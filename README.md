@@ -9,18 +9,19 @@ una hoja de Google mediante Apps Script.
 | Archivo | Qué es | Dónde va |
 |---|---|---|
 | `index.html` | Toda la app (alumno, maestra, editor de canciones, PDFs, violinista 3D, metrónomo, afinador) | Se publica en GitHub Pages |
-| `Codigo.gs` | El servidor: guarda alumnos, progreso y repertorio en la hoja de Google | Se pega en Apps Script, dentro de la hoja |
+| `config.js` | La dirección del servidor (URL `/exec`) | Se publica junto a `index.html` |
+| `apps-script/Código.js` | El servidor: guarda alumnos, maestros, progreso y repertorio en la hoja de Google | Apps Script, dentro de la hoja (se sube con `clasp push`) |
 | `README.md` | Esta guía | — |
 
-`Codigo.gs` está aquí solo como respaldo. No contiene claves: la clave de la maestra se guarda
-en las propiedades del script, dentro de tu cuenta de Google.
+El código del servidor no contiene claves: la clave de administración se guarda en las
+propiedades del script, dentro de tu cuenta de Google.
 
 ## Puesta en marcha
 
 ### 1. La base de datos (una sola vez)
 
 1. En Google Drive crea una hoja nueva llamada **Sprinkloud App**.
-2. Abre **Extensiones → Apps Script**, borra lo que haya y pega el contenido de `Codigo.gs`. Guarda.
+2. Abre **Extensiones → Apps Script**, borra lo que haya y pega el contenido de `apps-script/Código.js`. Guarda.
 3. Elige la función **configurar** y pulsa **Ejecutar**. Acepta los permisos que pide Google.
 4. En **Registro de ejecución** aparece la **clave de administración**. Guárdala en un lugar
    seguro: es la única que puede inscribir alumnos y manejar a los maestros.
@@ -33,19 +34,21 @@ en las propiedades del script, dentro de tu cuenta de Google.
 2. Copia la URL que termina en `/exec` y ábrela en el navegador: debe responder
    `{"ok":true,...}`.
 
-Cada vez que cambies `Codigo.gs`: **Implementar → Gestionar implementaciones → lápiz →
-Versión: Nueva versión → Implementar**. Así la URL no cambia.
+Cada vez que cambies el servidor: **Implementar → Gestionar implementaciones → lápiz →
+Versión: Nueva versión → Implementar**. Así la URL no cambia. Con clasp: `clasp push` y
+después `clasp deploy -i <id de la implementación>` (sin `-i` se crea otra URL).
 
 ### 3. Conectar la página
 
-En `index.html`, cerca del inicio del código, está esta línea:
+En `config.js` está esta línea:
 
 ```js
-const API_URL = '';
+window.SPRINKLOUD_API = '';
 ```
 
 Pega ahí tu URL `/exec`. Si la dejas vacía, la app funciona en **modo demostración**
-(código de alumno `SOFIA1`, clave de maestra `demo`) y no guarda nada.
+(código de alumno `SOFIA1`, clave de maestra `maestra1`, clave de administración `demo`)
+y no guarda nada.
 
 ### 4. Publicar la página
 

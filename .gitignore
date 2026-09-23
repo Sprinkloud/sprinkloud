@@ -1,0 +1,3 @@
+# clasp: guardan credenciales e identificadores locales
+.clasp.json
+.clasprc.json
