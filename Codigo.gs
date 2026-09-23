@@ -2,6 +2,13 @@
  * SPRINKLOUD: servidor de la app de violín
  * Google Apps Script + Google Sheets (gratis)
  *
+ * Hay dos tipos de acceso:
+ *   - Administración: la clave guardada en las propiedades del script (CLAVE_MAESTRA).
+ *     Es la única que puede inscribir o quitar alumnos, cambiarles el nivel,
+ *     y crear o desactivar maestros.
+ *   - Maestros: cada uno con su propia clave, guardada en la hoja "Maestros".
+ *     Dan clase, evalúan y editan el repertorio, pero no inscriben ni borran alumnos.
+ *
  * Primera vez:
  *   1. Ejecuta la función configurar() (menú de arriba > elegir "configurar" > Ejecutar).
  *   2. Mira la clave de la maestra en "Registro de ejecución".
@@ -16,12 +23,15 @@
  */
 
 const HOJAS = {
-  Alumnos: ['id', 'nombre', 'codigo', 'nivel', 'leccion', 'estrellas', 'canciones', 'checks', 'notas', 'creado', 'actualizado'],
-  Repertorio: ['id', 'titulo', 'origen', 'porque', 'nivel', 'leccion', 'frases', 'creado', 'actualizado']
+  Alumnos: ['id', 'nombre', 'codigo', 'nivel', 'leccion', 'estrellas', 'canciones', 'checks', 'notas', 'creado', 'actualizado', 'maestro'],
+  Repertorio: ['id', 'titulo', 'origen', 'porque', 'nivel', 'leccion', 'frases', 'creado', 'actualizado'],
+  Maestros: ['id', 'nombre', 'clave', 'activo', 'creado', 'actualizado']
 };
 const COLUMNAS_JSON = ['estrellas', 'canciones', 'checks', 'frases'];
-const EDITABLES_ALUMNO = ['nombre', 'nivel', 'leccion', 'estrellas', 'canciones', 'checks', 'notas'];
+const COLUMNAS_BOOL = ['activo'];
+const EDITABLES_ALUMNO = ['nombre', 'nivel', 'leccion', 'estrellas', 'canciones', 'checks', 'notas', 'maestro'];
 const EDITABLES_CANCION = ['titulo', 'origen', 'porque', 'nivel', 'leccion', 'frases', 'creado'];
+const EDITABLES_MAESTRO = ['nombre', 'clave', 'activo'];
 const MAX_CELDA = 45000; // Google Sheets admite 50.000 caracteres por celda
 
 /* ---------- configuración ---------- */
@@ -39,9 +49,9 @@ function configurar() {
   Logger.log('Listo. Clave de la maestra: ' + props.getProperty('CLAVE_MAESTRA'));
 }
 
-/** Muestra la clave actual en el registro de ejecución. */
+/** Muestra la clave de administración en el registro de ejecución. */
 function verClave() {
-  Logger.log('Clave de la maestra: ' + PropertiesService.getScriptProperties().getProperty('CLAVE_MAESTRA'));
+  Logger.log('Clave de administración: ' + PropertiesService.getScriptProperties().getProperty('CLAVE_MAESTRA'));
 }
 
 /** Para cambiar la clave: escribe la nueva aquí, guarda y ejecuta esta función. */
@@ -84,12 +94,16 @@ function manejar(q) {
       delete a.codigo;
       return { ok: true, alumno: a, repertorio: repertorioComoObjeto() };
     }
-    case 'maestra':
-      verificar(q.clave);
-      return { ok: true, alumnos: leer('Alumnos'), repertorio: repertorioComoObjeto() };
+    case 'acceso': {
+      const u = verificar(q.clave);
+      const maestros = leer('Maestros');
+      return { ok: true, rol: u.rol, nombre: u.nombre, id: u.id,
+        alumnos: leer('Alumnos'), repertorio: repertorioComoObjeto(),
+        maestros: u.rol === 'admin' ? maestros : maestros.map(function (m) { return { id: m.id, nombre: m.nombre, activo: m.activo }; }) };
+    }
 
     case 'nuevoAlumno': {
-      verificar(q.clave);
+      verificar(q.clave, true);
       const nombre = String(q.nombre || '').trim().slice(0, 60);
       if (!nombre) throw new Error('Escribe el nombre del alumno.');
       return conCandado(function () {
@@ -97,8 +111,9 @@ function manejar(q) {
         let codigo = generarCodigo(6);
         while (usados.indexOf(codigo) >= 0) codigo = generarCodigo(6);
         const ahora = Date.now();
-        const a = { id: 'a' + ahora.toString(36) + generarCodigo(3).toLowerCase(), nombre: nombre, codigo: codigo, nivel: 1, leccion: 1,
-          estrellas: {}, canciones: {}, checks: {}, notas: '', creado: ahora, actualizado: ahora };
+        const a = { id: 'a' + ahora.toString(36) + generarCodigo(3).toLowerCase(), nombre: nombre, codigo: codigo,
+          nivel: Math.max(1, Number(q.nivel) || 1), leccion: Math.max(1, Number(q.leccion) || 1),
+          estrellas: {}, canciones: {}, checks: {}, notas: '', creado: ahora, actualizado: ahora, maestro: String(q.maestro || '') };
         agregar('Alumnos', a);
         return { ok: true, alumno: a };
       });
@@ -111,8 +126,41 @@ function manejar(q) {
       });
 
     case 'borrarAlumno':
-      verificar(q.clave);
+      verificar(q.clave, true);
       return conCandado(function () { borrar('Alumnos', q.id); return { ok: true }; });
+
+    case 'nuevoMaestro': {
+      verificar(q.clave, true);
+      const nombre = String(q.nombre || '').trim().slice(0, 60);
+      if (!nombre) throw new Error('Escribe el nombre del maestro.');
+      return conCandado(function () {
+        let nueva = String(q.nuevaClave || '').trim();
+        if (nueva && nueva.length < 6) throw new Error('La clave del maestro necesita al menos 6 caracteres.');
+        if (!nueva) nueva = generarCodigo(8);
+        comprobarClaveLibre(nueva, null);
+        const ahora = Date.now();
+        const m = { id: 'm' + ahora.toString(36) + generarCodigo(3).toLowerCase(), nombre: nombre, clave: nueva, activo: true, creado: ahora, actualizado: ahora };
+        agregar('Maestros', m);
+        return { ok: true, maestro: m };
+      });
+    }
+    case 'guardarMaestro':
+      verificar(q.clave, true);
+      return conCandado(function () {
+        const cambios = q.cambios || {};
+        if ('clave' in cambios) {
+          const nueva = String(cambios.clave || '').trim();
+          if (nueva.length < 6) throw new Error('La clave del maestro necesita al menos 6 caracteres.');
+          comprobarClaveLibre(nueva, q.id);
+          cambios.clave = nueva;
+        }
+        actualizar('Maestros', q.id, cambios, EDITABLES_MAESTRO);
+        return { ok: true };
+      });
+
+    case 'borrarMaestro':
+      verificar(q.clave, true);
+      return conCandado(function () { borrar('Maestros', q.id); return { ok: true }; });
 
     case 'guardarCancion':
       verificar(q.clave);
@@ -131,7 +179,7 @@ function manejar(q) {
       });
 
     case 'borrarCancion':
-      verificar(q.clave);
+      verificar(q.clave, true);
       return conCandado(function () { borrar('Repertorio', q.id); return { ok: true }; });
 
     default:
@@ -141,10 +189,31 @@ function manejar(q) {
 
 /* ---------- utilidades ---------- */
 
-function verificar(clave) {
-  const real = PropertiesService.getScriptProperties().getProperty('CLAVE_MAESTRA');
-  if (!real) throw new Error('Falta configurar el servidor: ejecuta configurar() en Apps Script.');
-  if (String(clave || '') !== real) throw new Error('La clave de la maestra no es correcta.');
+/** Devuelve quién es el dueño de una clave: administración, maestro activo, o nadie. */
+function identificar(clave) {
+  clave = String(clave || '');
+  if (!clave) return null;
+  const admin = PropertiesService.getScriptProperties().getProperty('CLAVE_MAESTRA');
+  if (!admin) throw new Error('Falta configurar el servidor: ejecuta configurar() en Apps Script.');
+  if (clave === admin) return { rol: 'admin', id: 'admin', nombre: 'Administración' };
+  const m = leer('Maestros').filter(function (x) { return String(x.clave) === clave; })[0];
+  if (!m) return null;
+  if (m.activo === false) throw new Error('Este acceso fue desactivado. Habla con la administración del club.');
+  return { rol: 'maestro', id: m.id, nombre: m.nombre };
+}
+
+function verificar(clave, soloAdmin) {
+  const u = identificar(clave);
+  if (!u) throw new Error('La clave no es correcta.');
+  if (soloAdmin && u.rol !== 'admin') throw new Error('Solo la administración puede hacer este cambio.');
+  return u;
+}
+
+function comprobarClaveLibre(clave, idPropio) {
+  const admin = PropertiesService.getScriptProperties().getProperty('CLAVE_MAESTRA');
+  if (clave === admin) throw new Error('Esa clave ya la usa la administración. Elige otra.');
+  const choque = leer('Maestros').filter(function (m) { return String(m.clave) === clave && m.id !== idPropio; })[0];
+  if (choque) throw new Error('Esa clave ya la usa ' + choque.nombre + '. Elige otra.');
 }
 
 function conCandado(fn) {
@@ -174,6 +243,8 @@ function aObjeto(cols, fila) {
     let v = fila[i];
     if (COLUMNAS_JSON.indexOf(c) >= 0) {
       try { v = v === '' ? (c === 'frases' ? [] : {}) : JSON.parse(v); } catch (e) { v = c === 'frases' ? [] : {}; }
+    } else if (COLUMNAS_BOOL.indexOf(c) >= 0) {
+      v = v === '' ? true : (v === true || String(v).toUpperCase() === 'TRUE' || String(v).toLowerCase() === 'sí');
     } else if (c === 'nivel' || c === 'leccion' || c === 'creado' || c === 'actualizado') {
       v = v === '' ? null : Number(v);
     } else {
@@ -193,6 +264,7 @@ function aFila(cols, o) {
       if (v.length > MAX_CELDA) throw new Error('El dato "' + c + '" es demasiado grande para guardarlo.');
       return v;
     }
+    if (COLUMNAS_BOOL.indexOf(c) >= 0) return v === true || String(v).toUpperCase() === 'TRUE';
     if (typeof v === 'string') return v.slice(0, MAX_CELDA);
     return v;
   });

@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="config.js"></script>
 <style>
 :root{
   box-sizing:border-box;
@@ -349,6 +350,16 @@ label.field{display:grid;gap:6px;font-weight:700;font-size:.9rem}
 .codechip{font:700 .95rem Sora;letter-spacing:.1em;border:1.5px dashed var(--gold);background:var(--gold-soft);border-radius:8px;padding:2px 10px;margin-left:4px}
 .save-state{min-width:8ch}
 .save-state.err{color:var(--danger);font-weight:700}
+.admin-grid{grid-template-columns:minmax(300px,1fr) 1.7fr}
+.admin-list{display:grid;gap:8px}
+.admin-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px;background:var(--surface-2)}
+.admin-row.off{opacity:.65}
+.admin-main{display:grid;min-width:160px;flex:1}
+.admin-selects select{width:auto;max-width:210px}
+.admin-form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-items:end;margin-top:16px;border-top:1px solid var(--line);padding-top:16px}
+.admin-form .btn{grid-column:1/-1;justify-self:start}
+@media (max-width: 980px){.admin-grid{grid-template-columns:1fr}}
+@media (max-width: 760px){.admin-form{grid-template-columns:1fr}.admin-selects select{max-width:100%}}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:.9rem;z-index:99;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
 #toast.show{opacity:1}
 .loading{display:grid;place-items:center;min-height:60vh;color:var(--ink-2);font-weight:700}
@@ -377,9 +388,10 @@ label.field{display:grid;gap:6px;font-weight:700;font-size:.9rem}
 <script>
 "use strict";
 /* ============ CONFIGURACIÓN ============
-   Pega aquí la URL de tu implementación web de Apps Script (termina en /exec).
-   Si la dejas vacía, la app funciona en "modo demostración" y no guarda nada. */
-const API_URL = 'https://script.google.com/macros/s/AKfycbz6dZlLukO0fF58FbfALdmxhd_tyG3QjPo3QuKYDmQ1DThfQS2kIa91EEVeeL6CgPTN1g/exec';
+   La dirección del servidor vive en config.js, al lado de este archivo.
+   Así puedes actualizar index.html sin volver a escribirla.
+   Si config.js falta o está vacío, la app funciona en "modo demostración". */
+const API_URL = (typeof window !== 'undefined' && window.SPRINKLOUD_API) || '';
 
 /* ============ utilidades ============ */
 const $ = (s, r = document) => r.querySelector(s);
@@ -652,25 +664,36 @@ const Api = {
 /* Modo demostración: funciona sin servidor para probar la app. Nada se guarda al recargar. */
 const Demo = {
   clave:'demo',
+  maestros:[{id:'m1', nombre:'Keila', clave:'maestra1', activo:true}],
   alumnos:[
-    {id:'d1', nombre:'Sofía', codigo:'SOFIA1', nivel:1, leccion:3, estrellas:{'1.1':3, '1.2':2}, canciones:{}, checks:{}, notas:'Le cuesta el Fa (2 bajo): lo sube un poco.'},
-    {id:'d2', nombre:'Mateo', codigo:'MATEO1', nivel:1, leccion:1, estrellas:{}, canciones:{}, checks:{}, notas:''},
-    {id:'d3', nombre:'Valentina', codigo:'VALE01', nivel:1, leccion:5, estrellas:{'1.1':2, '1.2':2, '1.3':3, '1.4':1}, canciones:{'1.4':'estrellita'}, checks:{}, notas:''}
+    {id:'d1', nombre:'Sofía', codigo:'SOFIA1', nivel:1, leccion:3, estrellas:{'1.1':3, '1.2':2}, canciones:{}, checks:{}, notas:'Le cuesta el Fa (2 bajo): lo sube un poco.', maestro:'m1'},
+    {id:'d2', nombre:'Mateo', codigo:'MATEO1', nivel:1, leccion:1, estrellas:{}, canciones:{}, checks:{}, notas:'', maestro:'m1'},
+    {id:'d3', nombre:'Valentina', codigo:'VALE01', nivel:1, leccion:5, estrellas:{'1.1':2, '1.2':2, '1.3':3, '1.4':1}, canciones:{'1.4':'estrellita'}, checks:{}, notas:'', maestro:''}
   ],
   repertorio:{},
   async call(accion, q){
     await new Promise(r => setTimeout(r, 250));
     const ok = x => ({ok:true, ...clonar(x)});
-    const clave = () => { if(q.clave !== this.clave) throw new Error('La clave de la maestra no es correcta. En el modo demostración es: demo'); };
+    const quien = () => {
+      if(q.clave === this.clave) return {rol:'admin', id:'admin', nombre:'Administración'};
+      const m = this.maestros.find(x => x.clave === q.clave);
+      if(!m) throw new Error('La clave no es correcta. En el modo demostración: demo para administración, maestra1 para maestra.');
+      if(!m.activo) throw new Error('Este acceso fue desactivado. Habla con la administración del club.');
+      return {rol:'maestro', id:m.id, nombre:m.nombre};
+    };
+    const admin = () => { const u = quien(); if(u.rol !== 'admin') throw new Error('Solo la administración puede hacer este cambio.'); return u; };
     const buscar = id => { const a = this.alumnos.find(x => x.id === id); if(!a) throw new Error('No se encontró el registro.'); return a; };
     switch(accion){
       case 'alumno': { const a = this.alumnos.find(x => x.codigo === String(q.codigo || '').trim().toUpperCase()); if(!a) throw new Error('No encontramos ese código. En el modo demostración prueba con SOFIA1.'); const c = clonar(a); delete c.notas; delete c.codigo; return ok({alumno:c, repertorio:this.repertorio}); }
-      case 'maestra': clave(); return ok({alumnos:this.alumnos, repertorio:this.repertorio});
-      case 'nuevoAlumno': { clave(); const a = {id:'d' + Date.now(), nombre:q.nombre, codigo:Math.random().toString(36).slice(2, 8).toUpperCase(), nivel:1, leccion:1, estrellas:{}, canciones:{}, checks:{}, notas:''}; this.alumnos.push(a); return ok({alumno:a}); }
-      case 'guardarAlumno': clave(); Object.assign(buscar(q.id), q.cambios); return ok({});
-      case 'borrarAlumno': clave(); this.alumnos = this.alumnos.filter(x => x.id !== q.id); return ok({});
-      case 'guardarCancion': clave(); this.repertorio[q.id] = {...(this.repertorio[q.id] || {}), ...q.cancion, id:q.id}; return ok({});
-      case 'borrarCancion': clave(); delete this.repertorio[q.id]; return ok({});
+      case 'acceso': { const u = quien(); return ok({rol:u.rol, nombre:u.nombre, id:u.id, alumnos:this.alumnos, repertorio:this.repertorio, maestros:u.rol === 'admin' ? this.maestros : this.maestros.map(m => ({id:m.id, nombre:m.nombre, activo:m.activo}))}); }
+      case 'nuevoAlumno': { admin(); const a = {id:'d' + Date.now(), nombre:q.nombre, codigo:Math.random().toString(36).slice(2, 8).toUpperCase(), nivel:+q.nivel || 1, leccion:+q.leccion || 1, estrellas:{}, canciones:{}, checks:{}, notas:'', maestro:q.maestro || ''}; this.alumnos.push(a); return ok({alumno:a}); }
+      case 'guardarAlumno': quien(); Object.assign(buscar(q.id), q.cambios); return ok({});
+      case 'borrarAlumno': admin(); this.alumnos = this.alumnos.filter(x => x.id !== q.id); return ok({});
+      case 'nuevoMaestro': { admin(); const m = {id:'m' + Date.now(), nombre:q.nombre, clave:(q.nuevaClave || Math.random().toString(36).slice(2, 10).toUpperCase()), activo:true}; this.maestros.push(m); return ok({maestro:m}); }
+      case 'guardarMaestro': { admin(); const m = this.maestros.find(x => x.id === q.id); if(m) Object.assign(m, q.cambios); return ok({}); }
+      case 'borrarMaestro': admin(); this.maestros = this.maestros.filter(x => x.id !== q.id); return ok({});
+      case 'guardarCancion': quien(); this.repertorio[q.id] = {...(this.repertorio[q.id] || {}), ...q.cancion, id:q.id}; return ok({});
+      case 'borrarCancion': admin(); delete this.repertorio[q.id]; return ok({});
     }
     throw new Error('Acción desconocida.');
   }
@@ -685,15 +708,21 @@ function estadoGuardado(delta, error){
   el.classList.toggle('err', !!error);
 }
 const Store = {
-  alumnos:[], repertorio:{}, alumno:null, subs:new Set(),
+  alumnos:[], repertorio:{}, maestros:[], alumno:null, subs:new Set(),
   on(f){ this.subs.add(f); },
   emit(){ this.subs.forEach(f => { try{ f(); }catch(e){ console.error(e); } }); },
   get(id){ return this.alumno && this.alumno.id === id ? this.alumno : this.alumnos.find(a => a.id === id); },
   async entrarAlumno(codigo){ const r = await Api.call('alumno', {codigo}); this.alumno = r.alumno; this.repertorio = r.repertorio || {}; this.emit(); },
-  async entrarMaestra(clave){ const r = await Api.call('maestra', {clave}); this.alumnos = ordenar(r.alumnos || []); this.repertorio = r.repertorio || {}; this.emit(); },
+  async entrarConClave(clave){
+    const r = await Api.call('acceso', {clave});
+    this.alumnos = ordenar(r.alumnos || []); this.repertorio = r.repertorio || {}; this.maestros = r.maestros || [];
+    S.rol = r.rol; S.nombre = r.nombre || ''; S.miId = r.id || '';
+    this.emit(); return r;
+  },
+  nombreMaestro(id){ return this.maestros.find(m => m.id === id)?.nombre || ''; },
   async refrescar(){
     if(pendientes) return;
-    try{ if(S.rol === 'alumno') await this.entrarAlumno(S.codigo); else if(S.rol === 'maestra') await this.entrarMaestra(S.clave); }catch(e){}
+    try{ if(S.rol === 'alumno') await this.entrarAlumno(S.codigo); else await this.entrarConClave(S.clave); }catch(e){}
   },
   async update(id, patch){
     const a = this.get(id); if(a) Object.assign(a, clonar(patch));
@@ -701,10 +730,26 @@ const Store = {
     try{ await Api.call('guardarAlumno', {clave:S.clave, id, cambios:patch}); estadoGuardado(-1); }
     catch(e){ estadoGuardado(-1, true); toast('No se guardó el cambio: ' + e.message); }
   },
-  async add(nombre){
+  async add(datos){
     estadoGuardado(1);
-    try{ const r = await Api.call('nuevoAlumno', {clave:S.clave, nombre}); this.alumnos = ordenar([...this.alumnos, r.alumno]); estadoGuardado(-1); this.emit(); return r.alumno; }
+    try{ const r = await Api.call('nuevoAlumno', {clave:S.clave, ...datos}); this.alumnos = ordenar([...this.alumnos, r.alumno]); estadoGuardado(-1); this.emit(); return r.alumno; }
     catch(e){ estadoGuardado(-1, true); toast(e.message); return null; }
+  },
+  async addMaestro(nombre, nuevaClave){
+    estadoGuardado(1);
+    try{ const r = await Api.call('nuevoMaestro', {clave:S.clave, nombre, nuevaClave}); this.maestros = [...this.maestros, r.maestro]; estadoGuardado(-1); this.emit(); return r.maestro; }
+    catch(e){ estadoGuardado(-1, true); toast(e.message); return null; }
+  },
+  async updateMaestro(id, cambios){
+    const m = this.maestros.find(x => x.id === id); const antes = m ? clonar(m) : null;
+    if(m) Object.assign(m, clonar(cambios));
+    this.emit(); estadoGuardado(1);
+    try{ await Api.call('guardarMaestro', {clave:S.clave, id, cambios}); estadoGuardado(-1); return true; }
+    catch(e){ if(m && antes) Object.assign(m, antes); estadoGuardado(-1, true); toast(e.message); this.emit(); return false; }
+  },
+  async removeMaestro(id){
+    this.maestros = this.maestros.filter(m => m.id !== id); this.emit(); estadoGuardado(1);
+    try{ await Api.call('borrarMaestro', {clave:S.clave, id}); estadoGuardado(-1); }catch(e){ estadoGuardado(-1, true); toast(e.message); }
   },
   async remove(id){
     this.alumnos = this.alumnos.filter(a => a.id !== id); this.emit(); estadoGuardado(1);
@@ -729,7 +774,7 @@ function borrarSesion(){ try{ localStorage.removeItem(SES_KEY); }catch(e){} }
 
 
 /* ============ estado de la app ============ */
-const S = {rol:null, codigo:'', clave:'', mTab:'clase', view:'login', verLeccion:null, practica:0, maestraSel:null, presentTab:'v3d', present:false};
+const S = {rol:null, nombre:'', miId:'', filtro:'mios', codigo:'', clave:'', mTab:'clase', view:'login', verLeccion:null, practica:0, maestraSel:null, presentTab:'v3d', present:false};
 let mounts = [];
 function clearMounts(){ mounts.forEach(f => { try{ f(); }catch(e){} }); mounts = []; }
 let toolMounts = [], toolKey = '';
@@ -741,8 +786,8 @@ function go(view, extra = {}){ stopPlay(); Object.assign(S, extra, {view}); if(v
 function salir(){
   if(ED?.dirty && !confirm('Tienes cambios sin guardar en una canción. ¿Salir de todos modos?')) return;
   ED = null; stopPlay(); Metro.stop(); borrarSesion();
-  Store.alumno = null; Store.alumnos = []; Store.repertorio = {};
-  go('login', {rol:null, codigo:'', clave:'', verLeccion:null, maestraSel:null, mTab:'clase'});
+  Store.alumno = null; Store.alumnos = []; Store.repertorio = {}; Store.maestros = [];
+  go('login', {rol:null, nombre:'', miId:'', codigo:'', clave:'', verLeccion:null, maestraSel:null, mTab:'clase'});
 }
 
 function topBar(role){
@@ -753,7 +798,7 @@ function topBar(role){
     ${!API_URL ? '<span class="badge" title="La app no está conectada a la hoja de Google">Modo demostración</span>' : ''}
     ${role === 'maestra' ? '<span class="fine save-state" id="save-state" aria-live="polite"></span>' : ''}
     ${al ? `<span class="who">${esc(al.nombre)}</span>` : ''}
-    ${role === 'maestra' ? '<span class="who">Panel de la maestra</span>' : ''}
+    ${role === 'maestra' ? `<span class="who">${esc(S.nombre || 'Maestro')}</span>` : ''}
     ${role ? '<button class="btn ghost small" data-act="salir">Salir</button>' : ''}
   </header>`;
 }
@@ -800,14 +845,14 @@ function viewLogin(){
         <p class="form-err" aria-live="polite"></p>
       </form>
       <form class="card" id="f-maestra">
-        <h2>Soy la maestra</h2><p class="muted">Ve en qué lección está cada alumno, prepara la clase y presenta las herramientas en la videollamada.</p>
-        <label class="field" style="margin-top:14px">Clave de la maestra<input type="password" name="clave" autocomplete="current-password" required></label>
+        <h2>Soy maestro o administración</h2><p class="muted">Ve en qué lección está cada alumno, prepara la clase y presenta las herramientas en la videollamada.</p>
+        <label class="field" style="margin-top:14px">Tu clave<input type="password" name="clave" autocomplete="current-password" required></label>
         <label class="switch" style="margin-top:12px"><input type="checkbox" name="rec"> Recordarme en este dispositivo</label>
         <div class="row" style="margin-top:16px"><button class="btn primary">Entrar al panel de clases</button></div>
         <p class="form-err" aria-live="polite"></p>
       </form>
     </section>
-    ${!API_URL ? '<p class="notice">Modo demostración: la app todavía no está conectada a la hoja de Google. Prueba con el código SOFIA1 o con la clave demo. Los cambios se pierden al recargar.</p>' : ''}
+    ${!API_URL ? '<p class="notice">Modo demostración: la app todavía no está conectada a la hoja de Google. Prueba con el código de alumno SOFIA1, la clave de maestra maestra1 o la clave de administración demo. Los cambios se pierden al recargar.</p>' : ''}
   </main>`;
 }
 document.addEventListener('submit', async e => {
@@ -824,8 +869,8 @@ document.addEventListener('submit', async e => {
       go('alumno', {verLeccion:null, practica:0});
     } else {
       const clave = f.elements.clave.value;
-      await Store.entrarMaestra(clave);
-      S.rol = 'maestra'; S.clave = clave; S.codigo = '';
+      S.clave = clave; S.codigo = '';
+      await Store.entrarConClave(clave);
       if(f.elements.rec.checked) guardarSesion();
       go('maestra');
     }
@@ -1396,11 +1441,14 @@ function mountViolinist(el, {vista} = {}){
 function viewMaestra(){
   return `${topBar('maestra')}
   <nav class="m-nav"><div class="seg" role="group" aria-label="Sección">
-    <button data-mtab="clase" aria-pressed="${S.mTab !== 'rep'}">Clases</button><button data-mtab="rep" aria-pressed="${S.mTab === 'rep'}">Repertorio</button></div></nav>
+    <button data-mtab="clase" aria-pressed="${S.mTab === 'clase'}">Clases</button><button data-mtab="rep" aria-pressed="${S.mTab === 'rep'}">Repertorio</button>${S.rol === 'admin' ? `<button data-mtab="admin" aria-pressed="${S.mTab === 'admin'}">Administración</button>` : ''}</div></nav>
   <main class="rep-wrap" id="m-rep" ${S.mTab === 'rep' ? '' : 'hidden'}>${repShellHTML()}</main>
-  <main class="maestra" id="m-clases" ${S.mTab === 'rep' ? 'hidden' : ''}>
-    <aside class="card roster"><h2>Mis alumnos</h2><div class="roster-list" id="m-roster"></div>
-      <form id="m-add"><input type="text" name="n" placeholder="Nombre del nuevo alumno" aria-label="Nombre del nuevo alumno" maxlength="60" required><button class="btn primary small">Agregar</button></form>
+  <main class="rep-wrap" id="m-admin" ${S.mTab === 'admin' ? '' : 'hidden'}>${S.rol === 'admin' ? adminShellHTML() : ''}</main>
+  <main class="maestra" id="m-clases" ${S.mTab === 'clase' ? '' : 'hidden'}>
+    <aside class="card roster"><h2>Alumnos</h2>
+      ${S.rol === 'maestro' ? `<div class="seg" style="margin:0 0 10px" role="group" aria-label="Filtrar alumnos"><button data-filtro="mios" aria-pressed="${S.filtro !== 'todos'}">Mis alumnos</button><button data-filtro="todos" aria-pressed="${S.filtro === 'todos'}">Todos</button></div>` : ''}
+      <div class="roster-list" id="m-roster"></div>
+      ${S.rol === 'admin' ? '<p class="fine" style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">Los alumnos se inscriben y se quitan desde la pestaña <strong>Administración</strong>.</p>' : ''}
     </aside>
     <section class="clase" id="m-clase"></section>
   </main>
@@ -1413,26 +1461,27 @@ function estadoAlumno(a){
 function renderMaestraData(){
   if(!$('#m-roster')) return;
   if(S.mTab === 'rep'){ renderRepList(); if(!ED) renderRepMain(); return; }
-  const list = Store.alumnos;
-  if(!S.maestraSel || !Store.get(S.maestraSel)) S.maestraSel = list[0]?.id || null;
-  $('#m-roster').innerHTML = list.length ? list.map(a => `<button class="${a.id === S.maestraSel ? 'on' : ''}" data-msel="${esc(a.id)}"><strong>${esc(a.nombre)}</strong><span>${esc(estadoAlumno(a))}</span></button>`).join('')
-    : '<p class="empty">Agrega a tu primer alumno con el campo de abajo.</p>';
+  if(S.mTab === 'admin'){ renderAdmin(); return; }
+  const todos = Store.alumnos;
+  const list = S.rol === 'maestro' && S.filtro !== 'todos' ? todos.filter(a => a.maestro === S.miId) : todos;
+  if(!S.maestraSel || !list.some(a => a.id === S.maestraSel)) S.maestraSel = list[0]?.id || null;
+  $('#m-roster').innerHTML = list.length ? list.map(a => `<button class="${a.id === S.maestraSel ? 'on' : ''}" data-msel="${esc(a.id)}"><strong>${esc(a.nombre)}</strong><span>${esc(estadoAlumno(a))}</span>${S.rol === 'admin' ? `<span>${esc(Store.nombreMaestro(a.maestro) || 'Sin maestro asignado')}</span>` : ''}</button>`).join('')
+    : `<p class="empty">${S.rol === 'admin' ? 'Todavía no hay alumnos. Inscríbelos en la pestaña Administración.' : S.filtro !== 'todos' ? 'No tienes alumnos asignados. Pulsa «Todos» para ver los del club.' : 'Todavía no hay alumnos inscritos.'}</p>`;
   const cont = $('#m-clase');
   const ae = document.activeElement;
   if(ae && cont.contains(ae) && ae.tagName === 'TEXTAREA') return;
   const al = Store.get(S.maestraSel);
-  if(!al){ cont.innerHTML = `<div class="card"><h2>Aún no hay alumnos</h2><p class="muted" style="margin-top:8px">Cuando agregues un alumno, la app le crea un código para entrar. Aquí verás en qué lección va y qué sigue en su próxima clase.</p></div>`; return; }
+  if(!al){ cont.innerHTML = `<div class="card"><h2>Ningún alumno seleccionado</h2><p class="muted" style="margin-top:8px">${S.rol === 'admin' ? 'Inscribe alumnos desde la pestaña Administración: al hacerlo, la app les crea un código para entrar.' : 'Elige un alumno de la lista para ver su clase de hoy.'}</p></div>`; return; }
   cont.innerHTML = claseHTML(al);
   wireClase(cont, al);
   if(S.present) renderPresent(true);
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-msel]'); if(!b) return; S.maestraSel = b.dataset.msel; S.practica = 0; renderMaestraData(); });
-document.addEventListener('submit', async e => {
-  if(e.target.id !== 'm-add') return; e.preventDefault();
-  const inp = e.target.elements.n; const nombre = inp.value.trim(); if(!nombre) return;
-  const btn = $('button', e.target); btn.disabled = true;
-  const a = await Store.add(nombre); btn.disabled = false;
-  if(a){ inp.value = ''; S.maestraSel = a.id; renderMaestraData(); toast(`${a.nombre} quedó inscrito. Su código para entrar es ${a.codigo}.`); }
+document.addEventListener('click', e => {
+  const f = e.target.closest('[data-filtro]'); if(!f) return;
+  S.filtro = f.dataset.filtro; S.maestraSel = null;
+  $$('[data-filtro]').forEach(b => b.setAttribute('aria-pressed', String(b === f)));
+  renderMaestraData();
 });
 const PTABS = [{id:'v3d', label:'Violinista 3D'}, {id:'fb', label:'Violín interactivo'}, {id:'sheet', label:'Notas'}, {id:'metro', label:'Metrónomo'}, {id:'tuner', label:'Afinador'}];
 function claseHTML(al){
@@ -1468,9 +1517,7 @@ function claseHTML(al){
         <div class="row" style="margin-top:12px"><button class="btn small" data-song-pdf="${esc(song)}">Descargar el PDF de «${esc(songC.titulo)}»</button></div>`
         : `<p class="muted">Esta lección se trabaja con ejercicios. La canción de la lección anterior sigue disponible para repasar.</p>`}
       </div>
-      <div class="card"><h3>Notas para la próxima clase</h3><p class="fine" style="margin-bottom:8px">Solo las ve la maestra.</p><textarea data-notes placeholder="Lo que quieres recordar de ${esc(al.nombre)}">${esc(al.notas || '')}</textarea>
-        <div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn danger small" data-remove>Quitar a ${esc(al.nombre)} del club</button></div>
-      </div>
+      <div class="card"><h3>Notas para la próxima clase</h3><p class="fine" style="margin-bottom:8px">Solo las ven los maestros y la administración.</p><textarea data-notes placeholder="Lo que quieres recordar de ${esc(al.nombre)}">${esc(al.notas || '')}</textarea></div>
     </div>
   </div>`;
 }
@@ -1505,7 +1552,6 @@ function wireClase(root, al){
   let nt = 0;
   notes.oninput = () => { clearTimeout(nt); nt = setTimeout(() => Store.update(al.id, {notas:notes.value}), 1200); };
   notes.onblur = () => { clearTimeout(nt); if(notes.value !== (al.notas || '')) Store.update(al.id, {notas:notes.value}); };
-  $('[data-remove]', root).onclick = () => { if(confirm(`¿Quitar a ${al.nombre} del club? Se borrará su progreso de la hoja.`)){ Store.remove(al.id); S.maestraSel = null; } };
   $$('[data-present]', root).forEach(b => b.onclick = () => openPresent(b.dataset.present));
 }
 
@@ -1574,7 +1620,7 @@ function renderRepMain(){
     <div class="notes-scroll">${notesHTML(ej)}</div>
     <div class="row" style="justify-content:space-between">
       <div class="row"><button class="btn primary" data-rplay>Escuchar</button><button class="btn" data-song-pdf="${esc(repSel)}">Descargar PDF</button></div>
-      ${c.propia ? `<button class="btn danger small" data-rdel>Borrar del repertorio</button>` : ''}
+      ${c.propia && S.rol === 'admin' ? `<button class="btn danger small" data-rdel>Borrar del repertorio</button>` : ''}
     </div>
   </div>`;
   const pb = $('[data-rplay]', el);
@@ -1595,8 +1641,12 @@ document.addEventListener('click', e => {
     if(t.dataset.mtab !== 'rep') ED = null;
     S.mTab = t.dataset.mtab; stopPlay(); closePresent();
     $$('[data-mtab]').forEach(b => b.setAttribute('aria-pressed', String(b === t)));
-    $('#m-rep').hidden = S.mTab !== 'rep'; $('#m-clases').hidden = S.mTab === 'rep';
-    if(S.mTab === 'rep'){ renderRepList(); renderRepMain(); } else renderMaestraData();
+    $('#m-rep').hidden = S.mTab !== 'rep';
+    $('#m-clases').hidden = S.mTab !== 'clase';
+    const ad = $('#m-admin'); if(ad) ad.hidden = S.mTab !== 'admin';
+    if(S.mTab === 'rep'){ renderRepList(); renderRepMain(); }
+    else if(S.mTab === 'admin') renderAdmin();
+    else renderMaestraData();
     return;
   }
   const r = e.target.closest('[data-rsel]');
@@ -1844,6 +1894,147 @@ function pdfRepertorio(nivel, lista){
   return d;
 }
 
+/* ============ administración ============ */
+function adminShellHTML(){
+  return `<div class="rep admin-grid">
+    <section id="admin-maestros"></section>
+    <section id="admin-alumnos"></section>
+  </div>`;
+}
+function selNivel(nivel, attr){
+  return `<select ${attr} aria-label="Nivel">${NIVELES.map(n => `<option value="${n.n}" ${+nivel === n.n ? 'selected' : ''}>Nivel ${n.n}</option>`).join('')}</select>`;
+}
+function selLeccion(nivel, leccion, attr){
+  const ls = nivelObj(nivel).lecciones;
+  return `<select ${attr} aria-label="Lección">${ls.map(L => `<option value="${L.n}" ${+leccion === L.n ? 'selected' : ''}>Lección ${L.n}: ${esc(L.titulo)}</option>`).join('')}<option value="${ls.length + 1}" ${+leccion > ls.length ? 'selected' : ''}>Nivel terminado</option></select>`;
+}
+function selMaestro(id, attr){
+  return `<select ${attr} aria-label="Maestro">${[`<option value="" ${!id ? 'selected' : ''}>Sin maestro asignado</option>`, ...Store.maestros.map(m => `<option value="${esc(m.id)}" ${m.id === id ? 'selected' : ''}>${esc(m.nombre)}${m.activo === false ? ' (acceso desactivado)' : ''}</option>`)].join('')}</select>`;
+}
+function limpiarForm(sel){ const f = $(sel); if(!f) return; $$('input', f).forEach(i => i.value = ''); $$('select', f).forEach(x => x.selectedIndex = 0); }
+function renderAdmin(){
+  if(S.rol !== 'admin') return;
+  const mEl = $('#admin-maestros'), aEl = $('#admin-alumnos');
+  if(!mEl || !aEl) return;
+  const guardado = {};
+  ['admin-nuevo-maestro', 'admin-nuevo-alumno'].forEach(id => { const f = $('#' + id); if(f) guardado[id] = $$('input,select', f).map(x => x.value); });
+
+  mEl.innerHTML = `<div class="card">
+    <h2>Maestros</h2>
+    <p class="muted" style="margin:8px 0 16px">Cada maestro entra con su propia clave. Si alguien se desvincula del club, desactiva su acceso: deja de poder entrar, pero el progreso de sus alumnos se conserva.</p>
+    <div class="admin-list">${Store.maestros.length ? Store.maestros.map(m => {
+      const cuantos = Store.alumnos.filter(a => a.maestro === m.id).length;
+      return `<div class="admin-row${m.activo === false ? ' off' : ''}">
+        <div class="admin-main"><strong>${esc(m.nombre)}</strong>
+          <span class="fine">${cuantos === 1 ? '1 alumno' : cuantos + ' alumnos'}${m.activo === false ? ', acceso desactivado' : ''}</span></div>
+        <button class="codechip" data-copy="${esc(m.clave)}" title="Copiar la clave">${esc(m.clave)}</button>
+        <div class="row">
+          <button class="btn small" data-mclave="${esc(m.id)}">Cambiar clave</button>
+          <button class="btn small" data-mtoggle="${esc(m.id)}">${m.activo === false ? 'Reactivar acceso' : 'Desactivar acceso'}</button>
+          <button class="btn danger small" data-mdel="${esc(m.id)}">Borrar</button>
+        </div>
+      </div>`;
+    }).join('') : '<p class="empty">Todavía no hay maestros. Crea el primero aquí abajo.</p>'}</div>
+    <form class="admin-form" id="admin-nuevo-maestro">
+      <label class="field">Nombre del maestro<input type="text" name="nombre" maxlength="60" required placeholder="Por ejemplo: Keila"></label>
+      <label class="field">Clave (opcional)<input type="text" name="clave" maxlength="40" placeholder="Si la dejas vacía, se crea sola"></label>
+      <button class="btn primary">Crear acceso</button>
+    </form>
+    <p class="fine" style="margin-top:12px">Tu clave de administración no está aquí: se guarda dentro de Apps Script y se cambia desde ahí.</p>
+  </div>`;
+
+  aEl.innerHTML = `<div class="card">
+    <h2>Alumnos</h2>
+    <p class="muted" style="margin:8px 0 16px">Al inscribir a un alumno la app le crea un código para entrar. Si ya sabe tocar, empiézalo en el nivel y la lección que le corresponda.</p>
+    <form class="admin-form" id="admin-nuevo-alumno">
+      <label class="field">Nombre del alumno<input type="text" name="nombre" maxlength="60" required placeholder="Nombre y apellido"></label>
+      <label class="field">Maestro${selMaestro('', 'name="maestro"')}</label>
+      <label class="field">Empieza en${selNivel(1, 'name="nivel" data-nnivel')}</label>
+      <label class="field">Lección${selLeccion(1, 1, 'name="leccion" data-nleccion')}</label>
+      <button class="btn primary">Inscribir alumno</button>
+    </form>
+    <div class="admin-list" style="margin-top:18px">${Store.alumnos.length ? Store.alumnos.map(a => `<div class="admin-row">
+      <div class="admin-main"><strong>${esc(a.nombre)}</strong><span class="fine">${esc(estadoAlumno(a))}</span></div>
+      <button class="codechip" data-copy="${esc(a.codigo || '')}" title="Copiar el código del alumno">${esc(a.codigo || 'sin código')}</button>
+      <div class="row admin-selects">
+        ${selMaestro(a.maestro || '', `data-amaestro="${esc(a.id)}"`)}
+        ${selNivel(a.nivel || 1, `data-anivel="${esc(a.id)}"`)}
+        ${selLeccion(a.nivel || 1, a.leccion || 1, `data-aleccion="${esc(a.id)}"`)}
+        <button class="btn danger small" data-adel="${esc(a.id)}">Quitar</button>
+      </div>
+    </div>`).join('') : '<p class="empty">Todavía no hay alumnos inscritos.</p>'}</div>
+  </div>`;
+
+  Object.entries(guardado).forEach(([id, vals]) => { const f = $('#' + id); if(f) $$('input,select', f).forEach((x, i) => { if(vals[i] !== undefined) x.value = vals[i]; }); });
+}
+document.addEventListener('submit', async e => {
+  if(e.target.id === 'admin-nuevo-maestro'){
+    e.preventDefault();
+    const f = e.target, btn = $('button', f);
+    const nombre = f.elements.nombre.value.trim(); if(!nombre) return;
+    const clave = f.elements.clave.value.trim();
+    if(clave && clave.length < 6){ toast('La clave del maestro necesita al menos 6 caracteres.'); return; }
+    btn.disabled = true;
+    const m = await Store.addMaestro(nombre, clave); btn.disabled = false;
+    if(m){ limpiarForm('#admin-nuevo-maestro'); renderAdmin(); toast(`${m.nombre} ya puede entrar con la clave ${m.clave}.`); }
+    return;
+  }
+  if(e.target.id === 'admin-nuevo-alumno'){
+    e.preventDefault();
+    const f = e.target, btn = $('button', f);
+    const nombre = f.elements.nombre.value.trim(); if(!nombre) return;
+    btn.disabled = true;
+    const a = await Store.add({nombre, maestro:f.elements.maestro.value, nivel:+f.elements.nivel.value, leccion:+f.elements.leccion.value});
+    btn.disabled = false;
+    if(a){ limpiarForm('#admin-nuevo-alumno'); renderAdmin(); toast(`${a.nombre} quedó inscrito. Su código para entrar es ${a.codigo}.`); }
+  }
+});
+document.addEventListener('change', e => {
+  if(S.rol !== 'admin') return;
+  const nn = e.target.closest('[data-nnivel]');
+  if(nn){ const f = nn.closest('form'); const l = $('[data-nleccion]', f); l.outerHTML = selLeccion(+nn.value, 1, 'name="leccion" data-nleccion'); return; }
+  const am = e.target.closest('[data-amaestro]'); if(am){ Store.update(am.dataset.amaestro, {maestro:am.value}); return; }
+  const an = e.target.closest('[data-anivel]');
+  if(an){ const al = Store.get(an.dataset.anivel); Store.update(an.dataset.anivel, {nivel:+an.value, leccion:1}); toast(`${al?.nombre || 'El alumno'} empieza el Nivel ${an.value}.`); renderAdmin(); return; }
+  const alc = e.target.closest('[data-aleccion]'); if(alc){ Store.update(alc.dataset.aleccion, {leccion:+alc.value}); return; }
+});
+document.addEventListener('click', async e => {
+  if(S.rol !== 'admin') return;
+  const cp = e.target.closest('[data-copy]');
+  if(cp){ try{ await navigator.clipboard.writeText(cp.dataset.copy); toast('Copiado: ' + cp.dataset.copy); }catch(err){ toast('Cópialo a mano: ' + cp.dataset.copy); } return; }
+  const mc = e.target.closest('[data-mclave]');
+  if(mc){
+    const m = Store.maestros.find(x => x.id === mc.dataset.mclave); if(!m) return;
+    const nueva = prompt(`Nueva clave para ${m.nombre} (mínimo 6 caracteres):`, '');
+    if(nueva === null) return;
+    if(nueva.trim().length < 6){ toast('La clave necesita al menos 6 caracteres.'); return; }
+    if(await Store.updateMaestro(m.id, {clave:nueva.trim()})){ renderAdmin(); toast(`La clave de ${m.nombre} quedó cambiada.`); }
+    return;
+  }
+  const mt = e.target.closest('[data-mtoggle]');
+  if(mt){
+    const m = Store.maestros.find(x => x.id === mt.dataset.mtoggle); if(!m) return;
+    const activar = m.activo === false;
+    if(!activar && !confirm(`¿Desactivar el acceso de ${m.nombre}? No podrá entrar hasta que lo reactives. Sus alumnos y el progreso se conservan.`)) return;
+    if(await Store.updateMaestro(m.id, {activo:activar})){ renderAdmin(); toast(activar ? `${m.nombre} vuelve a tener acceso.` : `${m.nombre} ya no puede entrar.`); }
+    return;
+  }
+  const md = e.target.closest('[data-mdel]');
+  if(md){
+    const m = Store.maestros.find(x => x.id === md.dataset.mdel); if(!m) return;
+    const cuantos = Store.alumnos.filter(a => a.maestro === m.id).length;
+    if(!confirm(`¿Borrar a ${m.nombre} de la lista de maestros?${cuantos ? ` Sus ${cuantos} alumnos quedarán sin maestro asignado.` : ''} Si solo se fue del club, es mejor desactivar su acceso.`)) return;
+    await Store.removeMaestro(m.id); renderAdmin(); toast(`${m.nombre} salió de la lista de maestros.`);
+    return;
+  }
+  const ad = e.target.closest('[data-adel]');
+  if(ad){
+    const al = Store.get(ad.dataset.adel); if(!al) return;
+    if(!confirm(`¿Quitar a ${al.nombre} del club? Se borrará su progreso de la hoja y su código dejará de funcionar.`)) return;
+    await Store.remove(al.id); if(S.maestraSel === al.id) S.maestraSel = null; renderAdmin(); toast(`${al.nombre} salió del club.`);
+  }
+});
+
 /* ============ modo presentación ============ */
 function openPresent(tab){ S.present = true; S.presentTab = tab || 'v3d'; renderPresent(); }
 function closePresent(){ S.present = false; clearPresentMounts(); const p = $('#present'); if(p){ p.hidden = true; p.innerHTML = ''; } document.body.style.overflow = ''; }
@@ -1884,7 +2075,7 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape' && S.present) 
     $('#app').innerHTML = '<div class="loading">Abriendo el club…</div>';
     try{
       if(ses.rol === 'alumno'){ await Store.entrarAlumno(ses.codigo); Object.assign(S, {rol:'alumno', codigo:ses.codigo, clave:''}); go('alumno'); return; }
-      if(ses.rol === 'maestra'){ await Store.entrarMaestra(ses.clave); Object.assign(S, {rol:'maestra', clave:ses.clave, codigo:''}); go('maestra'); return; }
+      if(ses.rol === 'maestro' || ses.rol === 'admin' || ses.rol === 'maestra'){ S.clave = ses.clave; S.codigo = ''; await Store.entrarConClave(ses.clave); go('maestra'); return; }
     }catch(e){ borrarSesion(); toast(e.message); }
   }
   go('login');

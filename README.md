@@ -22,7 +22,8 @@ en las propiedades del script, dentro de tu cuenta de Google.
 1. En Google Drive crea una hoja nueva llamada **Sprinkloud App**.
 2. Abre **Extensiones → Apps Script**, borra lo que haya y pega el contenido de `Codigo.gs`. Guarda.
 3. Elige la función **configurar** y pulsa **Ejecutar**. Acepta los permisos que pide Google.
-4. En **Registro de ejecución** aparece la **clave de la maestra**. Guárdala en un lugar seguro.
+4. En **Registro de ejecución** aparece la **clave de administración**. Guárdala en un lugar
+   seguro: es la única que puede inscribir alumnos y manejar a los maestros.
 
 ### 2. El servidor (una sola vez)
 
@@ -54,15 +55,36 @@ Pega ahí tu URL `/exec`. Si la dejas vacía, la app funciona en **modo demostra
 
 ### 5. Usarla
 
-1. Entra con la clave de la maestra y agrega a cada alumno: la app le crea un código de 6 letras.
-2. Envía a cada familia el enlace de la app y el código del alumno.
-3. En clase, el botón **Presentar en la videollamada** abre la pantalla para compartir en Meet.
+1. Entra con la **clave de administración** (la que da `configurar()`), abre la pestaña
+   **Administración** y crea el acceso de cada maestro: la app le genera su propia clave.
+2. En la misma pestaña inscribe a los alumnos. Eliges el maestro y el nivel y la lección
+   en que empieza, para que quien ya sabe tocar no arranque desde cero. La app le crea un
+   código de 6 letras.
+3. Envía a cada familia el enlace de la app y el código del alumno, y a cada maestro su clave.
+4. En clase, el botón **Presentar en la videollamada** abre la pantalla para compartir en Meet.
+
+## Quién puede hacer qué
+
+| Acción | Administración | Maestro | Alumno |
+|---|---|---|---|
+| Dar clase, evaluar con estrellas, avanzar de lección, notas privadas | Sí | Sí | No |
+| Crear y editar canciones del repertorio | Sí | Sí | No |
+| Inscribir o quitar alumnos, cambiarles el nivel y el maestro | Sí | No | No |
+| Crear maestros, cambiar su clave, desactivar o borrar su acceso | Sí | No | No |
+| Borrar canciones del repertorio | Sí | No | No |
+| Ver su lección, sus notas, metrónomo y afinador | Sí | Sí | Sí |
+
+Cuando un maestro se desvincula del club, entra en **Administración → Maestros** y pulsa
+**Desactivar acceso**: deja de poder entrar de inmediato, pero sus alumnos y todo el progreso
+se conservan. **Borrar** lo saca de la lista y deja a sus alumnos sin maestro asignado.
 
 ## Notas
 
-- La página es pública, así que la URL del servidor también lo es. Lo que protege los datos es
-  la clave de la maestra (para ver y editar todo) y el código de cada alumno (que solo ve su
-  propio progreso, sin las notas privadas de la maestra).
+- La página es pública, así que la URL del servidor también lo es. Lo que protege los datos son
+  las claves: la de administración, la de cada maestro y el código de cada alumno (que solo ve
+  su propio progreso, sin las notas privadas de los maestros).
+- Las claves de los maestros se guardan en la hoja **Maestros**. Cualquiera que pueda abrir esa
+  hoja las ve, así que compártela solo con quien administre el club.
 - Para cambiar la clave: edita la función `cambiarClave` en Apps Script, ejecútala y vuelve a
   publicar una versión nueva de la implementación.
 - Respaldos: la hoja de Google guarda historial de versiones (**Archivo → Historial de versiones**).
