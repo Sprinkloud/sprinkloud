@@ -5,6 +5,7 @@ App web de clases de violín del Club Musical Sprinkloud. Tiene tres roles: alum
 - Repo: https://github.com/Sprinkloud/sprinkloud (rama `main`)
 - Producción: https://sprinkloud.github.io/sprinkloud/ (GitHub Pages, `main` / raíz)
 - Guía de puesta en marcha para la maestra: [README.md](README.md)
+- Diseño visual y movimiento: [DESIGN.md](DESIGN.md). Estilo de libro ilustrado en acuarela con el osito del club; animaciones según Emil Kowalski. Todo cambio visual lo sigue.
 - Mapa de la metodología (niveles, cápsulas visuales, gamificación, próximas entregas): [docs/METODOLOGIA.md](docs/METODOLOGIA.md). Es la copia del documento en línea de la Dirección Pedagógica; si no coinciden, manda el documento en línea.
 
 ## Arquitectura
