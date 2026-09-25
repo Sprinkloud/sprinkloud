@@ -80,7 +80,7 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 
 ## Estado del proyecto
 
-Última actualización: 26 de septiembre de 2026. Las entregas vienen de [docs/METODOLOGIA.md](docs/METODOLOGIA.md), sección "Siguientes pasos en la app".
+Última actualización: 26 de septiembre de 2026 (mapa, postura 2D y niveles 2 a 8 publicados). Las entregas vienen de [docs/METODOLOGIA.md](docs/METODOLOGIA.md), sección "Siguientes pasos en la app".
 
 | Entrega | Estado |
 |---|---|
@@ -88,10 +88,10 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 | 1. Lección paso a paso, ritmo del club, juegos Eco / ¿Cuál sonó? / Completa el compás, cápsulas 1–4 del Nivel 1 | Publicado en GitHub Pages |
 | Secciones del alumno (Inicio, Partituras, Herramientas, Logros, Mi bosque), vista previa para la administración | Publicado (servidor: implementación de Apps Script, versión 3) |
 | 2. Premios: racha, calendario, insignias, medallas, festejo de fin de nivel, certificado PDF, ranking del grupo, aviso de video con 2 estrellas, bosque con tienda | Publicado |
-| 3. Ilustraciones 2D (postura, mano izquierda, mano del arco, brazo) en lugar del violinista 3D | Hecho |
-| 4. Niveles 2 a 8 completos (80 lecciones), cápsulas 5–24, ejercicios y repertorio | Hecho (faltan 10 partituras pendientes) |
-| 5. Pentagrama del club, juegos Del pentagrama al violín, Del oído al violín y Lluvia de notas, importación de MusicXML | Hecho |
-| Inicio como mapa del bosque, Eco más sensible | Hecho |
+| 3. Ilustraciones 2D (postura, mano izquierda, mano del arco, brazo) en lugar del violinista 3D | Publicado |
+| 4. Niveles 2 a 8 completos (80 lecciones), cápsulas 5–24, ejercicios y repertorio | Publicado (faltan 10 partituras pendientes) |
+| 5. Pentagrama del club, juegos Del pentagrama al violín, Del oído al violín y Lluvia de notas, importación de MusicXML | Publicado |
+| Inicio como mapa del bosque, Eco más sensible | Publicado |
 
 Pendientes técnicos:
 - El sonido y la latencia del juego Eco no se han probado en celulares reales.
