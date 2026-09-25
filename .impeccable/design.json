@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-25T21:20:18.271640+00:00",
+  "generatedAt": "2026-09-25T22:20:38.491399+00:00",
   "title": "Design System: Sprinkloud",
   "extensions": {
     "colorMeta": {
@@ -455,7 +455,7 @@
       {
         "name": "mancha-de-papel",
         "value": "0 6px 18px rgba(58, 49, 40, .08)",
-        "purpose": "Tarjetas y la hoja de práctica."
+        "purpose": "Solo la hoja de práctica y superficies que flotan; nunca con línea de lápiz."
       },
       {
         "name": "boton-hundido",
@@ -538,7 +538,7 @@
       "refersTo": "card",
       "description": "Contenedor de lección, logros y paneles.",
       "html": "<div class=\"ds-card\"><h3>Lección 3: Subir y bajar</h3><p>Tocar la escala subiendo y bajando.</p></div>",
-      "css": ".ds-card{background:#FBF7EE;color:#3A3128;border:1px solid #DCCFB5;border-radius:22px;padding:24px;box-shadow:0 6px 18px rgba(58,49,40,.08);font:400 1rem/1.5 'Nunito Sans',system-ui,sans-serif}.ds-card h3{font:600 1.15rem/1.25 Fraunces,Georgia,serif;color:#48592F;margin:0 0 6px}.ds-card p{margin:0}"
+      "css": ".ds-card{background:#FBF7EE;color:#3A3128;border:1px solid #DCCFB5;border-radius:22px;padding:24px;font:400 1rem/1.5 'Nunito Sans',system-ui,sans-serif}.ds-card h3{font:600 1.15rem/1.25 Fraunces,Georgia,serif;color:#48592F;margin:0 0 6px}.ds-card p{margin:0}"
     },
     {
       "name": "Aviso del osito",

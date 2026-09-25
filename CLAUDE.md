@@ -94,6 +94,7 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 | 4. Niveles 2 a 8 completos (80 lecciones), cápsulas 5–24, ejercicios y repertorio | Publicado (faltan 10 partituras pendientes) |
 | 5. Pentagrama del club, juegos Del pentagrama al violín, Del oído al violín y Lluvia de notas, importación de MusicXML | Publicado |
 | Inicio como mapa del bosque, Eco más sensible | Publicado |
+| Migración visual al estilo de libro ilustrado (paleta, Fraunces y Caveat, papel, iconos SVG, movimiento según Emil, toques de 44 px, ilustración de Ives en la entrada) | Hecho, sin publicar. Falta `/review-animations` |
 
 Pendientes técnicos:
 - El sonido y la latencia del juego Eco no se han probado en celulares reales.

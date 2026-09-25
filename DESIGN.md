@@ -108,7 +108,7 @@ components:
     padding: "6px 2px"
 ---
 
-<!-- PENDIENTE DE IMPLEMENTAR: este mundo visual lo eligió la fundadora y todavía no está aplicado en index.html. Cuando termine la migración, vuelve a ejecutar $impeccable document para comparar los tokens con el código real. -->
+<!-- IMPLEMENTADO en index.html (migración del 26 de septiembre de 2026). Pendiente: la ilustración del osito y el reemplazo de los Fluent Emoji por acuarelas. -->
 
 # Design System: Sprinkloud
 
@@ -129,7 +129,7 @@ La descripción de referencia se usa tal cual como prompt al generar o encargar 
 - Aparece junto a la lección actual del mapa, en los festejos, en los avisos y en las cápsulas.
 - En las ilustraciones de postura toca con la técnica correcta: sus dedos, muñeca, antebrazo y brazo se distinguen con claridad.
 
-**Imágenes.** Todas salen de fuentes gratuitas y se anotan en `assets/LICENCIAS.md` con su archivo, fuente, autor, licencia y enlace:
+**Imágenes.** Todas salen de fuentes gratuitas y se anotan en `assets/LICENCIAS.md` con su archivo, fuente, autor, licencia y enlace. La pantalla de entrada usa una acuarela original de Sarah Noble Ives (hacia 1907, dominio público), con su crédito visible:
 
 | Qué | De dónde sale | Formato |
 |---|---|---|
@@ -137,7 +137,7 @@ La descripción de referencia se usa tal cual como prompt al generar o encargar 
 | Postura y manos | SVG propio (`mountPostura`) | Redibujado con tinta, lavados y el filtro `#acuarela` |
 | Flora y fauna | Láminas de dominio público (Wikimedia Commons, Internet Archive, Biodiversity Heritage Library) | Recortadas en viñeta |
 
-Hoy los Fluent Emoji planos cubren el mapa, el bosque y las cápsulas. Se reemplazan sección por sección.
+Hoy los Fluent Emoji planos cubren el mapa, el bosque y las cápsulas, suavizados con `saturate(.7) sepia(.16)` para que no chillen sobre el papel. Se reemplazan sección por sección. **El osito todavía no existe como ilustración:** no hay una fuente gratuita del personaje; hasta que exista, la lección actual del mapa se marca con "¡Aquí!" a mano y un anillo ocre.
 
 **Key Characteristics:**
 - Papel crema con textura y lavados transparentes; nada de color plano ni degradados digitales.
@@ -199,10 +199,10 @@ Es una app de una columna centrada que en computadora abre en dos (lección y se
 
 ## Elevation & Depth
 
-La profundidad es de papel apilado, no de material flotante. Las tarjetas se separan del fondo con una línea de lápiz de 1 px y una mancha cálida y difusa. El fondo lleva una textura de papel con ruido SVG (`feTurbulence`) al 3–5 % de opacidad, que no se anima.
+La profundidad es de papel apilado, no de material flotante. Las tarjetas se separan del fondo solo con una línea de lápiz de 1 px, sin sombra. El fondo lleva una textura de papel con ruido SVG (`feTurbulence`) al 3–5 % de opacidad, que no se anima.
 
 ### Shadow Vocabulary
-- **Mancha de papel** (`box-shadow: 0 6px 18px rgba(58, 49, 40, .08)`): tarjetas y la hoja de la práctica.
+- **Mancha de papel** (`box-shadow: 0 6px 18px rgba(58, 49, 40, .08)`): solo superficies que flotan sobre otras, como la hoja de la práctica. Nunca junto con una línea de lápiz.
 - **Botón hundido** (`box-shadow: 0 4px 0 rgba(58, 49, 40, .18)`): solo en los botones grandes de juego (reproducir, tocar aquí), que bajan al presionarse.
 
 ### Named Rules
@@ -224,7 +224,7 @@ Las esquinas son redondeadas y amables: 9 px en las tarjetas de nota, 14 px en p
 ### Cards / Containers
 - **Corner Style:** 22 px.
 - **Background:** hoja limpia sobre papel crema.
-- **Shadow Strategy:** mancha de papel.
+- **Shadow Strategy:** ninguna; la línea de lápiz basta.
 - **Border:** línea de lápiz de 1 px.
 - **Internal Padding:** 24 px (16 px en celulares).
 
@@ -298,26 +298,16 @@ El movimiento se rige por la filosofía de Emil Kowalski (skills `animate` y `re
 | Acierto en un juego | Cada pregunta | Pasa a musgo con `scale(0.97)` → `1`, 160 ms `--ease-out` |
 | Error en un juego | Cada pregunta | Vaivén de 4 px dos veces en 240 ms, color arcilla |
 | Combo | Ocasional | Entra desde `scale(0.95)` con opacidad, 180 ms |
-| Cápsulas | Una vez por lección | Stagger de 60 ms, 300 ms `--ease-out`; la clave de Sol se dibuja con `stroke-dashoffset` en 1.2 s `--ease-in-out` |
+| Cápsulas | Una vez por lección | Stagger de 60 ms, 300 ms `--ease-out`; la clave de Sol se revela de abajo hacia arriba con `clip-path: inset()` en 1.2 s `--ease-in-out` |
 | "Así no" en la postura | Pocas veces | Cruce con `blur(2px)`, 200 ms `ease` |
 | Poner algo en el bosque | Pocas veces | Baja desde `translateY(-8px) scale(0.95)`, 220 ms `--ease-out`; quitarlo, 150 ms |
 | Fin de práctica | Una vez al día | Estrellas en stagger de 80 ms desde `scale(0.9)`, 300 ms `--ease-out` |
 | Festejo de fin de nivel | Rara vez | La medalla entra con un resorte suave (`bounce` 0.2, 0.6 s) y caen hasta 30 hojas y pétalos de acuarela durante 2.4 s |
 
-### Lo que hay que ajustar en el código actual
-
-| Antes | Después | Por qué |
-|---|---|---|
-| `.pr-bar i` y `.lv-bar i` con `transition: width` | `transform: scaleX()` desde la izquierda | `width` fuerza layout; `transform` va por GPU |
-| `@keyframes pop` desde `scale(.7)` | Desde `scale(0.95)` con `opacity: 0` | Nada aparece de casi cero |
-| `.btn` sin estado `:active` | `:active{transform:scale(.97)}` con `--dur-press` | El botón tiene que sentirse presionado |
-| Anillo del claro actual con `scale` infinito | Respiración solo de opacidad, 3 s | El movimiento constante cansa |
-| Confeti de colores (`caer`, 760° de giro), también al final de cada juego | Hojas y pétalos de acuarela, pocos y lentos, solo en festejos de nivel | El confeti chillón rompe el tono de libro |
-| `@keyframes clave` con `blur(6px)` | Trazo de la clave con `stroke-dashoffset` | El desenfoque no enseña nada |
-| `.pollito` y `hop` con saltos de 16 px | 8 px con `--ease-out` | Más calmo |
-| Hover sin media query en `.btn`, `.item` y `button.rc` | Dentro de `@media (hover: hover) and (pointer: fine)` | En los celulares el hover queda pegado |
+### Tamaños de toque
+En pantallas táctiles o angostas (≤ 760 px), todo control mide al menos 44 × 44 px, incluidos los puntos del violín virtual en los juegos.
 
 ### Antes de publicar
-- `review-animations` sobre todo cambio de movimiento y `/impeccable audit` sobre la interfaz.
+- `/review-animations` (lo lanza la fundadora; no se puede invocar desde un agente) sobre todo cambio de movimiento, y `/impeccable audit` sobre la interfaz.
 - Con movimiento reducido no queda nada que se desplace ni escale.
 - Probado en un celular real, sobre todo el Eco y los toques en el mapa.
