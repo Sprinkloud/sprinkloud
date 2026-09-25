@@ -67,3 +67,20 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
   - Las estrellas de los juegos y los días de práctica se guardan solo en el navegador (`sprinkloud-juegos`, `sprinkloud-practica`). La Entrega 2 (racha, medallas) debe pasarlos a la hoja.
 - No agregues un paso de build: la app es `index.html` más `config.js`, y se publica tal cual.
 - Los roles en `S.rol` son `'admin'`, `'maestro'` y `'alumno'`. En cambio, `'maestra'` es el nombre de la **vista** (`go('maestra')`), no un rol.
+
+## Estado del proyecto
+
+Última actualización: 25 de septiembre de 2026. Las entregas vienen de [docs/METODOLOGIA.md](docs/METODOLOGIA.md), sección "Siguientes pasos en la app".
+
+| Entrega | Estado |
+|---|---|
+| Roles de administración y maestros, `config.js`, servidor sincronizado con clasp | Publicado (implementación de Apps Script, versión 2) |
+| 1. Lección paso a paso, ritmo del club, juegos Eco / ¿Cuál sonó? / Completa el compás, cápsulas 1–4 del Nivel 1 | Publicado en GitHub Pages |
+| 2. Premios: racha, insignias, festejo de fin de nivel, medalla, certificado PDF, botón "Aprobar concierto" | Pendiente. Necesita cambios en el servidor para guardar los juegos y la práctica en la hoja. |
+| 3. Ilustraciones 2D (postura, mano izquierda, mano del arco, brazo) en lugar del violinista 3D | Pendiente |
+| 4. Nivel 2: 10 lecciones, cápsulas 5–9, repertorio | Pendiente |
+| 5. Nivel 3 y partituras: pentagrama del club, cápsulas 10–17, juegos Del pentagrama al violín y Del oído al violín, MusicXML de MuseScore | Pendiente |
+
+Pendientes técnicos:
+- `guardarAlumno` en `Código.js` acepta cambios de `nivel` y `maestro` hechos por un maestro. Esa restricción solo existe en la interfaz y debería exigir administración en el servidor.
+- El sonido y la latencia del juego Eco no se han probado en celulares reales.
