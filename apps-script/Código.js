@@ -23,11 +23,11 @@
  */
 
 const HOJAS = {
-  Alumnos: ['id', 'nombre', 'codigo', 'nivel', 'leccion', 'estrellas', 'canciones', 'checks', 'notas', 'creado', 'actualizado', 'maestro'],
+  Alumnos: ['id', 'nombre', 'codigo', 'nivel', 'leccion', 'estrellas', 'canciones', 'checks', 'notas', 'creado', 'actualizado', 'maestro', 'progreso'],
   Repertorio: ['id', 'titulo', 'origen', 'porque', 'nivel', 'leccion', 'frases', 'creado', 'actualizado'],
   Maestros: ['id', 'nombre', 'clave', 'activo', 'creado', 'actualizado']
 };
-const COLUMNAS_JSON = ['estrellas', 'canciones', 'checks', 'frases'];
+const COLUMNAS_JSON = ['estrellas', 'canciones', 'checks', 'frases', 'progreso'];
 const COLUMNAS_BOOL = ['activo'];
 const EDITABLES_ALUMNO = ['nombre', 'nivel', 'leccion', 'estrellas', 'canciones', 'checks', 'notas', 'maestro'];
 const EDITABLES_CANCION = ['titulo', 'origen', 'porque', 'nivel', 'leccion', 'frases', 'creado'];
@@ -90,9 +90,24 @@ function manejar(q) {
       if (!codigo) throw new Error('Escribe tu código.');
       const a = leer('Alumnos').filter(function (x) { return String(x.codigo).toUpperCase() === codigo; })[0];
       if (!a) throw new Error('No encontramos ese código. Pídele tu código a tu maestra.');
+      const todos = leer('Alumnos');
+      const m = a.maestro ? leer('Maestros').filter(function (x) { return x.id === a.maestro; })[0] : null;
+      a.maestroNombre = m ? m.nombre : '';
       delete a.notas; // las notas de la maestra no se muestran al alumno
       delete a.codigo;
-      return { ok: true, alumno: a, repertorio: repertorioComoObjeto() };
+      return { ok: true, alumno: a, grupo: grupoDe(a, todos), repertorio: repertorioComoObjeto() };
+    }
+    case 'guardarProgreso': {
+      // el alumno guarda su propio avance (días de práctica, juegos, bosque) con su código
+      const codigo = String(q.codigo || '').trim().toUpperCase();
+      const p = q.progreso;
+      if (!codigo || !p || typeof p !== 'object' || Array.isArray(p)) throw new Error('No se pudo guardar tu avance.');
+      return conCandado(function () {
+        const a = leer('Alumnos').filter(function (x) { return String(x.codigo).toUpperCase() === codigo; })[0];
+        if (!a) throw new Error('No encontramos ese código.');
+        actualizar('Alumnos', a.id, { progreso: p }, ['progreso']);
+        return { ok: true };
+      });
     }
     case 'acceso': {
       const u = verificar(q.clave);
@@ -118,12 +133,15 @@ function manejar(q) {
         return { ok: true, alumno: a };
       });
     }
-    case 'guardarAlumno':
-      verificar(q.clave);
+    case 'guardarAlumno': {
+      const u = verificar(q.clave);
+      const cambios = q.cambios || {};
+      if (u.rol !== 'admin') delete cambios.maestro; // solo la administración reasigna alumnos
       return conCandado(function () {
-        actualizar('Alumnos', q.id, q.cambios || {}, EDITABLES_ALUMNO);
+        actualizar('Alumnos', q.id, cambios, EDITABLES_ALUMNO);
         return { ok: true };
       });
+    }
 
     case 'borrarAlumno':
       verificar(q.clave, true);
@@ -225,7 +243,18 @@ function conCandado(fn) {
 function hoja(nombre) {
   const sh = SpreadsheetApp.getActive().getSheetByName(nombre);
   if (!sh) throw new Error('Falta la hoja "' + nombre + '". Ejecuta configurar() en Apps Script.');
+  const cols = HOJAS[nombre];
+  if (sh.getLastColumn() < cols.length) sh.getRange(1, 1, 1, cols.length).setValues([cols]).setFontWeight('bold').setBackground('#DCEBE0');
   return sh;
+}
+
+/** Compañeros del mismo maestro para el ranking semanal: solo nombre de pila y puntos. */
+function grupoDe(a, todos) {
+  const mismos = a.maestro ? todos.filter(function (x) { return x.maestro === a.maestro; }) : [a];
+  return mismos.map(function (x) {
+    const s = (x.progreso && x.progreso.semana) || {};
+    return { nombre: String(x.nombre || '').trim().split(/\s+/)[0], semana: String(s.id || ''), puntos: Number(s.puntos) || 0, dias: Number(s.dias) || 0, yo: x.id === a.id };
+  });
 }
 
 function leer(nombre) {
