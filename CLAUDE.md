@@ -1,6 +1,6 @@
 # CLAUDE.md: Sprinkloud
 
-App web de clases de violín del Club Musical Sprinkloud. Tiene tres roles: alumno (entra con un código de 6 letras), maestro (clave propia, guardada en la hoja `Maestros`) y administración (la clave de las Script Properties). Incluye lecciones, repertorio, editor de canciones, PDFs, un violinista 3D, un metrónomo, un afinador y un modo de presentación para Meet.
+App web de clases de violín del Club Musical Sprinkloud. Tiene tres roles: alumno (entra con un código de 6 letras), maestro (clave propia, guardada en la hoja `Maestros`) y administración (la clave de las Script Properties). Tiene 8 niveles (88 lecciones), repertorio, editor de canciones con importación desde MuseScore (MusicXML), partituras en tarjetas y en pentagrama, PDFs, ilustraciones 2D de postura, juegos, cápsulas visuales, metrónomo, afinador y un modo de presentación para Meet.
 
 - Repo: https://github.com/Sprinkloud/sprinkloud (rama `main`)
 - Producción: https://sprinkloud.github.io/sprinkloud/ (GitHub Pages, `main` / raíz)
@@ -15,6 +15,7 @@ No hay build, dependencias ni `package.json`:
 |---|---|
 | `index.html` | Toda la app: HTML, CSS y JS en un único archivo (unas 2100 líneas). Se sirve tal cual desde GitHub Pages. |
 | `config.js` | Solo define `window.SPRINKLOUD_API` (la URL `/exec`). `index.html` lo carga, y si falta o está vacío la app entra en modo demostración. |
+| `assets/emoji/` | Ilustraciones Fluent Emoji (licencia MIT, ver `LICENCIA.md`), usadas en el mapa, el bosque y las cápsulas. |
 | `apps-script/Código.js` | Backend en Google Apps Script, ligado a la hoja de Google "Sprinkloud App". Se sincroniza con clasp (ver Despliegue). `appsscript.json` es el manifiesto (zona horaria, webapp). |
 
 **Flujo de datos:** `Api.call(accion, datos)` en `index.html` hace `fetch POST` a `API_URL` con el JSON `{accion, ...datos}`. `doPost` → `manejar(q)` en `Código.js` hace un `switch` por `accion` y responde siempre con `{ok, ...}` o con `{ok:false, error}`.
@@ -36,7 +37,7 @@ Las columnas de `COLUMNAS_JSON` se guardan como JSON serializado (máximo `MAX_C
 El JS está dividido con comentarios `/* ============ nombre ============ */`. Para ubicarte, busca por el nombre de la sección:
 configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música (`STR`, `DEDO`, `LECCIONES`) · niveles (`NIVELES`) · audio (WebAudio) · micrófono y detección de altura · conexión con la hoja de Google (`Api`, `Demo`, `Store`) · estado de la app (`S`, `go`, `renderApp`) · entrada · vista alumno · metrónomo · afinador · diapasón interactivo · violinista 3D (three.js) · vista maestra · repertorio: catálogo, editor y PDF (jsPDF) · modo presentación · inicio.
 
-- Librerías cargadas por CDN: three.js r128 y jsPDF 2.5.1 (cdnjs), y Google Fonts (Sora, Nunito Sans).
+- Librerías cargadas por CDN: jsPDF 2.5.1 (cdnjs) y Google Fonts (Sora, Nunito Sans). Ya no se usa three.js: la postura es SVG propio (`mountPostura`, sección "postura 2D").
 - Estado global en `S`. `Store` hace actualizaciones optimistas y avisa a quien esté suscrito con `Store.on`/`emit`.
 - Los temas claro y oscuro usan las variables CSS de `:root` y `[data-theme]`.
 - La sesión se guarda en `localStorage` con la clave `sprinkloud-sesion`.
@@ -70,6 +71,11 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
   - Secciones del código: "ritmo del club" (`CELULAS`, `celulasHasta`, `tocarCelulas`), "juegos de ritmo" (`mountJuego`: eco, cual, completa; `mountRitmoPanel`), "cápsulas visuales" (`CAPSULAS`, `miniQuiz`) y "práctica paso a paso" (`pasosDe`, `PASOS`, overlay `#practica`).
   - Las estrellas de los juegos y los días de práctica van a `progreso` en la hoja (`guardarJuego`, `marcarPractica`, `guardarProgreso`). Lo que quedó guardado solo en el navegador se migra al entrar (`migrarAvanceLocal`).
 - No agregues un paso de build: la app es `index.html` más `config.js`, y se publica tal cual.
+- Niveles 2 a 8: `LECCIONES_N2`…`LECCIONES_N8`, con el mismo formato que el Nivel 1 más `ritmo` y `visual`. Los ejercicios están en `EJERCICIOS`. Las notas pueden ser `[midi, pulsos, cuerda, dedo]` para fijar la cuerda o la posición.
+- Lectura de notas por nivel (`modoNotas`): N1 y N2 usan tarjetas, N3 tarjetas y pentagrama, y de N4 en adelante pentagrama con las notas coloreadas por cuerda (`pentagramaHTML`, `partituraHTML`).
+- Canciones pendientes (`pendiente:true` en `CANCIONES`): Arroz con leche, Un elefante, La cucaracha, Aserrín aserrán, Cielito lindo, La bamba, Bella ciao, El cóndor pasa, La primavera y Aire de Londonderry. No se inventan melodías. Cuando el maestro crea o importa una canción con el mismo título, `catalogo()` la usa en su lugar.
+- Juegos (`JUEGOS`): de ritmo (eco, cual, completa) y de notas (pentagrama, oido, lluvia en `mountJuegoNotas`). El Eco aprende el retraso de cada equipo (`latencia`, guardada en `localStorage`).
+- Cápsulas (`CAPSULAS`): 24 en total, del catálogo de docs/METODOLOGIA.md. El Inicio del alumno es el mapa del bosque (`mapaSVG`): al tocar una lección se abre directamente su práctica (`abrirPractica(n, nivel)`).
 - Los roles en `S.rol` son `'admin'`, `'maestro'` y `'alumno'`. En cambio, `'maestra'` es el nombre de la **vista** (`go('maestra')`), no un rol.
 
 ## Estado del proyecto
@@ -82,9 +88,11 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 | 1. Lección paso a paso, ritmo del club, juegos Eco / ¿Cuál sonó? / Completa el compás, cápsulas 1–4 del Nivel 1 | Publicado en GitHub Pages |
 | Secciones del alumno (Inicio, Partituras, Herramientas, Logros, Mi bosque), vista previa para la administración | Publicado (servidor: implementación de Apps Script, versión 3) |
 | 2. Premios: racha, calendario, insignias, medallas, festejo de fin de nivel, certificado PDF, ranking del grupo, aviso de video con 2 estrellas, bosque con tienda | Publicado |
-| 3. Ilustraciones 2D (postura, mano izquierda, mano del arco, brazo) en lugar del violinista 3D | Pendiente |
-| 4. Nivel 2: 10 lecciones, cápsulas 5–9, repertorio | Pendiente |
-| 5. Nivel 3 y partituras: pentagrama del club, cápsulas 10–17, juegos Del pentagrama al violín y Del oído al violín, MusicXML de MuseScore | Pendiente |
+| 3. Ilustraciones 2D (postura, mano izquierda, mano del arco, brazo) en lugar del violinista 3D | Hecho |
+| 4. Niveles 2 a 8 completos (80 lecciones), cápsulas 5–24, ejercicios y repertorio | Hecho (faltan 10 partituras pendientes) |
+| 5. Pentagrama del club, juegos Del pentagrama al violín, Del oído al violín y Lluvia de notas, importación de MusicXML | Hecho |
+| Inicio como mapa del bosque, Eco más sensible | Hecho |
 
 Pendientes técnicos:
 - El sonido y la latencia del juego Eco no se han probado en celulares reales.
+- Hay 10 canciones pendientes de partitura (ver arriba). El maestro las agrega en Repertorio, creándolas o importándolas desde MuseScore.
