@@ -1,0 +1,622 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-25T21:20:18.271640+00:00",
+  "title": "Design System: Sprinkloud",
+  "extensions": {
+    "colorMeta": {
+      "moss": {
+        "role": "primary",
+        "displayName": "Musgo del bosque",
+        "canonical": "#647745",
+        "tonalRamp": [
+          "#091600",
+          "#202f00",
+          "#3e4f1e",
+          "#5e713f",
+          "#819561",
+          "#a5ba85",
+          "#c8dea7",
+          "#e2f8c1"
+        ]
+      },
+      "moss-deep": {
+        "role": "primary",
+        "displayName": "Musgo profundo",
+        "canonical": "#48592F",
+        "tonalRamp": [
+          "#091600",
+          "#202f04",
+          "#3e4e25",
+          "#5e7045",
+          "#819468",
+          "#a5ba8b",
+          "#c8ddae",
+          "#e2f8c7"
+        ]
+      },
+      "moss-soft": {
+        "role": "primary",
+        "displayName": "Musgo suave",
+        "canonical": "#E1E6CF",
+        "tonalRamp": [
+          "#111304",
+          "#282b19",
+          "#464a37",
+          "#676c57",
+          "#8a8f7a",
+          "#afb49e",
+          "#d2d7c1",
+          "#edf2da"
+        ]
+      },
+      "ochre": {
+        "role": "secondary",
+        "displayName": "Ocre de la mañana",
+        "canonical": "#C4923A",
+        "tonalRamp": [
+          "#2b0100",
+          "#471b00",
+          "#693c00",
+          "#8e5e00",
+          "#b38226",
+          "#daa751",
+          "#ffcb75",
+          "#ffe58f"
+        ]
+      },
+      "ochre-soft": {
+        "role": "secondary",
+        "displayName": "Ocre suave",
+        "canonical": "#F1E0BC",
+        "tonalRamp": [
+          "#1b0f00",
+          "#342706",
+          "#544626",
+          "#766747",
+          "#9a8a69",
+          "#c0af8d",
+          "#e3d2af",
+          "#feedc8"
+        ]
+      },
+      "dusty-blue": {
+        "role": "tertiary",
+        "displayName": "Azul polvoso",
+        "canonical": "#7895A6",
+        "tonalRamp": [
+          "#001421",
+          "#122c3a",
+          "#314c5b",
+          "#516d7d",
+          "#7491a2",
+          "#98b6c8",
+          "#bbd9ec",
+          "#d5f4ff"
+        ]
+      },
+      "dusty-blue-soft": {
+        "role": "tertiary",
+        "displayName": "Azul polvoso suave",
+        "canonical": "#DCE5E8",
+        "tonalRamp": [
+          "#0c1315",
+          "#232a2c",
+          "#42494c",
+          "#636a6d",
+          "#858e91",
+          "#aab3b6",
+          "#cdd6d9",
+          "#e7f0f3"
+        ]
+      },
+      "rose-clay": {
+        "role": "tertiary",
+        "displayName": "Arcilla rosada",
+        "canonical": "#B0685A",
+        "tonalRamp": [
+          "#300000",
+          "#4e0e05",
+          "#723125",
+          "#985245",
+          "#bf7667",
+          "#e79a8b",
+          "#ffbdad",
+          "#ffd7c7"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Papel crema",
+        "canonical": "#F6F0E2",
+        "tonalRamp": [
+          "#151107",
+          "#2d281e",
+          "#4c473c",
+          "#6e685c",
+          "#918c7f",
+          "#b6b1a3",
+          "#dad4c6",
+          "#f4eee0"
+        ]
+      },
+      "paper-deep": {
+        "role": "neutral",
+        "displayName": "Papel profundo",
+        "canonical": "#EFE6D1",
+        "tonalRamp": [
+          "#171103",
+          "#2f2818",
+          "#4e4735",
+          "#706856",
+          "#948b78",
+          "#b9b09c",
+          "#dcd4bf",
+          "#f7eed9"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Hoja limpia",
+        "canonical": "#FBF7EE",
+        "tonalRamp": [
+          "#14110b",
+          "#2c2922",
+          "#4b4740",
+          "#6c6961",
+          "#8f8c84",
+          "#b4b1a8",
+          "#d8d4cb",
+          "#f2eee5"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta sepia",
+        "canonical": "#3A3128",
+        "tonalRamp": [
+          "#181008",
+          "#30271e",
+          "#4f463c",
+          "#71675d",
+          "#958a7f",
+          "#baafa4",
+          "#ded2c7",
+          "#f8ece1"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Tinta suave",
+        "canonical": "#6D6152",
+        "tonalRamp": [
+          "#191004",
+          "#312719",
+          "#514637",
+          "#736758",
+          "#978a7a",
+          "#bcaf9e",
+          "#e0d2c1",
+          "#faecdb"
+        ]
+      },
+      "pencil-line": {
+        "role": "neutral",
+        "displayName": "Línea de lápiz",
+        "canonical": "#DCCFB5",
+        "tonalRamp": [
+          "#191000",
+          "#322712",
+          "#514630",
+          "#736850",
+          "#978b72",
+          "#bcb096",
+          "#e0d3b9",
+          "#faedd2"
+        ]
+      },
+      "string-sol": {
+        "role": "string",
+        "displayName": "Cuerda Sol, rosa tierra",
+        "canonical": "#9C5B55",
+        "tonalRamp": [
+          "#2e0000",
+          "#4b1210",
+          "#6f332e",
+          "#94544e",
+          "#bb7771",
+          "#e39c94",
+          "#ffbfb7",
+          "#ffd9d0"
+        ]
+      },
+      "string-re": {
+        "role": "string",
+        "displayName": "Cuerda Re, ocre",
+        "canonical": "#C4923A",
+        "tonalRamp": [
+          "#2b0100",
+          "#471b00",
+          "#693c00",
+          "#8e5e00",
+          "#b38226",
+          "#daa751",
+          "#ffcb75",
+          "#ffe58f"
+        ]
+      },
+      "string-la": {
+        "role": "string",
+        "displayName": "Cuerda La, musgo",
+        "canonical": "#647745",
+        "tonalRamp": [
+          "#091600",
+          "#202f00",
+          "#3e4f1e",
+          "#5e713f",
+          "#819561",
+          "#a5ba85",
+          "#c8dea7",
+          "#e2f8c1"
+        ]
+      },
+      "string-mi": {
+        "role": "string",
+        "displayName": "Cuerda Mi, azul polvoso",
+        "canonical": "#567388",
+        "tonalRamp": [
+          "#001324",
+          "#102c3e",
+          "#2f4b5f",
+          "#506d82",
+          "#7390a6",
+          "#97b6cd",
+          "#b9d9f1",
+          "#d3f4ff"
+        ]
+      },
+      "night-paper": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: paper",
+        "canonical": "#1E2521",
+        "tonalRamp": [
+          "#0d1310",
+          "#242b27",
+          "#424a45",
+          "#636b66",
+          "#868f8a",
+          "#abb4ae",
+          "#ced7d1",
+          "#e8f1ec"
+        ]
+      },
+      "night-paper-deep": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: paper-deep",
+        "canonical": "#27302A",
+        "tonalRamp": [
+          "#0c140f",
+          "#232b25",
+          "#414a44",
+          "#626c65",
+          "#858f88",
+          "#a9b4ad",
+          "#ccd8d0",
+          "#e6f2ea"
+        ]
+      },
+      "night-surface": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: surface",
+        "canonical": "#2C3530",
+        "tonalRamp": [
+          "#0c140f",
+          "#232b26",
+          "#414a45",
+          "#626c66",
+          "#858f89",
+          "#a9b4ae",
+          "#ccd7d1",
+          "#e6f2eb"
+        ]
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: ink",
+        "canonical": "#EDE6D6",
+        "tonalRamp": [
+          "#161106",
+          "#2e281c",
+          "#4d473a",
+          "#6e685a",
+          "#928c7d",
+          "#b7b0a1",
+          "#dbd4c4",
+          "#f5eede"
+        ]
+      },
+      "night-ink-soft": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: ink-soft",
+        "canonical": "#B9AF9C",
+        "tonalRamp": [
+          "#181003",
+          "#302818",
+          "#4f4736",
+          "#716856",
+          "#958b79",
+          "#bab09d",
+          "#ddd3bf",
+          "#f8edd9"
+        ]
+      },
+      "night-line": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: line",
+        "canonical": "#3E4A42",
+        "tonalRamp": [
+          "#0a140e",
+          "#212c25",
+          "#3f4b43",
+          "#606d64",
+          "#839087",
+          "#a7b5ac",
+          "#cad8cf",
+          "#e4f3e9"
+        ]
+      },
+      "night-moss": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: moss",
+        "canonical": "#9DB47A",
+        "tonalRamp": [
+          "#081700",
+          "#1f2f00",
+          "#3c4f18",
+          "#5d723a",
+          "#7f965d",
+          "#a4bb81",
+          "#c7dfa3",
+          "#e1f9bc"
+        ]
+      },
+      "night-ochre": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: ochre",
+        "canonical": "#D9AE63",
+        "tonalRamp": [
+          "#280500",
+          "#431f00",
+          "#653f00",
+          "#886105",
+          "#ae8438",
+          "#d4aa5f",
+          "#f9cd81",
+          "#ffe79b"
+        ]
+      },
+      "night-dusty-blue": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: dusty-blue",
+        "canonical": "#9DB6C4",
+        "tonalRamp": [
+          "#01141e",
+          "#172c37",
+          "#354b57",
+          "#566d79",
+          "#78909e",
+          "#9cb5c3",
+          "#bfd9e7",
+          "#d9f3ff"
+        ]
+      },
+      "night-rose-clay": {
+        "role": "neutral",
+        "displayName": "Bosque de noche: rose-clay",
+        "canonical": "#D69585",
+        "tonalRamp": [
+          "#2d0000",
+          "#491509",
+          "#6d3528",
+          "#925748",
+          "#b97a6a",
+          "#e09e8e",
+          "#ffc1b0",
+          "#ffdbca"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Nombre del nivel y festejos."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Títulos de pantalla y de cada paso."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Títulos de tarjetas."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido; mínimo 16 px en el alumno."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Botones, etiquetas y chips."
+      },
+      "hand": {
+        "displayName": "A mano",
+        "purpose": "Voz del osito, rótulos del mapa y el lema; nunca párrafos."
+      }
+    },
+    "shadows": [
+      {
+        "name": "mancha-de-papel",
+        "value": "0 6px 18px rgba(58, 49, 40, .08)",
+        "purpose": "Tarjetas y la hoja de práctica."
+      },
+      {
+        "name": "boton-hundido",
+        "value": "0 4px 0 rgba(58, 49, 40, .18)",
+        "purpose": "Solo botones grandes de juego que bajan al presionar."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Entradas y respuestas (Emil Kowalski)."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "Algo que se mueve dentro de la pantalla."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "Hoja de práctica y paneles que suben."
+      },
+      {
+        "name": "dur-press",
+        "value": "140ms",
+        "purpose": "Respuesta al presionar (scale 0.97)."
+      },
+      {
+        "name": "dur-fast",
+        "value": "180ms",
+        "purpose": "Cambios pequeños y salidas."
+      },
+      {
+        "name": "dur-base",
+        "value": "240ms",
+        "purpose": "Entradas de tarjetas y pasos."
+      },
+      {
+        "name": "dur-panel",
+        "value": "320ms",
+        "purpose": "Paneles y superposiciones."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "movil",
+        "value": "680px"
+      },
+      {
+        "name": "nav-abajo",
+        "value": "760px"
+      },
+      {
+        "name": "una-columna",
+        "value": "980px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal: empezar práctica, seguir, entrar.",
+      "html": "<button class=\"ds-btn-primary\">Empezar práctica</button>",
+      "css": ".ds-btn-primary{background:#647745;color:#FBF7EE;border:0;border-radius:999px;padding:10px 20px;font:700 .875rem 'Nunito Sans',system-ui,sans-serif;transition:transform 140ms cubic-bezier(.23,1,.32,1)}.ds-btn-primary:active{transform:scale(.97)}.ds-btn-primary:focus-visible{outline:3px solid #C4923A;outline-offset:2px}@media (hover:hover) and (pointer:fine){.ds-btn-primary:hover{background:#48592F}}"
+    },
+    {
+      "name": "Botón secundario",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Acciones de apoyo: escuchar otra vez, descargar PDF.",
+      "html": "<button class=\"ds-btn-secondary\">Escuchar otra vez</button>",
+      "css": ".ds-btn-secondary{background:#FBF7EE;color:#3A3128;border:1.5px solid #DCCFB5;border-radius:999px;padding:10px 20px;font:700 .875rem 'Nunito Sans',system-ui,sans-serif;transition:transform 140ms cubic-bezier(.23,1,.32,1),border-color 150ms ease}.ds-btn-secondary:active{transform:scale(.97)}.ds-btn-secondary:focus-visible{outline:3px solid #C4923A;outline-offset:2px}@media (hover:hover) and (pointer:fine){.ds-btn-secondary:hover{border-color:#647745}}"
+    },
+    {
+      "name": "Tarjeta de papel",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Contenedor de lección, logros y paneles.",
+      "html": "<div class=\"ds-card\"><h3>Lección 3: Subir y bajar</h3><p>Tocar la escala subiendo y bajando.</p></div>",
+      "css": ".ds-card{background:#FBF7EE;color:#3A3128;border:1px solid #DCCFB5;border-radius:22px;padding:24px;box-shadow:0 6px 18px rgba(58,49,40,.08);font:400 1rem/1.5 'Nunito Sans',system-ui,sans-serif}.ds-card h3{font:600 1.15rem/1.25 Fraunces,Georgia,serif;color:#48592F;margin:0 0 6px}.ds-card p{margin:0}"
+    },
+    {
+      "name": "Aviso del osito",
+      "kind": "custom",
+      "refersTo": "notice",
+      "description": "Avisos como el de enviar el video por WhatsApp.",
+      "html": "<div class=\"ds-notice\"><strong>¡Lograste 2 estrellas!</strong><span>Envía tu video al grupo del club.</span></div>",
+      "css": ".ds-notice{display:grid;gap:2px;background:#F1E0BC;color:#3A3128;border:1.5px solid #C4923A;border-radius:22px;padding:16px 20px;font:400 1rem/1.5 'Nunito Sans',system-ui,sans-serif}.ds-notice strong{font:600 1.15rem Fraunces,Georgia,serif;color:#48592F}"
+    },
+    {
+      "name": "Pestaña activa",
+      "kind": "nav",
+      "refersTo": "nav-tab-active",
+      "description": "Navegación del alumno por secciones.",
+      "html": "<nav class=\"ds-nav\"><a class=\"on\">Inicio</a><a>Partituras</a><a>Logros</a></nav>",
+      "css": ".ds-nav{display:flex;gap:6px;background:#F6F0E2;border-top:1px solid #DCCFB5;padding:8px}.ds-nav a{padding:8px 16px;border-radius:14px;font:800 .875rem 'Nunito Sans',system-ui,sans-serif;color:#6D6152;transition:background-color 120ms ease,color 120ms ease}.ds-nav a.on{background:#E1E6CF;color:#48592F}"
+    },
+    {
+      "name": "Tarjeta de nota",
+      "kind": "custom",
+      "refersTo": "note-card",
+      "description": "Nota con el color de su cuerda y el número de dedo.",
+      "html": "<div class=\"ds-note\"><b>La</b><i>0</i></div>",
+      "css": ".ds-note{display:inline-grid;justify-items:center;gap:4px;width:52px;border:2px solid #647745;border-radius:9px;padding:6px 2px;background:color-mix(in srgb,#647745 16%,#FBF7EE)}.ds-note b{font:800 .95rem 'Nunito Sans',sans-serif;color:#647745}.ds-note i{font:700 .72rem Fraunces,serif;font-style:normal;width:21px;height:21px;border-radius:50%;background:#647745;color:#FBF7EE;display:grid;place-items:center}"
+    }
+  ],
+  "narrative": {
+    "northStar": "El libro de cuentos del bosque",
+    "overview": "Sprinkloud se ve como un libro ilustrado clásico para niños. Acuarela delicada con línea fina de tinta, paleta terrosa y apagada, papel con textura y mucho espacio en blanco. El osito del club acompaña al alumno por un bosque de pinos en calma, con luz de mañana entre las ramas. Cada pantalla es una viñeta con un solo protagonista, sea el mapa, la lección o el juego, rodeada de papel en blanco.",
+    "keyCharacteristics": [
+      "Papel crema con textura y lavados transparentes; nada de color plano ni degradados digitales.",
+      "Línea de tinta sepia, fina y un poco irregular.",
+      "Un protagonista por pantalla, con papel en blanco alrededor.",
+      "Tono tierno, tranquilo y nostálgico, sin estridencias."
+    ],
+    "rules": [
+      {
+        "name": "The Four Strings Rule",
+        "body": "Las cuatro cuerdas conservan su color en toda la app, dentro de la paleta: Sol en rosa tierra (string-sol), Re en ocre (string-re), La en musgo (string-la) y Mi en azul polvoso (string-mi). Ninguna otra cosa usa esos colores para significar otra cosa.",
+        "section": "colors"
+      },
+      {
+        "name": "The Sepia Ink Rule",
+        "body": "No existe el negro puro. Todo texto y contorno es tinta sepia (ink); de noche es crema (night-ink).",
+        "section": "colors"
+      },
+      {
+        "name": "The AA Rule",
+        "body": "Todo texto cumple contraste AA (4.5:1) en los dos temas, comprobado: tinta sobre papel 11.2:1, tinta suave 5.3:1, crema sobre musgo 4.6:1. Sobre las cuerdas Sol, La y Mi el número de dedo va en crema; sobre Re (ocre) va en tinta, porque el crema no llega al contraste. Estrellas y medallas ocre llevan siempre contorno de tinta.",
+        "section": "colors"
+      },
+      {
+        "name": "The Storybook Numbers Rule",
+        "body": "Los números que se celebran (racha, puntos, notas grandes) van en Fraunces.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Protagonist Rule",
+        "body": "Cada pantalla tiene un solo protagonista. No se rellenan las esquinas con decoración.",
+        "section": "layout"
+      },
+      {
+        "name": "The Paper Stack Rule",
+        "body": "No hay sombras grises duras ni elevación por capas tipo Material. Si algo necesita destacar, se le da papel alrededor, no sombra.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do usa solo los tokens de color de este archivo, en tema claro y de noche.",
+      "Do deja papel en blanco alrededor del protagonista de cada pantalla.",
+      "Do registra cada imagen nueva en `assets/LICENCIAS.md`.",
+      "Do mantén al osito con la misma bufanda y las mismas proporciones en toda la app."
+    ],
+    "donts": [
+      "Don't uses vector plano, degradados digitales, 3D, neón ni negro puro.",
+      "Don't pongas sombras grises duras ni bordes de acuarela sobre texto, botones o partituras.",
+      "Don't llenes la pantalla con decoración ni con párrafos: el alumno tiene 6 años.",
+      "Don't uses confeti de colores; los festejos llevan hojas y pétalos de acuarela."
+    ]
+  }
+}
