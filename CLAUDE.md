@@ -5,6 +5,7 @@ App web de clases de violín del Club Musical Sprinkloud. Tiene tres roles: alum
 - Repo: https://github.com/Sprinkloud/sprinkloud (rama `main`)
 - Producción: https://sprinkloud.github.io/sprinkloud/ (GitHub Pages, `main` / raíz)
 - Guía de puesta en marcha para la maestra: [README.md](README.md)
+- Mapa de la metodología (niveles, cápsulas visuales, gamificación, próximas entregas): [docs/METODOLOGIA.md](docs/METODOLOGIA.md). Es la copia del documento en línea de la Dirección Pedagógica; si no coinciden, manda el documento en línea.
 
 ## Arquitectura
 
@@ -58,5 +59,11 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 - `Código.js` usa `function () {}` al estilo de Apps Script (V8). No uses sintaxis que Apps Script no admita.
 - Si agregas una acción nueva, impleméntala **en los dos lados**: `manejar()` en `Código.js` y `Demo.call()` en `index.html`.
 - Para agregar un nivel, añade un objeto a `NIVELES` (el formato está en el comentario de esa sección). Las claves de progreso siguen el formato `"nivel.leccion"` (función `K()`).
+- Contenido para el alumno: poco texto y visual, paso a paso (estilo Duolingo). No escribas en la app justificaciones de la metodología. No menciones ni insertes videos de YouTube. Las imágenes deben salir de fuentes gratuitas y quedar anotadas con su licencia.
+- Sílabas de ritmo: se usan las del club (pan, lu-na, cho-co-la-te, grán-chi-co, ca-ma-rón, va-lien-te, blan-co, que-so, mú-si-ca, Le-e, y, "1 - 2"…), las mismas de la herramienta https://sprinkloud.vercel.app/Teoría Musical/Ritmo.html. En las tarjetas de canciones y en los PDF se calculan con `silabas(frase)`.
+- Práctica del alumno (Entrega 1 de docs/METODOLOGIA.md):
+  - Cada lección tiene `ritmo:{nueva, juego}` y `visual` (la cápsula), definidos en `PRACTICA_N1`.
+  - Secciones del código: "ritmo del club" (`CELULAS`, `celulasHasta`, `tocarCelulas`), "juegos de ritmo" (`mountJuego`: eco, cual, completa; `mountRitmoPanel`), "cápsulas visuales" (`CAPSULAS`, `miniQuiz`) y "práctica paso a paso" (`pasosDe`, `PASOS`, overlay `#practica`).
+  - Las estrellas de los juegos y los días de práctica se guardan solo en el navegador (`sprinkloud-juegos`, `sprinkloud-practica`). La Entrega 2 (racha, medallas) debe pasarlos a la hoja.
 - No agregues un paso de build: la app es `index.html` más `config.js`, y se publica tal cual.
 - Los roles en `S.rol` son `'admin'`, `'maestro'` y `'alumno'`. En cambio, `'maestra'` es el nombre de la **vista** (`go('maestra')`), no un rol.

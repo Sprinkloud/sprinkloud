@@ -364,6 +364,105 @@ label.field{display:grid;gap:6px;font-weight:700;font-size:.9rem}
 #toast.show{opacity:1}
 .loading{display:grid;place-items:center;min-height:60vh;color:var(--ink-2);font-weight:700}
 
+/* práctica paso a paso */
+.practica{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column}
+.pr-top{display:flex;align-items:center;gap:14px;padding:calc(12px + env(safe-area-inset-top,0px)) clamp(14px,3vw,30px) 12px}
+.pr-close{width:42px;height:42px;flex:none;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);font-size:1.5rem;font-weight:700;line-height:1;color:var(--ink-2)}
+.pr-bar{flex:1;height:14px;border-radius:999px;background:var(--line);overflow:hidden}
+.pr-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:999px;transition:width .45s}
+.pr-body{flex:1;overflow:auto;padding:8px clamp(14px,3vw,30px) 24px;display:grid;align-content:start;justify-items:center;gap:16px;text-align:center}
+.pr-body > *{max-width:1000px;width:100%}
+.pr-body .notes-scroll{text-align:left}
+.pr-kicker{font:800 .8rem Sora;color:var(--gold);text-transform:uppercase;letter-spacing:.08em}
+.pr-title{font:700 clamp(1.6rem,4.4vw,2.5rem) Sora;color:var(--pine);line-height:1.15}
+.pr-foot{padding:14px clamp(14px,3vw,30px) calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;justify-content:center;gap:10px;background:var(--surface);min-height:74px}
+.btn.big{padding:14px 34px;font-size:1.1rem}
+.big-play{width:92px;height:92px;justify-self:center;border-radius:50%;border:0;background:var(--accent);color:var(--on-accent);font-size:2.2rem;display:grid;place-items:center;box-shadow:0 6px 0 color-mix(in srgb,var(--accent) 55%,#000);transition:transform .08s}
+.big-play:active{transform:translateY(4px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 55%,#000)}
+.pasos-chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 18px}
+.pasos-chips span{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 6px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-weight:700;font-size:.9rem}
+.pasos-chips i{font:700 .75rem Sora;font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center}
+details.mas{margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
+details.mas summary{cursor:pointer;font-weight:700;color:var(--pine)}
+details.mas .sheet-box{border-top:0;padding-top:8px}
+
+/* cartas de ritmo */
+.rc{display:inline-grid;justify-items:center;border:2px solid var(--line);background:var(--surface);border-radius:16px;padding:10px 12px;font:inherit;color:inherit}
+button.rc{cursor:pointer;transition:transform .08s,border-color .15s}
+button.rc:hover{border-color:var(--pine)}
+button.rc:active{transform:scale(.96)}
+.rc-notes{display:flex;gap:4px}
+.rc-n{height:36px;width:calc(var(--d) * 58px);min-width:28px;border-radius:10px;background:var(--pine);color:var(--on-accent);display:grid;place-items:center;font:800 .92rem "Nunito Sans";white-space:nowrap;padding:0 4px;transition:background .1s}
+.rc-n.rest{background:transparent;border:2px dashed var(--ink-2);color:var(--ink-2);font-style:italic;font-weight:600}
+.rc.big{padding:16px 18px}
+.rc.big .rc-n{height:58px;width:calc(var(--d) * 104px);font-size:1.3rem;border-radius:14px}
+.rc.new{border-color:var(--gold);background:var(--gold-soft)}
+.rc.q{border-style:dashed;border-color:var(--gold)}
+.rc.q .rc-n{background:var(--gold-soft);color:var(--gold);font-size:1.3rem}
+.rc.hid .rc-n{background:var(--line)}
+.rc.ok{border-color:var(--pine);background:var(--accent-soft)}
+.rc.bad{border-color:var(--danger);background:var(--danger-soft);animation:shake .3s}
+.rc.now{border-color:var(--gold)}
+.rc-n.now{background:var(--gold);color:#1b1408}
+.rc-n.hit{background:var(--pine);box-shadow:0 0 0 3px var(--gold)}
+.rc-n.miss{background:var(--danger)}
+.bar-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:12px;border-radius:var(--r-m);background:var(--surface-2);border:1px solid var(--line)}
+
+/* juegos */
+.game{display:grid;gap:14px;justify-items:center;text-align:center}
+.g-head{display:flex;gap:12px;align-items:center;justify-content:space-between;width:100%;max-width:640px;flex-wrap:wrap}
+.g-head strong{font:700 1.1rem Sora;color:var(--pine)}
+.g-dots{display:flex;gap:6px}
+.g-dots i{width:14px;height:14px;border-radius:50%;background:var(--line)}
+.g-dots i.ok{background:var(--pine)}
+.g-dots i.bad{background:var(--danger)}
+.g-dots i.cur{box-shadow:0 0 0 3px var(--gold)}
+.g-pts{font:800 .95rem Sora;color:var(--ink-2)}
+.g-combo{font:800 1.05rem Sora;color:var(--gold);min-height:1.4em;margin:0}
+.g-msg{font:700 1.25rem Sora;min-height:1.6em;margin:0}
+.g-opts{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.beat-dots{display:flex;gap:12px;justify-content:center;margin-bottom:12px}
+.beat-dots span{width:20px;height:20px;border-radius:50%;background:var(--line);transition:transform .06s}
+.beat-dots span.on{background:var(--pine);transform:scale(1.25)}
+.beat-dots span.on.you{background:var(--gold)}
+.pad{width:min(340px,82vw);height:140px;border-radius:28px;border:0;background:var(--gold);color:#1b1408;font:800 1.5rem Sora;box-shadow:0 8px 0 #8a6528;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.pad.tap{transform:translateY(6px);box-shadow:0 2px 0 #8a6528}
+.pad:disabled{background:var(--line);color:var(--ink-2);box-shadow:0 8px 0 color-mix(in srgb,var(--line) 70%,#000)}
+.g-end{display:grid;gap:8px;justify-items:center;animation:pop .35s}
+.g-stars{font-size:3.2rem;color:var(--gold);letter-spacing:.12em;line-height:1}
+.g-stars .off{color:var(--line)}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+
+/* cápsulas */
+.cap{display:grid;gap:12px;justify-items:center;text-align:center}
+.cap-body{display:grid;gap:14px;justify-items:center;width:100%}
+.cap-name{font:800 1.35rem Sora;color:var(--pine);min-height:1.6em;margin:0}
+.quiz{font:700 1.3rem Sora;color:var(--gold);min-height:1.6em;margin:0}
+.vio{width:min(250px,64vw);height:auto}
+.vio .pt{cursor:pointer;outline:none}
+.vio .pt .hl{transition:fill .15s}
+.vio .pt:hover .hl,.vio .pt:focus-visible .hl{filter:brightness(1.15)}
+.vio .pt.on .hl{fill:var(--gold);stroke:#8a6528}
+.vio .pt.on .hl-s{stroke:var(--gold);stroke-width:3.4}
+.n7{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.n7 button{border:0;background:none;display:grid;justify-items:center;gap:4px;font:800 1.05rem Sora;color:var(--ink);padding:4px}
+.n7 svg{width:clamp(52px,11vw,76px);height:auto}
+.n7 button.hop svg{animation:hop .4s}
+@keyframes hop{50%{transform:translateY(-16px)}}
+.esc{width:100%}
+.esc svg{width:min(600px,100%);height:auto}
+.pollito{transition:transform .22s ease-out}
+.huellas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hu{width:80px;height:80px;border-radius:18px;border:2px dashed var(--line);display:flex;gap:4px;align-items:center;justify-content:center;color:var(--pine);transition:background .08s}
+.hu.on{border-style:solid;border-color:var(--gold);background:var(--gold-soft)}
+
+/* confeti */
+.confeti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+.confeti i{position:absolute;top:-16px;width:10px;height:15px;border-radius:2px;animation:caer var(--t) linear forwards}
+@keyframes caer{to{transform:translateY(106vh) rotate(760deg)}}
+@media (prefers-reduced-motion: reduce){.confeti{display:none}.rc.bad,.g-end,.n7 button.hop svg{animation:none}.pollito{transition:none}}
+
 @media (max-width: 980px){
   .al-grid{grid-template-columns:1fr}
   .sendero-card{position:static;order:2}
@@ -424,7 +523,7 @@ function posFor(m){
   return {cuerda:s, off, dedo:DEDO[off] ?? String(off), dedoCorto:DEDO_C[off] ?? String(off)};
 }
 
-const CANCIONES = {"pollitos": {"titulo": "Los pollitos dicen", "origen": "Canción tradicional", "porque": "Empieza con la escala de Do subiendo: Do, Re, Mi, Fa, Sol. Es la primera canción perfecta.", "lecciones": "Nivel 1, lecciones 1 a 3", "nivel": 1, "compas": 4, "letras": ["Los pollitos dicen", "pío, pío, pío", "cuando tienen hambre", "cuando tienen frío"], "igual": [null, null, null, null], "frases": [[[60, 1], [62, 1], [64, 1], [65, 1], [67, 2], [67, 2]], [[69, 1], [69, 1], [69, 1], [69, 1], [67, 4]], [[65, 1], [65, 1], [65, 1], [65, 1], [64, 2], [64, 2]], [[62, 1], [62, 1], [62, 1], [62, 1], [60, 4]]]}, "estrellita": {"titulo": "Estrellita", "origen": "Canción tradicional", "porque": "El salto de Do a Sol cambia de cuerda desde la primera nota: ideal para practicar los cambios de cuerda.", "lecciones": "Nivel 1, lección 4", "nivel": 1, "compas": 4, "letras": ["Estrellita, ¿dónde estás?", "Me pregunto qué serás", "En el cielo y en el mar", "un diamante de verdad", "Estrellita, ¿dónde estás?", "Me pregunto qué serás"], "igual": [null, null, null, 2, 0, 1], "frases": [[[60, 1], [60, 1], [67, 1], [67, 1], [69, 1], [69, 1], [67, 2]], [[65, 1], [65, 1], [64, 1], [64, 1], [62, 1], [62, 1], [60, 2]], [[67, 1], [67, 1], [65, 1], [65, 1], [64, 1], [64, 1], [62, 2]], [[67, 1], [67, 1], [65, 1], [65, 1], [64, 1], [64, 1], [62, 2]], [[60, 1], [60, 1], [67, 1], [67, 1], [69, 1], [69, 1], [67, 2]], [[65, 1], [65, 1], [64, 1], [64, 1], [62, 1], [62, 1], [60, 2]]]}, "himno": {"titulo": "Himno a la alegría", "origen": "Ludwig van Beethoven", "porque": "Casi toda en la cuerda Re, con notas tranquilas y seguidas: perfecta para buscar un sonido limpio con el arco.", "lecciones": "Nivel 1, lección 5", "nivel": 1, "compas": 4, "letras": ["", "", "", ""], "igual": [null, null, null, null], "frases": [[[64, 1], [64, 1], [65, 1], [67, 1], [67, 1], [65, 1], [64, 1], [62, 1]], [[60, 1], [60, 1], [62, 1], [64, 1], [64, 1.5], [62, 0.5], [62, 2]], [[64, 1], [64, 1], [65, 1], [67, 1], [67, 1], [65, 1], [64, 1], [62, 1]], [[60, 1], [60, 1], [62, 1], [64, 1], [62, 1.5], [60, 0.5], [60, 2]]]}, "martinillo": {"titulo": "Martinillo", "origen": "Canción tradicional", "porque": "Termina con \"din, don, dan\" en la cuerda Sol al aire: la manera más divertida de conocer la cuerda más grave.", "lecciones": "Nivel 1, lección 6", "nivel": 1, "compas": 4, "letras": ["Martinillo, Martinillo", "¿dónde estás? ¿dónde estás?", "Toca la campana, toca la campana", "din, don, dan; din, don, dan"], "igual": [null, null, null, null], "frases": [[[60, 1], [62, 1], [64, 1], [60, 1], [60, 1], [62, 1], [64, 1], [60, 1]], [[64, 1], [65, 1], [67, 2], [64, 1], [65, 1], [67, 2]], [[67, 0.5], [69, 0.5], [67, 0.5], [65, 0.5], [64, 1], [60, 1], [67, 0.5], [69, 0.5], [67, 0.5], [65, 0.5], [64, 1], [60, 1]], [[60, 1], [55, 1], [60, 2], [60, 1], [55, 1], [60, 2]]]}, "cascabel": {"titulo": "Cascabel (Jingle Bells)", "origen": "James Lord Pierpont", "porque": "Tiene \"ta\", \"ti\" y notas largas: la canción ideal para practicar el ritmo que aprendiste por imitación.", "lecciones": "Nivel 1, lección 7", "nivel": 1, "compas": 4, "letras": ["", "", "", "", "", "", "", ""], "igual": [null, null, null, null, 0, 1, 2, null], "frases": [[[64, 1], [64, 1], [64, 2], [64, 1], [64, 1], [64, 2]], [[64, 1], [67, 1], [60, 1.5], [62, 0.5], [64, 4]], [[65, 1], [65, 1], [65, 1.5], [65, 0.5], [65, 1], [64, 1], [64, 1], [64, 0.5], [64, 0.5]], [[64, 1], [62, 1], [62, 1], [64, 1], [62, 2], [67, 2]], [[64, 1], [64, 1], [64, 2], [64, 1], [64, 1], [64, 2]], [[64, 1], [67, 1], [60, 1.5], [62, 0.5], [64, 4]], [[65, 1], [65, 1], [65, 1.5], [65, 0.5], [65, 1], [64, 1], [64, 1], [64, 0.5], [64, 0.5]], [[67, 1], [67, 1], [65, 1], [62, 1], [60, 4]]]}};
+const CANCIONES = {"pollitos": {"titulo": "Los pollitos dicen", "origen": "Canción tradicional", "porque": "Empieza con la escala de Do subiendo: Do, Re, Mi, Fa, Sol. Es la primera canción perfecta.", "lecciones": "Nivel 1, lecciones 1 a 3", "nivel": 1, "compas": 4, "letras": ["Los pollitos dicen", "pío, pío, pío", "cuando tienen hambre", "cuando tienen frío"], "igual": [null, null, null, null], "frases": [[[60, 1], [62, 1], [64, 1], [65, 1], [67, 2], [67, 2]], [[69, 1], [69, 1], [69, 1], [69, 1], [67, 4]], [[65, 1], [65, 1], [65, 1], [65, 1], [64, 2], [64, 2]], [[62, 1], [62, 1], [62, 1], [62, 1], [60, 4]]]}, "estrellita": {"titulo": "Estrellita", "origen": "Canción tradicional", "porque": "El salto de Do a Sol cambia de cuerda desde la primera nota: ideal para practicar los cambios de cuerda.", "lecciones": "Nivel 1, lección 4", "nivel": 1, "compas": 4, "letras": ["Estrellita, ¿dónde estás?", "Me pregunto qué serás", "En el cielo y en el mar", "un diamante de verdad", "Estrellita, ¿dónde estás?", "Me pregunto qué serás"], "igual": [null, null, null, 2, 0, 1], "frases": [[[60, 1], [60, 1], [67, 1], [67, 1], [69, 1], [69, 1], [67, 2]], [[65, 1], [65, 1], [64, 1], [64, 1], [62, 1], [62, 1], [60, 2]], [[67, 1], [67, 1], [65, 1], [65, 1], [64, 1], [64, 1], [62, 2]], [[67, 1], [67, 1], [65, 1], [65, 1], [64, 1], [64, 1], [62, 2]], [[60, 1], [60, 1], [67, 1], [67, 1], [69, 1], [69, 1], [67, 2]], [[65, 1], [65, 1], [64, 1], [64, 1], [62, 1], [62, 1], [60, 2]]]}, "himno": {"titulo": "Himno a la alegría", "origen": "Ludwig van Beethoven", "porque": "Casi toda en la cuerda Re, con notas tranquilas y seguidas: perfecta para buscar un sonido limpio con el arco.", "lecciones": "Nivel 1, lección 5", "nivel": 1, "compas": 4, "letras": ["", "", "", ""], "igual": [null, null, null, null], "frases": [[[64, 1], [64, 1], [65, 1], [67, 1], [67, 1], [65, 1], [64, 1], [62, 1]], [[60, 1], [60, 1], [62, 1], [64, 1], [64, 1.5], [62, 0.5], [62, 2]], [[64, 1], [64, 1], [65, 1], [67, 1], [67, 1], [65, 1], [64, 1], [62, 1]], [[60, 1], [60, 1], [62, 1], [64, 1], [62, 1.5], [60, 0.5], [60, 2]]]}, "martinillo": {"titulo": "Martinillo", "origen": "Canción tradicional", "porque": "Termina con \"din, don, dan\" en la cuerda Sol al aire: la manera más divertida de conocer la cuerda más grave.", "lecciones": "Nivel 1, lección 6", "nivel": 1, "compas": 4, "letras": ["Martinillo, Martinillo", "¿dónde estás? ¿dónde estás?", "Toca la campana, toca la campana", "din, don, dan; din, don, dan"], "igual": [null, null, null, null], "frases": [[[60, 1], [62, 1], [64, 1], [60, 1], [60, 1], [62, 1], [64, 1], [60, 1]], [[64, 1], [65, 1], [67, 2], [64, 1], [65, 1], [67, 2]], [[67, 0.5], [69, 0.5], [67, 0.5], [65, 0.5], [64, 1], [60, 1], [67, 0.5], [69, 0.5], [67, 0.5], [65, 0.5], [64, 1], [60, 1]], [[60, 1], [55, 1], [60, 2], [60, 1], [55, 1], [60, 2]]]}, "cascabel": {"titulo": "Cascabel (Jingle Bells)", "origen": "James Lord Pierpont", "porque": "Tiene pan, lu-na, Le-e y notas largas: la canción ideal para practicar el ritmo que aprendiste por imitación.", "lecciones": "Nivel 1, lección 7", "nivel": 1, "compas": 4, "letras": ["", "", "", "", "", "", "", ""], "igual": [null, null, null, null, 0, 1, 2, null], "frases": [[[64, 1], [64, 1], [64, 2], [64, 1], [64, 1], [64, 2]], [[64, 1], [67, 1], [60, 1.5], [62, 0.5], [64, 4]], [[65, 1], [65, 1], [65, 1.5], [65, 0.5], [65, 1], [64, 1], [64, 1], [64, 0.5], [64, 0.5]], [[64, 1], [62, 1], [62, 1], [64, 1], [62, 2], [67, 2]], [[64, 1], [64, 1], [64, 2], [64, 1], [64, 1], [64, 2]], [[64, 1], [67, 1], [60, 1.5], [62, 0.5], [64, 4]], [[65, 1], [65, 1], [65, 1.5], [65, 0.5], [65, 1], [64, 1], [64, 1], [64, 0.5], [64, 0.5]], [[67, 1], [67, 1], [65, 1], [62, 1], [60, 4]]]}};
 const ORDEN_CANCIONES = ["pollitos", "estrellita", "himno", "martinillo", "cascabel"];
 const ESCALA = [60,62,64,65,67,69,71,72];
 const EJERCICIOS = {
@@ -433,7 +532,7 @@ const EJERCICIOS = {
   notas_largas:{nombre:'Notas largas en Re y La', compas:4, notas:[[62,4],[62,4],[69,4],[69,4]]},
   saltos:{nombre:'Saltos entre Re y La', compas:4, notas:[[67,1],[69,1],[67,1],[69,1],[65,1],[71,1],[64,1],[72,1],[67,2],[69,2],[67,4]]},
   cuerdas:{nombre:'Las cuatro cuerdas al aire', compas:4, notas:[[55,4],[62,4],[69,4],[76,4]]},
-  ritmo:{nombre:'Escala con ritmo ti-ti ta', compas:4, notas:ESCALA.flatMap(m => [[m,.5],[m,.5],[m,1]])}
+  ritmo:{nombre:'Escala con ritmo lu-na pan', compas:4, notas:ESCALA.flatMap(m => [[m,.5],[m,.5],[m,1]])}
 };
 
 const LECCIONES = [
@@ -506,13 +605,13 @@ const LECCIONES = [
  {n:7, titulo:'Ritmo por imitación', mision:'Tocar la escala con ritmo y una canción nueva.',
   capsula:'Sin partitura todavía: el ritmo se aprende escuchando y repitiendo.',
   ajuste:'Mano derecha suelta: el arco se mueve desde el brazo, no desde el hombro.',
-  oir:'La maestra toca ritmos y tú los repites. "Ta" es la negra; "ti-ti" son dos corcheas.',
-  tocar:'La escala de Do con distintos ritmos, por ejemplo "ti-ti ta" en cada nota.',
-  aplicar:'Cascabel, que mezcla ta, ti y notas largas. La canción necesita el ritmo y por eso aprendemos el ritmo.',
-  casa:'La escala con "ti-ti ta" y el metrónomo en 60. Luego Cascabel, diciendo el ritmo en voz alta antes de tocar.',
+  oir:'La maestra toca ritmos y tú los repites: pan, lu-na, 1-2 y Le-e y.',
+  tocar:'La escala de Do con distintos ritmos, por ejemplo "lu-na pan" en cada nota.',
+  aplicar:'Cascabel, que mezcla pan, lu-na, Le-e y notas largas.',
+  casa:'La escala con "lu-na pan" y el metrónomo en 60. Luego Cascabel, diciendo el ritmo en voz alta antes de tocar.',
   desbloqueo:'Imitas tres ritmos y los aplicas a la canción.',
   practicas:['ritmo','cancion'], cancionSugerida:'cascabel', vista:'manoDer',
-  foco:'el ritmo "ti-ti ta" y un pulso constante',
+  foco:'el ritmo "lu-na pan" y un pulso constante',
   noCorregir:'la postura'},
  {n:8, titulo:'Mi primer concierto', mision:'Tocar tus canciones para alguien.',
   capsula:'Tocar para otros también se practica: saludar, respirar, empezar y terminar.',
@@ -526,6 +625,20 @@ const LECCIONES = [
   foco:'tocar de principio a fin sin detenerse, como en un concierto',
   noCorregir:'nada técnico: hoy es para celebrar y tocar completo'}
 ];
+
+/* Ritmo del día (carta nueva + juego) y cápsula visual de cada lección del Nivel 1.
+   Ver docs/METODOLOGIA.md, secciones "Ritmo a la par" y "Catálogo de cápsulas visuales". */
+const PRACTICA_N1 = {
+  1:{ritmo:{nueva:'pan', juego:'eco'}, visual:'violin'},
+  2:{ritmo:{nueva:'luna', juego:'eco'}, visual:'notas7'},
+  3:{ritmo:{juego:'cual'}, visual:'escalera'},
+  4:{ritmo:{nueva:'bla2', juego:'cual'}},
+  5:{ritmo:{nueva:'leey', juego:'eco'}},
+  6:{ritmo:{nueva:'s4', juego:'completa'}},
+  7:{ritmo:{nueva:'red', juego:'eco'}, visual:'panluna'},
+  8:{ritmo:{juego:'completa'}}
+};
+LECCIONES.forEach(L => Object.assign(L, PRACTICA_N1[L.n]));
 
 /* ============ niveles ============
    Para agregar el Nivel 2, añade otro objeto con el mismo formato que LECCIONES:
@@ -782,7 +895,7 @@ function clearToolMounts(){ toolMounts.forEach(f => { try{ f(); }catch(e){} }); 
 let presentMounts = [];
 function clearPresentMounts(){ presentMounts.forEach(f => { try{ f(); }catch(e){} }); presentMounts = []; }
 
-function go(view, extra = {}){ stopPlay(); Object.assign(S, extra, {view}); if(view !== 'maestra') closePresent(); renderApp(); window.scrollTo(0, 0); }
+function go(view, extra = {}){ cerrarPractica(); stopPlay(); Object.assign(S, extra, {view}); if(view !== 'maestra') closePresent(); renderApp(); window.scrollTo(0, 0); }
 function salir(){
   if(ED?.dirty && !confirm('Tienes cambios sin guardar en una canción. ¿Salir de todos modos?')) return;
   ED = null; stopPlay(); Metro.stop(); borrarSesion();
@@ -891,13 +1004,15 @@ function viewAlumno(){
           <div class="tabs" role="tablist">
             <button class="tab" role="tab" data-tool="ver" aria-selected="true">Escuchar y ver</button>
             <button class="tab" role="tab" data-tool="metro" aria-selected="false">Metrónomo</button>
+            <button class="tab" role="tab" data-tool="ritmo" aria-selected="false">Ritmo</button>
             <button class="tab" role="tab" data-tool="tuner" aria-selected="false">Afinador</button>
           </div>
           <div class="tool-body" id="al-tool-body"></div>
         </section>
       </div>
     </div>
-  </main>`;
+  </main>
+  <div class="practica" id="practica" hidden></div>`;
 }
 let alTool = 'ver';
 function verDe(al){ const actual = leccionActual(al); return S.verLeccion && S.verLeccion <= actual ? S.verLeccion : actual; }
@@ -953,18 +1068,10 @@ function leccionHTML(al, L, esActual){
   const est = (al.estrellas || {})[K(al, L.n)] || 0;
   return `<div class="lesson-head"><div><div class="kicker">${esActual ? 'Tu lección de hoy' : `Repaso de la lección ${L.n}`}</div><h2>Lección ${L.n}: ${esc(L.titulo)}</h2></div>${starsHTML(est)}</div>
   <p class="mission">${esc(L.mision)}</p>
-  <div class="flow">
-    <div class="step"><h3><i>1</i>Oír</h3><p>${esc(L.oir)}</p></div>
-    <div class="step"><h3><i>2</i>Tocar</h3><p>${esc(L.tocar)}</p></div>
-    <div class="step"><h3><i>3</i>Aplicar</h3><p>${esc(L.aplicar)}</p></div>
-  </div>
-  <div class="facts">
-    <div><h4>Conoce tu violín</h4><p>${esc(L.capsula)}</p></div>
-    <div><h4>El ajuste de postura de esta lección</h4><p>${esc(L.ajuste)}</p></div>
-    <div><h4>Reto para casa</h4><p>${esc(L.casa)}</p></div>
-    <div><h4>La lección se completa cuando</h4><p>${esc(L.desbloqueo)}</p></div>
-  </div>
-  ${sheetBlockHTML(al, L)}`;
+  <div class="pasos-chips">${pasosDe(al, L).filter(p => p.id !== 'logro').map((p, i) => `<span><i>${i + 1}</i>${NOMBRE_PASO[p.id]}</span>`).join('')}</div>
+  <button class="btn primary big" data-practicar>▶ ${esActual ? 'Empezar práctica' : 'Repasar esta lección'}</button>
+  ${L.ritmo ? `<p class="fine" style="margin-top:12px">Ritmo del día: ${esc(JUEGOS[L.ritmo.juego].nombre)} ${starsHTML(mejorJuego(al.id, `${al.nivel || 1}.${L.n}.${L.ritmo.juego}`))}</p>` : ''}
+  <details class="mas"><summary>Notas y PDF de la lección</summary>${sheetBlockHTML(al, L)}</details>`;
 }
 function sheetBlockHTML(al, L){
   const opts = L.practicas.map(k => ejercicio(k, al, L));
@@ -984,20 +1091,31 @@ function sheetBlockHTML(al, L){
       </div>
       ${songId ? `<div class="row"><button class="btn" data-song-pdf="${esc(songId)}">Descargar PDF</button><button class="btn ghost" data-song-open="${esc(songId)}">Abrir para imprimir</button></div>` : ''}
     </div>
-    <div class="legend" style="margin-top:12px">${Object.values(STR).map(s => `<span><i style="background:${s.color}"></i>Cuerda ${s.nombre}</span>`).join('')}<span>Círculo = dedo (0 = al aire, 2b = segundo dedo bajo).</span><span>ta = 1 pulso, ti = medio, ta-a = 2.</span><span>${bowSVG(true)} arco abajo ${bowSVG(false)} arco arriba</span></div>
+    <div class="legend" style="margin-top:12px">${Object.values(STR).map(s => `<span><i style="background:${s.color}"></i>Cuerda ${s.nombre}</span>`).join('')}<span>Círculo = dedo (0 = al aire, 2b = segundo dedo bajo).</span><span>pan = 1 pulso, lu-na = dos en un pulso, 1-2 = 2 pulsos.</span><span>${bowSVG(true)} arco abajo ${bowSVG(false)} arco arriba</span></div>
     <p class="fine" style="margin-top:12px"><button class="btn small" data-rep-pdf="${niv}">Descargar todas las canciones del Nivel ${niv}</button></p>
   </div>`;
 }
 
 function bowSVG(down){ return down ? '<svg class="bow" viewBox="0 0 12 10" aria-hidden="true"><path d="M1 10V2h10v8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M1 2h10" stroke="currentColor" stroke-width="3.2"/></svg>' : '<svg class="bow" viewBox="0 0 12 10" aria-hidden="true"><path d="M1 1l5 8 5-8" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>'; }
-const RITMO = {0.5:'ti', 1:'ta', 1.5:'ta-i', 2:'ta-a', 3:'ta-a-a', 4:'ta-a-a-a'};
+const RITMO = {0.5:'lu', 1:'pan', 1.5:'Le-e', 2:'1-2', 3:'1-2-3', 4:'1-2-3-4'};
+/* Sílabas del club para una frase: pan = 1 pulso, lu-na = dos corcheas, "y" = corchea a contratiempo */
+function silabas(fr){
+  const out = []; let t = 0;
+  for(let i = 0; i < fr.length; i++){
+    const d = fr[i][1], off = Math.abs(t - Math.round(t)) > 1e-6;
+    if(d === .5 && !off && fr[i + 1]?.[1] === .5){ out.push('lu', 'na'); t += 1; i++; continue; }
+    out.push(d === .5 ? (off ? 'y' : 'lu') : RITMO[d] || ''); t += d;
+  }
+  return out;
+}
 function notesHTML(ej){
   let idx = 0;
   return ej.frases.map((fr, k) => {
     let down = true;
-    const cards = fr.map(([m, d]) => {
+    const sil = silabas(fr);
+    const cards = fr.map(([m, d], j) => {
       const p = posFor(m); const i = idx++;
-      const h = `<div class="nc" data-i="${i}" style="--c:${STR[p.cuerda].color};--b:${d}"><div class="nc-card"><b>${noteName(m)}</b><i>${p.dedoCorto}</i></div><span class="nc-r">${RITMO[d] || ''}</span><span class="nc-bow">${bowSVG(down)}</span></div>`;
+      const h = `<div class="nc" data-i="${i}" style="--c:${STR[p.cuerda].color};--b:${d}"><div class="nc-card"><b>${noteName(m)}</b><i>${p.dedoCorto}</i></div><span class="nc-r">${sil[j]}</span><span class="nc-bow">${bowSVG(down)}</span></div>`;
       down = !down; return h;
     }).join('');
     const letra = ej.letras?.[k]; const ig = ej.igual?.[k];
@@ -1056,6 +1174,7 @@ function mountAlumnoTool(){
   if(alTool === 'ver') toolMounts.push(mountFingerboard(body, al, L));
   if(alTool === 'metro') toolMounts.push(mountMetronome(body, {}));
   if(alTool === 'tuner') toolMounts.push(mountTuner(body, {}));
+  if(alTool === 'ritmo') toolMounts.push(mountRitmoPanel(body, al, L, {guardar:true}));
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('#al-tools [data-tool]'); if(!b) return;
@@ -1483,13 +1602,14 @@ document.addEventListener('click', e => {
   $$('[data-filtro]').forEach(b => b.setAttribute('aria-pressed', String(b === f)));
   renderMaestraData();
 });
-const PTABS = [{id:'v3d', label:'Violinista 3D'}, {id:'fb', label:'Violín interactivo'}, {id:'sheet', label:'Notas'}, {id:'metro', label:'Metrónomo'}, {id:'tuner', label:'Afinador'}];
+const PTABS = [{id:'v3d', label:'Violinista 3D'}, {id:'fb', label:'Violín interactivo'}, {id:'sheet', label:'Notas'}, {id:'ritmo', label:'Ritmo'}, {id:'cap', label:'Cápsulas'}, {id:'metro', label:'Metrónomo'}, {id:'tuner', label:'Afinador'}];
 function claseHTML(al){
   const niv = nivelDe(al), total = totalDe(al), done = nivelCompleto(al), n = leccionActual(al), L = lec(n, niv.n);
   const est = (al.estrellas || {})[K(al, n)] || 0; const checks = (al.checks || {})[K(al, n)] || [];
   const song = cancionDe(al, n); const songC = catalogo()[song];
   const usaCancion = L.practicas.some(p => p === 'cancion' || p === 'frase');
   const plan = [['Oír', L.oir], ['Tocar', L.tocar], ['Aplicar en la canción', L.aplicar], ['Conoce tu violín', L.capsula], ['Ajuste de postura', L.ajuste]];
+  if(L.ritmo) plan.push(['Ritmo del día', `${L.ritmo.nueva ? `Carta nueva: ${CELULAS[L.ritmo.nueva].syl.join(' ')}. ` : ''}Juego: ${JUEGOS[L.ritmo.juego].nombre}, en la pestaña Ritmo.`]);
   const siguienteNivel = NIVELES.find(x => x.n === niv.n + 1);
   const next = n < total ? lec(n + 1, niv.n) : null;
   const txtAvanzar = n < total ? `Aprobar y pasar a la lección ${n + 1}` : siguienteNivel ? `Aprobar y pasar al Nivel ${siguienteNivel.n}` : `Aprobar y completar el Nivel ${niv.n}`;
@@ -1562,7 +1682,7 @@ const NIVELES_TARJETAS = 2;
 const PALETA = [55,57,59,60,62,64,65,67,69,71,72,74,76,77,79];
 const ALTERACIONES = [63,66,68,70,73,75,78];
 const NIVEL1_OK = new Set([55,57,59,60,62,64,65,67,69,71,72,74,76]);
-const DURS = [[.5,'ti','medio pulso'],[1,'ta','1 pulso'],[1.5,'ta-i','1 pulso y medio'],[2,'ta-a','2 pulsos'],[3,'ta-a-a','3 pulsos'],[4,'ta-a-a-a','4 pulsos']];
+const DURS = [[.5,'lu','medio pulso'],[1,'pan','1 pulso'],[1.5,'Le-e','1 pulso y medio'],[2,'1-2','2 pulsos'],[3,'1-2-3','3 pulsos'],[4,'1-2-3-4','4 pulsos']];
 const LOGO_JPG = 'data:image/jpeg;base64,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';
 let ED = null, repSel = null, edAlter = false;
 
@@ -1822,7 +1942,7 @@ function dibujarCancion(d, c){
     Object.entries(SC).forEach(([k, [sc]]) => { fill(sc); d.circle(lx + 4, ly - 3, 4, 'F'); text(C.ink); d.text('Cuerda ' + STR[k].nombre, lx + 11, ly); lx += 66; });
     d.setFont('helvetica', 'normal'); text(C.ink2);
     d.text('Círculo = dedo (0 = al aire, 2b = segundo dedo bajo).', lx + 4, ly);
-    d.text('ta = 1 pulso, ti = medio, ta-a = 2, ta-i = 1 y medio.', lx + 4, ly + 11);
+    d.text('pan = 1 pulso, lu-na = dos en un pulso, 1-2 = 2 pulsos, Le-e y = pulso y medio + medio.', lx + 4, ly + 11);
     bow(MX + 4, ly + 6, true); d.text('arco abajo', MX + 12, ly + 13); bow(MX + 70, ly + 6, false); d.text('arco arriba', MX + 78, ly + 13);
   };
   header();
@@ -1849,13 +1969,13 @@ function dibujarCancion(d, c){
     }
     if(letra){ text(C.ink2); d.setFont('helvetica', 'italic'); d.setFontSize(10); d.text(letra, MX + 22, y + 10); y += 16; }
     text(C.gold); d.setFont('helvetica', 'bold'); d.setFontSize(10); d.text(String(k + 1), MX, y + 28);
-    let xx = MX + 22, down = true; const ch = 46;
-    fr.forEach(([m, du]) => {
+    let xx = MX + 22, down = true; const ch = 46; const sil = silabas(fr);
+    fr.forEach(([m, du], j) => {
       const p = posFor(m); const [sc, tint] = SC[p.cuerda]; const w = Math.max(bw * du - 4, 25);
       fill(tint); stroke(sc); d.setLineWidth(1.3); d.roundedRect(xx, y, w, ch, 7, 7, 'FD');
       text(sc); d.setFont('helvetica', 'bold'); d.setFontSize(w > 34 ? 12 : 10); d.text(noteName(m), xx + w / 2, y + 17, {align:'center'});
       fill(sc); d.circle(xx + w / 2, y + 32, 8, 'F'); d.setTextColor(255, 255, 255); d.setFontSize(p.dedoCorto.length > 1 ? 8 : 9); d.text(p.dedoCorto, xx + w / 2, y + 35.2, {align:'center'});
-      text(C.ink2); d.setFontSize(8); d.text(RITMO[du] || '', xx + w / 2, y + ch + 11, {align:'center'});
+      text(C.ink2); d.setFontSize(8); d.text(sil[j] || '', xx + w / 2, y + ch + 11, {align:'center'});
       bow(xx + w / 2, y + ch + 17, down); down = !down;
       xx += Math.max(bw * du, 29);
     });
@@ -2035,6 +2155,514 @@ document.addEventListener('click', async e => {
   }
 });
 
+/* ============ ritmo del club ============
+   Células y sílabas de la herramienta de ritmo del club.
+   d = duración de cada nota en pulsos; r = qué notas son silencio. */
+const CELULAS = {
+  pan:{syl:['pan'], d:[1], nombre:'Un pulso'},
+  luna:{syl:['lu','na'], d:[.5,.5], nombre:'Dos en un pulso'},
+  bla2:{syl:['1 - 2'], d:[2], nombre:'Nota de dos pulsos'},
+  leey:{syl:['Le-e','y'], d:[1.5,.5], nombre:'Nota que se estira'},
+  s4:{syl:['pan'], d:[1], r:[1], nombre:'Silencio: pan por dentro'},
+  red:{syl:['1 - 2 - 3 - 4'], d:[4], nombre:'Nota de cuatro pulsos'},
+  bla3:{syl:['1 - 2 - 3'], d:[3], nombre:'Nota de tres pulsos'},
+  choco:{syl:['cho','co','la','te'], d:[.25,.25,.25,.25], nombre:'Cuatro en un pulso'},
+  gran:{syl:['grán','chi','co'], d:[.5,.25,.25], nombre:'Larga y dos cortas'},
+  cama:{syl:['ca','ma','rón'], d:[.25,.25,.5], nombre:'Dos cortas y larga'},
+  s2:{syl:['1 - 2'], d:[2], r:[1], nombre:'Silencio de dos pulsos'}
+};
+const durCel = id => CELULAS[id].d.reduce((a, b) => a + b, 0);
+const JUEGOS = {eco:{nombre:'Eco', rondas:5}, cual:{nombre:'¿Cuál sonó?', rondas:8}, completa:{nombre:'Completa el compás', rondas:6}};
+const azar = arr => arr[Math.floor(Math.random() * arr.length)];
+const barajar = arr => { const a = arr.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* cartas que el alumno ya tiene hasta esa lección */
+function celulasHasta(nivel, n){
+  const ids = [];
+  NIVELES.filter(nv => nv.n <= nivel).forEach(nv => nv.lecciones.forEach(L => {
+    if((nv.n < nivel || L.n <= n) && L.ritmo?.nueva && !ids.includes(L.ritmo.nueva)) ids.push(L.ritmo.nueva);
+  }));
+  return ids.length ? ids : ['pan'];
+}
+/* un compás de 4 pulsos con las cartas disponibles; incluye la carta nueva si la hay */
+function compasAzar(pool, nueva){
+  for(let intento = 0; intento < 30; intento++){
+    const cel = []; let resto = 4;
+    if(nueva && Math.random() < .8){ cel.push(nueva); resto -= durCel(nueva); }
+    while(resto > 1e-6){
+      const cand = pool.filter(id => durCel(id) <= resto + 1e-6); if(!cand.length) break;
+      const id = azar(cand); cel.push(id); resto -= durCel(id);
+    }
+    if(resto > 1e-6) continue;
+    const suenan = cel.flatMap(id => CELULAS[id].d.filter((_, i) => !CELULAS[id].r?.[i])).length;
+    if(suenan >= Math.min(2, cel.length)) return barajar(cel);
+  }
+  return ['pan', 'pan', 'pan', 'pan'];
+}
+function eventosDe(cels){
+  const ev = []; let t = 0;
+  cels.forEach((id, ci) => { const c = CELULAS[id]; c.d.forEach((d, ni) => { ev.push({t, d, r:!!c.r?.[ni], ci, ni}); t += d; }); });
+  return ev;
+}
+function cartaRitmo(id, {tag = 'div', cls = '', attrs = '', oculta = false} = {}){
+  const c = CELULAS[id];
+  const notas = c.d.map((d, i) => `<span class="rc-n${c.r?.[i] ? ' rest' : ''}" style="--d:${d}">${oculta ? '' : esc(c.syl[i])}</span>`).join('');
+  return `<${tag} class="rc ${cls}" ${attrs} aria-label="${esc(c.syl.join(' '))}${c.r ? ' (silencio)' : ''}"><span class="rc-notes">${notas}</span></${tag}>`;
+}
+
+/* sonidos del ritmo */
+function golpe(when){
+  const c = audio(); const o = c.createOscillator(), g = c.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(820, when); o.frequency.exponentialRampToValueAtTime(420, when + .08);
+  g.gain.setValueAtTime(.0001, when); g.gain.exponentialRampToValueAtTime(.5, when + .004); g.gain.exponentialRampToValueAtTime(.0001, when + .16);
+  o.connect(g); g.connect(c.destination); o.start(when); o.stop(when + .18);
+}
+function clickSuave(when){
+  const c = audio(); const o = c.createOscillator(), g = c.createGain();
+  o.type = 'square'; o.frequency.value = 1040;
+  g.gain.setValueAtTime(.0001, when); g.gain.exponentialRampToValueAtTime(.035, when + .002); g.gain.exponentialRampToValueAtTime(.0001, when + .04);
+  o.connect(g); g.connect(c.destination); o.start(when); o.stop(when + .05);
+}
+function sfx(ok){
+  const c = audio(); let w = c.currentTime + .01;
+  (ok ? [[76,.08],[83,.18]] : [[48,.24]]).forEach(([m, d]) => {
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = ok ? 'triangle' : 'sawtooth'; o.frequency.value = mtof(m);
+    g.gain.setValueAtTime(.0001, w); g.gain.exponentialRampToValueAtTime(ok ? .22 : .06, w + .01); g.gain.exponentialRampToValueAtTime(.0001, w + d);
+    o.connect(g); g.connect(c.destination); o.start(w); o.stop(w + d + .02); w += d * .75;
+  });
+}
+/* temporizador ligado al reloj de audio, fácil de cancelar */
+function reloj(){
+  const ts = [];
+  return {at(sec, fn){ ts.push(setTimeout(fn, Math.max(0, (sec - audio().currentTime) * 1000))); }, clear(){ ts.forEach(clearTimeout); ts.length = 0; }};
+}
+/* toca células con cuenta previa y pulso suave; onNota recibe cada nota a tiempo */
+function tocarCelulas(cels, bpm, {previa = 4, rel = null, onNota = null} = {}){
+  const c = audio(), spb = 60 / bpm, t0 = c.currentTime + .15;
+  for(let b = 0; b < previa; b++) click(t0 + b * spb, b === 0);
+  const ini = t0 + previa * spb, ev = eventosDe(cels);
+  const tot = ev.reduce((a, e) => Math.max(a, e.t + e.d), 0);
+  for(let b = 0; b < tot; b++) clickSuave(ini + b * spb);
+  ev.forEach((e, i) => { const w = ini + e.t * spb; if(!e.r) golpe(w); if(rel && onNota) rel.at(w, () => onNota(i, e)); });
+  if(rel && onNota) rel.at(ini + tot * spb, () => onNota(-1, null));
+  return {ini, fin:ini + tot * spb, spb, ev};
+}
+
+/* mejores estrellas de cada juego, en este dispositivo */
+const JUEGOS_KEY = 'sprinkloud-juegos';
+function leerJuegos(){ try{ return JSON.parse(localStorage.getItem(JUEGOS_KEY) || '{}'); }catch(e){ return {}; } }
+function guardarJuego(alId, clave, est){ try{ const j = leerJuegos(), k = `${alId}|${clave}`; j[k] = Math.max(j[k] || 0, est); localStorage.setItem(JUEGOS_KEY, JSON.stringify(j)); }catch(e){} }
+function mejorJuego(alId, clave){ return leerJuegos()[`${alId}|${clave}`] || 0; }
+const PRACTICA_KEY = 'sprinkloud-practica';
+function marcarPractica(alId, k){
+  try{
+    const p = JSON.parse(localStorage.getItem(PRACTICA_KEY) || '{}'); const hoy = new Date().toISOString().slice(0, 10);
+    const r = p[alId] = p[alId] || {dias:[], lecciones:{}};
+    if(!r.dias.includes(hoy)) r.dias.push(hoy);
+    r.lecciones[k] = (r.lecciones[k] || 0) + 1;
+    localStorage.setItem(PRACTICA_KEY, JSON.stringify(p));
+  }catch(e){}
+}
+
+function confeti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box = document.createElement('div'); box.className = 'confeti'; box.setAttribute('aria-hidden', 'true');
+  const cols = ['var(--gold)', 'var(--pine)', 'var(--s-sol)', 'var(--s-re)', 'var(--s-la)', 'var(--s-mi)'];
+  box.innerHTML = Array.from({length:70}, (_, i) => `<i style="left:${Math.random() * 100}%;background:${cols[i % cols.length]};--t:${1.6 + Math.random() * 1.6}s;animation-delay:${Math.random() * .5}s"></i>`).join('');
+  document.body.appendChild(box); setTimeout(() => box.remove(), 3800);
+}
+const estrellasGrandes = n => `<div class="g-stars" aria-label="${n} de 3 estrellas">${[1,2,3].map(k => `<span class="${k <= n ? '' : 'off'}">★</span>`).join('')}</div>`;
+
+/* ============ juegos de ritmo ============ */
+function mountJuego(el, {tipo, pool, nueva = null, bpm = 66, alId = null, clave = '', onFin = null}){
+  if(tipo !== 'eco' && pool.length < 2) tipo = 'eco';
+  const J = JUEGOS[tipo], rel = reloj();
+  let ronda = 0, aciertos = 0, combo = 0, puntos = 0, resultados = [], bloq = false;
+  el.innerHTML = `<div class="game">
+    <div class="g-head"><strong>${J.nombre}</strong><div class="g-dots">${Array.from({length:J.rondas}, () => '<i></i>').join('')}</div><span class="g-pts">0 pts</span></div>
+    <p class="g-combo" aria-live="polite"></p>
+    <div class="g-area"></div>
+    <p class="g-msg" aria-live="polite"></p>
+    <div class="g-opts"></div>
+    <div class="row g-ctrl" style="justify-content:center"></div>
+  </div>`;
+  const area = $('.g-area', el), msg = $('.g-msg', el), opts = $('.g-opts', el), ctrl = $('.g-ctrl', el), dots = $$('.g-dots i', el), comboEl = $('.g-combo', el);
+  const pinta = () => {
+    dots.forEach((d, i) => d.className = i < resultados.length ? (resultados[i] ? 'ok' : 'bad') : i === ronda ? 'cur' : '');
+    $('.g-pts', el).textContent = `${puntos} pts`;
+    comboEl.textContent = combo >= 3 ? `¡Combo x${combo}!` : '';
+  };
+  const responder = ok => {
+    sfx(ok); resultados.push(ok);
+    if(ok){ aciertos++; combo++; puntos += combo >= 5 ? 20 : 10; } else combo = 0;
+    pinta();
+    rel.at(audio().currentTime + (ok ? 1.2 : 2.2), () => { ronda++; ronda < J.rondas ? pregunta() : fin(); });
+  };
+  const oirBtn = fn => { ctrl.innerHTML = '<button class="btn" data-g-oir>Escuchar otra vez</button>'; $('[data-g-oir]', ctrl).onclick = fn; };
+
+  function preguntaCual(){
+    const objetivo = nueva && pool.includes(nueva) && Math.random() < .4 ? nueva : azar(pool);
+    const cartas = barajar([objetivo, ...barajar(pool.filter(id => id !== objetivo)).slice(0, 2)]);
+    area.innerHTML = '<p class="pr-title" aria-hidden="true">?</p>';
+    msg.textContent = 'Escucha y elige la carta';
+    opts.innerHTML = cartas.map(id => cartaRitmo(id, {tag:'button', attrs:`data-g-op="${id}"`})).join('');
+    const oir = () => { rel.clear(); tocarCelulas([objetivo], bpm, {previa:2}); };
+    oirBtn(oir); oir();
+    $$('[data-g-op]', opts).forEach(b => b.onclick = () => {
+      if(bloq) return; bloq = true; const ok = b.dataset.gOp === objetivo;
+      b.classList.add(ok ? 'ok' : 'bad'); if(!ok) $(`[data-g-op="${objetivo}"]`, opts).classList.add('ok');
+      msg.textContent = ok ? '¡Sí!' : 'Era esta'; ctrl.innerHTML = ''; responder(ok);
+    });
+  }
+
+  function preguntaCompleta(){
+    const cels = compasAzar(pool, nueva), h = Math.floor(Math.random() * cels.length), obj = cels[h];
+    const mismas = pool.filter(id => id !== obj && Math.abs(durCel(id) - durCel(obj)) < 1e-6);
+    const otras = barajar(mismas.length ? mismas : pool.filter(id => id !== obj)).slice(0, 2);
+    const barra = lleno => area.innerHTML = `<div class="bar-row">${cels.map((id, i) => i === h && !lleno ? `<div class="rc q"><span class="rc-notes"><span class="rc-n" style="--d:${durCel(obj)}">?</span></span></div>` : cartaRitmo(id, {cls:i === h ? 'ok' : ''})).join('')}</div>`;
+    barra(false);
+    msg.textContent = '¿Qué carta falta?';
+    opts.innerHTML = barajar([obj, ...otras]).map(id => cartaRitmo(id, {tag:'button', attrs:`data-g-op="${id}"`})).join('');
+    const oir = () => { rel.clear(); tocarCelulas(cels, bpm, {previa:4, rel, onNota:(i, e) => $$('.bar-row > .rc', area).forEach((r, k) => r.classList.toggle('now', !!e && k === e.ci))}); };
+    oirBtn(oir); oir();
+    $$('[data-g-op]', opts).forEach(b => b.onclick = () => {
+      if(bloq) return; bloq = true; const ok = b.dataset.gOp === obj;
+      b.classList.add(ok ? 'ok' : 'bad'); if(!ok) $(`[data-g-op="${obj}"]`, opts).classList.add('ok');
+      rel.clear(); barra(true); msg.textContent = ok ? '¡Completo!' : 'Faltaba esta'; ctrl.innerHTML = ''; responder(ok);
+    });
+  }
+
+  function preguntaEco(){
+    const cels = compasAzar(pool, nueva), ev = eventosDe(cels), esperados = ev.filter(e => !e.r);
+    area.innerHTML = `<div class="beat-dots" aria-hidden="true">${'<span></span>'.repeat(4)}</div><div class="bar-row eco-cartas">${cels.map(id => cartaRitmo(id, {oculta:true, cls:'hid'})).join('')}</div>`;
+    msg.textContent = 'Escucha el ritmo y repítelo';
+    opts.innerHTML = '<button class="btn primary big" data-g-go>▶ Escuchar</button>';
+    ctrl.innerHTML = '<button class="pad" data-g-pad disabled>Toca aquí</button>';
+    const pad = $('[data-g-pad]', ctrl), bd = $$('.beat-dots span', area);
+    let taps = [], ventana = null;
+    const pulso = (b, tuyo) => bd.forEach((d, i) => { d.classList.toggle('on', i === b); d.classList.toggle('you', !!tuyo); });
+    pad.addEventListener('pointerdown', e => {
+      e.preventDefault(); if(pad.disabled || !ventana) return;
+      const c = audio(); taps.push(c.currentTime - (c.outputLatency || c.baseLatency || 0) - .03);
+      pad.classList.add('tap'); setTimeout(() => pad.classList.remove('tap'), 90);
+    });
+    const evaluar = () => {
+      pad.disabled = true; pulso(-1);
+      const {ini, spb} = ventana, tol = Math.min(.2, spb * .3), libres = taps.filter(t => t > ini - tol);
+      const usados = new Set();
+      const marcas = esperados.map(e => {
+        const w = ini + e.t * spb; let mejor = -1, dist = tol;
+        libres.forEach((t, k) => { if(!usados.has(k) && Math.abs(t - w) <= dist){ dist = Math.abs(t - w); mejor = k; } });
+        if(mejor >= 0){ usados.add(mejor); return true; } return false;
+      });
+      const hits = marcas.filter(Boolean).length, extra = libres.length - hits, n = esperados.length;
+      $('.eco-cartas', area).innerHTML = cels.map(id => cartaRitmo(id)).join('');
+      const ns = $$('.eco-cartas .rc-n', area); let k = 0;
+      ev.forEach((e, i) => { if(!e.r){ ns[i]?.classList.add(marcas[k] ? 'hit' : 'miss'); k++; } });
+      const ok = (hits === n && extra <= 1) || (n >= 4 && hits >= n - 1 && extra === 0);
+      msg.textContent = ok ? '¡Igualito!' : hits ? 'Casi: mira las marcas rojas' : 'Escucha otra vez con calma';
+      responder(ok);
+    };
+    $('[data-g-go]', opts).onclick = () => {
+      opts.innerHTML = ''; taps = [];
+      const c = audio(), spb = 60 / bpm, t0 = c.currentTime + .2;
+      for(let b = 0; b < 16; b++){
+        const w = t0 + b * spb; (b < 4 || (b >= 8 && b < 12)) ? click(w, b % 4 === 0) : clickSuave(w);
+        rel.at(w, () => pulso(b % 4, b >= 12));
+      }
+      ev.forEach(e => { if(!e.r) golpe(t0 + (4 + e.t) * spb); });
+      rel.at(t0, () => msg.textContent = '1, 2, 3, 4…');
+      rel.at(t0 + 4 * spb, () => msg.textContent = 'Escucha');
+      rel.at(t0 + 8 * spb, () => { msg.textContent = 'Prepárate: 1, 2, 3, 4'; pad.disabled = false; });
+      rel.at(t0 + 12 * spb, () => msg.textContent = '¡Ahora tú!');
+      ventana = {ini:t0 + 12 * spb, spb};
+      rel.at(t0 + 16.4 * spb, evaluar);
+    };
+  }
+
+  const preguntas = {eco:preguntaEco, cual:preguntaCual, completa:preguntaCompleta};
+  function pregunta(){ rel.clear(); bloq = false; msg.textContent = ''; opts.innerHTML = ''; ctrl.innerHTML = ''; area.innerHTML = ''; pinta(); preguntas[tipo](); }
+  function fin(){
+    rel.clear(); const est = aciertos / J.rondas >= .9 ? 3 : aciertos / J.rondas >= .7 ? 2 : 1;
+    if(alId) guardarJuego(alId, clave, est);
+    comboEl.textContent = ''; msg.textContent = ''; opts.innerHTML = '';
+    area.innerHTML = `<div class="g-end">${estrellasGrandes(est)}<p class="pr-title">${est === 3 ? '¡Perfecto!' : est === 2 ? '¡Muy bien!' : '¡Lo lograste!'}</p><p class="muted">${aciertos} de ${J.rondas} · ${puntos} puntos</p></div>`;
+    ctrl.innerHTML = `<button class="btn" data-g-otra>Jugar otra vez</button>${onFin ? '<button class="btn primary big" data-g-fin>Seguir</button>' : ''}`;
+    if(est >= 2) confeti();
+    $('[data-g-otra]', ctrl).onclick = () => { ronda = 0; aciertos = 0; combo = 0; puntos = 0; resultados = []; pregunta(); };
+    const f = $('[data-g-fin]', ctrl); if(f) f.onclick = () => onFin(est);
+  }
+  const teclas = e => {
+    if(e.code !== 'Space' || !el.isConnected) return;
+    const p = $('[data-g-pad]', el); if(p && !p.disabled){ e.preventDefault(); p.dispatchEvent(new Event('pointerdown')); }
+  };
+  document.addEventListener('keydown', teclas);
+  pregunta();
+  return () => { rel.clear(); document.removeEventListener('keydown', teclas); };
+}
+
+/* panel de ritmo: cartas de la lección + los juegos (herramienta del alumno y pestaña de la clase) */
+function mountRitmoPanel(el, al, L, {guardar = false} = {}){
+  const niv = al.nivel || 1, pool = celulasHasta(niv, L.n), nueva = L.ritmo?.nueva || null;
+  const disp = Object.keys(JUEGOS).filter(t => t === 'eco' || pool.length >= 2);
+  let limpiar = null;
+  const menu = () => {
+    limpiar?.(); limpiar = null;
+    el.innerHTML = `<div class="game">
+      <p class="pr-kicker">Tus cartas de ritmo</p>
+      <div class="g-opts">${pool.map(id => cartaRitmo(id, {tag:'button', cls:id === nueva ? 'new' : '', attrs:`data-rp-oir="${id}"`})).join('')}</div>
+      <p class="muted">Toca una carta para escucharla.</p>
+      <div class="row" style="justify-content:center">${disp.map(t => `<button class="btn primary" data-rp-j="${t}">${JUEGOS[t].nombre}${guardar ? ` ${'★'.repeat(mejorJuego(al.id, `${niv}.${L.n}.${t}`))}` : ''}</button>`).join('')}</div>
+    </div>`;
+    $$('[data-rp-oir]', el).forEach(b => b.onclick = () => tocarCelulas(Array.from({length:Math.max(1, Math.floor(4 / durCel(b.dataset.rpOir)))}, () => b.dataset.rpOir), 66, {previa:2}));
+    $$('[data-rp-j]', el).forEach(b => b.onclick = () => {
+      const t = b.dataset.rpJ; el.innerHTML = '<div></div>';
+      limpiar = mountJuego(el.firstChild, {tipo:t, pool, nueva, alId:guardar ? al.id : null, clave:`${niv}.${L.n}.${t}`, onFin:menu});
+    });
+  };
+  menu();
+  return () => limpiar?.();
+}
+
+/* ============ cápsulas visuales ============ */
+/* mini cuestionario: repite la pregunta hasta que la respuesta sea correcta */
+function miniQuiz(root, preguntas, onFin){
+  let i = 0; const q = $('.quiz', root);
+  const mostrar = () => { q.textContent = preguntas[i].texto; preguntas[i].preparar?.(); };
+  mostrar();
+  return valor => {
+    if(i >= preguntas.length) return;
+    const ok = preguntas[i].ok(valor); sfx(ok);
+    if(!ok){ q.textContent = `Casi… ${preguntas[i].texto}`; return; }
+    q.textContent = '¡Sí!'; i++;
+    setTimeout(() => { if(!q.isConnected) return; if(i < preguntas.length) mostrar(); else { q.textContent = '¡Cápsula lista!'; confeti(); onFin?.(); } }, 900);
+  };
+}
+function violinSVG(){
+  const pt = (id, nombre, inner) => `<g class="pt" data-pt="${id}" tabindex="0" role="button" aria-label="${nombre}">${inner}</g>`;
+  const madera = 'fill="#C27A3E" stroke="#6B3A17" stroke-width="3"';
+  return `<svg class="vio" viewBox="0 0 200 500" role="group" aria-label="Partes del violín">
+    ${pt('caja', 'La caja', `<path class="hl" ${madera} d="M100 165C135 165 170 172 170 205C170 238 150 250 148 262C142 280 142 305 150 320C175 330 182 360 182 395C182 450 145 478 100 478C55 478 18 450 18 395C18 360 25 330 50 320C58 305 58 280 52 262C50 250 30 238 30 205C30 172 65 165 100 165Z"/>`)}
+    ${pt('efes', 'Las efes', `<path class="hl" fill="#2A1F18" d="M64 318c-6 8 4 14 2 24s-10 16-4 22c3-8 9-12 8-22s-10-14-6-24z"/><path class="hl" fill="#2A1F18" d="M136 318c6 8-4 14-2 24s10 16 4 22c-3-8-9-12-8-22s10-14 6-24z"/>`)}
+    ${pt('barbada', 'La barbada', `<ellipse class="hl" cx="58" cy="452" rx="30" ry="14" fill="#3B2A1E"/>`)}
+    ${pt('cordal', 'El cordal', `<path class="hl" fill="#2A1F18" d="M90 400h20l6 56c-10 8-22 8-32 0z"/>`)}
+    ${pt('diapason', 'El diapasón', `<path class="hl" fill="#2A1F18" d="M91 72h18l4 250h-26z"/>`)}
+    ${pt('clavijas', 'Las clavijas', `<rect class="hl" x="64" y="40" width="24" height="8" rx="4" fill="#2A1F18"/><rect class="hl" x="112" y="48" width="24" height="8" rx="4" fill="#2A1F18"/><rect class="hl" x="64" y="58" width="24" height="8" rx="4" fill="#2A1F18"/><rect class="hl" x="112" y="66" width="24" height="8" rx="4" fill="#2A1F18"/>`)}
+    ${pt('voluta', 'La voluta', `<path class="hl" ${madera} d="M88 80V38c0-10 4-14 12-14s12 4 12 14v42z"/><circle class="hl" cx="100" cy="20" r="14" ${madera}/>`)}
+    ${pt('puente', 'El puente', `<path class="hl" fill="#E9DCC2" stroke="#8a6528" stroke-width="1.5" d="M76 370h48l-4 11h-10l-4-5h-12l-4 5h-10z"/>`)}
+    ${pt('cuerdas', 'Las cuerdas', `<rect x="90" y="80" width="20" height="316" fill="transparent"/>${[94,98,102,106].map((x, i) => `<line class="hl-s" x1="${x}" y1="74" x2="${x - 3 + i * 2}" y2="402" stroke="${Object.values(STR)[i].color}" stroke-width="1.8"/>`).join('')}`)}
+  </svg>`;
+}
+function capViolin(body, root, fin){
+  body.innerHTML = `${violinSVG()}<p class="cap-name" aria-live="polite">Toca una parte del violín</p>`;
+  const nombre = $('.cap-name', body);
+  const objetivos = barajar(['puente', 'voluta', 'cuerdas', 'diapason', 'barbada', 'clavijas']).slice(0, 3);
+  const nom = id => $(`.pt[data-pt="${id}"]`, body).getAttribute('aria-label');
+  const responder = miniQuiz(root, objetivos.map(id => ({texto:`Toca: ${nom(id).toLowerCase()}`, ok:v => v === id})), fin);
+  $$('.pt', body).forEach(g => {
+    const act = () => { $$('.pt.on', body).forEach(x => x.classList.remove('on')); g.classList.add('on'); nombre.textContent = g.getAttribute('aria-label'); responder(g.dataset.pt); };
+    g.addEventListener('click', act);
+    g.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); act(); } });
+  });
+}
+const SIETE = [['Do',60],['Re',62],['Mi',64],['Fa',65],['Sol',67],['La',69],['Si',71]];
+const COL7 = ['#D8574B','#E8903A','#D9AE2E','#5BA35B','#3E9C9C','#4A76C4','#8A5BC4'];
+const carita = col => `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="${col}"/><circle cx="23" cy="27" r="4.4" fill="#fff"/><circle cx="41" cy="27" r="4.4" fill="#fff"/><circle cx="24" cy="28" r="2.2" fill="#1b1408"/><circle cx="42" cy="28" r="2.2" fill="#1b1408"/><path d="M21 40q11 10 22 0" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></svg>`;
+function capNotas(body, root, fin){
+  body.innerHTML = `<div class="n7">${SIETE.map(([n, m], i) => `<button data-n7="${n}" data-m="${m}">${carita(COL7[i])}<span>${n}</span></button>`).join('')}</div><button class="btn" data-n7-todas>▶ Escuchar las 7</button>`;
+  const bts = $$('[data-n7]', body);
+  const salta = (b, suena) => { if(suena) tone(mtof(+b.dataset.m), .7); b.classList.remove('hop'); void b.offsetWidth; b.classList.add('hop'); };
+  const responder = miniQuiz(root, barajar(SIETE.map(x => x[0])).slice(0, 3).map(n => ({texto:`Toca a ${n}`, ok:v => v === n})), fin);
+  bts.forEach(b => b.onclick = () => { salta(b, true); responder(b.dataset.n7); });
+  $('[data-n7-todas]', body).onclick = () => playSeq(SIETE.map(([, m]) => [m, 1]), 100, i => salta(bts[i], false));
+  return () => stopPlay();
+}
+function capEscalera(body, root, fin){
+  const W = 560, H = 250, sw = 66, top = i => H - 16 - (i + 1) * 26, cx = i => 20 + i * sw + (sw - 6) / 2;
+  const pollito = '<ellipse cx="0" cy="-16" rx="16" ry="15" fill="#F2C94C"/><circle cx="6" cy="-20" r="2.6" fill="#1b1408"/><path d="M14 -17l9 3-9 3z" fill="#E8903A"/><path d="M-10 -14q-6 4 0 8" fill="none" stroke="#D9A826" stroke-width="3" stroke-linecap="round"/>';
+  body.innerHTML = `<div class="esc"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="La escala de Do como una escalera">
+    ${ESCALA.map((m, i) => `<rect x="${20 + i * sw}" y="${top(i)}" width="${sw - 6}" height="${H - 16 - top(i)}" rx="8" fill="${STR[posFor(m).cuerda].color}"/><text x="${cx(i)}" y="${H - 26}" text-anchor="middle" fill="#fff" font-weight="800" font-size="15">${noteName(m)}</text>`).join('')}
+    <g class="pollito" style="transform:translate(${cx(0)}px,${top(0)}px)">${pollito}</g>
+  </svg></div>
+  <div class="row" style="justify-content:center"><button class="btn" data-esc="sube">Subir ▲</button><button class="btn" data-esc="baja">Bajar ▼</button></div>
+  <div class="row q-opts" style="justify-content:center"></div>`;
+  const pol = $('.pollito', body), qopts = $('.q-opts', body);
+  const mover = i => pol.style.transform = `translate(${cx(i)}px,${top(i)}px)`;
+  const tocar = idx => playSeq(idx.map(i => [ESCALA[i], .8]), 96, k => mover(idx[k]));
+  $$('[data-esc]', body).forEach(b => b.onclick = () => tocar(b.dataset.esc === 'sube' ? [0,1,2,3,4,5,6,7] : [7,6,5,4,3,2,1,0]));
+  let responder = null;
+  const preguntas = [0, 1, 2].map(() => {
+    const sube = Math.random() < .5, s = Math.floor(Math.random() * 5), idx = sube ? [s, s + 1, s + 2] : [s + 2, s + 1, s];
+    return {texto:'¿El pollito sube o baja?', ok:v => v === (sube ? 'sube' : 'baja'), preparar:() => {
+      qopts.innerHTML = '<button class="btn primary" data-q="oir">▶ Escuchar</button><button class="btn" data-q="sube">Sube ▲</button><button class="btn" data-q="baja">Baja ▼</button>';
+      $('[data-q="oir"]', qopts).onclick = () => tocar(idx);
+      $$('[data-q="sube"],[data-q="baja"]', qopts).forEach(b => b.onclick = () => responder(b.dataset.q));
+    }};
+  });
+  responder = miniQuiz(root, preguntas, () => { qopts.innerHTML = ''; fin(); });
+  return () => stopPlay();
+}
+function capPanLuna(body, root, fin){
+  const pie = s => `<svg viewBox="0 0 30 40" width="${s}" height="${s * 4 / 3}" aria-hidden="true"><ellipse cx="15" cy="25" rx="10" ry="14" fill="currentColor"/><circle cx="7" cy="6" r="3.6" fill="currentColor"/><circle cx="15" cy="3.6" r="3.6" fill="currentColor"/><circle cx="23" cy="6" r="3.6" fill="currentColor"/></svg>`;
+  const patrones = {pan:['pan','pan','pan','pan'], luna:['luna','luna','luna','luna'], mezcla:['pan','luna','pan','luna']};
+  body.innerHTML = `<div class="huellas"></div>
+    <div class="row" style="justify-content:center"><button class="btn" data-pl="pan">pan pan pan pan</button><button class="btn" data-pl="luna">lu-na lu-na lu-na lu-na</button><button class="btn" data-pl="mezcla">pan lu-na pan lu-na</button></div>
+    <div class="row q-opts" style="justify-content:center"></div>`;
+  const hu = $('.huellas', body), qopts = $('.q-opts', body), rel = reloj();
+  const pintar = cels => hu.innerHTML = cels.map(id => `<div class="hu">${id === 'pan' ? pie(36) : pie(22) + pie(22)}</div>`).join('');
+  const tocar = cels => { rel.clear(); pintar(cels); tocarCelulas(cels, 72, {previa:2, rel, onNota:(i, e) => $$('.hu', hu).forEach((h, k) => h.classList.toggle('on', !!e && k === e.ci))}); };
+  pintar(patrones.pan);
+  $$('[data-pl]', body).forEach(b => b.onclick = () => tocar(patrones[b.dataset.pl]));
+  let responder = null;
+  const preguntas = [0, 1, 2].map(() => {
+    const id = Math.random() < .5 ? 'pan' : 'luna';
+    return {texto:'¿Sonó pan o lu-na?', ok:v => v === id, preparar:() => {
+      qopts.innerHTML = `<button class="btn primary" data-q="oir">▶ Escuchar</button>${cartaRitmo('pan', {tag:'button', attrs:'data-q="pan"'})}${cartaRitmo('luna', {tag:'button', attrs:'data-q="luna"'})}`;
+      $('[data-q="oir"]', qopts).onclick = () => { rel.clear(); tocarCelulas([id, id, id, id], 72, {previa:2}); };
+      $$('button.rc', qopts).forEach(b => b.onclick = () => responder(b.dataset.q));
+    }};
+  });
+  responder = miniQuiz(root, preguntas, () => { qopts.innerHTML = ''; fin(); });
+  return () => rel.clear();
+}
+const CAPSULAS = {
+  violin:{titulo:'Conoce tu violín', mount:capViolin},
+  notas7:{titulo:'Las 7 notas', mount:capNotas},
+  escalera:{titulo:'La escala es una escalera', mount:capEscalera},
+  panluna:{titulo:'Pan y lu-na', mount:capPanLuna}
+};
+function mountCapsula(el, id, {onFin = null} = {}){
+  const C = CAPSULAS[id]; if(!C){ onFin?.(); return () => {}; }
+  el.innerHTML = `<div class="cap"><h2 class="pr-title">${C.titulo}</h2><p class="quiz" aria-live="polite"></p><div class="cap-body"></div></div>`;
+  return C.mount($('.cap-body', el), el, () => onFin?.()) || (() => {});
+}
+/* pestaña de cápsulas en la clase: todas disponibles, empieza por la de la lección */
+function mountCapsulasPanel(el, L){
+  let limpiar = null, actual = L.visual || 'violin';
+  el.innerHTML = `<div class="game"><div class="seg" role="group" aria-label="Cápsula">${Object.entries(CAPSULAS).map(([id, c]) => `<button data-capsel="${id}" aria-pressed="${id === actual}">${c.titulo}</button>`).join('')}</div><div class="cap-host" style="width:100%"></div></div>`;
+  const host = $('.cap-host', el);
+  const abrir = id => { limpiar?.(); actual = id; $$('[data-capsel]', el).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.capsel === id))); limpiar = mountCapsula(host, id); };
+  $$('[data-capsel]', el).forEach(b => b.onclick = () => abrir(b.dataset.capsel));
+  abrir(actual);
+  return () => limpiar?.();
+}
+
+/* ============ práctica paso a paso ============ */
+let practicaMounts = [];
+function clearPracticaMounts(){ practicaMounts.forEach(f => { try{ f(); }catch(e){} }); practicaMounts = []; }
+const PR = {pasos:[], i:0, L:null, estrellas:0};
+function pasosDe(al, L){
+  const principal = L.practicas[0], cancion = L.practicas.find(k => k === 'cancion' || k === 'frase');
+  const p = [{id:'oir', ej:principal}, {id:'tocar', ej:principal}];
+  if(L.ritmo) p.push({id:'ritmo'});
+  if(L.visual) p.push({id:'capsula'});
+  if(cancion && cancion !== principal) p.push({id:'cancion', ej:cancion});
+  p.push({id:'logro'});
+  return p;
+}
+const NOMBRE_PASO = {oir:'Escuchar', tocar:'Tocar', ritmo:'Ritmo', capsula:'Cápsula', cancion:'Canción'};
+function abrirPractica(){
+  const al = Store.alumno; if(!al) return;
+  const L = lec(verDe(al), al.nivel);
+  Object.assign(PR, {pasos:pasosDe(al, L), i:0, L, estrellas:0});
+  pintarPaso();
+}
+function cerrarPractica(){
+  clearPracticaMounts(); stopPlay();
+  const p = $('#practica'); if(p && !p.hidden){ p.hidden = true; p.innerHTML = ''; document.body.style.overflow = ''; }
+}
+const marcarNota = (root, i) => { $$('.nc.playing', root).forEach(g => g.classList.remove('playing')); $(`.nc[data-i="${i}"]`, root)?.classList.add('playing'); };
+function pintarPaso(){
+  const p = $('#practica'), al = Store.alumno; if(!p || !al) return;
+  clearPracticaMounts(); stopPlay();
+  const paso = PR.pasos[PR.i], L = PR.L, n = PR.pasos.length;
+  p.hidden = false; document.body.style.overflow = 'hidden';
+  p.innerHTML = `<div class="pr-top"><button class="pr-close" data-pr-cerrar aria-label="Salir de la práctica">×</button>
+      <div class="pr-bar" role="progressbar" aria-label="Avance de la práctica" aria-valuemin="0" aria-valuemax="${n - 1}" aria-valuenow="${PR.i}"><i style="width:${Math.round(PR.i / (n - 1) * 100)}%"></i></div></div>
+    <div class="pr-body" id="pr-body"></div><div class="pr-foot" id="pr-foot"></div>`;
+  $('[data-pr-cerrar]', p).onclick = cerrarPractica;
+  const body = $('#pr-body', p), foot = $('#pr-foot', p);
+  const seguir = (txt = 'Seguir') => { foot.innerHTML = `<button class="btn primary big" data-pr-sig>${txt}</button>`; $('[data-pr-sig]', foot).onclick = () => { PR.i++; pintarPaso(); }; };
+  PASOS[paso.id]({body, foot, al, L, paso, seguir, num:PR.i + 1});
+}
+/* toca las tarjetas con 4 pulsos de preparación */
+function tocaConmigo(ej, bpm, root, onEnd){
+  stopPlay(); const c = audio(), spb = 60 / bpm, t0 = c.currentTime + .1;
+  for(let b = 0; b < 4; b++) click(t0 + b * spb, b === 0);
+  const tm = setTimeout(() => playSeq(ej.notas, bpm, i => marcarNota(root, i), onEnd), Math.max(0, 4 * spb * 1000 - 120));
+  practicaMounts.push(() => clearTimeout(tm));
+}
+const PASOS = {
+  oir({body, al, L, paso, seguir, num}){
+    const ej = ejercicio(paso.ej, al, L);
+    body.innerHTML = `<p class="pr-kicker">Lección ${L.n} · paso ${num}</p><h2 class="pr-title">Escucha y canta</h2><p class="muted">${esc(ej.nombre)}</p>
+      <button class="big-play" data-pr-play aria-label="Escuchar">▶</button><div class="notes-scroll">${notesHTML(ej)}</div>`;
+    const b = $('[data-pr-play]', body);
+    b.onclick = () => { if(b.dataset.on){ stopPlay(); return; } b.dataset.on = '1'; b.textContent = '■'; playSeq(ej.notas, 72, i => marcarNota(body, i), () => { delete b.dataset.on; b.textContent = '▶'; }); };
+    seguir('Ya la escuché');
+  },
+  tocar({body, al, L, paso, seguir, num}){
+    let ej = ejercicio(paso.ej, al, L);
+    const opts = L.practicas.map(k => ejercicio(k, al, L));
+    body.innerHTML = `<p class="pr-kicker">Lección ${L.n} · paso ${num}</p><h2 class="pr-title">Toca conmigo</h2>
+      ${opts.length > 1 ? `<div class="seg" role="group" aria-label="Qué tocar" style="justify-self:center;width:auto">${opts.map((o, i) => `<button data-pr-op="${i}" aria-pressed="${o.key === ej.key}">${esc(o.nombre)}</button>`).join('')}</div>` : `<p class="muted">${esc(ej.nombre)}</p>`}
+      <button class="big-play" data-pr-play aria-label="Tocar con la app">▶</button>
+      <label class="row fine" style="justify-content:center">Velocidad <input type="range" min="40" max="110" value="60" data-pr-bpm style="width:160px;accent-color:var(--pine)"> <output>60</output></label>
+      <div class="notes-scroll" data-pr-notas>${notesHTML(ej)}</div>`;
+    const b = $('[data-pr-play]', body), bpm = $('[data-pr-bpm]', body);
+    bpm.oninput = () => bpm.nextElementSibling.textContent = bpm.value;
+    b.onclick = () => { if(b.dataset.on){ stopPlay(); return; } b.dataset.on = '1'; b.textContent = '■'; tocaConmigo(ej, +bpm.value, body, () => { delete b.dataset.on; b.textContent = '▶'; }); };
+    $$('[data-pr-op]', body).forEach(o => o.onclick = () => { stopPlay(); ej = opts[+o.dataset.prOp]; $$('[data-pr-op]', body).forEach(x => x.setAttribute('aria-pressed', String(x === o))); $('[data-pr-notas]', body).innerHTML = notesHTML(ej); });
+    seguir('¡Lo toqué!');
+  },
+  ritmo({body, foot, al, L}){
+    const niv = al.nivel || 1, pool = celulasHasta(niv, L.n), nueva = L.ritmo.nueva, tipo = L.ritmo.juego;
+    const jugar = () => {
+      clearPracticaMounts(); stopPlay();
+      body.innerHTML = '<p class="pr-kicker">Ritmo del día</p><div data-pr-juego></div>'; foot.innerHTML = '';
+      practicaMounts.push(mountJuego($('[data-pr-juego]', body), {tipo, pool, nueva, alId:al.id, clave:`${niv}.${L.n}.${tipo}`, onFin:est => { PR.estrellas = est; PR.i++; pintarPaso(); }}));
+    };
+    if(!nueva){ jugar(); return; }
+    const c = CELULAS[nueva], veces = Math.max(1, Math.floor(4 / durCel(nueva))), rel = reloj();
+    practicaMounts.push(() => rel.clear());
+    body.innerHTML = `<p class="pr-kicker">Ritmo del día · carta nueva</p><h2 class="pr-title">${esc(c.syl.join(' '))}</h2><p class="muted">${esc(c.nombre)}</p>
+      <div>${cartaRitmo(nueva, {cls:'big new'})}</div>
+      <button class="big-play" data-pr-play aria-label="Escuchar la carta">▶</button>
+      <p class="muted">Escucha, di las sílabas y aplaude.</p>`;
+    $('[data-pr-play]', body).onclick = () => { rel.clear(); tocarCelulas(Array.from({length:veces}, () => nueva), 66, {previa:4, rel, onNota:(i, e) => $$('.rc.big .rc-n', body).forEach((x, k) => x.classList.toggle('now', !!e && k === e.ni))}); };
+    foot.innerHTML = `<button class="btn primary big" data-pr-jugar>Jugar: ${esc(JUEGOS[tipo].nombre)}</button>`;
+    $('[data-pr-jugar]', foot).onclick = jugar;
+  },
+  capsula({body, foot, L, seguir}){
+    body.innerHTML = '<p class="pr-kicker">Cápsula</p><div data-pr-cap></div>';
+    foot.innerHTML = '<button class="btn ghost" data-pr-saltar>Saltar</button>';
+    $('[data-pr-saltar]', foot).onclick = () => { PR.i++; pintarPaso(); };
+    practicaMounts.push(mountCapsula($('[data-pr-cap]', body), L.visual, {onFin:() => seguir()}));
+  },
+  cancion({body, al, L, paso, seguir, num}){
+    const ej = ejercicio(paso.ej, al, L);
+    body.innerHTML = `<p class="pr-kicker">Lección ${L.n} · paso ${num}</p><h2 class="pr-title">Tu canción</h2><p class="muted">${esc(ej.nombre)}</p>
+      <button class="big-play" data-pr-play aria-label="Tocar con la app">▶</button>
+      <label class="row fine" style="justify-content:center">Velocidad <input type="range" min="40" max="110" value="66" data-pr-bpm style="width:160px;accent-color:var(--pine)"> <output>66</output></label>
+      <div class="notes-scroll">${notesHTML(ej)}</div>`;
+    const b = $('[data-pr-play]', body), bpm = $('[data-pr-bpm]', body);
+    bpm.oninput = () => bpm.nextElementSibling.textContent = bpm.value;
+    b.onclick = () => { if(b.dataset.on){ stopPlay(); return; } b.dataset.on = '1'; b.textContent = '■'; tocaConmigo(ej, +bpm.value, body, () => { delete b.dataset.on; b.textContent = '▶'; }); };
+    seguir('¡La toqué completa!');
+  },
+  logro({body, foot, al, L}){
+    marcarPractica(al.id, `${al.nivel || 1}.${L.n}`);
+    body.innerHTML = `<div class="g-end" style="margin-top:4vh">${treeIcon(96, 'var(--pine)')}<h2 class="pr-title">¡Práctica lista!</h2>${PR.estrellas ? estrellasGrandes(PR.estrellas) : ''}
+      <p class="pr-kicker" style="margin-top:14px">Reto para casa</p><p class="mission" style="margin:0 auto">${esc(L.casa)}</p></div>`;
+    confeti();
+    foot.innerHTML = '<button class="btn primary big" data-pr-fin>Volver al sendero</button>';
+    $('[data-pr-fin]', foot).onclick = () => { cerrarPractica(); renderAlumnoData(); };
+  }
+};
+document.addEventListener('click', e => { if(e.target.closest('[data-practicar]')) abrirPractica(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && !$('#practica')?.hidden) cerrarPractica(); });
+
 /* ============ modo presentación ============ */
 function openPresent(tab){ S.present = true; S.presentTab = tab || 'v3d'; renderPresent(); }
 function closePresent(){ S.present = false; clearPresentMounts(); const p = $('#present'); if(p){ p.hidden = true; p.innerHTML = ''; } document.body.style.overflow = ''; }
@@ -2061,6 +2689,8 @@ function renderPresent(fromData){
   if(S.presentTab === 'fb') presentMounts.push(mountFingerboard(body, al, L, {big:true}));
   if(S.presentTab === 'metro') presentMounts.push(mountMetronome(body, {big:true}));
   if(S.presentTab === 'tuner') presentMounts.push(mountTuner(body, {big:true}));
+  if(S.presentTab === 'ritmo') presentMounts.push(mountRitmoPanel(body, al, L));
+  if(S.presentTab === 'cap') presentMounts.push(mountCapsulasPanel(body, L));
   if(S.presentTab === 'sheet'){ body.innerHTML = `<div class="card" style="max-width:1200px;margin:0 auto">${sheetBlockHTML(al, L)}</div>`; wireSheet(body, al, L); presentMounts.push(() => stopPlay()); }
   $('[data-pclose]', p).onclick = closePresent;
   $$('[data-ptab]', p).forEach(b => b.onclick = () => { S.presentTab = b.dataset.ptab; renderPresent(); });
