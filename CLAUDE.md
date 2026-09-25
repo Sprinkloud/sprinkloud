@@ -74,14 +74,14 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 
 ## Estado del proyecto
 
-Última actualización: 25 de septiembre de 2026. Las entregas vienen de [docs/METODOLOGIA.md](docs/METODOLOGIA.md), sección "Siguientes pasos en la app".
+Última actualización: 26 de septiembre de 2026. Las entregas vienen de [docs/METODOLOGIA.md](docs/METODOLOGIA.md), sección "Siguientes pasos en la app".
 
 | Entrega | Estado |
 |---|---|
-| Roles de administración y maestros, `config.js`, servidor sincronizado con clasp | Publicado (implementación de Apps Script, versión 2) |
+| Roles de administración y maestros, `config.js`, servidor sincronizado con clasp | Publicado |
 | 1. Lección paso a paso, ritmo del club, juegos Eco / ¿Cuál sonó? / Completa el compás, cápsulas 1–4 del Nivel 1 | Publicado en GitHub Pages |
-| Secciones del alumno (Inicio, Partituras, Herramientas, Logros, Mi bosque), vista previa para la administración | Hecho |
-| 2. Premios: racha, calendario, insignias, medallas, festejo de fin de nivel, certificado PDF, ranking del grupo, aviso de video con 2 estrellas, bosque con tienda | Hecho |
+| Secciones del alumno (Inicio, Partituras, Herramientas, Logros, Mi bosque), vista previa para la administración | Publicado (servidor: implementación de Apps Script, versión 3) |
+| 2. Premios: racha, calendario, insignias, medallas, festejo de fin de nivel, certificado PDF, ranking del grupo, aviso de video con 2 estrellas, bosque con tienda | Publicado |
 | 3. Ilustraciones 2D (postura, mano izquierda, mano del arco, brazo) en lugar del violinista 3D | Pendiente |
 | 4. Nivel 2: 10 lecciones, cápsulas 5–9, repertorio | Pendiente |
 | 5. Nivel 3 y partituras: pentagrama del club, cápsulas 10–17, juegos Del pentagrama al violín y Del oído al violín, MusicXML de MuseScore | Pendiente |
