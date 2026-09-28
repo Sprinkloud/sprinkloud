@@ -130,13 +130,13 @@ La descripción de referencia se usa tal cual como prompt al generar o encargar 
 
 **Los guías de cada sección.** Personajes de la misma colección, con la cabeza de sección (`guiaHTML`) y una frase corta en Caveat: ratón en Partituras, erizo en Herramientas, zorro en Logros y ardilla en Mi bosque. El conejo queda libre para las cápsulas.
 
-**Imágenes.** Las acuarelas las aporta la Dirección Pedagógica en `assets/image/` (originales, no se publican). La app usa copias WebP en `assets/ilustraciones/` y todo se anota en `assets/LICENCIAS.md`:
+**Imágenes.** Las acuarelas y los Lottie son propios del club y no llevan créditos. Los originales están en `assets/image/` (no se publican) y la app usa copias WebP en `assets/ilustraciones/`:
 
 | Qué | De dónde sale | Formato |
 |---|---|---|
 | Osito y guías | `image/personajes y paisajes/` | WebP de 640 a 1000 px, con `.acuarela` (multiplicar sobre el papel en tema claro) y `.vineta` (bordes que se desvanecen) |
 | Postura y manos | `image/violin postura/` | WebP de 1100 a 1200 px con puntos numerados encima (`POSTURA` y `mountPostura`). Nunca dibujos propios: si falta una vista, se pide la imagen |
-| Reacciones animadas | `image/formato lottie/` (Lordicon, estilo wired) | JSON en `assets/lottie/`, con lottie_light desde cdnjs; crédito de Lordicon en la entrada |
+| Reacciones animadas | `image/formato lottie/` | JSON en `assets/lottie/`, con lottie_light desde cdnjs |
 
 Hoy los Fluent Emoji planos cubren el mapa, el bosque y las cápsulas, suavizados con `saturate(.7) sepia(.16)` para que no chillen sobre el papel. Se reemplazan sección por sección. La lección actual del mapa se marca con "¡Aquí!" a mano y un anillo ocre.
 
@@ -303,7 +303,7 @@ El movimiento se rige por la filosofía de Emil Kowalski (skills `animate` y `re
 | Combo | Ocasional | Entra desde `scale(0.95)` con opacidad, 180 ms |
 | Cápsulas | Una vez por lección | Stagger de 60 ms, 300 ms `--ease-out`; la clave de Sol se revela de abajo hacia arriba con `clip-path: inset()` en 1.2 s `--ease-in-out` |
 | Punto de postura activo | Varias veces por lección | El punto crece a `scale(1.18)` y pasa a ocre, 180 ms `--ease-out`; la frase entra desde `translateY(4px)`, 180 ms; al cambiar de imagen, fundido de 240 ms |
-| Personajes Lottie | Una vez por pantalla | Su propia animación de Lordicon, sin bucle |
+| Personajes Lottie | Una vez por pantalla | Su propia animación, sin bucle |
 | Poner algo en el bosque | Pocas veces | Baja desde `translateY(-8px) scale(0.95)`, 220 ms `--ease-out`; quitarlo, 150 ms |
 | Fin de práctica | Una vez al día | Estrellas en stagger de 80 ms desde `scale(0.9)`, 300 ms `--ease-out` |
 | Festejo de fin de nivel | Rara vez | La medalla entra con un resorte suave (`bounce` 0.2, 0.6 s) y caen hasta 30 hojas y pétalos de acuarela durante 2.4 s |

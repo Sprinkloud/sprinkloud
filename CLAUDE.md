@@ -18,7 +18,7 @@ No hay build, dependencias ni `package.json`:
 | `index.html` | Toda la app: HTML, CSS y JS en un único archivo (unas 2100 líneas). Se sirve tal cual desde GitHub Pages. |
 | `config.js` | Solo define `window.SPRINKLOUD_API` (la URL `/exec`). `index.html` lo carga, y si falta o está vacío la app entra en modo demostración. |
 | `assets/ilustraciones/` | Acuarelas del club en WebP: postura, mano izquierda, mano del arco (3 pasos), osito y guías de sección. Originales en `assets/image/` (ignorada por git). |
-| `assets/lottie/` | Animaciones de Lordicon (osito, ardilla, abeja, cámara). Para probarlas en local hay que servir la carpeta con `python -m http.server`, porque `fetch` no funciona en `file://`. |
+| `assets/lottie/` | Animaciones propias del club (osito, ardilla, abeja, cámara). Para probarlas en local hay que servir la carpeta con `python -m http.server`, porque `fetch` no funciona en `file://`. |
 | `assets/emoji/` | Ilustraciones Fluent Emoji (licencia MIT, ver `LICENCIA.md`), usadas en el mapa, el bosque y las cápsulas. |
 | `apps-script/Código.js` | Backend en Google Apps Script, ligado a la hoja de Google "Sprinkloud App". Se sincroniza con clasp (ver Despliegue). `appsscript.json` es el manifiesto (zona horaria, webapp). |
 
@@ -97,7 +97,7 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 | 5. Pentagrama del club, juegos Del pentagrama al violín, Del oído al violín y Lluvia de notas, importación de MusicXML | Publicado |
 | Inicio como mapa del bosque, Eco más sensible | Publicado |
 | Migración visual al estilo de libro ilustrado (paleta, Fraunces y Caveat, papel, iconos SVG, movimiento según Emil, toques de 44 px) | Publicado el 28 de septiembre de 2026 sin `/review-animations` (la fundadora pidió publicar); queda pendiente correrla |
-| Acuarelas del club: postura con puntos numerados (en lugar de los dibujos 2D), osito y guías por sección, Lottie de Lordicon | Publicado el 28 de septiembre de 2026 sin `/impeccable audit` ni `/review-animations` (la fundadora pidió subir); quedan pendientes. Falta la imagen de primer plano de la mano izquierda |
+| Acuarelas del club: postura con puntos numerados (en lugar de los dibujos 2D), osito y guías por sección, animaciones Lottie | Publicado el 28 de septiembre de 2026 sin `/impeccable audit` ni `/review-animations` (la fundadora pidió subir); quedan pendientes. Falta la imagen de primer plano de la mano izquierda |
 
 Pendientes técnicos:
 - El sonido y la latencia del juego Eco no se han probado en celulares reales.
