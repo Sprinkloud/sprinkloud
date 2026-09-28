@@ -1,6 +1,6 @@
 # CLAUDE.md: Sprinkloud
 
-App web de clases de violín del Club Musical Sprinkloud. Tiene tres roles: alumno (entra con un código de 6 letras), maestro (clave propia, guardada en la hoja `Maestros`) y administración (la clave de las Script Properties). Tiene 8 niveles (88 lecciones), repertorio, editor de canciones con importación desde MuseScore (MusicXML), partituras en tarjetas y en pentagrama, PDFs, ilustraciones 2D de postura, juegos, cápsulas visuales, metrónomo, afinador y un modo de presentación para Meet.
+App web de clases de violín del Club Musical Sprinkloud. Tiene tres roles: alumno (entra con un código de 6 letras), maestro (clave propia, guardada en la hoja `Maestros`) y administración (la clave de las Script Properties). Tiene 8 niveles (88 lecciones), repertorio, editor de canciones con importación desde MuseScore (MusicXML), partituras en tarjetas y en pentagrama, PDFs, postura con las acuarelas del club y puntos numerados, juegos, cápsulas visuales, metrónomo, afinador y un modo de presentación para Meet.
 
 - Repo: https://github.com/Sprinkloud/sprinkloud (rama `main`)
 - Producción: https://sprinkloud.github.io/sprinkloud/ (GitHub Pages, `main` / raíz)
@@ -17,6 +17,8 @@ No hay build, dependencias ni `package.json`:
 |---|---|
 | `index.html` | Toda la app: HTML, CSS y JS en un único archivo (unas 2100 líneas). Se sirve tal cual desde GitHub Pages. |
 | `config.js` | Solo define `window.SPRINKLOUD_API` (la URL `/exec`). `index.html` lo carga, y si falta o está vacío la app entra en modo demostración. |
+| `assets/ilustraciones/` | Acuarelas del club en WebP: postura, mano izquierda, mano del arco (3 pasos), osito y guías de sección. Originales en `assets/image/` (ignorada por git). |
+| `assets/lottie/` | Animaciones de Lordicon (osito, ardilla, abeja, cámara). Para probarlas en local hay que servir la carpeta con `python -m http.server`, porque `fetch` no funciona en `file://`. |
 | `assets/emoji/` | Ilustraciones Fluent Emoji (licencia MIT, ver `LICENCIA.md`), usadas en el mapa, el bosque y las cápsulas. |
 | `apps-script/Código.js` | Backend en Google Apps Script, ligado a la hoja de Google "Sprinkloud App". Se sincroniza con clasp (ver Despliegue). `appsscript.json` es el manifiesto (zona horaria, webapp). |
 
@@ -39,7 +41,7 @@ Las columnas de `COLUMNAS_JSON` se guardan como JSON serializado (máximo `MAX_C
 El JS está dividido con comentarios `/* ============ nombre ============ */`. Para ubicarte, busca por el nombre de la sección:
 configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música (`STR`, `DEDO`, `LECCIONES`) · niveles (`NIVELES`) · audio (WebAudio) · micrófono y detección de altura · conexión con la hoja de Google (`Api`, `Demo`, `Store`) · estado de la app (`S`, `go`, `renderApp`) · entrada · vista alumno · metrónomo · afinador · diapasón interactivo · violinista 3D (three.js) · vista maestra · repertorio: catálogo, editor y PDF (jsPDF) · modo presentación · inicio.
 
-- Librerías cargadas por CDN: jsPDF 2.5.1 (cdnjs) y Google Fonts (Sora, Nunito Sans). Ya no se usa three.js: la postura es SVG propio (`mountPostura`, sección "postura 2D").
+- Librerías cargadas por CDN: jsPDF 2.5.1 (cdnjs) y Google Fonts (Sora, Nunito Sans). lottie-web 5.12.2 (`lottie_light`, cdnjs) se carga solo cuando aparece un `[data-lottie]`. Ya no se usa three.js. La postura usa las imágenes de `assets/ilustraciones/` con puntos (`POSTURA` y `mountPostura`); nunca dibujos SVG propios.
 - Estado global en `S`. `Store` hace actualizaciones optimistas y avisa a quien esté suscrito con `Store.on`/`emit`.
 - Los temas claro y oscuro usan las variables CSS de `:root` y `[data-theme]`.
 - La sesión se guarda en `localStorage` con la clave `sprinkloud-sesion`.
@@ -94,7 +96,8 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 | 4. Niveles 2 a 8 completos (80 lecciones), cápsulas 5–24, ejercicios y repertorio | Publicado (faltan 10 partituras pendientes) |
 | 5. Pentagrama del club, juegos Del pentagrama al violín, Del oído al violín y Lluvia de notas, importación de MusicXML | Publicado |
 | Inicio como mapa del bosque, Eco más sensible | Publicado |
-| Migración visual al estilo de libro ilustrado (paleta, Fraunces y Caveat, papel, iconos SVG, movimiento según Emil, toques de 44 px, ilustración de Ives en la entrada) | Publicado el 28 de septiembre de 2026 sin `/review-animations` (la fundadora pidió publicar); queda pendiente correrla |
+| Migración visual al estilo de libro ilustrado (paleta, Fraunces y Caveat, papel, iconos SVG, movimiento según Emil, toques de 44 px) | Publicado el 28 de septiembre de 2026 sin `/review-animations` (la fundadora pidió publicar); queda pendiente correrla |
+| Acuarelas del club: postura con puntos numerados (en lugar de los dibujos 2D), osito y guías por sección, Lottie de Lordicon | Publicado el 28 de septiembre de 2026 sin `/impeccable audit` ni `/review-animations` (la fundadora pidió subir); quedan pendientes. Falta la imagen de primer plano de la mano izquierda |
 
 Pendientes técnicos:
 - El sonido y la latencia del juego Eco no se han probado en celulares reales.

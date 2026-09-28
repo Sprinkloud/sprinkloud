@@ -1,3 +1,6 @@
 # clasp: guardan credenciales e identificadores locales
 .clasp.json
 .clasprc.json
+
+# originales en alta resolución (se publican solo las copias de assets/ilustraciones y assets/lottie)
+assets/image/

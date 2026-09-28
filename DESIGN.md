@@ -108,7 +108,7 @@ components:
     padding: "6px 2px"
 ---
 
-<!-- IMPLEMENTADO en index.html (migración del 26 de septiembre de 2026). Pendiente: la ilustración del osito y el reemplazo de los Fluent Emoji por acuarelas. -->
+<!-- IMPLEMENTADO en index.html (migración del 26 de septiembre de 2026; acuarelas del club el 28 de septiembre). Pendiente: reemplazar los Fluent Emoji del mapa y del bosque por acuarelas. -->
 
 # Design System: Sprinkloud
 
@@ -126,18 +126,21 @@ La descripción de referencia se usa tal cual como prompt al generar o encargar 
 
 - Oso pardo pequeño, antropomorfo, con una bufanda tejida sencilla en ocre o musgo.
 - Siempre con la misma bufanda y las mismas proporciones.
-- Aparece junto a la lección actual del mapa, en los festejos, en los avisos y en las cápsulas.
-- En las ilustraciones de postura toca con la técnica correcta: sus dedos, muñeca, antebrazo y brazo se distinguen con claridad.
+- Aparece en la pantalla de entrada (`osito-bosque`), al cerrar cada práctica (Lottie `osito`) y en el "Reto para casa" (`osito-casa`).
 
-**Imágenes.** Todas salen de fuentes gratuitas y se anotan en `assets/LICENCIAS.md` con su archivo, fuente, autor, licencia y enlace. La pantalla de entrada usa una acuarela original de Sarah Noble Ives (hacia 1907, dominio público), con su crédito visible:
+**Los guías de cada sección.** Personajes de la misma colección, con la cabeza de sección (`guiaHTML`) y una frase corta en Caveat: ratón en Partituras, erizo en Herramientas, zorro en Logros y ardilla en Mi bosque. El conejo queda libre para las cápsulas.
+
+**Imágenes.** Las acuarelas las aporta la Dirección Pedagógica en `assets/image/` (originales, no se publican). La app usa copias WebP en `assets/ilustraciones/` y todo se anota en `assets/LICENCIAS.md`:
 
 | Qué | De dónde sale | Formato |
 |---|---|---|
-| Osito, escenas del mapa y festejos | IA gratuita con el prompt de arriba, o ilustración encargada | PNG a 2x con fondo transparente |
-| Postura y manos | SVG propio (`mountPostura`) | Redibujado con tinta, lavados y el filtro `#acuarela` |
-| Flora y fauna | Láminas de dominio público (Wikimedia Commons, Internet Archive, Biodiversity Heritage Library) | Recortadas en viñeta |
+| Osito y guías | `image/personajes y paisajes/` | WebP de 640 a 1000 px, con `.acuarela` (multiplicar sobre el papel en tema claro) y `.vineta` (bordes que se desvanecen) |
+| Postura y manos | `image/violin postura/` | WebP de 1100 a 1200 px con puntos numerados encima (`POSTURA` y `mountPostura`). Nunca dibujos propios: si falta una vista, se pide la imagen |
+| Reacciones animadas | `image/formato lottie/` (Lordicon, estilo wired) | JSON en `assets/lottie/`, con lottie_light desde cdnjs; crédito de Lordicon en la entrada |
 
-Hoy los Fluent Emoji planos cubren el mapa, el bosque y las cápsulas, suavizados con `saturate(.7) sepia(.16)` para que no chillen sobre el papel. Se reemplazan sección por sección. **El osito todavía no existe como ilustración:** no hay una fuente gratuita del personaje; hasta que exista, la lección actual del mapa se marca con "¡Aquí!" a mano y un anillo ocre.
+Hoy los Fluent Emoji planos cubren el mapa, el bosque y las cápsulas, suavizados con `saturate(.7) sepia(.16)` para que no chillen sobre el papel. Se reemplazan sección por sección. La lección actual del mapa se marca con "¡Aquí!" a mano y un anillo ocre.
+
+**Lottie.** Solo personajes y objetos de la colección: `osito` (fin de práctica), `ardilla` (juego con 2 o 3 estrellas), `abeja` (festejo de nivel) y `camara` (aviso del video). Se reproducen una vez al aparecer; los de tipo "tocar" repiten al pasar el puntero. Con movimiento reducido quedan quietos en su pose final. No se usan el logo de Instagram ni el pavo.
 
 **Key Characteristics:**
 - Papel crema con textura y lavados transparentes; nada de color plano ni degradados digitales.
@@ -299,7 +302,8 @@ El movimiento se rige por la filosofía de Emil Kowalski (skills `animate` y `re
 | Error en un juego | Cada pregunta | Vaivén de 4 px dos veces en 240 ms, color arcilla |
 | Combo | Ocasional | Entra desde `scale(0.95)` con opacidad, 180 ms |
 | Cápsulas | Una vez por lección | Stagger de 60 ms, 300 ms `--ease-out`; la clave de Sol se revela de abajo hacia arriba con `clip-path: inset()` en 1.2 s `--ease-in-out` |
-| "Así no" en la postura | Pocas veces | Cruce con `blur(2px)`, 200 ms `ease` |
+| Punto de postura activo | Varias veces por lección | El punto crece a `scale(1.18)` y pasa a ocre, 180 ms `--ease-out`; la frase entra desde `translateY(4px)`, 180 ms; al cambiar de imagen, fundido de 240 ms |
+| Personajes Lottie | Una vez por pantalla | Su propia animación de Lordicon, sin bucle |
 | Poner algo en el bosque | Pocas veces | Baja desde `translateY(-8px) scale(0.95)`, 220 ms `--ease-out`; quitarlo, 150 ms |
 | Fin de práctica | Una vez al día | Estrellas en stagger de 80 ms desde `scale(0.9)`, 300 ms `--ease-out` |
 | Festejo de fin de nivel | Rara vez | La medalla entra con un resorte suave (`bounce` 0.2, 0.6 s) y caen hasta 30 hojas y pétalos de acuarela durante 2.4 s |

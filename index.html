@@ -23,6 +23,7 @@
   --on-sol:#FBF7EE; --on-re:#3A3128; --on-la:#FBF7EE; --on-mi:#FBF7EE;
   --wash-a:#DCE7C8; --wash-b:#C9D9B0; --rio:#9DB6C4; --sendero:#EAD9B4;
   --r-l:22px; --r-m:14px; --r-s:9px;
+  --foto-papel:#FBF7EE; --foto-punto:#647745; --foto-punto-on:#C4923A; --foto-tinta:#3A3128;
   --f-display:Fraunces,Georgia,"Times New Roman",serif; --f-hand:Caveat,"Segoe Print",cursive;
   --ease-out:cubic-bezier(0.23,1,0.32,1); --ease-in-out:cubic-bezier(0.77,0,0.175,1); --ease-drawer:cubic-bezier(0.32,0.72,0,1);
   --dur-press:140ms; --dur-fast:180ms; --dur-base:240ms; --dur-panel:320ms;
@@ -614,20 +615,35 @@ button.rc:active{transform:scale(.96)}
 .penta-phr .phr-n{padding-bottom:70px}
 .rc-fig{color:var(--ink);margin-bottom:4px}
 
-/* postura 2D */
-.p2d-wrap{display:grid;gap:12px;justify-items:center;text-align:center}
-.p2d-stage{width:100%;max-width:560px}
-.p2d-wrap.big .p2d-stage{max-width:760px}
-.p2d{width:100%;height:auto;display:block;border-radius:20px;background:var(--surface)}
-.p2d .rot text{font-family:"Nunito Sans",sans-serif}
-.sin-nombres .rots{display:none}
-.p2d-cap{font-weight:600;max-width:60ch}
-.p2d-cap .no{color:var(--danger)}
-.p2d-cap .si{color:var(--pine)}
-.btn.danger-on{border-color:var(--danger);background:var(--danger-soft);color:var(--danger)}
-.p2d-leyenda{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-weight:800;font-size:.9rem}
-.p2d-leyenda span{display:inline-flex;align-items:center;gap:6px}
-.p2d-leyenda i{width:22px;height:12px;border-radius:6px;display:inline-block}
+/* postura con acuarelas del club: puntos numerados sobre la foto */
+.pos-wrap{display:grid;gap:12px;justify-items:center;text-align:center}
+.pos-paso{font:600 1.5rem var(--f-hand);color:var(--gold-ink)}
+.pos-foto{position:relative;margin:0;max-width:620px;border-radius:var(--r-l);overflow:hidden;background:var(--foto-papel);box-shadow:0 0 0 1px var(--line)}
+.pos-wrap.big .pos-foto{max-width:840px}
+.pos-foto img{display:block;width:100%;height:100%}
+.pos-punto{position:absolute;transform:translate(-50%,-50%);width:34px;height:34px;padding:0;border-radius:50%;border:2.5px solid var(--foto-papel);background:var(--foto-punto);color:var(--foto-papel);font:800 .95rem/1 "Nunito Sans",sans-serif;display:grid;place-items:center;box-shadow:0 2px 6px rgb(58 49 40 / .35);transition:transform var(--dur-fast) var(--ease-out),background-color var(--dur-fast) ease,color var(--dur-fast) ease}
+.pos-punto::before{content:"";position:absolute;inset:-6px;border-radius:50%}
+.pos-punto.on{background:var(--foto-punto-on);color:var(--foto-tinta);transform:translate(-50%,-50%) scale(1.18)}
+.pos-punto:active{transform:translate(-50%,-50%) scale(.94)}
+@media (max-width:560px){.pos-punto{width:26px;height:26px;font-size:.8rem;border-width:2px}.pos-punto::before{inset:-9px}}
+.pos-cap{display:flex;gap:10px;align-items:center;justify-content:center;font-weight:700;font-size:1.05rem;max-width:46ch;min-height:3em;text-align:left}
+.pos-cap b{flex:none;width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--on-re);display:grid;place-items:center;font-size:.95rem}
+.pos-nav{display:flex;gap:12px;align-items:center;justify-content:center}
+
+/* personajes y animaciones Lottie */
+.acuarela{mix-blend-mode:multiply}
+.vineta{-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .acuarela{mix-blend-mode:normal}}
+:root[data-theme="dark"] .acuarela{mix-blend-mode:normal}
+.guia{display:flex;align-items:center;gap:14px;margin:4px 0 14px}
+.guia img{width:clamp(76px,15vw,112px);height:auto;flex:none}
+.guia .sec-title{margin:0}
+.guia-dice{font:600 1.4rem/1.1 var(--f-hand);color:var(--gold-ink)}
+.lot{display:inline-grid;place-items:center;flex:none;width:56px;height:56px;border-radius:50%;background:var(--foto-papel)}
+.lot svg{width:100%;height:100%}
+.lot-l{width:112px;height:112px}
+.reto-casa{margin:14px auto 0;display:grid;gap:8px;justify-items:center;max-width:46ch}
+.reto-casa img{width:min(260px,70vw);height:auto}
 
 /* juegos de notas y cápsulas */
 .fb-juego{width:100%}
@@ -698,7 +714,7 @@ button.fig,button.caja{cursor:pointer}
 @keyframes hoja{0%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(var(--x),52vh) rotate(160deg)}100%{transform:translate(calc(var(--x) * -.4),108vh) rotate(320deg)}}
 .creditos{font-size:.8rem;color:var(--ink-2);text-align:center;margin-top:6px}
 .login-ilus{margin:0;display:grid;justify-items:center}
-.login-ilus img{width:min(420px,100%);height:auto;mix-blend-mode:multiply;border-radius:4px}
+.login-ilus img{width:min(420px,100%);height:auto}
 .mano{font-family:var(--f-hand);font-weight:600}
 @media (prefers-reduced-motion: reduce){.hojas{display:none}.g-stars .i-star,.cap-body > *,.rc.ok{animation:none}.trail .ring,.mnode .ring{animation:none;opacity:.8}}
 /* toques cómodos para dedos de niño en pantallas táctiles */
@@ -2184,7 +2200,7 @@ function viewLogin(){
     <section class="login-hero">
       <div><h1>Tu sendero en el violín empieza aquí</h1>
       <p>Cada lección es un árbol del sendero. Aquí encuentras tus canciones, el metrónomo y el afinador para practicar en casa.</p></div>
-      <figure class="login-ilus"><img src="assets/ilustraciones/ives-oso-arroyo.webp" width="1000" height="1091" alt="Acuarela antigua: un oso pardo cruza un arroyo en el bosque, bajo ramas de hojas amarillas" decoding="async"><figcaption class="creditos">Ilustración de Sarah Noble Ives, hacia 1907. Dominio público.</figcaption></figure>
+      <figure class="login-ilus"><img class="acuarela" src="assets/ilustraciones/osito-bosque.webp" width="872" height="768" alt="Acuarela: un osito con bufanda en un sendero del bosque" decoding="async"><figcaption class="creditos">Animaciones de <a href="https://lordicon.com/" target="_blank" rel="noopener">Lordicon</a>.</figcaption></figure>
     </section>
     <section class="login-grid">
       <form class="card" id="f-alumno" autocomplete="off">
@@ -2369,7 +2385,7 @@ function renderInicio(cont, al){
   $$('[data-mniv]', cont).forEach(b => b.onclick = () => { S.mapaNivel = +b.dataset.mniv; secKey = ''; renderAlumnoData(); });
   if(primero){ secKey = 'inicio:' + nv; requestAnimationFrame(() => $('.mnode.current', cont)?.scrollIntoView({block:'center', behavior:'auto'})); }
 }
-const videoAvisoHTML = song => `<div class="aviso"><svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="3" fill="var(--pine)"/><path d="M16 10l6-3v10l-6-3z" fill="var(--gold)"/></svg><div><strong>¡Lograste 2 estrellas!</strong><p>Envía al grupo de WhatsApp del club tu video tocando «${esc(song)}». Tu maestro lo revisará para que avances.</p></div></div>`;
+const videoAvisoHTML = song => `<div class="aviso"><span class="lot" data-lottie="camara" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40"><rect x="2" y="6" width="14" height="12" rx="3" fill="var(--pine)"/><path d="M16 10l6-3v10l-6-3z" fill="var(--gold)"/></svg></span><div><strong>¡Lograste 2 estrellas!</strong><p>Envía al grupo de WhatsApp del club tu video tocando «${esc(song)}». Tu maestro lo revisará para que avances.</p></div></div>`;
 function senderoSVG(al, ver){
   const niv = nivelDe(al), ls = niv.lecciones, total = ls.length;
   const W = 340, step = 96, top = 50;
@@ -2419,6 +2435,14 @@ function cancionesDelAlumno(al){
   return lista.reverse();
 }
 function ejCancion(id){ const c = catalogo()[id]; return {key:'cancion', cancion:id, titulo:c.titulo, nombre:c.titulo, compas:c.compas, anacrusa:c.anacrusa || 0, notas:c.frases.flat(), frases:c.frases, letras:c.letras, igual:c.igual || c.frases.map(() => null)}; }
+/* personajes del club que acompañan cada sección */
+const GUIAS = {
+  partituras:{img:'raton', w:640, h:556, alt:'Un ratón con gorra y mochila', dice:'Aquí guardo tus canciones.'},
+  herramientas:{img:'erizo', w:504, h:640, alt:'Un erizo con su cinturón de herramientas', dice:'¡Mis herramientas para practicar!'},
+  logros:{img:'zorro', w:640, h:622, alt:'Un zorro con chaleco verde', dice:'¡Mira todo lo que lograste!'},
+  bosque:{img:'ardilla', w:560, h:640, alt:'Una ardilla que lee un mapa del bosque', dice:'Planta lo que ganaste.'}
+};
+const guiaHTML = (sec, titulo) => { const g = GUIAS[sec]; return `<div class="guia"><img class="acuarela vineta" src="assets/ilustraciones/${g.img}.webp" width="${g.w}" height="${g.h}" alt="${g.alt}" decoding="async"><div><h1 class="sec-title">${titulo}</h1><p class="guia-dice">${g.dice}</p></div></div>`; };
 function renderPartituras(cont, al){
   const lista = cancionesDelAlumno(al), cat = catalogo();
   if(S.partSel && cat[S.partSel]){
@@ -2443,7 +2467,7 @@ function renderPartituras(cont, al){
   }
   const [actual, ...antes] = lista;
   const tarjeta = (s, grande) => `<button class="part-card${grande ? ' actual' : ''}" data-part="${esc(s.id)}"><span class="part-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="${SECCIONES[1].icono}"/></svg></span><span><strong>${esc(cat[s.id].titulo)}</strong><small>${grande ? 'Tu partitura de ahora' : `Nivel ${s.nivel}, lección ${s.leccion}`}</small></span></button>`;
-  cont.innerHTML = `<h1 class="sec-title">Mis partituras</h1>
+  cont.innerHTML = `${guiaHTML('partituras', 'Mis partituras')}
     ${actual ? tarjeta(actual, true) : '<p class="empty">Tu primera canción aparece aquí en cuanto la empieces.</p>'}
     ${antes.length ? `<h2 class="sec-sub">Ya las tocaste</h2><div class="part-list">${antes.map(s => tarjeta(s, false)).join('')}</div>` : ''}
     <p style="margin-top:18px"><button class="btn small" data-rep-pdf="${al.nivel || 1}">Descargar todas las canciones del Nivel ${al.nivel || 1}</button></p>`;
@@ -2453,7 +2477,7 @@ function renderPartituras(cont, al){
 
 /* ---- Herramientas ---- */
 function herramientasHTML(){
-  return `<h1 class="sec-title">Herramientas</h1><section class="card tools" id="al-tools" aria-label="Herramientas de práctica">
+  return `${guiaHTML('herramientas', 'Herramientas')}<section class="card tools" id="al-tools" aria-label="Herramientas de práctica">
     <div class="tabs" role="tablist">${[['ver', 'Violín'], ['postura', 'Postura'], ['metro', 'Metrónomo'], ['ritmo', 'Juegos'], ['tuner', 'Afinador']].map(([id, n]) => `<button class="tab" role="tab" data-tool="${id}" aria-selected="${alTool === id}">${n}</button>`).join('')}</div>
     <div class="tool-body" id="al-tool-body"></div></section>`;
 }
@@ -2507,7 +2531,7 @@ function rankingHTML(al){
 }
 function renderLogros(cont, al){
   const p = progresoDe(al), completos = nivelesCompletos(al);
-  cont.innerHTML = `<h1 class="sec-title">Mis logros</h1>
+  cont.innerHTML = `${guiaHTML('logros', 'Mis logros')}
     <div class="logros-grid">
       <section class="card"><h2 class="sec-sub">Medallas</h2><div class="medallas">${MEDALLAS.map((m, i) => `<div class="med${completos.includes(i + 1) ? '' : ' off'}">${medallaSVG(i + 1, completos.includes(i + 1), 72)}<small>${m}</small></div>`).join('')}</div></section>
       <section class="card"><h2 class="sec-sub">Racha y calendario</h2><div class="racha">${ICON_FUEGO}<b>${rachaActual(p)}</b> ${rachaActual(p) === 1 ? 'día seguido' : 'días seguidos'}</div>${calendarioHTML(p)}</section>
@@ -2528,7 +2552,7 @@ function revisarFestejo(al){
 function mostrarFestejo(al, n){
   const box = $('#practica'); if(!box) return;
   box.hidden = false; document.body.style.overflow = 'hidden';
-  box.innerHTML = `<div class="pr-body"><div class="g-end" style="margin-top:6vh"><div data-fx-med>${medallaSVG(n, true, 160)}</div><h2 class="pr-title">¡Nivel ${n} completo!</h2><p class="mission" style="margin:0 auto">Ganaste la medalla ${MEDALLAS[n - 1]}.</p><p class="mission" style="margin:0 auto">¡Felicidades, ${esc(al.nombre)}! Tu bosque creció.</p></div></div>
+  box.innerHTML = `<div class="pr-body"><div class="g-end" style="margin-top:6vh"><span class="lot lot-l" data-lottie="abeja" aria-hidden="true"></span><div data-fx-med>${medallaSVG(n, true, 160)}</div><h2 class="pr-title">¡Nivel ${n} completo!</h2><p class="mission" style="margin:0 auto">Ganaste la medalla ${MEDALLAS[n - 1]}.</p><p class="mission" style="margin:0 auto">¡Felicidades, ${esc(al.nombre)}! Tu bosque creció.</p></div></div>
     <div class="pr-foot"><button class="btn" data-fx-cert>Descargar mi certificado</button><button class="btn primary big" data-fx-ok>¡Genial!</button></div>`;
   hojasCaen(); playSeq([[60, .4], [64, .4], [67, .4], [72, 1.2]], 120);
   animar($('[data-fx-med]', box), [{transform:'scale(.9)', opacity:0}, {transform:'scale(1.03)', opacity:1, offset:.7}, {transform:'scale(1)', opacity:1}], {duration:600, easing:'cubic-bezier(0.23,1,0.32,1)'});
@@ -2588,7 +2612,7 @@ function renderBosque(cont, al){
   const p = progresoDe(al), saldo = saldoHojas(al), completos = nivelesCompletos(al);
   const sel = S.bosqueSel;
   const colocado = sel?.lugar != null ? p.bosque[sel.lugar] : null;
-  cont.innerHTML = `<div class="bq-head"><h1 class="sec-title">Mi bosque</h1><span class="hojas-big">${ICON_HOJA}<b>${saldo}</b> hojitas</span></div>
+  cont.innerHTML = `<div class="bq-head">${guiaHTML('bosque', 'Mi bosque')}<span class="hojas-big">${ICON_HOJA}<b>${saldo}</b> hojitas</span></div>
     <p class="fine">Ganas hojitas con cada estrella de tu maestro (10), cada estrella de juego (1) y cada día que practicas (2).</p>
     <p class="bq-msg" aria-live="polite">${sel?.item ? `Toca un lugar vacío para poner: <strong>${ITEMS[sel.item].nombre}</strong>` : colocado ? `<strong>${ITEMS[colocado[0]].nombre}</strong> <button class="btn small" data-bq-quitar>Quitar (+${ITEMS[colocado[0]].costo} hojitas)</button>` : 'Elige algo de la tienda y ponlo en tu bosque.'}</p>
     <div class="bq-wrap">${bosqueSVG(p, sel?.lugar)}</div>
@@ -3794,7 +3818,7 @@ function mountJuego(el, {tipo, pool, nueva = null, bpm = 66, alId = null, clave 
     rel.clear(); const est = aciertos / J.rondas >= .9 ? 3 : aciertos / J.rondas >= .7 ? 2 : 1;
     if(alId) guardarJuego(alId, clave, est);
     comboEl.textContent = ''; msg.textContent = ''; opts.innerHTML = '';
-    area.innerHTML = `<div class="g-end">${estrellasGrandes(est)}<p class="pr-title">${est === 3 ? '¡Perfecto!' : est === 2 ? '¡Muy bien!' : '¡Lo lograste!'}</p><p class="muted">${aciertos} de ${J.rondas} · ${puntos} puntos</p></div>`;
+    area.innerHTML = `<div class="g-end">${est >= 2 ? '<span class="lot lot-l" data-lottie="ardilla" aria-hidden="true"></span>' : ''}${estrellasGrandes(est)}<p class="pr-title">${est === 3 ? '¡Perfecto!' : est === 2 ? '¡Muy bien!' : '¡Lo lograste!'}</p><p class="muted">${aciertos} de ${J.rondas} · ${puntos} puntos</p></div>`;
     ctrl.innerHTML = `<button class="btn" data-g-otra>Jugar otra vez</button>${onFin ? '<button class="btn primary big" data-g-fin>Seguir</button>' : ''}`;
 
     $('[data-g-otra]', ctrl).onclick = () => { ronda = 0; aciertos = 0; combo = 0; puntos = 0; resultados = []; pregunta(); };
@@ -4074,10 +4098,10 @@ const PASOS = {
   logro({body, foot, al, L}){
     marcarPractica(al.id);
     const song = catalogo()[cancionDe(al, L.n)]?.titulo || 'tu canción';
-    body.innerHTML = `<div class="g-end" style="margin-top:4vh">${treeIcon(96, 'var(--pine)')}<h2 class="pr-title">¡Práctica lista!</h2>${PR.estrellas ? estrellasGrandes(PR.estrellas) : ''}
+    body.innerHTML = `<div class="g-end" style="margin-top:4vh"><span class="lot lot-l" data-lottie="osito" aria-hidden="true">${treeIcon(80, 'var(--pine)')}</span><h2 class="pr-title">¡Práctica lista!</h2>${PR.estrellas ? estrellasGrandes(PR.estrellas) : ''}
       <p class="fine">${ICON_HOJA} Ganaste hojitas para tu bosque</p>
       ${PR.estrellas >= 2 ? videoAvisoHTML(song) : ''}
-      <p class="mission" style="margin:14px auto 0"><strong>Reto para casa:</strong> ${esc(L.casa)}</p></div>`;
+      <figure class="reto-casa"><img class="acuarela vineta" src="assets/ilustraciones/osito-casa.webp" width="1000" height="718" alt="El osito lee en su casita del árbol" decoding="async"><figcaption class="mission"><strong>Reto para casa:</strong> ${esc(L.casa)}</figcaption></figure></div>`;
     foot.innerHTML = '<button class="btn primary big" data-pr-fin>Volver al sendero</button>';
     $('[data-pr-fin]', foot).onclick = () => { cerrarPractica(); renderAlumnoData(); };
   }
@@ -4167,7 +4191,7 @@ Object.assign(JUEGOS, {pentagrama:{nombre:'Del pentagrama al violín', rondas:8,
 
 /* cómo se leen las notas en cada nivel */
 const modoNotas = nivel => nivel <= 2 ? 'tarjetas' : nivel === 3 ? 'ambos' : 'pentagrama';
-const VISTA_2D = {manoIzq:'izq', manoDer:'der', hombros:'postura', general:'postura', pies:'postura', izq:'izq', der:'der', postura:'postura', brazo:'brazo'};
+const VISTA_2D = {manoIzq:'izq', manoDer:'arco', der:'arco', izq:'izq', hombros:'postura', general:'postura', pies:'postura', postura:'postura', brazo:'postura'};
 
 /* notas que el alumno ya sabe leer en cada lección (juegos de notas) */
 const NATURALES = [55,57,59,60,62,64,65,67,69,71,72,74,76,77,79,81,83];
@@ -4345,7 +4369,7 @@ function mountJuegoNotas(el, {tipo, pool, notasCancion = null, alId = null, clav
     const pct = total ? aciertos / total : 0, est = pct >= .9 ? 3 : pct >= .7 ? 2 : 1;
     if(alId) guardarJuego(alId, clave, est);
     comboEl.textContent = ''; msg.textContent = '';
-    area.innerHTML = `<div class="g-end">${estrellasGrandes(est)}<p class="pr-title">${est === 3 ? '¡Perfecto!' : est === 2 ? '¡Muy bien!' : '¡Lo lograste!'}</p><p class="muted">${aciertos} de ${total} · ${puntos} puntos</p></div>`;
+    area.innerHTML = `<div class="g-end">${est >= 2 ? '<span class="lot lot-l" data-lottie="ardilla" aria-hidden="true"></span>' : ''}${estrellasGrandes(est)}<p class="pr-title">${est === 3 ? '¡Perfecto!' : est === 2 ? '¡Muy bien!' : '¡Lo lograste!'}</p><p class="muted">${aciertos} de ${total} · ${puntos} puntos</p></div>`;
     ctrl.innerHTML = `<button class="btn" data-g-otra>Jugar otra vez</button>${onFin ? '<button class="btn primary big" data-g-fin>Seguir</button>' : ''}`;
 
     $('[data-g-otra]', ctrl).onclick = () => { ronda = 0; aciertos = 0; combo = 0; puntos = 0; resultados = []; inicio(); };
@@ -4632,196 +4656,103 @@ function mapaSVG(al, nivel){
   return o + '</svg>';
 }
 
-/* ============ postura 2D ============
-   Ilustraciones propias (SVG) con colores fijos para cada parte:
-   brazo (hombro a codo), antebrazo (codo a muñeca) y mano. */
-const CUERPO = {brazo:'#6E8DA3', antebrazo:'#C4923A', mano:'#F3D2B8', borde:'#5A4636', pelo:'#6B4A2E', camisa:'#647745', pantalon:'#4F5E6B', mal:'#B0685A', madera:'#B97A45', maderaOsc:'#5A3A22', ebano:'#2E2620'};
-const trazo = (d, col, w, extra = '') => `<path d="${d}" fill="none" stroke="${CUERPO.borde}" stroke-width="${w + 5}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
-const seg = (x1, y1, x2, y2, col, w) => trazo(`M${x1} ${y1}L${x2} ${y2}`, col, w);
-function rotulo(x, y, tx, ty, txt, col = 'var(--ink)'){
-  const w = txt.length * 7.4 + 18;
-  const ax = tx < x ? tx + w / 2 : tx - w / 2;
-  return `<g class="rot"><path d="M${x} ${y}L${ax} ${ty}" stroke="${col}" stroke-width="1.6" stroke-dasharray="3 3"/><circle cx="${x}" cy="${y}" r="3.4" fill="${col}"/>
-    <rect x="${tx - w / 2}" y="${ty - 13}" width="${w}" height="26" rx="13" fill="var(--surface)" stroke="${col}" stroke-width="1.6"/><text x="${tx}" y="${ty + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="${col}">${txt}</text></g>`;
-}
-/* violín visto desde arriba, apuntando a la derecha; (x, y) = punta del botón, largo total 230 */
-function violinPlano(x, y, ang = 0){
-  const body = 'M0 0C0-26 14-38 34-38S58-30 62-24C68-18 76-18 82-24S96-34 110-32 130-20 130 0 124 32 110 32 88 30 82 24 68 18 62 24 50 38 34 38 0 26 0 0Z';
-  return `<g transform="translate(${x} ${y}) rotate(${ang})">
-    <path d="${body}" fill="${CUERPO.madera}" stroke="${CUERPO.maderaOsc}" stroke-width="3"/>
-    <path d="M44-15c-4 6 3 9 1 15s-6 9-2 14M44 15" stroke="${CUERPO.ebano}" stroke-width="2.4" fill="none"/>
-    <path d="M44 15c-4-6 3-9 1-15" stroke="none"/>
-    <path d="M86-8h92l5 3v10l-5 3H86z" fill="${CUERPO.ebano}"/>
-    <path d="M178-6h20c6 0 8 2 8 6s-2 6-8 6h-20z" fill="${CUERPO.madera}" stroke="${CUERPO.maderaOsc}" stroke-width="2"/>
-    <circle cx="214" cy="0" r="10" fill="${CUERPO.madera}" stroke="${CUERPO.maderaOsc}" stroke-width="2.4"/>
-    <path d="M186-6v-8M196-6v-8M186 6v8M196 6v8" stroke="${CUERPO.ebano}" stroke-width="4" stroke-linecap="round"/>
-    <path d="M8-10h20v20H8z" fill="#3B2A1E" rx="4"/>
-    <path d="M22-8h20l0 16H22z" fill="${CUERPO.ebano}"/>
-    <rect x="58" y="-15" width="5" height="30" rx="2" fill="#E9DCC2" stroke="#8a6528"/>
-    ${[-5.5, -1.8, 1.8, 5.5].map(k => `<path d="M30 ${k * 1.25}L180 ${k * .7}" stroke="#E9E4D8" stroke-width="1.1"/>`).join('')}
-  </g>`;
-}
-function ninoCabeza(cx, cy){
-  return `<circle cx="${cx}" cy="${cy}" r="52" fill="${CUERPO.mano}" stroke="${CUERPO.borde}" stroke-width="3"/>
-    <path d="M${cx - 52} ${cy - 2}C${cx - 58} ${cy - 50} ${cx - 10} ${cy - 72} ${cx + 30} ${cy - 50}C${cx + 44} ${cy - 42} ${cx + 50} ${cy - 30} ${cx + 50} ${cy - 20}C${cx + 26} ${cy - 30} ${cx} ${cy - 30} ${cx - 14} ${cy - 12}C${cx - 22} ${cy - 4} ${cx - 30} ${cy + 10} ${cx - 44} ${cy + 20}Z" fill="${CUERPO.pelo}"/>
-    <circle cx="${cx - 18}" cy="${cy + 6}" r="10" fill="${CUERPO.mano}" stroke="${CUERPO.borde}" stroke-width="2.4"/>
-    <ellipse cx="${cx + 30}" cy="${cy - 2}" rx="4.6" ry="6" fill="#1b1408"/><circle cx="${cx + 31.5}" cy="${cy - 4}" r="1.6" fill="#fff"/>
-    <ellipse cx="${cx + 22}" cy="${cy + 18}" rx="9" ry="5.5" fill="#F29C9C" opacity=".7"/>
-    <path d="M${cx + 34} ${cy + 22}q8 7 16 0" fill="none" stroke="#7A3A2A" stroke-width="3" stroke-linecap="round"/>`;
-}
-
-/* ---- vista 1: postura de perfil ---- */
-function dibujoPostura(err){
-  const hombro = err === 'hombro', caido = err === 'caido';
-  const sh = hombro ? [168, 178] : [168, 196];
-  const vAng = caido ? 14 : -4;
-  const vx = 168, vy = 172;
-  const rad = vAng * Math.PI / 180, cuello = [vx + 150 * Math.cos(rad), vy + 150 * Math.sin(rad)];
-  const codo = [205, 288], muneca = [cuello[0] - 8, cuello[1] + 26];
-  return `<svg viewBox="0 0 440 440" class="p2d" role="img" aria-label="Postura para tocar el violín, de perfil">
-    <ellipse cx="190" cy="424" rx="110" ry="10" fill="var(--line)"/>
-    <path d="M140 300v112h22V318z" fill="${CUERPO.pantalon}"/><path d="M168 300v112h22V300z" fill="${CUERPO.pantalon}"/>
-    <path d="M136 410h34c8 0 12 4 12 9H136z" fill="#3B2A1E"/><path d="M170 410h36c8 0 12 4 12 9h-48z" fill="#3B2A1E"/>
-    <rect x="118" y="168" width="84" height="146" rx="30" fill="${CUERPO.camisa}" stroke="${CUERPO.borde}" stroke-width="3"/>
-    ${hombro ? `<path d="M140 190c6-30 44-38 56-10" fill="${CUERPO.mal}" stroke="${CUERPO.borde}" stroke-width="3"/>` : ''}
-    <rect x="146" y="142" width="26" height="34" rx="10" fill="${CUERPO.mano}" stroke="${CUERPO.borde}" stroke-width="3"/>
-    ${ninoCabeza(158, hombro ? 102 : 110)}
-    ${violinPlano(vx, vy, vAng)}
-    <path d="M222 104L262 214" stroke="#8B5E3C" stroke-width="4" stroke-linecap="round"/><path d="M224 110l8 20" stroke="#1b1408" stroke-width="7" stroke-linecap="round"/>
-    <circle cx="226" cy="112" r="11" fill="${CUERPO.mano}" stroke="${CUERPO.borde}" stroke-width="2.5"/>
-    ${seg(sh[0], sh[1], codo[0], codo[1], hombro ? CUERPO.mal : CUERPO.brazo, 24)}
-    ${seg(codo[0], codo[1], muneca[0], muneca[1], CUERPO.antebrazo, 21)}
-    <circle cx="${codo[0]}" cy="${codo[1]}" r="11" fill="${CUERPO.antebrazo}" stroke="${CUERPO.borde}" stroke-width="2.5"/>
-    <circle cx="${muneca[0] + 2}" cy="${muneca[1] - 12}" r="13" fill="${CUERPO.mano}" stroke="${CUERPO.borde}" stroke-width="2.5"/>
-    ${[0, 1, 2].map(k => trazo(`M${muneca[0] + 4 + k * 5} ${muneca[1] - 20}q${6 + k * 4} -18 ${14 + k * 8} -14`, CUERPO.mano, 7)).join('')}
-    <g class="rots">
-      ${rotulo(sh[0] + 14, sh[1] + 40, 70, 262, 'Brazo', CUERPO.brazo)}
-      ${rotulo(260, 250, 330, 330, 'Antebrazo', CUERPO.antebrazo)}
-      ${rotulo(muneca[0] + 6, muneca[1] - 30, 380, 80, 'Mano', '#B8693A')}
-      ${rotulo(186, 414, 330, 400, 'Pies separados', 'var(--ink-2)')}
-      ${hombro ? rotulo(160, 172, 84, 120, 'Hombro levantado', CUERPO.mal) : rotulo(118, 190, 60, 150, 'Espalda larga', 'var(--ink-2)')}
-      ${caido ? rotulo(cuello[0], cuello[1], 360, 250, 'Violín caído', CUERPO.mal) : ''}
-    </g>
-  </svg>`;
-}
-
-/* ---- vista 2: mano izquierda de cerca ---- */
-function dibujoIzq(err){
-  const plana = err === 'plana', doblada = err === 'doblada';
-  const tips = [236, 276, 314, 350];
-  const mun = doblada ? [214, 206] : [206, 222];
-  const palma = doblada ? [236, 176] : [228, 188];
-  const dedos = tips.map((x, k) => plana
-    ? trazo(`M${palma[0] + k * 6} ${palma[1] - 20}L${x} 104`, CUERPO.mal, 15)
-    : trazo(`M${palma[0] + k * 7} ${palma[1] - 22}C${palma[0] + k * 7} ${70 - k * 2} ${x + 4} ${66 - k * 3} ${x} 102`, CUERPO.mano, 15)).join('');
-  return `<svg viewBox="0 0 440 300" class="p2d" role="img" aria-label="Mano izquierda sobre el diapasón">
-    <rect x="0" y="0" width="440" height="300" rx="20" fill="var(--surface-2)"/>
-    ${seg(-20, 330, 92, 262, CUERPO.brazo, 34)}
-    <circle cx="92" cy="262" r="17" fill="${CUERPO.antebrazo}" stroke="${CUERPO.borde}" stroke-width="3"/>
-    ${seg(92, 262, mun[0], mun[1], CUERPO.antebrazo, 30)}
-    ${trazo(`M${mun[0]} ${mun[1]}L${palma[0]} ${palma[1]}`, doblada ? CUERPO.mal : CUERPO.mano, 30)}
-    <ellipse cx="${palma[0] + 14}" cy="${palma[1] - 14}" rx="30" ry="24" fill="${CUERPO.mano}" stroke="${CUERPO.borde}" stroke-width="3"/>
-    ${dedos}
-    <rect x="-10" y="102" width="460" height="30" rx="6" fill="${CUERPO.ebano}"/>
-    <rect x="-10" y="132" width="460" height="18" rx="4" fill="${CUERPO.madera}" stroke="${CUERPO.maderaOsc}" stroke-width="2"/>
-    ${[106, 114, 122, 130].map(y => `<line x1="-10" y1="${y}" x2="450" y2="${y}" stroke="#E9E4D8" stroke-width="1.2"/>`).join('')}
-    ${tips.map(x => `<circle cx="${x}" cy="104" r="5" fill="${plana ? CUERPO.mal : '#F29C9C'}" stroke="${CUERPO.borde}" stroke-width="1.6"/>`).join('')}
-    ${trazo(`M${palma[0] - 6} ${palma[1] - 6}C${palma[0] - 16} ${palma[1] - 30} ${palma[0] - 20} ${palma[1] - 44} ${palma[0] - 10} ${palma[1] - 62}`, CUERPO.mano, 17)}
-    <g class="rots">
-      ${rotulo(290, 56, 340, 30, plana ? 'Dedos planos' : 'Dedos redondos: casita', plana ? CUERPO.mal : '#B8693A')}
-      ${rotulo(palma[0] - 12, palma[1] - 58, 90, 70, 'Pulgar suave', '#B8693A')}
-      ${rotulo(mun[0] + 4, mun[1] + 4, 330, 200, doblada ? 'Muñeca doblada' : 'Muñeca recta', doblada ? CUERPO.mal : 'var(--pine)')}
-      ${rotulo(150, 244, 250, 270, 'Antebrazo', CUERPO.antebrazo)}
-      ${rotulo(40, 296, 70, 210, 'Brazo', CUERPO.brazo)}
-    </g>
-  </svg>`;
-}
-
-/* ---- vista 3: mano del arco de cerca ---- */
-function dibujoDer(err){
-  const pulgarMal = err === 'pulgar', menique = err === 'menique';
-  return `<svg viewBox="0 0 440 300" class="p2d" role="img" aria-label="Cómo tomar el arco">
-    <rect x="0" y="0" width="440" height="300" rx="20" fill="var(--surface-2)"/>
-    <rect x="30" y="176" width="420" height="7" rx="3" fill="#E9E4D8"/>
-    <rect x="20" y="164" width="440" height="11" rx="5" fill="#8B5E3C" stroke="${CUERPO.maderaOsc}" stroke-width="1.6"/>
-    <path d="M40 175h78l-8 30H48z" fill="#1b1408"/><circle cx="80" cy="190" r="6" fill="#E9E4D8"/>
-    ${seg(470, -30, 352, 86, CUERPO.antebrazo, 32)}
-    ${trazo('M352 86C320 100 240 100 196 118', CUERPO.mano, 38)}
-    ${pulgarMal ? '' : trazo('M214 122C196 150 176 168 134 178', CUERPO.mano, 15)}
-    ${trazo('M252 112C256 136 250 156 238 166', CUERPO.mano, 15)}
-    ${trazo('M228 116C224 144 196 168 176 178', CUERPO.mano, 15)}
-    ${trazo('M204 120C194 146 162 168 150 182', CUERPO.mano, 15)}
-    ${trazo(menique ? 'M184 124L100 150' : 'M186 124C164 120 132 128 126 160', menique ? CUERPO.mal : CUERPO.mano, 13)}
-    ${pulgarMal ? trazo('M214 130L110 196', CUERPO.mal, 15) : ''}
-    <g class="rots">
-      ${rotulo(pulgarMal ? 118 : 134, pulgarMal ? 190 : 176, 90, 250, pulgarMal ? 'Pulgar recto' : 'Pulgar doblado', pulgarMal ? CUERPO.mal : '#B8693A')}
-      ${rotulo(menique ? 104 : 128, menique ? 150 : 156, 110, 80, menique ? 'Meñique estirado' : 'Meñique curvo arriba', menique ? CUERPO.mal : '#B8693A')}
-      ${rotulo(206, 172, 240, 250, 'Dedos sueltos', '#B8693A')}
-      ${rotulo(300, 98, 250, 40, 'Muñeca flexible', 'var(--pine)')}
-      ${rotulo(410, 20, 370, 150, 'Antebrazo', CUERPO.antebrazo)}
-    </g>
-  </svg>`;
-}
-
-/* ---- vista 4: brazo del arco según la cuerda ---- */
-const ALTURA_CUERDA = [{id:'sol', codo:138, ang:-30}, {id:'re', codo:164, ang:-10}, {id:'la', codo:192, ang:10}, {id:'mi', codo:220, ang:30}];
-function dibujoBrazo(i){
-  const c = ALTURA_CUERDA[i], puente = [330, 200];
-  const cuerdas = ALTURA_CUERDA.map((q, k) => { const a = (-54 + k * 36) * Math.PI / 180; return [puente[0] + 58 * Math.sin(a), puente[1] - 58 * Math.cos(a) + 40]; });
-  const toque = cuerdas[i], rad = c.ang * Math.PI / 180, dir = [Math.cos(rad), Math.sin(rad)];
-  const mano = [toque[0] - dir[0] * 100, toque[1] - dir[1] * 100];
-  const hombro = [60, 104], codo = [104, c.codo];
-  return `<svg viewBox="0 0 440 320" class="p2d" role="img" aria-label="Altura del brazo del arco en la cuerda ${STR[c.id].nombre}">
-    <rect x="0" y="0" width="440" height="320" rx="20" fill="var(--surface-2)"/>
-    <path d="M${puente[0] - 80} 300C${puente[0] - 80} 200 ${puente[0] - 50} 176 ${puente[0]} 176S${puente[0] + 80} 200 ${puente[0] + 80} 300z" fill="${CUERPO.madera}" opacity=".35"/>
-    <path d="M${puente[0] - 62} 262C${puente[0] - 60} 212 ${puente[0] - 32} 186 ${puente[0]} 186S${puente[0] + 60} 212 ${puente[0] + 62} 262z" fill="#E9DCC2" stroke="#8a6528" stroke-width="2"/>
-    ${cuerdas.map((p, k) => `<circle cx="${p[0]}" cy="${p[1]}" r="${k === i ? 9 : 6}" fill="${STR[ALTURA_CUERDA[k].id].color}" stroke="#fff" stroke-width="2"/>`).join('')}
-    <circle cx="${hombro[0]}" cy="${hombro[1]}" r="20" fill="${CUERPO.camisa}" stroke="${CUERPO.borde}" stroke-width="3"/>
-    ${seg(hombro[0], hombro[1], codo[0], codo[1], CUERPO.brazo, 28)}
-    ${seg(codo[0], codo[1], mano[0] - 10, mano[1], CUERPO.antebrazo, 24)}
-    <circle cx="${codo[0]}" cy="${codo[1]}" r="13" fill="${CUERPO.antebrazo}" stroke="${CUERPO.borde}" stroke-width="2.5"/>
-    <path d="M${mano[0]} ${mano[1]}L${toque[0] + dir[0] * 70} ${toque[1] + dir[1] * 70}" stroke="#8B5E3C" stroke-width="6" stroke-linecap="round"/>
-    <circle cx="${mano[0]}" cy="${mano[1]}" r="16" fill="${CUERPO.mano}" stroke="${CUERPO.borde}" stroke-width="3"/>
-    <g class="rots">
-      ${rotulo(codo[0] - 6, codo[1] + 8, 90, 296, i === 0 ? 'Codo alto' : i === 3 ? 'Codo bajo' : 'Codo a media altura', 'var(--pine)')}
-      ${rotulo((hombro[0] + codo[0]) / 2 + 12, (hombro[1] + codo[1]) / 2, 150, 60, 'Brazo', CUERPO.brazo)}
-      ${rotulo((codo[0] + mano[0]) / 2, (codo[1] + mano[1]) / 2 + 10, 230, 296, 'Antebrazo', CUERPO.antebrazo)}
-      ${rotulo(toque[0], toque[1] - 10, 370, 60, `Cuerda ${STR[c.id].nombre}`, STR[c.id].color)}
-    </g>
-  </svg>`;
-}
-
-const VISTAS_2D = {
-  postura:{nombre:'Postura', dibujo:dibujoPostura, bien:'Pies separados, espalda larga, violín en el hombro y mirando hacia la voluta.', errores:[{id:'hombro', txt:'Hombro levantado', no:'El hombro sube a buscar el violín: se cansa y aprieta.'}, {id:'caido', txt:'Violín caído', no:'La voluta cae hacia el piso y el arco se resbala.'}]},
-  izq:{nombre:'Mano izquierda', dibujo:dibujoIzq, bien:'Dedos redondos como una casita, pulgar suave y muñeca recta.', errores:[{id:'plana', txt:'Dedos planos', no:'Los dedos acostados tocan dos cuerdas a la vez.'}, {id:'doblada', txt:'Muñeca doblada', no:'La muñeca se hunde y los dedos no llegan.'}]},
-  der:{nombre:'Mano del arco', dibujo:dibujoDer, bien:'Pulgar doblado, meñique curvo arriba y dedos sueltos sobre la vara.', errores:[{id:'pulgar', txt:'Pulgar recto', no:'El pulgar tieso aprieta el arco y el sonido raspa.'}, {id:'menique', txt:'Meñique estirado', no:'El meñique estirado no sostiene el peso del arco.'}]},
-  brazo:{nombre:'Brazo del arco', dibujo:dibujoBrazo, bien:'Codo alto para Sol, más bajo para Re y La, y bajito para Mi.', errores:[]}
+/* ============ postura con las acuarelas del club ============
+   Imágenes de assets/ilustraciones. Cada punto es [x %, y %, frase] sobre la imagen. */
+const POSTURA = {
+  postura:{nombre:'Postura', fotos:[
+    {img:'postura-violinista', w:1200, h:900, alt:'Un joven toca el violín con buena postura', puntos:[
+      [45, 40, 'El violín descansa en el hombro izquierdo y la mandíbula lo sostiene.'],
+      [84, 56, 'Dedos redondos sobre las cuerdas.'],
+      [80, 71, 'Muñeca recta: la palma no toca el mástil.'],
+      [30, 74, 'La mano del arco va suave, sin apretar.'],
+      [9, 73, 'Codo suelto: sube para Sol y baja para Mi.'],
+      [61, 51, 'El arco cruza derecho, entre el puente y el diapasón.']]}]},
+  izq:{nombre:'Mano izquierda', fotos:[
+    {img:'postura-mano-izq', w:579, h:609, alt:'La mano izquierda sobre el diapasón del violín', puntos:[
+      [62, 52, 'Dedos redondos, de puntita sobre la cuerda.'],
+      [52, 76, 'Muñeca recta, en línea con el antebrazo.'],
+      [46, 91, 'El antebrazo queda debajo del violín.']]}]},
+  arco:{nombre:'Mano del arco', fotos:[
+    {img:'arco-preparar', w:1100, h:719, titulo:'Prepara la mano', alt:'Una mano forma un círculo con el pulgar y el dedo medio', puntos:[
+      [47, 83, 'El pulgar toca el dedo medio: haz un círculo.'],
+      [22, 70, 'Los otros dedos caen juntos y suaves.'],
+      [74, 42, 'Muñeca suelta.']]},
+    {img:'arco-tomar', w:733, h:1100, titulo:'Toma el arco', alt:'Una mano toma el arco junto a la nuez', puntos:[
+      [49, 41, 'Pulgar doblado, entre la vara y la nuez.'],
+      [26, 32, 'El índice abraza la vara.'],
+      [24, 55, 'Medio y anular caen junto a la nuez.']]},
+    {img:'arco-cerca', w:1100, h:823, titulo:'Mírala de cerca', alt:'La mano del arco vista de cerca', puntos:[
+      [33, 50, 'El índice se apoya en la vara.'],
+      [47, 70, 'Medio y anular abrazan la nuez.'],
+      [86, 44, 'Meñique redondo, de puntita sobre la vara.']]}]}
 };
 function mountPostura(el, {vista = 'postura', big = false} = {}){
-  let v = VISTAS_2D[vista] ? vista : 'postura', err = null, cuerda = 0, nombres = true, auto = 0;
+  let v = POSTURA[vista] ? vista : 'postura', i = 0, foto = -1;
+  const pasos = () => POSTURA[v].fotos.flatMap((f, fi) => f.puntos.map(([x, y, txt]) => ({fi, x, y, txt})));
+  const flecha = d => `<svg class="i i-s" viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
   const pinta = () => {
-    const V = VISTAS_2D[v], E = V.errores.find(e => e.id === err);
-    el.innerHTML = `<div class="p2d-wrap${big ? ' big' : ''}">
-      <div class="seg" role="group" aria-label="Qué mirar">${Object.entries(VISTAS_2D).map(([id, x]) => `<button data-p2v="${id}" aria-pressed="${id === v}">${x.nombre}</button>`).join('')}</div>
-      <div class="p2d-stage${nombres ? '' : ' sin-nombres'}">${v === 'brazo' ? dibujoBrazo(cuerda) : V.dibujo(err)}</div>
-      <p class="p2d-cap">${E ? `<b class="no">Así no:</b> ${esc(E.no)}` : `<b class="si">Así sí:</b> ${esc(V.bien)}`}</p>
-      <div class="row" style="justify-content:center">
-        ${v === 'brazo' ? ALTURA_CUERDA.map((q, k) => `<button class="btn small${k === cuerda ? ' primary' : ''}" data-p2c="${k}">${STR[q.id].nombre}</button>`).join('') + `<button class="btn small" data-p2auto>${auto ? '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.5h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/></svg> Detener' : '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg> Recorrer las cuerdas'}</button>` : ''}
-        ${V.errores.map(e => `<button class="btn small${err === e.id ? ' danger-on' : ''}" data-p2e="${e.id}">${err === e.id ? 'Ver así sí' : 'Así no: ' + e.txt.toLowerCase()}</button>`).join('')}
-        <label class="switch"><input type="checkbox" data-p2n ${nombres ? 'checked' : ''}> Nombres</label>
-      </div>
-      <div class="p2d-leyenda"><span><i style="background:${CUERPO.brazo}"></i>Brazo</span><span><i style="background:${CUERPO.antebrazo}"></i>Antebrazo</span><span><i style="background:${CUERPO.mano};border:1px solid ${CUERPO.borde}"></i>Mano</span></div>
-    </div>`;
-    $$('[data-p2v]', el).forEach(b => b.onclick = () => { v = b.dataset.p2v; err = null; parar(); pinta(); });
-    $$('[data-p2e]', el).forEach(b => b.onclick = () => { err = err === b.dataset.p2e ? null : b.dataset.p2e; pinta(); animar($('.p2d-stage', el), [{filter:'blur(2px)', opacity:.6}, {filter:'blur(0)', opacity:1}], {duration:200, easing:'ease'}); });
-    $$('[data-p2c]', el).forEach(b => b.onclick = () => { parar(); cuerda = +b.dataset.p2c; tone(mtof(STR[ALTURA_CUERDA[cuerda].id].midi), 1); pinta(); });
-    const a = $('[data-p2auto]', el); if(a) a.onclick = () => { if(auto){ parar(); pinta(); return; } auto = setInterval(() => { cuerda = (cuerda + 1) % 4; tone(mtof(STR[ALTURA_CUERDA[cuerda].id].midi), .9); pinta(); }, 1300); pinta(); };
-    $('[data-p2n]', el).onchange = e => { nombres = e.target.checked; pinta(); };
+    const P = pasos(), a = P[i], F = POSTURA[v].fotos[a.fi], nueva = foto !== a.fi;
+    if(nueva){
+      foto = a.fi;
+      el.innerHTML = `<div class="pos-wrap${big ? ' big' : ''}">
+        <div class="seg" role="group" aria-label="Qué mirar">${Object.entries(POSTURA).map(([id, x]) => `<button data-posv="${id}" aria-pressed="${id === v}">${x.nombre}</button>`).join('')}</div>
+        ${F.titulo ? `<p class="pos-paso">${a.fi + 1}. ${F.titulo}</p>` : ''}
+        <figure class="pos-foto" style="width:min(100%, calc(${big ? 64 : 56}vh * ${(F.w / F.h).toFixed(3)}));aspect-ratio:${F.w} / ${F.h}">
+          <img src="assets/ilustraciones/${F.img}.webp" width="${F.w}" height="${F.h}" alt="${esc(F.alt)}" decoding="async">
+          ${P.map((p, n) => p.fi === a.fi ? `<button class="pos-punto" style="left:${p.x}%;top:${p.y}%" data-posp="${n}" aria-label="Punto ${n + 1}: ${esc(p.txt)}">${n + 1}</button>` : '').join('')}
+        </figure>
+        <p class="pos-cap" aria-live="polite"></p>
+        <div class="pos-nav"><button class="btn small" data-posmov="-1" aria-label="Punto anterior">${flecha('M14.5 5.5 8 12l6.5 6.5')}</button><span class="fine" data-poscuenta></span><button class="btn small" data-posmov="1" aria-label="Punto siguiente">${flecha('M9.5 5.5 16 12l-6.5 6.5')}</button></div>
+      </div>`;
+      $$('[data-posv]', el).forEach(b => b.onclick = () => { if(b.dataset.posv === v) return; v = b.dataset.posv; i = 0; foto = -1; pinta(); });
+      $$('[data-posp]', el).forEach(b => b.onclick = () => { i = +b.dataset.posp; pinta(); });
+      $$('[data-posmov]', el).forEach(b => b.onclick = () => { i = Math.max(0, Math.min(P.length - 1, i + +b.dataset.posmov)); pinta(); });
+      animar($('.pos-foto', el), [{opacity:0}, {opacity:1}], {duration:240, easing:'ease'});
+    }
+    $$('[data-posp]', el).forEach(b => { const on = +b.dataset.posp === i; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+    const cap = $('.pos-cap', el);
+    cap.innerHTML = `<b>${i + 1}</b><span>${esc(a.txt)}</span>`;
+    if(!nueva) animar(cap, [{opacity:0, transform:'translateY(4px)'}, {opacity:1, transform:'none'}], {duration:180, easing:'cubic-bezier(0.23,1,0.32,1)'});
+    $('[data-poscuenta]', el).textContent = `${i + 1} de ${P.length}`;
+    const [ant, sig] = $$('[data-posmov]', el); ant.disabled = i === 0; sig.disabled = i === P.length - 1;
   };
-  const parar = () => { clearInterval(auto); auto = 0; };
   pinta();
-  return () => parar();
+  return () => {};
 }
+
+/* ============ animaciones Lottie (Lordicon, estilo wired) ============
+   Un <span data-lottie="nombre"> se anima solo al aparecer en pantalla. lottie_light se carga
+   la primera vez que hace falta; con movimiento reducido se queda quieto en su pose final. */
+const LOTTIE_JS = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_light.min.js';
+const LOTTIE_MODO = {camara:'revelar', abeja:'revelar', osito:'tocar', ardilla:'tocar'};
+let lottieLib = null, lottieT = 0;
+const lottieJSON = {}, lottieVivos = new Set();
+function cargarLottie(){
+  lottieLib ||= new Promise((ok, mal) => { const sc = document.createElement('script'); sc.src = LOTTIE_JS; sc.onload = () => ok(window.lottie); sc.onerror = () => { lottieLib = null; mal(new Error('lottie')); }; document.head.appendChild(sc); });
+  return lottieLib;
+}
+function activarLotties(){
+  lottieVivos.forEach(x => { if(!x.el.isConnected){ x.anim.destroy(); lottieVivos.delete(x); } });
+  $$('[data-lottie]:not([data-lot])').forEach(async el => {
+    el.dataset.lot = '1';
+    const nombre = el.dataset.lottie;
+    try{
+      lottieJSON[nombre] ||= fetch(`assets/lottie/${nombre}.json`).then(r => { if(!r.ok) throw new Error(r.status); return r.json(); });
+      const [lib, data] = await Promise.all([cargarLottie(), lottieJSON[nombre]]);
+      if(!el.isConnected) return;
+      el.textContent = '';
+      const anim = lib.loadAnimation({container:el, renderer:'svg', loop:false, autoplay:false, animationData:structuredClone(data)});
+      lottieVivos.add({el, anim});
+      const revelar = LOTTIE_MODO[nombre] === 'revelar';
+      anim.addEventListener('DOMLoaded', () => {
+        if(menosMov()){ anim.goToAndStop(revelar ? anim.totalFrames - 1 : 0, true); return; }
+        anim.play();
+      });
+      if(!revelar) el.addEventListener('pointerenter', () => { if(!menosMov()) anim.goToAndPlay(0, true); });
+    }catch(e){ lottieJSON[nombre] = null; }
+  });
+}
+new MutationObserver(() => { clearTimeout(lottieT); lottieT = setTimeout(activarLotties, 40); }).observe(document.body, {childList:true, subtree:true});
 
 /* ============ modo presentación ============ */
 function openPresent(tab){ S.present = true; S.presentTab = tab || 'postura'; renderPresent(); }
