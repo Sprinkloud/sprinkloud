@@ -577,24 +577,25 @@ button.rc:active{transform:scale(.96)}
 }
 
 /* mapa del bosque */
-.mapa-wrap{max-width:560px;margin:0 auto}
-.mapa{width:100%;height:auto;display:block;border-radius:var(--r-l);border:1px solid var(--line)}
+.mapa-wrap{max-width:420px;margin:0 auto}
+.mapa-sub{color:var(--ink-2);margin-top:2px}
+.mapa{width:100%;height:auto;display:block}
+.mpath{fill:none;stroke:var(--line);stroke-width:12;stroke-linecap:round}
 .mnode{cursor:pointer;outline:none}
 .mnode.locked{cursor:default}
-.mnode .mdisc{fill:var(--surface);stroke:var(--line);stroke-width:3;transition:transform var(--dur-press) var(--ease-out);transform-box:fill-box;transform-origin:center}
+.mnode .mdisc{fill:var(--surface-2);stroke:var(--line);stroke-width:2.5;transition:transform var(--dur-press) var(--ease-out);transform-box:fill-box;transform-origin:center}
 .mnode:active .mdisc{transform:scale(.97)}
-.mnode.done .mdisc{fill:var(--accent);stroke:var(--pine)}
-.mnode.current .mdisc{fill:var(--gold);stroke:var(--gold-ink);stroke-width:4}
-.mnode.locked .mdisc{fill:var(--surface-2);stroke:var(--line)}
-.mnode .ring{fill:none;stroke:var(--gold);stroke-width:4;animation:respira 3s ease-in-out infinite}
-.mnum{font:600 26px var(--f-display);fill:var(--on-accent)}
-.mnode.current .mnum{fill:var(--ink)}
-.maqui{font:600 22px var(--f-hand);fill:var(--gold-ink)}
-.mstar{fill:var(--gold);stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round}
-.mstar.off{fill:var(--surface);stroke:var(--line)}
-.mtag{fill:var(--surface);stroke:var(--line)}
-.mtit{font:600 17px var(--f-hand);fill:var(--pine)}
+.mnode:focus-visible .mdisc{stroke:var(--pine);stroke-width:4}
+.mnode.done .mdisc{fill:var(--accent-soft);stroke:var(--pine)}
+.mnode.current .mdisc{fill:var(--gold-soft);stroke:var(--gold);stroke-width:3}
+.mnode .ring{fill:none;stroke:var(--gold);stroke-width:3;animation:respira 3s ease-in-out infinite}
+.mtree{fill:var(--line)}
+.mnode.done .mtree,.mnode.current .mtree{fill:var(--pine)}
+.mlec{font:700 11px "Nunito Sans",sans-serif;fill:var(--ink-2)}
+.mtit{font:700 15px "Nunito Sans",sans-serif;fill:var(--ink)}
 .mnode.locked .mtit{fill:var(--ink-2)}
+.mstar{fill:var(--gold);stroke:var(--gold-ink);stroke-width:1.2;stroke-linejoin:round}
+.mstar.off{fill:var(--line);stroke:none}
 .niv-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
 .niv-chip{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--surface-2);display:grid;place-items:center;padding:0;font:800 .95rem var(--f-display);color:var(--ink-2)}
 .niv-chip.on{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
@@ -2375,7 +2376,7 @@ function renderInicio(cont, al){
   const estAct = (al.estrellas || {})[K(al, actual)] || 0, song = catalogo()[cancionDe(al, actual)]?.titulo || 'tu canción';
   const primero = secKey !== 'inicio:' + nv;
   cont.innerHTML = `<section class="card nivel-card">
-      <div class="nivel-top"><div><h1>Nivel ${nv}: ${esc(niv.titulo)}</h1></div><span class="nivel-cuenta">${hechas} de ${total} lecciones</span></div>
+      <div class="nivel-top"><div><h1>Nivel ${nv}: ${esc(niv.titulo)}</h1><p class="mapa-sub">Toca un árbol para repasar esa lección.</p></div><span class="nivel-cuenta">${hechas} de ${total} lecciones</span></div>
       <div class="lv-bar" role="progressbar" aria-label="Avance del nivel" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${hechas}"><i style="transform:scaleX(${Math.max(.03, hechas / total)})"></i></div>
       <div class="niv-chips">${NIVELES.map(x => { const ok = x.n < nivelAl || (x.n === nivelAl && completo), abierto = x.n <= nivelAl || S.preview; return `<button class="niv-chip${x.n === nv ? ' on' : ''}${ok ? ' ok' : ''}" ${abierto ? `data-mniv="${x.n}"` : 'disabled'} title="Nivel ${x.n}: ${esc(x.titulo)}">${ok ? medallaSVG(x.n, true, 30) : `<b>${x.n}</b>`}</button>`; }).join('')}</div>
     </section>
@@ -4626,31 +4627,24 @@ Object.assign(CAPSULAS, {
 /* ============ mapa del bosque (inicio del alumno) ============ */
 const DECO = ['evergreen-tree', 'deciduous-tree', 'mushroom', 'tulip', 'rabbit', 'fox', 'owl', 'deer', 'hedgehog', 'butterfly', 'snail', 'sunflower', 'herb', 'chipmunk', 'bird', 'four-leaf-clover', 'hut', 'wood', 'lady-beetle', 'frog'];
 function mapaSVG(al, nivel){
-  const nv = nivelObj(nivel), ls = nv.lecciones, W = 400, step = 140, top = 80;
+  const nv = nivelObj(nivel), ls = nv.lecciones, W = 380, step = 112, top = 52, tx = 196;
   const actualNivel = al.nivel || 1, hecho = nivel < actualNivel || (nivel === actualNivel && nivelCompleto(al)), actual = nivel === actualNivel ? (al.leccion || 1) : hecho ? ls.length + 1 : 0;
-  const pts = ls.map((L, i) => ({x:200 + 108 * Math.sin(i * 1.2), y:top + i * step}));
-  const H = top + (ls.length - 1) * step + 110;
+  const pts = ls.map((L, i) => ({x:i % 2 ? 132 : 62, y:top + i * step}));
+  const H = top + (ls.length - 1) * step + 56;
   const curva = pts.map((p, i) => { if(!i) return `M${p.x} ${p.y}`; const q = pts[i - 1], my = (q.y + p.y) / 2; return `C${q.x} ${my} ${p.x} ${my} ${p.x} ${p.y}`; }).join(' ');
-  let seed = nivel * 97 + 13; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-  let deco = '';
-  pts.forEach((p, i) => { const lado = p.x > 200 ? -1 : 1; for(let k = 0; k < 3; k++){ const img = DECO[Math.floor(rnd() * DECO.length)], dx = lado * (70 + rnd() * 90), dy = -40 + rnd() * 90, s = 30 + rnd() * 18; deco += `<image href="assets/emoji/${img}.svg" x="${Math.max(4, Math.min(W - s - 4, p.x + dx - s / 2))}" y="${p.y + dy - s / 2}" width="${s}" height="${s}"/>`; } });
-  let o = `<svg class="mapa" viewBox="0 0 ${W} ${H}" role="list" aria-label="Mapa del Nivel ${nivel}">
-    <defs><linearGradient id="mp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--wash-a)"/><stop offset="1" stop-color="var(--wash-b)"/></linearGradient>
-      <filter id="acuarela" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="${nivel}"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter></defs>
-    <rect width="${W}" height="${H}" fill="var(--surface)"/>
-    <rect x="10" y="10" width="${W - 20}" height="${H - 20}" rx="40" fill="url(#mp)" opacity=".8" filter="url(#acuarela)"/>
-    <path d="M${W} ${H * .3} C ${W * .7} ${H * .38} ${W * .9} ${H * .55} ${W * .6} ${H * .62} S ${W * .1} ${H * .8} 0 ${H * .86}" stroke="var(--rio)" stroke-width="26" fill="none" opacity=".75" stroke-linecap="round" filter="url(#acuarela)"/>
-    ${deco}
-    <path d="${curva}" stroke="var(--sendero)" stroke-width="26" fill="none" stroke-linecap="round" filter="url(#acuarela)"/>`;
+  /* títulos largos en dos renglones */
+  const renglones = t => { if(t.length <= 21) return [t]; const pal = t.split(' '); let a = ''; while(pal.length && (a + ' ' + pal[0]).trim().length <= 21) a = (a + ' ' + pal.shift()).trim(); return [a, pal.join(' ')]; };
+  let o = `<svg class="mapa" viewBox="0 0 ${W} ${H}" role="list" aria-label="Lecciones del Nivel ${nivel}"><path class="mpath" d="${curva}"/>`;
   ls.forEach((L, i) => {
-    const p = pts[i], n = L.n, est = (al.estrellas || {})[`${nivel}.${n}`] || 0;
+    const p = pts[i], n = L.n, est = (al.estrellas || {})[`${nivel}.${n}`] || 0, r = renglones(L.titulo), y0 = p.y - (r.length > 1 ? 18 : 10);
     const st = n < actual ? 'done' : n === actual ? 'current' : 'locked', abierto = st !== 'locked' || S.preview;
     o += `<g class="mnode ${st}" role="listitem" ${abierto ? `tabindex="0" data-mapa="${nivel}.${n}"` : ''} aria-label="Lección ${n}: ${esc(L.titulo)}${st === 'locked' ? ', bloqueada' : ''}">
-      ${st === 'current' ? `<circle class="ring" cx="${p.x}" cy="${p.y}" r="46"/><text class="maqui" x="${p.x + (p.x > 200 ? -84 : 84)}" y="${p.y + 7}" text-anchor="middle">¡Aquí!</text>` : ''}
-      <circle class="mdisc" cx="${p.x}" cy="${p.y}" r="38"/>
-      ${st === 'locked' ? `<path d="M${p.x - 9} ${p.y - 2}v-6a9 9 0 0 1 18 0v6" stroke="var(--ink-2)" stroke-width="3.4" fill="none"/><rect x="${p.x - 13}" y="${p.y - 3}" width="26" height="20" rx="4" fill="var(--ink-2)"/>` : `<text x="${p.x}" y="${p.y + 9}" text-anchor="middle" class="mnum">${n}</text>`}
-      ${st !== 'locked' ? [1, 2, 3].map(k => `<path class="mstar${k <= est ? '' : ' off'}" transform="translate(${p.x - 30 + (k - 1) * 20} ${p.y + 42}) scale(.8)" d="M12 3.4l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.4l-5.1 2.8 1.1-5.8-4.3-4 5.8-.7z"/>`).join('') : ''}
-      ${(() => { const w = Math.min(300, L.titulo.length * 8.4 + 32), cx = Math.max(w / 2 + 6, Math.min(W - w / 2 - 6, p.x)); return `<g transform="translate(${cx} ${p.y + (st !== 'locked' ? 78 : 60)})"><rect x="${-w / 2}" y="-13" width="${w}" height="26" rx="13" class="mtag"/><text y="5" text-anchor="middle" class="mtit">${esc(L.titulo)}</text></g>`; })()}
+      ${st === 'current' ? `<circle class="ring" cx="${p.x}" cy="${p.y}" r="38"/>` : ''}
+      <circle class="mdisc" cx="${p.x}" cy="${p.y}" r="32"/>
+      <path class="mtree" transform="translate(${p.x - 16} ${p.y - 18})" d="M16 0 5 15h6L3 25h8L1 34h30L21 25h8L21 15h6z"/>
+      <text class="mlec" x="${tx}" y="${y0}">Lección ${n}</text>
+      ${r.map((t, k) => `<text class="mtit" x="${tx}" y="${y0 + 19 + k * 18}">${esc(t)}</text>`).join('')}
+      ${[1, 2, 3].map(k => `<path class="mstar${k <= est ? '' : ' off'}" transform="translate(${tx - 2 + (k - 1) * 15} ${y0 + 23 + (r.length - 1) * 18}) scale(.55)" d="M12 3.4l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.4l-5.1 2.8 1.1-5.8-4.3-4 5.8-.7z"/>`).join('')}
     </g>`;
   });
   return o + '</svg>';
