@@ -108,7 +108,7 @@ components:
     padding: "6px 2px"
 ---
 
-<!-- IMPLEMENTADO en index.html (migración del 26 de septiembre de 2026; acuarelas del club el 28 de septiembre). Pendiente: reemplazar los Fluent Emoji del mapa y del bosque por acuarelas. -->
+<!-- IMPLEMENTADO en index.html (migración del 26 de septiembre de 2026; acuarelas del club el 28 de septiembre). Pendiente: reemplazar los Fluent Emoji del bosque por acuarelas. -->
 
 # Design System: Sprinkloud
 
@@ -138,7 +138,7 @@ La descripción de referencia se usa tal cual como prompt al generar o encargar 
 | Postura y manos | `image/violin postura/` | WebP de 1100 a 1200 px con puntos numerados encima (`POSTURA` y `mountPostura`). Nunca dibujos propios: si falta una vista, se pide la imagen |
 | Reacciones animadas | `image/formato lottie/` | JSON en `assets/lottie/`, con lottie_light desde cdnjs |
 
-Hoy los Fluent Emoji planos cubren el mapa, el bosque y las cápsulas, suavizados con `saturate(.7) sepia(.16)` para que no chillen sobre el papel. Se reemplazan sección por sección. La lección actual del mapa se marca con "¡Aquí!" a mano y un anillo ocre.
+**El mapa de lecciones es llano** (pedido de la fundadora): sendero gris en zigzag, un árbol por lección en un círculo (musgo si está hecha, ocre con anillo si es la actual, gris si falta) y a la derecha "Lección N", el título en Nunito Sans y tres estrellas. Sin fondo, río ni decoraciones. Los Fluent Emoji planos siguen en el bosque y las cápsulas, suavizados con `saturate(.7) sepia(.16)`.
 
 **Lottie.** Solo personajes y objetos de la colección: `osito` (fin de práctica), `ardilla` (juego con 2 o 3 estrellas), `abeja` (festejo de nivel) y `camara` (aviso del video). Se reproducen una vez al aparecer; los de tipo "tocar" repiten al pasar el puntero. Con movimiento reducido quedan quietos en su pose final. No se usan el logo de Instagram ni el pavo.
 
@@ -196,7 +196,7 @@ La paleta es terrosa y apagada: musgo, ocre, azul polvoso y crema, con tinta sep
 
 ## Layout
 
-Es una app de una columna centrada que en computadora abre en dos (lección y sendero, o mapa y panel). En celulares la navegación del alumno va abajo; en computadora va arriba. El ritmo de espacios sigue la escala de 4 · 8 · 16 · 24 · 40 px. El mapa del bosque tiene un ancho máximo de 560 px y siempre queda centrado, con papel a los lados.
+Es una app de una columna centrada que en computadora abre en dos (lección y sendero, o mapa y panel). En celulares la navegación del alumno va abajo; en computadora va arriba. El ritmo de espacios sigue la escala de 4 · 8 · 16 · 24 · 40 px. El mapa de lecciones tiene un ancho máximo de 420 px y siempre queda centrado, con papel a los lados.
 
 **The One Protagonist Rule.** Cada pantalla tiene un solo protagonista. No se rellenan las esquinas con decoración.
 
