@@ -105,7 +105,7 @@ configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música 
 | Inicio como mapa del bosque, Eco más sensible | Publicado |
 | Migración visual al estilo de libro ilustrado (paleta, Fraunces y Caveat, papel, iconos SVG, movimiento según Emil, toques de 44 px) | Publicado el 28 de septiembre de 2026 sin `/review-animations` (la fundadora pidió publicar); queda pendiente correrla |
 | Acuarelas del club: postura con puntos numerados (en lugar de los dibujos 2D), osito y guías por sección, animaciones Lottie | Publicado el 28 de septiembre de 2026 sin `/impeccable audit` ni `/review-animations` (la fundadora pidió subir); quedan pendientes. Falta la imagen de primer plano de la mano izquierda |
-| Login sin scroll en computadora, flecha para volver en la práctica, ritmo con la pizza (una pizza por pulso; todas las figuras, silencios y puntillo), Leer notas sobre la imagen del violín en las lecciones de pentagrama, clave de Sol de Bravura, herramientas Leer notas y Crear ritmo | Listo en local (30 de septiembre de 2026), probado en la copia demo; sin publicar |
+| Login sin scroll en computadora, flecha para volver en la práctica, ritmo con la pizza (una pizza por pulso; todas las figuras, silencios y puntillo), Leer notas sobre la imagen del violín en las lecciones de pentagrama, clave de Sol de Bravura, herramientas Leer notas y Crear ritmo | Publicado (30 de septiembre de 2026; solo la página, sin cambios en el servidor) |
 
 Pendientes técnicos:
 - El sonido y la latencia del juego Eco no se han probado en celulares reales.
