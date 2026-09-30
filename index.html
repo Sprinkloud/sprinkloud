@@ -725,6 +725,114 @@ button.fig,button.caja{cursor:pointer}
   .fb .dot circle{r:22px}
 }
 @media (prefers-reduced-motion: reduce){.rc.bad,.rc.ok{animation:none}}
+
+/* ---- login en computadora: cabe sin scroll ---- */
+@media (min-width: 981px){
+  .login{min-height:calc(100dvh - 80px);display:grid;align-content:center;padding:clamp(12px,3vh,32px) 34px}
+  .login-hero{margin-bottom:clamp(12px,2.5vh,24px);gap:24px}
+  .login-hero h1{font-size:clamp(2rem,3.4vw,3rem);max-width:14ch}
+  .login-hero p{margin-top:8px}
+  .login-ilus img{width:auto;max-width:100%;height:clamp(180px,31vh,320px)}
+  .login .notice{margin-top:10px;padding-top:10px;padding-bottom:10px}
+  .login-grid .card{padding:18px 20px}
+  .login-grid .field{margin-top:10px!important}
+}
+@media (min-width: 981px) and (max-height: 720px){
+  .login-hero p{display:none}
+  .login-ilus img{height:30vh}
+}
+
+/* ---- práctica: flecha para volver ---- */
+.pr-atras.oculto{visibility:hidden}
+
+/* ---- círculo de cuenta: reloj, 1-2-3-4 y el pulso ---- */
+.pulso{flex:none;width:56px;height:56px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font:700 22px var(--f-display);color:var(--ink-2);background:var(--surface);transition:background-color 80ms ease,border-color 80ms ease,color 80ms ease}
+.pulso.cuenta{background:var(--gold-soft);border-color:var(--gold);color:var(--gold-ink)}
+.pulso.lit{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.pulso.lit.strong{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+@media (pointer: coarse){.pulso{width:64px;height:64px}}
+.pr-play-fila{display:flex;align-items:center;justify-content:center;gap:16px}
+
+/* ---- la pizza: cada pizza es un pulso; lo que suena se pinta de ocre ---- */
+.pizza-vista{display:flex;flex-direction:column;align-items:center;gap:10px}
+.pizza{width:min(100%,calc(var(--p) * 170px),calc(var(--p) * 26vh));height:auto;display:block;overflow:visible}
+.pz-bandeja{fill:var(--surface-2);stroke:var(--line);stroke-width:2}
+.pz-plato{fill:var(--surface-2);stroke:var(--line);stroke-width:2}
+.pz-vacio{fill:none;stroke:var(--ink-2);stroke-width:2;stroke-dasharray:4 5;opacity:.55}
+.pz-corte-luz{stroke:#FBF7EE;stroke-width:3.4;opacity:.75}
+.pz-corte{stroke:#3A3128;stroke-width:1.4;opacity:.6}
+.pz-luz{fill:#C4923A;opacity:0;mix-blend-mode:multiply;transition:opacity 180ms ease}
+.pz-luz.on{opacity:.55;transition-duration:80ms}
+.pz-insignia{fill:#FBF7EE;fill-opacity:.93;stroke:#3A3128;stroke-width:1}
+.pz-fig{color:#3A3128;transition:color 80ms ease}
+.pz-fig.on{color:#8F6A2A}
+.pz-sil{font-family:var(--f-hand);font-weight:600;fill:currentColor}
+.pz-sil.rest{opacity:.5}
+.pizza-tira{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 8px;color:var(--ink)}
+.pizza-tira .nt,.tr-figs .nt{transition:color 80ms ease}
+.pizza-tira .nt.on,.tr-figs .nt.on{color:var(--gold-ink)}
+.fig-fichas{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.fig-ficha{flex-direction:column;gap:2px;padding:6px 12px;min-height:44px}
+.fig-ficha.on{border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+
+/* ---- Leer notas: el violín del club (proporción real, todo se mide con --n) ---- */
+.ln{display:grid;gap:12px;justify-items:center;width:100%}
+.ln-arriba{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 24px;width:100%}
+.ln-penta{background:#FBF7EE;border:1px solid var(--line);border-radius:var(--r-l);padding:2px 10px;color:#3A3128;width:min(100%,250px)}
+.ln-penta .nota-sola{width:100%;height:auto;display:block}
+.ln-estado{display:grid;gap:6px;justify-items:center}
+.ln-msg{font-weight:700;color:var(--gold-ink);min-height:1.5em}
+.ln-estrellas{display:flex;align-items:center;gap:10px}
+.ln-estrellas[hidden]{display:none}
+.ln-est .i-star{width:26px;height:26px}
+.ln-marca{font-weight:700;color:var(--ink-2);font-size:.85rem}
+.ln-violin{width:100%;display:flex;justify-content:center}
+.lv{display:block;width:100%;max-width:min(1040px,calc((100dvh - 250px) * 390 / 116));height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none;border-radius:var(--r-l);box-shadow:0 1px 0 var(--line)}
+.ln [data-cuerda="sol"]{--c:#9C5B55;--on:#FBF7EE}
+.ln [data-cuerda="re"]{--c:#C4923A;--on:#3A3128}
+.ln [data-cuerda="la"]{--c:#647745;--on:#FBF7EE}
+.ln [data-cuerda="mi"]{--c:#567388;--on:#FBF7EE}
+.lv-cinta{stroke:#FBF7EE;opacity:.16;pointer-events:none}
+.lv-n{cursor:pointer}
+.lv-in{transform:scale(.4);transition:transform 160ms var(--ease-out)}
+.lv-n circle{fill:#FBF7EE;fill-opacity:.55;stroke:#3A3128;stroke-opacity:.35;stroke-width:.5}
+.lv-n text{fill:var(--on);font-family:var(--f-body);font-weight:800;opacity:0;pointer-events:none}
+.lv-n.on .lv-in{transform:scale(1)}
+.lv-n.on circle{fill:var(--c);fill-opacity:1;stroke:#FBF7EE;stroke-opacity:.9;stroke-width:.8}
+.lv-n.on text{opacity:1}
+.lv-n.activa .lv-in{transform:scale(1.3)}
+.lv-n.activa circle{fill:var(--c);fill-opacity:1;stroke:#3A3128;stroke-opacity:1;stroke-width:1.2}
+.lv-n.activa text{opacity:1}
+.lv-n.ln-guia .lv-in{transform:scale(1.2)}
+.lv-n.ln-guia circle{fill:var(--c);fill-opacity:1;stroke:var(--gold);stroke-opacity:1;stroke-width:1.6}
+.lv-n.ln-guia text{opacity:1}
+.lv-n.activa,.lv-n.ln-guia{isolation:isolate}
+@media (max-width: 760px){
+  .lv{max-width:min(420px,100%);min-width:0}
+  .ln-arriba{position:sticky;top:0;z-index:5;background:var(--bg);padding:4px 0}
+}
+@media (prefers-reduced-motion: reduce){.lv-in{transition:none}}
+
+/* ---- taller de ritmo ---- */
+.taller{display:grid;gap:12px;width:100%}
+.taller-barra{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;justify-content:center}
+.taller-barra .big-play{width:56px;height:56px}
+.pizza-btn[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#3A3128}
+.taller-lienzo{display:grid;gap:8px;max-height:52vh;overflow:auto;padding:2px}
+.taller-lienzo.en-pizza .pizza-vista{align-items:flex-start}
+.taller-lienzo.en-pizza .pizza{width:min(calc(var(--p) * 25%),calc(var(--p) * 140px))}
+.taller.big .taller-lienzo.en-pizza .pizza{width:min(calc(var(--p) * 25%),calc(var(--p) * 200px))}
+.tr-compas{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:6px 44px 6px 8px;color:var(--ink);transition:background-color 150ms ease,border-color 150ms ease}
+.tr-compas.playing{border-color:color-mix(in srgb,var(--gold) 45%,var(--line));background:color-mix(in srgb,var(--gold-soft) 30%,var(--surface))}
+.tr-basura{position:absolute;top:4px;right:4px;width:40px;height:40px;border-radius:50%;border:0;background:transparent;color:var(--ink-2);display:grid;place-items:center}
+@media (hover: hover){.tr-basura:hover{color:var(--danger);background:var(--surface-2)}}
+.tr-figs{display:flex;align-items:center;gap:6px;min-height:60px}
+.tr-hueco{border:1px dashed var(--line);border-radius:10px;align-self:stretch;display:grid;place-items:center;font-size:.8rem;color:var(--ink-2)}
+.taller-paleta{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.tr-carta{display:grid;justify-items:center;gap:2px;padding:8px 6px;color:var(--ink)}
+.tr-carta[aria-disabled="true"]{opacity:.4}
+.tr-sil{font:600 1rem var(--f-hand);color:var(--ink-2)}
+.taller-vacio{color:var(--ink-2);text-align:center;padding:24px}
 </style>
 </head>
 <body>
@@ -1952,15 +2060,23 @@ function silence(){
   liveTones.forEach(r => { try{ r.g.gain.cancelScheduledValues(t); r.g.gain.setTargetAtTime(.0001, t, .02); r.oscs.forEach(o => o.stop(t + .12)); }catch(e){} });
   liveTones.clear();
 }
-function click(when, acc){
+function click(when, acc, dest){
   const c = audio(); const o = c.createOscillator(), g = c.createGain();
   o.type = 'square'; o.frequency.value = acc ? 1560 : 1040;
   g.gain.setValueAtTime(.0001, when); g.gain.exponentialRampToValueAtTime(acc ? .22 : .13, when + .002); g.gain.exponentialRampToValueAtTime(.0001, when + .05);
-  o.connect(g); g.connect(c.destination); o.start(when); o.stop(when + .06);
+  o.connect(g); g.connect(dest || c.destination); o.start(when); o.stop(when + .06);
+}
+/* bus del ritmo: lo que suena en los juegos, la pizza y el taller pasa por aquí para poder callarlo de una vez */
+let RBUS = null;
+function ritmoBus(){ const c = audio(); if(!RBUS){ RBUS = c.createGain(); RBUS.gain.value = 1; RBUS.connect(c.destination); } return RBUS; }
+function pararRitmo(){
+  if(!RBUS || !AC) return; const g = RBUS, t = AC.currentTime; RBUS = null;
+  try{ g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(.0001, t + .04); }catch(e){}
+  setTimeout(() => { try{ g.disconnect(); }catch(e){} }, 300);
 }
 /* reproducción de secuencias */
 let playTimers = [], playEnd = null;
-function stopPlay(){ playTimers.forEach(clearTimeout); playTimers = []; silence(); $$('.playing').forEach(e => e.classList.remove('playing')); $$('.hit').forEach(e => e.classList.remove('hit')); const f = playEnd; playEnd = null; f && f(); }
+function stopPlay(){ playTimers.forEach(clearTimeout); playTimers = []; silence(); pararRitmo(); $$('.playing').forEach(e => e.classList.remove('playing')); $$('.hit').forEach(e => e.classList.remove('hit')); const f = playEnd; playEnd = null; f && f(); }
 function playSeq(notas, bpm, onNote, onEnd){
   stopPlay(); const c = audio(); const spb = 60 / bpm; let t = c.currentTime + .12;
   notas.forEach(([m,d], i) => { tone(mtof(m), d * spb * .92, t); const ms = (t - c.currentTime) * 1000; playTimers.push(setTimeout(() => onNote && onNote(i, m), ms)); t += d * spb; });
@@ -2145,9 +2261,9 @@ const S = {rol:null, nombre:'', miId:'', filtro:'mios', alSec:'inicio', mapaNive
 let mounts = [];
 function clearMounts(){ mounts.forEach(f => { try{ f(); }catch(e){} }); mounts = []; }
 let toolMounts = [], toolKey = '';
-function clearToolMounts(){ toolMounts.forEach(f => { try{ f(); }catch(e){} }); toolMounts = []; }
+function clearToolMounts(){ toolMounts.forEach(f => { try{ f(); }catch(e){} }); toolMounts = []; pararRitmo(); }
 let presentMounts = [];
-function clearPresentMounts(){ presentMounts.forEach(f => { try{ f(); }catch(e){} }); presentMounts = []; }
+function clearPresentMounts(){ presentMounts.forEach(f => { try{ f(); }catch(e){} }); presentMounts = []; pararRitmo(); }
 
 function go(view, extra = {}){ cerrarPractica(); stopPlay(); Object.assign(S, extra, {view}); if(view !== 'maestra') closePresent(); renderApp(); window.scrollTo(0, 0); }
 function salir(){
@@ -2334,7 +2450,7 @@ function viewAlumno(){
   <main class="alumno" id="al-sec"></main>
   <div class="practica" id="practica" hidden></div>`;
 }
-let alTool = 'ver', secKey = '';
+let alTool = 'leer', secKey = '';
 function verDe(al){
   const actual = leccionActual(al);
   if(S.preview) return S.verLeccion && S.verLeccion <= totalDe(al) ? S.verLeccion : actual;
@@ -2479,7 +2595,7 @@ function renderPartituras(cont, al){
 /* ---- Herramientas ---- */
 function herramientasHTML(){
   return `${guiaHTML('herramientas', 'Herramientas')}<section class="card tools" id="al-tools" aria-label="Herramientas de práctica">
-    <div class="tabs" role="tablist">${[['ver', 'Violín'], ['postura', 'Postura'], ['metro', 'Metrónomo'], ['ritmo', 'Juegos'], ['tuner', 'Afinador']].map(([id, n]) => `<button class="tab" role="tab" data-tool="${id}" aria-selected="${alTool === id}">${n}</button>`).join('')}</div>
+    <div class="tabs" role="tablist">${[['leer', 'Leer notas'], ['postura', 'Postura'], ['metro', 'Metrónomo'], ['taller', 'Crear ritmo'], ['tuner', 'Afinador']].map(([id, n]) => `<button class="tab" role="tab" data-tool="${id}" aria-selected="${alTool === id}">${n}</button>`).join('')}</div>
     <div class="tool-body" id="al-tool-body"></div></section>`;
 }
 
@@ -2785,10 +2901,10 @@ function mountAlumnoTool(){
   const L = lec(verDe(al), al.nivel);
   $$('#al-tools [data-tool]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tool === alTool)));
   const body = $('#al-tool-body'); if(!body) return;
-  if(alTool === 'ver') toolMounts.push(mountFingerboard(body, al, L));
   if(alTool === 'metro') toolMounts.push(mountMetronome(body, {}));
   if(alTool === 'tuner') toolMounts.push(mountTuner(body, {}));
-  if(alTool === 'ritmo') toolMounts.push(mountRitmoPanel(body, al, L, {guardar:true}));
+  if(alTool === 'taller') toolMounts.push(mountTallerRitmo(body));
+  if(alTool === 'leer') toolMounts.push(mountLeerNotas(body, {modo:modoLeer(al.nivel || 1, verDe(al)), nivel:al.nivel || 1, libre:true}));
   if(alTool === 'postura') toolMounts.push(mountPostura(body, {vista:VISTA_2D[L.vista] || 'postura'}));
 }
 document.addEventListener('click', e => {
@@ -2981,7 +3097,7 @@ document.addEventListener('click', e => {
   $$('[data-filtro]').forEach(b => b.setAttribute('aria-pressed', String(b === f)));
   renderMaestraData();
 });
-const PTABS = [{id:'postura', label:'Postura'}, {id:'fb', label:'Violín interactivo'}, {id:'sheet', label:'Notas'}, {id:'ritmo', label:'Ritmo'}, {id:'cap', label:'Cápsulas'}, {id:'metro', label:'Metrónomo'}, {id:'tuner', label:'Afinador'}];
+const PTABS = [{id:'postura', label:'Postura'}, {id:'leer', label:'Leer notas'}, {id:'sheet', label:'Notas'}, {id:'taller', label:'Crear ritmo'}, {id:'cap', label:'Cápsulas'}, {id:'metro', label:'Metrónomo'}, {id:'tuner', label:'Afinador'}];
 function claseHTML(al){
   const niv = nivelDe(al), total = totalDe(al), done = nivelCompleto(al), n = leccionActual(al), L = lec(n, niv.n);
   const est = (al.estrellas || {})[K(al, n)] || 0; const checks = (al.checks || {})[K(al, n)] || [];
@@ -3622,17 +3738,27 @@ function cartaRitmo(id, {tag = 'div', cls = '', attrs = '', oculta = false} = {}
 }
 
 /* sonidos del ritmo */
-function golpe(when){
-  const c = audio(); const o = c.createOscillator(), g = c.createGain();
-  o.type = 'sine'; o.frequency.setValueAtTime(820, when); o.frequency.exponentialRampToValueAtTime(420, when + .08);
-  g.gain.setValueAtTime(.0001, when); g.gain.exponentialRampToValueAtTime(.5, when + .004); g.gain.exponentialRampToValueAtTime(.0001, when + .16);
-  o.connect(g); g.connect(c.destination); o.start(when); o.stop(when + .18);
+/* nota de piano: parciales armónicos con ataque rápido y caída natural; se apaga al terminar la figura */
+function pianoNota(when, freq, dur, gain){
+  const c = audio(), out = c.createGain(), lp = c.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = 3200;
+  out.gain.setValueAtTime(.0001, when); out.gain.exponentialRampToValueAtTime(gain, when + .006);
+  out.gain.setTargetAtTime(gain * .3, when + .006, .18);
+  out.gain.setTargetAtTime(.0001, when + Math.max(dur - .04, .06), .045);
+  [[1, 1], [2, .42], [3, .2], [4, .1], [5, .05]].forEach(([h, a], k) => {
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(freq * h * (1 + (k ? .0009 * k : 0)), when); g.gain.value = a;
+    o.connect(g); g.connect(lp); o.start(when); o.stop(when + dur + .35);
+  });
+  lp.connect(out); out.connect(ritmoBus());
 }
+/* golpe de ritmo: Do5 en el pulso y Sol4 a contratiempo; dura lo que vale la figura */
+function golpe(when, dur = .18, enPulso = true){ pianoNota(when, enPulso ? 523.25 : 392, Math.max(dur, .09), enPulso ? .3 : .24); }
 function clickSuave(when){
   const c = audio(); const o = c.createOscillator(), g = c.createGain();
   o.type = 'square'; o.frequency.value = 1040;
   g.gain.setValueAtTime(.0001, when); g.gain.exponentialRampToValueAtTime(.035, when + .002); g.gain.exponentialRampToValueAtTime(.0001, when + .04);
-  o.connect(g); g.connect(c.destination); o.start(when); o.stop(when + .05);
+  o.connect(g); g.connect(ritmoBus()); o.start(when); o.stop(when + .05);
 }
 function sfx(ok){
   const c = audio(); let w = c.currentTime + .01;
@@ -3649,14 +3775,15 @@ function reloj(){
   return {at(sec, fn){ ts.push(setTimeout(fn, Math.max(0, (sec - audio().currentTime) * 1000))); }, clear(){ ts.forEach(clearTimeout); ts.length = 0; }};
 }
 /* toca células con cuenta previa y pulso suave; onNota recibe cada nota a tiempo */
-function tocarCelulas(cels, bpm, {previa = 4, rel = null, onNota = null} = {}){
-  const c = audio(), spb = 60 / bpm, t0 = c.currentTime + .15;
-  for(let b = 0; b < previa; b++) click(t0 + b * spb, b === 0);
+/* metro: 'suave' (pulso bajito) o 'fuerte' (metrónomo); onCuenta(1..4) en la cuenta previa y onPulso(b) en cada pulso */
+function tocarCelulas(cels, bpm, {previa = 4, rel = null, onNota = null, metro = 'suave', onCuenta = null, onPulso = null} = {}){
+  const c = audio(), spb = 60 / bpm, t0 = c.currentTime + .15, bus = ritmoBus();
+  for(let b = 0; b < previa; b++){ const w = t0 + b * spb; click(w, b === 0, bus); if(rel && onCuenta) rel.at(w, () => onCuenta(b + 1)); }
   const ini = t0 + previa * spb, ev = eventosDe(cels);
   const tot = ev.reduce((a, e) => Math.max(a, e.t + e.d), 0);
-  for(let b = 0; b < tot; b++) clickSuave(ini + b * spb);
-  ev.forEach((e, i) => { const w = ini + e.t * spb; if(!e.r) golpe(w); if(rel && onNota) rel.at(w, () => onNota(i, e)); });
-  if(rel && onNota) rel.at(ini + tot * spb, () => onNota(-1, null));
+  for(let b = 0; b < tot; b++){ const w = ini + b * spb; if(metro === 'fuerte') click(w, b % 4 === 0, bus); else clickSuave(w); if(rel && onPulso) rel.at(w, () => onPulso(b)); }
+  ev.forEach((e, i) => { const w = ini + e.t * spb; if(!e.r) golpe(w, e.d * spb * .95, Math.abs(e.t % 1) < .01); if(rel && onNota) rel.at(w, () => onNota(i, e)); });
+  if(rel && (onNota || onPulso)) rel.at(ini + tot * spb, () => { onPulso && onPulso(-1); onNota && onNota(-1, null); });
   return {ini, fin:ini + tot * spb, spb, ev};
 }
 
@@ -3696,6 +3823,7 @@ const estrellasGrandes = n => `<div class="g-stars" aria-label="${n} de 3 estrel
 /* ============ juegos de ritmo ============ */
 let latencia = (() => { try{ return +localStorage.getItem('sprinkloud-latencia') || .06; }catch(e){ return .06; } })();
 function mountJuego(el, {tipo, pool, nueva = null, bpm = 66, alId = null, clave = '', onFin = null, notasPool = null, notasCancion = null}){
+  if(tipo === 'pentagrama'){ const [nv, n] = (clave || '').split('.').map(Number); return mountLeerNotas(el, {modo:modoLeer(nv || 3, n || 4), nivel:nv || 3, alId, clave, onFin}); }
   if(JUEGOS[tipo]?.notas) return mountJuegoNotas(el, {tipo, pool:notasPool || NATURALES, notasCancion, alId, clave, onFin});
   if(!JUEGOS[tipo]) tipo = 'eco';
   if(tipo !== 'eco' && pool.length < 2) tipo = 'eco';
@@ -3803,7 +3931,7 @@ function mountJuego(el, {tipo, pool, nueva = null, bpm = 66, alId = null, clave 
         const w = t0 + b * spb; (b < 4 || (b >= 8 && b < 12)) ? click(w, b % 4 === 0) : clickSuave(w);
         rel.at(w, () => pulso(b % 4, b >= 12));
       }
-      ev.forEach(e => { if(!e.r) golpe(t0 + (4 + e.t) * spb); });
+      ev.forEach(e => { if(!e.r) golpe(t0 + (4 + e.t) * spb, e.d * spb * .95, Math.abs(e.t % 1) < .01); });
       rel.at(t0, () => msg.textContent = '1, 2, 3, 4…');
       rel.at(t0 + 4 * spb, () => msg.textContent = 'Escucha');
       rel.at(t0 + 8 * spb, () => { msg.textContent = 'Prepárate: 1, 2, 3, 4'; pad.disabled = false; pad.textContent = 'Toca aquí'; });
@@ -3984,7 +4112,7 @@ function mountCapsulasPanel(el, L){
 
 /* ============ práctica paso a paso ============ */
 let practicaMounts = [];
-function clearPracticaMounts(){ practicaMounts.forEach(f => { try{ f(); }catch(e){} }); practicaMounts = []; }
+function clearPracticaMounts(){ practicaMounts.forEach(f => { try{ f(); }catch(e){} }); practicaMounts = []; pararRitmo(); }
 const PR = {pasos:[], i:0, L:null, estrellas:0};
 function pasosDe(al, L){
   const principal = L.practicas[0], cancion = L.practicas.find(k => k === 'cancion' || k === 'frase');
@@ -4001,7 +4129,7 @@ function abrirPractica(n, nivel){
   const al0 = Store.alumno; if(!al0) return;
   const nv = nivel || al0.nivel || 1, al = nv === (al0.nivel || 1) ? al0 : {...al0, nivel:nv};
   const L = lec(n || verDe(al0), nv);
-  Object.assign(PR, {pasos:pasosDe(al, L), i:0, L, al, estrellas:0, anterior:0});
+  Object.assign(PR, {pasos:pasosDe(al, L), i:0, L, al, estrellas:0, anterior:0, dir:1});
   pintarPaso();
   animar($('#practica'), [{transform:'translateY(24px)', opacity:0}, {transform:'none', opacity:1}], {duration:320, easing:'cubic-bezier(0.32,0.72,0,1)'});
 }
@@ -4015,14 +4143,17 @@ function pintarPaso(){
   clearPracticaMounts(); stopPlay();
   const paso = PR.pasos[PR.i], L = PR.L, n = PR.pasos.length;
   p.hidden = false; document.body.style.overflow = 'hidden';
+  const atras = PR.i > 0 && paso.id !== 'logro';
   p.innerHTML = `<div class="pr-top"><button class="pr-close" data-pr-cerrar aria-label="Salir de la práctica"><svg class="i i-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+      <button class="pr-close pr-atras${atras ? '' : ' oculto'}" data-pr-atras aria-label="Volver al paso anterior" ${atras ? '' : 'tabindex="-1" aria-hidden="true"'}><svg class="i i-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></button>
       <div class="pr-bar-row"><div class="pr-bar" role="progressbar" aria-label="Avance de la práctica" aria-valuemin="0" aria-valuemax="${n - 1}" aria-valuenow="${PR.i}"><i style="transform:scaleX(${PR.anterior ?? PR.i / (n - 1)})"></i></div><span class="pr-paso">Paso ${Math.min(PR.i + 1, n - 1)} de ${n - 1}</span></div></div>
     <div class="pr-body" id="pr-body"></div><div class="pr-foot" id="pr-foot"></div>`;
   $('[data-pr-cerrar]', p).onclick = cerrarPractica;
+  $('[data-pr-atras]', p).onclick = () => { if(PR.i > 0){ PR.dir = -1; PR.i--; pintarPaso(); } };
   const body = $('#pr-body', p), foot = $('#pr-foot', p);
   const barra = $('.pr-bar i', p); requestAnimationFrame(() => { if(barra) barra.style.transform = `scaleX(${PR.i / (n - 1)})`; }); PR.anterior = PR.i / (n - 1);
-  if(PR.i > 0) animar(body, [{transform:'translateX(16px)', opacity:0}, {transform:'none', opacity:1}], {duration:240, easing:'cubic-bezier(0.23,1,0.32,1)'});
-  const seguir = (txt = 'Seguir') => { foot.innerHTML = `<button class="btn primary big" data-pr-sig>${txt}</button>`; $('[data-pr-sig]', foot).onclick = () => { PR.i++; pintarPaso(); }; };
+  if(PR.i > 0 || PR.dir < 0) animar(body, [{transform:`translateX(${PR.dir < 0 ? -16 : 16}px)`, opacity:0}, {transform:'none', opacity:1}], {duration:240, easing:'cubic-bezier(0.23,1,0.32,1)'});
+  const seguir = (txt = 'Seguir') => { foot.innerHTML = `<button class="btn primary big" data-pr-sig>${txt}</button>`; $('[data-pr-sig]', foot).onclick = () => { PR.dir = 1; PR.i++; pintarPaso(); }; };
   PASOS[paso.id]({body, foot, al, L, paso, seguir, num:PR.i + 1});
 }
 /* toca las tarjetas con 4 pulsos de preparación */
@@ -4061,16 +4192,16 @@ const PASOS = {
       clearPracticaMounts(); stopPlay();
       body.innerHTML = '<div data-pr-juego></div>'; foot.innerHTML = '';
       const notasCancion = (() => { try{ return ejercicio(L.practicas.find(k => k === 'cancion' || k === 'frase') || L.practicas[0], al, L).notas; }catch(e){ return null; } })();
-      practicaMounts.push(mountJuego($('[data-pr-juego]', body), {tipo, pool, nueva, alId:al.id, clave:`${niv}.${L.n}.${tipo}`, notasPool:notasHasta(niv, L.n), notasCancion, onFin:est => { PR.estrellas = est; PR.i++; pintarPaso(); }}));
+      practicaMounts.push(mountJuego($('[data-pr-juego]', body), {tipo, pool, nueva, alId:al.id, clave:`${niv}.${L.n}.${tipo}`, notasPool:notasHasta(niv, L.n), notasCancion, onFin:est => { PR.estrellas = Math.max(PR.estrellas || 0, est); PR.dir = 1; PR.i++; pintarPaso(); }}));
     };
     if(!nueva){ jugar(); return; }
-    const c = CELULAS[nueva], veces = Math.max(1, Math.floor(4 / durCel(nueva))), rel = reloj();
+    const c = CELULAS[nueva], rel = reloj(), cels = compasDe(nueva);
     practicaMounts.push(() => rel.clear());
-    body.innerHTML = `<h2 class="pr-title">Carta nueva: ${esc(c.syl.join(' '))}</h2><p class="muted">${esc(c.nombre)}</p>
+    body.innerHTML = `<h2 class="pr-title">Carta nueva: ${esc(c.syl.join(' '))}</h2>
       <div>${cartaRitmo(nueva, {cls:'big new'})}</div>
-      <button class="big-play" data-pr-play aria-label="Escuchar la carta"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg></button>
-      <p class="muted">Escucha, di las sílabas y aplaude.</p>`;
-    $('[data-pr-play]', body).onclick = () => { rel.clear(); tocarCelulas(Array.from({length:veces}, () => nueva), 66, {previa:4, rel, onNota:(i, e) => $$('.rc.big .rc-n', body).forEach((x, k) => x.classList.toggle('now', !!e && k === e.ni))}); };
+      ${pizzaHTML(cels, {silabas:niv < 3, tira:niv >= 3})}
+      <div class="pr-play-fila">${pulsoHTML()}<button class="big-play" data-pr-play aria-label="Escuchar el compás"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg></button></div>`;
+    $('[data-pr-play]', body).onclick = () => tocarPizza(body, cels, 66, rel);
     foot.innerHTML = `<button class="btn primary big" data-pr-jugar>Jugar: ${esc((JUEGOS[tipo] || JUEGOS.eco).nombre)}</button>`;
     $('[data-pr-jugar]', foot).onclick = jugar;
   },
@@ -4082,7 +4213,7 @@ const PASOS = {
   capsula({body, foot, L, seguir}){
     body.innerHTML = '<div data-pr-cap></div>';
     foot.innerHTML = '<button class="btn ghost" data-pr-saltar>Saltar</button>';
-    $('[data-pr-saltar]', foot).onclick = () => { PR.i++; pintarPaso(); };
+    $('[data-pr-saltar]', foot).onclick = () => { PR.dir = 1; PR.i++; pintarPaso(); };
     practicaMounts.push(mountCapsula($('[data-pr-cap]', body), L.visual, {onFin:() => seguir()}));
   },
   cancion({body, al, L, paso, seguir, num}){
@@ -4186,9 +4317,10 @@ Object.assign(CELULAS, {
   blan:{syl:['blan', 'co'], d:[.75, .25], nombre:'Puntillo corto'},
   ques:{syl:['que', 'so'], d:[.25, .75], nombre:'Puntillo al revés'},
   vali:{syl:['va', 'lien', 'te'], d:[.25, .5, .25], nombre:'Síncopa'},
-  s16:{syl:['cho'], d:[.25], r:[1], nombre:'Silencio muy corto'}
+  s16:{syl:['cho'], d:[.25], r:[1], nombre:'Silencio muy corto'},
+  s1:{syl:['1 - 2 - 3 - 4'], d:[4], r:[1], nombre:'Silencio de cuatro pulsos'}
 });
-Object.assign(JUEGOS, {pentagrama:{nombre:'Del pentagrama al violín', rondas:8, notas:true}, oido:{nombre:'Del oído al violín', rondas:8, notas:true}, lluvia:{nombre:'Lluvia de notas', rondas:1, notas:true}});
+Object.assign(JUEGOS, {pentagrama:{nombre:'Leer notas', rondas:12, notas:true}, oido:{nombre:'Del oído al violín', rondas:8, notas:true}, lluvia:{nombre:'Lluvia de notas', rondas:1, notas:true}});
 
 /* cómo se leen las notas en cada nivel */
 const modoNotas = nivel => nivel <= 2 ? 'tarjetas' : nivel === 3 ? 'ambos' : 'pentagrama';
@@ -4204,13 +4336,15 @@ function notasHasta(nivel, n){
 }
 
 /* ============ pentagrama ============ */
-const CLAVE_SOL = 'M13 11V7.5l2.2-2.21c.8-.79.95-2.05.39-3.03A2.47 2.47 0 0 0 13.45 1c-.21 0-.45.03-.64.09C11.73 1.38 11 2.38 11 3.5v3.24L7.86 9.91a5.95 5.95 0 0 0-1.25 6.43c.77 1.9 2.45 3.21 4.39 3.55v.61c0 .26-.23.5-.5.5H9v2h1.5c1.35 0 2.5-1.11 2.5-2.5V20c2.03 0 4.16-1.92 4.16-4.75c0-2.3-1.92-4.25-4.16-4.25m0-7.5c0-.23.11-.41.32-.47c.22-.06.45.03.56.23a.5.5 0 0 1-.08.61l-.8.86zm-2 8c-.97.64-1.7 1.74-1.96 2.76l1.96.52v3.05a3.86 3.86 0 0 1-2.57-2.26c-.59-1.46-.27-3.12.83-4.24L11 9.5zm2 6.5v-5.06c1.17 0 2.18 1.1 2.18 2.31C15.18 17 13.91 18 13 18';
+/* clave de Sol de Bravura (SMuFL, licencia OFL), la misma de las páginas del club; el origen es la línea de Sol y 356 unidades = un espacio */
+const CLAVE_SOL = 'M541-598C539-615 541-616 550-625C706-770 824-953 824-1174C824-1299 789-1423 730-1509C708-1541 671-1581 655-1581C635-1581 590-1544 562-1512C455-1394 420-1214 420-1064C420-981 431-887 441-828C444-811 445-808 428-793C220-622 0-416 0-125C0 125 171 363 524 363C557 363 595 360 624 354C639 351 642 350 645 367C662 464 684 589 684 657C684 870 540 896 455 896C377 896 340 873 340 854C340 844 353 840 386 829C431 816 482 778 482 694C482 615 432 547 344 547C248 547 190 624 190 713C190 806 246 948 464 948C560 948 747 904 747 660C747 577 721 441 706 351C703 334 704 336 724 327C870 269 966 147 966-16C966-200 831-363 619-363C582-363 582-363 577-389ZM677-1358C724-1358 763-1319 763-1240C763-1080 626-950 513-851C503-842 497-844 494-863C488-900 485-949 485-995C485-1220 589-1358 677-1358ZM520-377C524-350 524-351 498-343C372-300 289-186 289-63C289 66 357 158 455 192C467 196 484 200 494 200C505 200 511 193 511 184C511 174 500 170 490 166C429 140 386 78 386 12C386-71 442-132 530-157C553-163 556-161 559-145L631 284C634 300 632 300 611 304C588 308 559 311 530 311C278 311 115 171 115-29C115-114 130-228 249-363C336-459 402-513 469-567C484-579 487-577 490-562ZM619-148C616-166 618-170 635-168C752-158 848-60 848 66C848 157 793 230 713 271C696 279 693 279 690 262Z';
 const DIATONICA = [[0, ''], [0, '#'], [1, ''], [2, 'b'], [2, ''], [3, ''], [3, '#'], [4, ''], [4, '#'], [5, ''], [6, 'b'], [6, '']];
 /* paso en el pentagrama: 0 = primera línea (Mi), 1 = primer espacio (Fa)… */
 function pasoDe(m){ const [l, acc] = DIATONICA[((m % 12) + 12) % 12]; return {st:l + 7 * (Math.floor(m / 12) - 1) - 30, acc}; }
 const sostenidoSVG = (x, y) => `<path d="M${x - 3} ${y - 9}v18M${x + 1} ${y - 10}v18M${x - 6} ${y - 1}l10-3M${x - 6} ${y + 5}l10-3" stroke="currentColor" stroke-width="1.6"/>`;
 const bemolSVG = (x, y) => `<path d="M${x - 3} ${y - 14}v17c5-2 8-4 8-7s-4-4-8-1" stroke="currentColor" stroke-width="1.7" fill="none"/>`;
-const claveSVG = (x, top) => `<path d="${CLAVE_SOL}" transform="translate(${x - 12 * 3} ${top + 30 - 15.2 * 3}) scale(3)" fill="currentColor"/>`;
+const claveEn = (x, ySol, esp, fill = 'currentColor') => `<path d="${CLAVE_SOL}" transform="translate(${x} ${ySol}) scale(${(esp / 356).toFixed(4)})" fill="${fill}"/>`;
+const claveSVG = (x, top) => claveEn(x - 14, top + 30, 10);
 /* dibuja frases en pentagrama. ej = {frases, compas, anacrusa, letras}; cada nota queda en <g class="pn" data-i> */
 function pentagramaHTML(ej, {nombres = true, inicio = 0} = {}){
   const W = 46, compas = ej.compas || 4, ana = ej.anacrusa || 0;
@@ -4275,7 +4409,7 @@ function partituraHTML(ej, nivel){
   return `<div class="notes-scroll penta-box">${pentagramaHTML(ej)}</div><details class="mas"><summary>Ver también las tarjetas</summary><div class="notes-scroll">${notesHTML(ej)}</div></details>`;
 }
 /* nota sola en un pentagrama pequeño (juegos y cápsulas) */
-function notaSolaSVG(m, {ancho = 200, color = true, dibujos = false} = {}){
+function notaSolaSVG(m, {ancho = 200, color = true, dibujos = false, plica = false} = {}){
   const top = 40, y = st => top + 40 - st * 5, {st, acc} = pasoDe(m), x = ancho / 2 + 20, col = color ? STR[posFor(m).cuerda].color : 'var(--ink)';
   let o = `<svg class="penta nota-sola" viewBox="0 0 ${ancho} 130" role="img" aria-label="Una nota en el pentagrama">`;
   for(let l = 0; l < 5; l++) o += `<line x1="6" x2="${ancho - 6}" y1="${top + l * 10}" y2="${top + l * 10}" class="pl"/>`;
@@ -4285,32 +4419,409 @@ function notaSolaSVG(m, {ancho = 200, color = true, dibujos = false} = {}){
   if(acc === '#') o += `<g style="color:var(--ink)">${sostenidoSVG(x - 17, y(st))}</g>`;
   if(acc === 'b') o += `<g style="color:var(--ink)">${bemolSVG(x - 16, y(st))}</g>`;
   o += `<ellipse cx="${x}" cy="${y(st)}" rx="7.4" ry="5.4" transform="rotate(-20 ${x} ${y(st)})" fill="${col}"/>`;
+  if(plica){ const abajo = st >= 4, sx = abajo ? x - 6.6 : x + 6.6; o += `<line x1="${sx}" x2="${sx}" y1="${y(st)}" y2="${y(st) + (abajo ? 32 : -32)}" stroke="${col}" stroke-width="1.8"/>`; }
   return o + '</svg>';
 }
 /* notación de una célula de ritmo (niveles 3 en adelante) */
-function notacionCelula(id){
-  const c = CELULAS[id], W = 34, y = 26; let x = 12, o = '', puntas = [];
-  const total = c.d.reduce((a, b) => a + b, 0), ancho = Math.max(40, 24 + c.d.length * W);
-  c.d.forEach((d, i) => {
-    if(c.r?.[i]){
-      if(d >= 2) o += `<rect x="${x - 7}" y="${y - 6}" width="14" height="5" fill="currentColor"/>`;
-      else if(d >= 1) o += `<path d="M${x - 3} ${y - 14}l6 7-6 6 6 7" stroke="currentColor" stroke-width="2.6" fill="none"/>`;
-      else { o += `<path d="M${x + 3} ${y - 8}l-6 16" stroke="currentColor" stroke-width="1.8"/><circle cx="${x}" cy="${y - 7}" r="2.4" fill="currentColor"/>`; if(d <= .25) o += `<circle cx="${x - 2}" cy="${y - 1}" r="2.4" fill="currentColor"/>`; }
-      puntas.push(null);
-    } else {
-      o += `<ellipse cx="${x}" cy="${y + 6}" rx="5.6" ry="4.2" transform="rotate(-20 ${x} ${y + 6})" fill="${d >= 2 ? 'none' : 'currentColor'}" stroke="currentColor" stroke-width="1.6"/>`;
-      if(d < 4) o += `<line x1="${x + 5}" x2="${x + 5}" y1="${y + 6}" y2="${y - 20}" stroke="currentColor" stroke-width="1.5"/>`;
-      if([.75, 1.5, 3].some(v => Math.abs(d - v) < 1e-6)) o += `<circle cx="${x + 11}" cy="${y + 6}" r="1.8" fill="currentColor"/>`;
-      puntas.push(d < 1 ? x + 5 : null);
-    }
-    x += W;
+function notacionCelula(id){ return celdaSVG(notasDeCelula(id), {alto:40, cls:'rc-fig'}); }
+
+/* ============ notación de figuras (misma que la página de ritmo del club) ============
+   Cada nota es {b: figura base en pulsos, dot: con puntillo, t: de tresillo, rest: silencio}. */
+const FG = {Y:50, TOP:16, RX:5.4, RY:4.1, SW:1.7, BEAM:4.6, GAP:6.6};
+const redond = x => Math.round(x * 1e6) / 1e6;
+const durFig = n => redond(n.b * (n.dot ? 1.5 : 1) * (n.t ? 2 / 3 : 1));
+const banderas = n => (n.rest ? 0 : n.b === .25 ? 2 : n.b === .5 ? 1 : 0);
+const casiIgual = (a, b) => Math.abs(a - b) < 1e-3;
+/* traduce una célula del club (d, r) a figuras: 3 = blanca con puntillo, 1.5 = negra con puntillo, .75 = corchea con puntillo */
+function notasDeCelula(id){
+  const c = CELULAS[id], tres = c.d.length === 3 && c.d.every(v => casiIgual(v, 1 / 3));
+  return c.d.map((d, i) => {
+    const rest = !!c.r?.[i];
+    if(tres) return {b:.5, t:1, rest};
+    if([4, 2, 1, .5, .25].some(v => casiIgual(v, d))) return {b:d, rest};
+    return {b:d / 1.5, dot:1, rest};
   });
-  const cortas = puntas.map((p, i) => p != null ? i : -1).filter(i => i >= 0);
-  if(cortas.length >= 2){ const a = puntas[cortas[0]], z = puntas[cortas[cortas.length - 1]]; o += `<line x1="${a}" x2="${z}" y1="${y - 20}" y2="${y - 20}" stroke="currentColor" stroke-width="4"/>`;
-    cortas.forEach((i, k) => { if(c.d[i] <= .25 + 1e-6){ const b = cortas[k + 1] != null && c.d[cortas[k + 1]] <= .25 + 1e-6 ? puntas[cortas[k + 1]] : puntas[i] + (k === cortas.length - 1 ? -9 : 9); o += `<line x1="${puntas[i]}" x2="${b}" y1="${y - 14}" y2="${y - 14}" stroke="currentColor" stroke-width="4"/>`; } });
-    if(c.d.length === 3 && c.d.every(v => Math.abs(v - 1 / 3) < 1e-3)) o += `<text x="${(a + z) / 2}" y="${y - 25}" text-anchor="middle" font-size="11" font-weight="800" fill="currentColor">3</text>`;
-  } else if(cortas.length === 1){ const px = puntas[cortas[0]]; o += `<path d="M${px} ${y - 20}c7 3 10 9 6 15" stroke="currentColor" stroke-width="1.8" fill="none"/>`; if(c.d[cortas[0]] <= .25) o += `<path d="M${px} ${y - 13}c7 3 10 9 6 15" stroke="currentColor" stroke-width="1.8" fill="none"/>`; }
-  return `<svg class="rc-fig" viewBox="0 0 ${ancho} 40" width="${ancho}" height="40" aria-hidden="true">${o}</svg>`;
+}
+function banderaSVG(sx, top, count){
+  let s = '';
+  for(let k = 0; k < count; k++){ const y = top + k * 7.6; s += `<path d="M${sx + FG.SW},${y} c8,3.4 10.5,9 6.6,15.2 c1.6,-7.2 -1.6,-10.2 -6.6,-11.8 z"/>`; }
+  return s;
+}
+function silencioSVG(b, x){
+  const Y = FG.Y;
+  if(b >= 4) return `<rect x="${x - 13}" y="${Y - 9}" width="26" height="1.4" opacity=".5"/><rect x="${x - 9}" y="${Y - 9}" width="18" height="6.2" rx="1"/>`;
+  if(b >= 2) return `<rect x="${x - 13}" y="${Y + 1}" width="26" height="1.4" opacity=".5"/><rect x="${x - 9}" y="${Y - 5}" width="18" height="6.2" rx="1"/>`;
+  if(b >= 1) return `<path d="M${x - 4},${Y - 18} L${x + 4},${Y - 9} L${x - 3},${Y - 1} L${x + 4.5},${Y + 7}" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M${x + 4.5},${Y + 7} c-5.6,-3.6 -10.2,-0.4 -8.1,4.3 c1.2,2.9 3.9,4.7 6.7,5.7 c-3.7,-4.1 -2.4,-7.7 2.4,-6.5 z"/>`;
+  if(b >= .5) return `<path d="M${x + 4},${Y - 11} L${x - 3.6},${Y + 11}" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="${x - .2}" cy="${Y - 8.4}" r="3.4"/>`;
+  return `<path d="M${x + 4},${Y - 16} L${x - 4.2},${Y + 12}" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="${x + .2}" cy="${Y - 13.4}" r="3.2"/><circle cx="${x - 2.4}" cy="${Y - 2.6}" r="3.2"/>`;
+}
+/* dibuja figuras unidas por barra; opt: {prefijo, inicio, alto, cls, attrs} */
+function celdaSVG(ns, opt = {}){
+  const {prefijo = null, inicio = 0, alto = 68, cls = 'rsvg', attrs = ''} = opt;
+  const dur = redond(ns.reduce((s, n) => s + durFig(n), 0));
+  let acc = 0; const ts = ns.map(n => { const v = acc; acc += durFig(n); return v; });
+  let span = 54 * Math.pow(dur, .55) - 36;
+  for(let i = 0; i < ns.length - 1; i++){ const need = (ns[i].rest || ns[i + 1].rest) ? 34 : 19; span = Math.max(span, need / (durFig(ns[i]) / dur)); }
+  const W = Math.round(Math.min(320, Math.max(70, span + 36))), L0 = 18, R0 = W - 18;
+  const xs = ns.map((n, i) => ns.length === 1 ? W / 2 : L0 + (ts[i] / dur) * (R0 - L0));
+  const dx = FG.RX - .6;
+  const grupos = []; let cur = null;
+  ns.forEach((n, i) => { if(banderas(n) > 0){ if(!cur){ cur = []; grupos.push(cur); } cur.push(i); } else cur = null; });
+  const unidas = new Set(), barras = [];
+  grupos.forEach(gr => {
+    if(gr.length < 2) return;
+    gr.forEach(i => unidas.add(i));
+    const maxF = Math.max(...gr.map(i => banderas(ns[i])));
+    for(let lv = 1; lv <= maxF; lv++){
+      let p = 0;
+      while(p < gr.length){
+        if(banderas(ns[gr[p]]) < lv){ p++; continue; }
+        let q = p; while(q + 1 < gr.length && banderas(ns[gr[q + 1]]) >= lv) q++;
+        const y = FG.TOP + (lv - 1) * FG.GAP;
+        if(q > p){ const x1 = xs[gr[p]] + dx - .5, x2 = xs[gr[q]] + dx + FG.SW + .5; barras.push(`<rect x="${x1.toFixed(1)}" y="${y}" width="${(x2 - x1).toFixed(1)}" height="${FG.BEAM}" rx="0.7"/>`); }
+        else { const w = 8.5, x0 = xs[gr[p]] + dx, x1 = p === 0 ? x0 : x0 - w + FG.SW; barras.push(`<rect x="${x1.toFixed(1)}" y="${y}" width="${w}" height="${FG.BEAM}" rx="0.7"/>`); }
+        p = q + 1;
+      }
+    }
+    if(ns[gr[0]].t){ const cx = (xs[gr[0]] + xs[gr[gr.length - 1]] + dx) / 2; barras.push(`<text x="${cx.toFixed(1)}" y="${FG.TOP - 4}" text-anchor="middle" font-size="11.5" font-style="italic" font-weight="600">3</text>`); }
+  });
+  const partes = ns.map((n, i) => {
+    const x = xs[i], nid = prefijo != null ? ` data-nid="${prefijo}-${inicio + i}"` : '';
+    let s = '';
+    if(n.rest) s += silencioSVG(n.b, x);
+    else {
+      const hueca = n.b >= 2;
+      s += `<ellipse cx="${x.toFixed(1)}" cy="${FG.Y}" rx="${hueca ? 6.3 : FG.RX}" ry="${hueca ? 4.6 : FG.RY}" transform="rotate(-16 ${x.toFixed(1)} ${FG.Y})" ${hueca ? 'fill="none" stroke="currentColor" stroke-width="1.8"' : ''}/>`;
+      if(n.b < 4){ const sx = x + dx, top = banderas(n) > 0 ? FG.TOP : FG.TOP + 3; s += `<rect x="${sx.toFixed(1)}" y="${top}" width="${FG.SW}" height="${(FG.Y - top).toFixed(1)}"/>`; if(!unidas.has(i) && banderas(n) > 0) s += banderaSVG(sx, FG.TOP, banderas(n)); }
+      if(n.dot) s += `<circle cx="${(x + 10.5).toFixed(1)}" cy="${FG.Y}" r="1.9"/>`;
+    }
+    return `<g class="nt"${nid}>${s}</g>`;
+  }).join('');
+  const ancho = Math.round(W * alto / 68);
+  return `<svg class="${cls}" viewBox="0 4 ${W} 68" width="${ancho}" height="${alto}" fill="currentColor" aria-hidden="true" ${attrs}>${barras.join('')}${partes}</svg>`;
+}
+/* nombre de las figuras, solo para lectores de pantalla */
+function nombreFiguraDe(n){
+  const base = {4:'redonda', 2:'blanca', 1:'negra', .5:'corchea', .25:'semicorchea'}[n.b];
+  return (n.rest ? 'silencio de ' : '') + base + (n.dot ? ' con puntillo' : '') + (n.t ? ' de tresillo' : '');
+}
+
+/* ============ círculo de cuenta: reloj en reposo, 1-2-3-4 y después el pulso ============ */
+const RELOJ_SVG = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5M12 2.5V5"/></svg>';
+const pulsoHTML = () => `<span class="pulso" aria-hidden="true">${RELOJ_SVG}</span>`;
+function pulsoEstado(el, modo, n){
+  if(!el) return;
+  el.classList.toggle('cuenta', modo === 'cuenta');
+  el.classList.toggle('lit', modo === 'pulso');
+  el.classList.toggle('strong', modo === 'pulso' && n === 0);
+  if(modo === 'cuenta') el.textContent = n; else if(modo === 'pulso') el.textContent = n + 1; else el.innerHTML = RELOJ_SVG;
+}
+
+/* ============ la pizza del club: cada pizza es un pulso ============
+   Negra = una pizza, blanca = dos, redonda = cuatro, corchea = media, semicorchea = un cuarto.
+   El puntillo es la mitad de su figura: una negra con puntillo es una pizza y media.
+   Las pizzas de una misma figura van sobre la misma bandeja; se pinta lo que suena y su figura cambia de color. */
+let pizzaN = 0;
+/* la cuenta empieza arriba y avanza hacia la izquierda: media pizza = mitad izquierda, un cuarto = arriba a la izquierda */
+function sectorPath(cx, cy, r, a0, a1){
+  const p = a => `${(cx - r * Math.sin(2 * Math.PI * a)).toFixed(2)} ${(cy - r * Math.cos(2 * Math.PI * a)).toFixed(2)}`;
+  return `M${cx} ${cy} L${p(a0)} A${r} ${r} 0 ${a1 - a0 > .5 ? 1 : 0} 0 ${p(a1)} Z`;
+}
+function figuraEnPizza(n, cx, cy, radio){
+  const svg = celdaSVG([n], {alto:Math.round(radio * 1.55)});
+  const m = svg.match(/width="(\d+)" height="(\d+)"/), w = +m[1], h = +m[2];
+  return svg.replace('<svg ', `<svg x="${(cx - w / 2).toFixed(1)}" y="${(cy - h / 2 - radio * .08).toFixed(1)}" `);
+}
+/* parte un tramo de tiempo [a, b) en los pedazos de cada pizza */
+function tramosPizza(a, b){
+  const out = []; let t = a;
+  while(t < b - 1e-6){ const p = Math.floor(t + 1e-6), f = Math.min(b, p + 1); out.push({p, a:redond(t - p), b:redond(f - p)}); t = f; }
+  return out;
+}
+/* cels: células; silabas: en los niveles 1 y 2 va la sílaba en lugar de la figura */
+function pizzaHTML(cels, {silabas = false, tira = true} = {}){
+  const ev = eventosDe(cels), notas = ev.map(e => notasDeCelula(cels[e.ci])[e.ni]);
+  const total = ev.reduce((a, e) => Math.max(a, e.t + e.d), 0), P = Math.max(1, Math.ceil(total - 1e-6));
+  const CW = 220, CY = 110, R = 100, cx = p => CW * p + CW / 2, id = 'pz' + (++pizzaN);
+  const forma = (s, r = R, cls = '', extra = '') => s.b - s.a >= 1 - 1e-6 ? `<circle ${cls} ${extra} cx="${cx(s.p)}" cy="${CY}" r="${r}"/>` : `<path ${cls} ${extra} d="${sectorPath(cx(s.p), CY, r, s.a, s.b)}"/>`;
+  // cada figura: la parte principal y, si tiene puntillo, la parte del punto
+  const partes = ev.map((e, k) => {
+    const n = notas[k], base = !silabas && n.dot ? redond(e.d / 1.5) : e.d;
+    return {k, e, n, main:tramosPizza(e.t, e.t + base), dot:base < e.d - 1e-6 ? tramosPizza(e.t + base, e.t + e.d) : []};
+  });
+  let o = `<svg class="pizza" style="--p:${P}" viewBox="0 0 ${CW * P} ${CW}" role="img" aria-label="${P === 1 ? 'Una pizza' : P + ' pizzas'}: ${esc(notas.map(nombreFiguraDe).join(', '))}"><defs>`;
+  for(let p = 0; p < P; p++) o += `<clipPath id="${id}-${p}">${partes.filter(x => !x.e.r).flatMap(x => [...x.main, ...x.dot]).filter(s => s.p === p).map(s => forma(s)).join('') || '<rect width="0" height="0"/>'}</clipPath>`;
+  o += '</defs>';
+  // bandeja: las pizzas de una figura larga van juntas
+  partes.forEach(({e}) => { const p0 = Math.floor(e.t + 1e-6), p1 = Math.ceil(e.t + e.d - 1e-6) - 1; if(p1 > p0) o += `<rect class="pz-bandeja" x="${CW * p0 + 4}" y="4" width="${CW * (p1 - p0 + 1) - 8}" height="${CW - 8}" rx="${(CW - 8) / 2}"/>`; });
+  const lado = R * 410 / 395;
+  for(let p = 0; p < P; p++){
+    o += `<circle class="pz-plato" cx="${cx(p)}" cy="${CY}" r="${R + 5}"/>`;
+    o += `<image href="assets/ilustraciones/pizza.webp" x="${cx(p) - lado}" y="${CY - lado}" width="${2 * lado}" height="${2 * lado}" clip-path="url(#${id}-${p})"/>`;
+  }
+  // silencios: plato vacío con el borde punteado
+  partes.forEach(({e, main, dot}) => { if(e.r) [...main, ...dot].forEach(s => { o += forma(s, R - 4, 'class="pz-vacio"'); }); });
+  // cortes: donde empieza o termina cada pedazo, si la pizza no está entera
+  for(let p = 0; p < P; p++){
+    const segs = partes.flatMap(x => [...x.main, ...x.dot]).filter(s => s.p === p);
+    if(segs.length === 1 && segs[0].b - segs[0].a >= 1 - 1e-6) continue;
+    [...new Set(segs.flatMap(s => [redond(s.a % 1), redond(s.b % 1)]))].forEach(a => { const x = cx(p) - R * Math.sin(2 * Math.PI * a), y = CY - R * Math.cos(2 * Math.PI * a); o += `<line class="pz-corte-luz" x1="${cx(p)}" y1="${CY}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/><line class="pz-corte" x1="${cx(p)}" y1="${CY}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; });
+  }
+  // lo que suena
+  partes.forEach(({k, main, dot}) => [...main, ...dot].forEach(s => { o += forma(s, R, 'class="pz-luz"', `data-sl="${k}"`); }));
+  // dónde va la insignia: al centro de las pizzas enteras, o en el pedazo más grande
+  const lugar = segs => {
+    const enteras = segs.filter(s => s.b - s.a >= 1 - 1e-6);
+    if(enteras.length) return {x:(cx(enteras[0].p) + cx(enteras[enteras.length - 1].p)) / 2, y:CY, len:enteras.length};
+    const s = segs.reduce((m, v) => v.b - v.a > m.b - m.a ? v : m), th = (s.b - s.a) * 2 * Math.PI, am = (s.a + s.b) * Math.PI;
+    const rho = Math.max(.45 * R, Math.min(.66 * R, 4 * R * Math.sin(th / 2) / (3 * th)));
+    return {x:cx(s.p) - rho * Math.sin(am), y:CY - rho * Math.cos(am), len:s.b - s.a};
+  };
+  partes.forEach(({k, e, n, main, dot}) => {
+    const L = lugar(main), ri = L.len >= 2 ? 50 : L.len >= 1 - 1e-6 ? 38 : L.len >= .5 - 1e-6 ? 30 : L.len >= 1 / 3 - 1e-3 ? 26 : 23;
+    const c = CELULAS[cels[e.ci]], dentro = silabas
+      ? `<text x="${L.x.toFixed(1)}" y="${(L.y + ri * .22).toFixed(1)}" text-anchor="middle" class="pz-sil${e.r ? ' rest' : ''}" style="font-size:${Math.round(ri * .95)}px">${esc(c.syl[e.ni] || '')}</text>`
+      : figuraEnPizza({...n, dot:0}, L.x, L.y, ri);
+    o += `<g class="pz-fig" data-nid="pz-${k}"><circle class="pz-insignia" cx="${L.x.toFixed(1)}" cy="${L.y.toFixed(1)}" r="${ri}"/>${dentro}`;
+    if(dot.length){ const D = lugar(dot), rd = Math.min(ri, D.len >= 1 - 1e-6 ? 30 : D.len >= .5 - 1e-6 ? 24 : 18); o += `<circle class="pz-insignia" cx="${D.x.toFixed(1)}" cy="${D.y.toFixed(1)}" r="${rd}"/><circle cx="${D.x.toFixed(1)}" cy="${D.y.toFixed(1)}" r="${(rd * .3).toFixed(1)}" fill="currentColor"/>`; }
+    o += '</g>';
+  });
+  o += '</svg>';
+  let tiraHTML = '';
+  if(tira){ let k = 0; tiraHTML = `<div class="pizza-tira">${cels.map(idc => { const ns = notasDeCelula(idc), s = celdaSVG(ns, {prefijo:'pz', inicio:k, alto:44}); k += ns.length; return s; }).join('')}</div>`; }
+  return `<div class="pizza-vista">${o}${tiraHTML}</div>`;
+}
+function pizzaMarcar(root, k){
+  if(!root) return;
+  $$('.pz-luz.on, .pz-fig.on, .pizza-tira .nt.on', root).forEach(x => x.classList.remove('on'));
+  if(k != null && k >= 0) $$(`[data-sl="${k}"], [data-nid="pz-${k}"]`, root).forEach(x => x.classList.add('on'));
+}
+/* compás de ejemplo de una carta (cuatro pizzas): se repite hasta llenar 4 pulsos; los silencios van con notas para que el compás suene */
+const COMPAS_EJEMPLO = {s4:['pan', 's4', 'pan', 's4'], s2:['pan', 'pan', 's2'], s8:['pan', 's8', 'y', 'pan', 's8', 'y'], s16:['pan', 'y', 's16', 's16', 'pan', 'y', 's16', 's16'], bla3:['bla3', 'pan'], s1:['s1']};
+function compasDe(id){
+  if(COMPAS_EJEMPLO[id]) return COMPAS_EJEMPLO[id].slice();
+  const cels = []; let resto = 4;
+  while(resto >= durCel(id) - 1e-6){ cels.push(id); resto -= durCel(id); }
+  while(resto > 1e-6){ const f = resto >= 1 - 1e-6 ? 'pan' : 'y'; cels.push(f); resto -= durCel(f); }
+  return cels;
+}
+/* toca un compás en la pizza con la cuenta en el círculo */
+function tocarPizza(root, cels, bpm, rel, {onFin = null, previa = 4} = {}){
+  pararRitmo(); rel.clear(); pizzaMarcar(root, -1);
+  const pul = $('.pulso', root);
+  return tocarCelulas(cels, bpm, {previa, rel, metro:'fuerte',
+    onCuenta:n => pulsoEstado(pul, 'cuenta', n),
+    onPulso:b => b < 0 ? pulsoEstado(pul, 'off') : pulsoEstado(pul, 'pulso', b % 4),
+    onNota:i => { pizzaMarcar(root, i); if(i < 0) onFin && onFin(); }});
+}
+
+/* ============ Leer notas: el violín del club con sus modos y estrellas ============
+   Modos del pentagrama (clave de Sol, registro del violín). */
+const MODOS_LEER = {
+  lineas:{nombre:'Líneas', notas:[64, 67, 71, 74, 77]},
+  espacios:{nombre:'Espacios', notas:[65, 69, 72, 76]},
+  adicionales:{nombre:'Líneas adicionales', notas:[55, 57, 59, 60, 81, 83, 84, 86]},
+  todas:{nombre:'Todas', notas:[55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 81, 83, 84, 86]}
+};
+const modoLeer = (nivel, n) => nivel === 3 && n === 1 ? 'lineas' : nivel === 3 && n === 2 ? 'espacios' : nivel === 3 && n === 3 ? 'adicionales' : 'todas';
+const CUERDAS_LEER = [['sol', 55], ['re', 62], ['la', 69], ['mi', 76]];
+const ESCALA_DO = new Set(['sol-5', 're-0', 're-2', 're-3', 're-5', 'la-0', 'la-2', 'la-3']);
+const esNatural = m => [0, 2, 4, 5, 7, 9, 11].includes(((m % 12) + 12) % 12);
+/* el violín del club (assets/ilustraciones/violin-mastil.webp): recorte del mástil de 116×390 con la voluta arriba.
+   Cada nota va donde de verdad se pisa: la cuerda mide 692 y cada semitono acorta la cuerda 2^(-1/12). */
+const MASTIL = {W:116, H:390, x0:500, y0:262, cejilla:328, largo:692};
+const POS_LEER = CUERDAS_LEER.flatMap(([id, base], i) => Array.from({length:11}, (_, k) => {
+  const y = k ? MASTIL.cejilla + MASTIL.largo * (1 - 2 ** (-k / 12)) : 312, sep = 13 + .02333 * (y - 350);
+  return {id, k, m:base + k, x:557.5 + .00111 * (y - 350) + (i - 1.5) * sep - MASTIL.x0, y:y - MASTIL.y0, r:.47 * sep};
+}));
+/* vertical: Sol a la izquierda y Mi a la derecha; horizontal: la voluta a la izquierda, Mi arriba y Sol abajo */
+function violinLeerSVG(horizontal){
+  const W = horizontal ? MASTIL.H : MASTIL.W, H = horizontal ? MASTIL.W : MASTIL.H;
+  const xy = p => horizontal ? [p.y, MASTIL.W - p.x] : [p.x, p.y];
+  const cintas = [2, 3, 5].map(k => { const a = xy(POS_LEER.find(p => p.id === 'sol' && p.k === k)), b = xy(POS_LEER.find(p => p.id === 'mi' && p.k === k)), r = POS_LEER.find(p => p.k === k).r;
+    return `<line class="lv-cinta" x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke-width="${(2 * r).toFixed(1)}"/>`; }).join('');
+  const notas = POS_LEER.map(p => { const [x, y] = xy(p), nom = noteName(p.m);
+    return `<g class="lv-n" data-cuerda="${p.id}" data-m="${p.m}" data-pos="${p.id}-${p.k}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" role="button" aria-label="${nom} en la cuerda ${STR[p.id].nombre}"><g class="lv-in"><circle r="${p.r.toFixed(1)}"/><text y="${(p.r * .3).toFixed(1)}" text-anchor="middle" style="font-size:${(p.r * (nom.length > 3 ? .62 : .8)).toFixed(1)}px">${nom}</text></g></g>`; }).join('');
+  return `<svg class="lv" viewBox="0 0 ${W} ${H}" role="group" aria-label="Violín: toca la nota"><image href="assets/ilustraciones/violin-mastil${horizontal ? '-h' : ''}.webp" width="${W}" height="${H}"/>${cintas}${notas}</svg>`;
+}
+const leerHorizontal = () => !matchMedia('(max-width: 760px)').matches;
+function diapasonLeerHTML(){ return `<div class="ln-violin" data-h="${leerHorizontal()}">${violinLeerSVG(leerHorizontal())}</div>`; }
+/* marca de color: todas las naturales hasta el 3.er dedo, o la escala de Do en primera posición */
+function marcarLeer(root, ver){
+  root.dataset.ver = ver;
+  $$('[data-pos]', root).forEach(b => { const k = +b.dataset.pos.split('-')[1], m = +b.dataset.m; b.classList.toggle('on', ver === 'todas' ? esNatural(m) && k < 7 : ESCALA_DO.has(b.dataset.pos)); });
+}
+/* si cambia la orientación se vuelve a dibujar el violín (nunca se deforma: solo se escala) */
+function medirLeer(root){
+  const v = $('.ln-violin', root), h = leerHorizontal(); if(!v || v.dataset.h === String(h)) return;
+  v.dataset.h = String(h); v.innerHTML = violinLeerSVG(h); const ln = $('.ln', root); if(ln) marcarLeer(ln, ln.dataset.ver || 'todas');
+}
+/* la nota más cercana al toque (el dedo no tiene que caer exacto en el círculo) */
+function notaTocada(e, root){
+  const svg = e.target.closest?.('.lv'); if(!svg || !root.contains(svg)) return null;
+  const ctm = svg.getScreenCTM(); if(!ctm) return null;
+  const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+  let mejor = null, dist = Infinity;
+  $$('.lv-n', svg).forEach(g => { const t = g.transform.baseVal.consolidate()?.matrix; if(!t) return; const d = Math.hypot(t.e - pt.x, t.f - pt.y); if(d < dist){ dist = d; mejor = g; } });
+  const r = mejor ? +$('circle', mejor).getAttribute('r') : 0;
+  return mejor && dist <= r * 2.2 ? mejor : null;
+}
+function campanita(){
+  const c = audio();
+  [784, 988, 1319].forEach((f, i) => { const t = c.currentTime + .2 + i * .09, o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.22, t + .02); g.gain.exponentialRampToValueAtTime(.001, t + .5); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + .5); });
+}
+/* libre = herramienta (sin final); en la lección termina con 3 estrellas o a las 12 notas */
+function mountLeerNotas(el, {modo = 'todas', nivel = 3, alId = null, clave = '', onFin = null, libre = false} = {}){
+  let ver = 'todas', jugando = !libre, objetivo = null, aciertos = 0, racha = 0, mejor = 0, estrellas = 0, mostradas = 0, fallos = 0, esperando = false;
+  const timers = []; const luego = (ms, fn) => timers.push(setTimeout(fn, ms));
+  const pool = () => modo === 'todas' && nivel >= 4 ? [...MODOS_LEER.todas.notas, 61, 66, 68, 73, 78] : MODOS_LEER[modo].notas;
+  el.innerHTML = `<div class="ln">
+    ${libre ? `<div class="seg ln-modos" role="group" aria-label="Qué notas practicar">${Object.entries(MODOS_LEER).map(([k, v]) => `<button data-lnm="${k}" aria-pressed="${k === modo}">${v.nombre}</button>`).join('')}</div>` : ''}
+    <div class="ln-arriba">
+      <div class="ln-penta" data-ln-penta>${notaSolaSVG(71, {color:false, plica:true})}</div>
+      <div class="ln-estado">
+        ${libre ? '<button class="btn primary" data-ln-jugar>Empezar</button>' : ''}
+        <p class="ln-msg" aria-live="polite">${libre ? 'Toca cualquier nota' : 'Toca esta nota en el violín'}</p>
+        <div class="ln-estrellas" ${libre ? 'hidden' : ''}><span class="ln-est" aria-label="Estrellas: 0 de 3">${[1, 2, 3].map(() => ESTRELLA.replace('i-star', 'i-star off')).join('')}</span><span class="ln-marca">0 · 0</span></div>
+      </div>
+    </div>
+    <div class="seg ln-ver" role="group" aria-label="Qué notas marcar"><button data-lnv="todas" aria-pressed="true">Todas las notas</button><button data-lnv="escala" aria-pressed="false">Escala de Do mayor</button></div>
+    ${diapasonLeerHTML()}
+  </div>`;
+  const root = $('.ln', el), msg = $('.ln-msg', el), penta = $('[data-ln-penta]', el), estEl = $('.ln-est', el), marca = $('.ln-marca', el);
+  marcarLeer(root, ver); medirLeer(el);
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => medirLeer(el)) : null; ro?.observe(el);
+  const pintarEstrellas = nueva => {
+    $$('.i-star', estEl).forEach((s, i) => s.classList.toggle('off', i >= estrellas));
+    estEl.setAttribute('aria-label', `Estrellas: ${estrellas} de 3`); marca.textContent = `${aciertos} · ${racha}`;
+    if(nueva) animar($$('.i-star', estEl)[estrellas - 1], [{transform:'scale(.95)', opacity:.4}, {transform:'scale(1)', opacity:1}], {duration:240, easing:'cubic-bezier(0.23,1,0.32,1)'});
+  };
+  const siguiente = () => {
+    esperando = false; fallos = 0;
+    if(!libre && (estrellas >= 3 || mostradas >= 12)){ fin(); return; }
+    const p = pool(); objetivo = azar(p.filter(m => m !== objetivo)) ?? azar(p); mostradas++;
+    penta.innerHTML = notaSolaSVG(objetivo, {color:false, plica:true}); penta.dataset.m = objetivo; msg.textContent = 'Toca esta nota en el violín';
+    $$('.ln-guia', root).forEach(b => b.classList.remove('ln-guia'));
+  };
+  const reiniciar = () => { aciertos = 0; racha = 0; mejor = 0; estrellas = 0; mostradas = 0; objetivo = null; pintarEstrellas(false); };
+  function fin(){
+    jugando = false; const est = Math.max(1, estrellas);
+    if(alId) guardarJuego(alId, clave, est);
+    el.innerHTML = `<div class="g-end">${est >= 2 ? '<span class="lot lot-l" data-lottie="ardilla" aria-hidden="true"></span>' : ''}${estrellasGrandes(est)}<p class="pr-title">${est === 3 ? '¡Perfecto!' : est === 2 ? '¡Muy bien!' : '¡Lo lograste!'}</p><p class="muted">${aciertos} aciertos · ${mejor} seguidos</p></div>
+      <div class="row" style="justify-content:center"><button class="btn" data-g-otra>Jugar otra vez</button>${onFin ? '<button class="btn primary big" data-g-fin>Seguir</button>' : ''}</div>`;
+    $('[data-g-otra]', el).onclick = () => mountLeerNotas(el, {modo, nivel, alId, clave, onFin, libre});
+    const f = $('[data-g-fin]', el); if(f) f.onclick = () => onFin(est);
+  }
+  root.addEventListener('pointerdown', e => {
+    const b = notaTocada(e, root); if(!b) return;
+    e.preventDefault(); const m = +b.dataset.m;
+    $$('.activa', root).forEach(x => x.classList.remove('activa')); b.classList.add('activa');
+    if(!jugando){ tone(mtof(m), .7); penta.innerHTML = notaSolaSVG(m, {color:false, plica:true}); msg.textContent = noteName(m); return; }
+    if(esperando || objetivo == null) return;
+    if(m === objetivo){
+      tone(mtof(m), .7); esperando = true; aciertos++; racha++; mejor = Math.max(mejor, racha);
+      const antes = estrellas; estrellas = [aciertos >= 5, mejor >= 4, mejor >= 6].filter(Boolean).length;
+      const gano = estrellas > antes; pintarEstrellas(gano); if(gano) campanita();
+      msg.textContent = gano ? (estrellas === 3 ? '¡Tres estrellas!' : '¡Ganaste una estrella!') : '¡Correcto!';
+      luego(gano ? 1300 : 700, siguiente);
+    } else {
+      sfx(false); racha = 0; fallos++; pintarEstrellas(false);
+      if(fallos >= 2){
+        esperando = true; msg.textContent = 'Está aquí';
+        $$(`[data-m="${objetivo}"]`, root).forEach(x => x.classList.add('ln-guia'));
+        luego(1200, siguiente);
+      } else msg.textContent = 'Inténtalo de nuevo';
+    }
+  });
+  $$('[data-lnv]', el).forEach(b => b.onclick = () => { ver = b.dataset.lnv; $$('[data-lnv]', el).forEach(x => x.setAttribute('aria-pressed', String(x === b))); marcarLeer(root, ver); });
+  $$('[data-lnm]', el).forEach(b => b.onclick = () => { modo = b.dataset.lnm; $$('[data-lnm]', el).forEach(x => x.setAttribute('aria-pressed', String(x === b))); if(jugando){ reiniciar(); siguiente(); } });
+  const bj = $('[data-ln-jugar]', el);
+  if(bj) bj.onclick = () => {
+    jugando = !jugando; bj.textContent = jugando ? 'Detener' : 'Empezar'; bj.classList.toggle('primary', !jugando);
+    $('.ln-estrellas', el).hidden = !jugando;
+    if(jugando){ reiniciar(); siguiente(); } else { objetivo = null; msg.textContent = 'Toca cualquier nota'; penta.innerHTML = notaSolaSVG(71, {color:false, plica:true}); }
+  };
+  if(!libre) siguiente();
+  return () => { timers.forEach(clearTimeout); ro?.disconnect(); };
+}
+
+/* ============ taller de ritmo: arma compases con las cartas del club ============ */
+const TALLER_GRUPOS = {
+  base:{nombre:'Rítmicas', ids:['pan', 'luna', 'choco', 'gran', 'cama', 'y', 'musi', 'blan', 'ques', 'vali']},
+  largas:{nombre:'Largas', ids:['bla2', 'leey', 'bla3', 'red']},
+  silencios:{nombre:'Silencios', ids:['s16', 's8', 's4', 's2', 's1', 'ct', 'pc']}
+};
+function mountTallerRitmo(el, {big = false} = {}){
+  const KEY = 'sprinkloud-taller';
+  let st = {comp:[], bpm:70, loop:false, pizza:false, grupo:'base'};
+  try{ Object.assign(st, JSON.parse(localStorage.getItem(KEY) || '{}')); st.comp = (st.comp || []).filter(id => CELULAS[id]); }catch(e){}
+  const guardar = () => { try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} };
+  const rel = reloj(); let sonando = false;
+  const total = () => st.comp.reduce((a, id) => a + durCel(id), 0);
+  const libreEnCompas = () => { const r = redond(total() % 4); return r === 0 ? 4 : redond(4 - r); };
+  const compases = () => { const bars = []; let cur = [], acc = 0; st.comp.forEach((id, i) => { cur.push(i); acc = redond(acc + durCel(id)); if(acc >= 4 - 1e-6){ bars.push(cur); cur = []; acc = 0; } }); if(cur.length) bars.push(cur); return bars; };
+  el.innerHTML = `<div class="taller${big ? ' big' : ''}">
+    <div class="taller-barra">${pulsoHTML()}
+      <button class="big-play" data-tr-play aria-label="Reproducir"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg></button>
+      <label class="row fine">Tempo <input type="range" min="40" max="160" value="${st.bpm}" data-tr-bpm style="width:110px;accent-color:var(--pine)"> <output>${st.bpm}</output></label>
+      <label class="switch"><input type="checkbox" data-tr-loop ${st.loop ? 'checked' : ''}> Repetir</label>
+      <button class="btn pizza-btn" data-tr-pizza aria-pressed="${st.pizza}">Pizza</button>
+      <button class="btn ghost small" data-tr-borrar>Borrar la última</button>
+    </div>
+    <div class="taller-lienzo" data-tr-lienzo></div>
+    <div class="seg" role="group" aria-label="Grupo de cartas">${Object.entries(TALLER_GRUPOS).map(([k, g]) => `<button data-tr-g="${k}" aria-pressed="${k === st.grupo}">${g.nombre}</button>`).join('')}</div>
+    <div class="taller-paleta" data-tr-paleta></div>
+  </div>`;
+  const lienzo = $('[data-tr-lienzo]', el), paleta = $('[data-tr-paleta]', el), bplay = $('[data-tr-play]', el);
+  const ICON_PLAY = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg>', ICON_STOP = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.5h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/></svg>';
+  function pintarPaleta(){
+    const libre = libreEnCompas();
+    paleta.innerHTML = TALLER_GRUPOS[st.grupo].ids.map(id => { const cabe = durCel(id) <= libre + 1e-6; return `<button class="rc tr-carta" data-tr-add="${id}" ${cabe ? '' : 'aria-disabled="true"'} aria-label="Añadir ${esc(notasDeCelula(id).map(nombreFiguraDe).join(', '))}">${celdaSVG(notasDeCelula(id), {alto:40, cls:'rc-fig'})}<span class="tr-sil">${esc(CELULAS[id].syl.join(' '))}</span></button>`; }).join('');
+    $$('[data-tr-add]', paleta).forEach(b => b.onclick = () => {
+      if(b.getAttribute('aria-disabled')){ toast(`En este compás solo caben ${libre} ${libre === 1 ? 'pulso' : 'pulsos'}.`); return; }
+      parar(); st.comp.push(b.dataset.trAdd); guardar(); pintar(); tocarCelulas([b.dataset.trAdd], st.bpm, {previa:0});
+    });
+  }
+  function pintarLienzo(){
+    const bars = compases();
+    if(!bars.length){ lienzo.innerHTML = '<p class="taller-vacio">Toca una carta para empezar tu ritmo</p>'; return; }
+    let k = 0;
+    lienzo.innerHTML = bars.map((idxs, bi) => {
+      const cels = idxs.map(i => st.comp[i]), usados = cels.reduce((a, id) => a + durCel(id), 0);
+      const inicio = k; k += cels.reduce((a, id) => a + CELULAS[id].d.length, 0);
+      const dentro = st.pizza ? pizzaHTML(cels, {tira:false}) : `<div class="tr-figs">${(() => { let j = inicio; return cels.map(id => { const ns = notasDeCelula(id), s = celdaSVG(ns, {prefijo:'tr', inicio:j, alto:56}); j += ns.length; return s; }).join(''); })()}${usados < 4 - 1e-6 ? `<span class="tr-hueco" style="flex:${4 - usados}">${redond(4 - usados)} ${4 - usados === 1 ? 'pulso' : 'pulsos'}</span>` : ''}</div>`;
+      return `<section class="tr-compas" data-tr-c="${bi}" data-ini="${inicio}"><button class="tr-basura" data-tr-del="${bi}" aria-label="Borrar el compás ${bi + 1}"><svg class="i i-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>${dentro}</section>`;
+    }).join('');
+    lienzo.classList.toggle('en-pizza', st.pizza);
+    $$('[data-tr-del]', lienzo).forEach(b => b.onclick = () => { parar(); const quitar = compases()[+b.dataset.trDel]; st.comp = st.comp.filter((_, i) => !quitar.includes(i)); guardar(); pintar(); });
+  }
+  const pintar = () => { pintarLienzo(); pintarPaleta(); };
+  const marcar = i => {
+    $$('.tr-compas.playing, .tr-figs .nt.on', lienzo).forEach(x => x.classList.remove('playing', 'on'));
+    if(i < 0){ $$('.tr-compas', lienzo).forEach(c => pizzaMarcar(c, -1)); return; }
+    $$(`[data-nid="tr-${i}"]`, lienzo).forEach(x => x.classList.add('on'));
+    const cs = $$('.tr-compas', lienzo); let c = null;
+    cs.forEach(x => { if(+x.dataset.ini <= i) c = x; });
+    if(c){ c.classList.add('playing'); if(st.pizza){ cs.forEach(x => x !== c && pizzaMarcar(x, -1)); pizzaMarcar(c, i - +c.dataset.ini); } c.scrollIntoView?.({block:'nearest', inline:'nearest'}); }
+  };
+  function parar(){ sonando = false; rel.clear(); pararRitmo(); pulsoEstado($('.pulso', el), 'off'); marcar(-1); bplay.innerHTML = ICON_PLAY; bplay.setAttribute('aria-label', 'Reproducir'); }
+  function sonar(previa){
+    if(!st.comp.length){ toast('Toca una carta para empezar tu ritmo.'); return; }
+    sonando = true; bplay.innerHTML = ICON_STOP; bplay.setAttribute('aria-label', 'Detener');
+    const pul = $('.pulso', el);
+    tocarCelulas(st.comp, st.bpm, {previa, rel, metro:'fuerte',
+      onCuenta:n => pulsoEstado(pul, 'cuenta', n),
+      onPulso:b => { if(b >= 0) pulsoEstado(pul, 'pulso', b % 4); },
+      onNota:i => { if(i >= 0){ marcar(i); return; } if(sonando && st.loop) sonar(0); else parar(); }});
+  }
+  bplay.onclick = () => { if(sonando){ parar(); return; } pararRitmo(); sonar(4); };
+  const bpm = $('[data-tr-bpm]', el); bpm.oninput = () => { st.bpm = +bpm.value; bpm.nextElementSibling.textContent = bpm.value; guardar(); };
+  $('[data-tr-loop]', el).onchange = e => { st.loop = e.target.checked; guardar(); };
+  $('[data-tr-pizza]', el).onclick = e => { parar(); st.pizza = !st.pizza; e.currentTarget.setAttribute('aria-pressed', st.pizza); guardar(); pintarLienzo(); };
+  $('[data-tr-borrar]', el).onclick = () => { parar(); st.comp.pop(); guardar(); pintar(); };
+  $$('[data-tr-g]', el).forEach(b => b.onclick = () => { st.grupo = b.dataset.trG; $$('[data-tr-g]', el).forEach(x => x.setAttribute('aria-pressed', String(x === b))); guardar(); pintarPaleta(); });
+  pintar();
+  return () => parar();
 }
 
 /* ============ MusicXML (exportado desde MuseScore 3) ============ */
@@ -4495,8 +5006,7 @@ function pentaClub({dibujos = true, espacios = false, adicionales = false, clave
   if(espacios) for(let s2 = 1; s2 <= 7; s2 += 2) o += `<g class="pc-espacio" data-st="${s2}"><rect x="${x0}" y="${y(s2) - 5}" width="${W - x0 - 10}" height="10" fill="transparent"/></g>`;
   if(adicionales){ o += `<g class="pc-add" data-st="-2"><line x1="${x0 + 160}" x2="${x0 + 204}" y1="${y(-2)}" y2="${y(-2)}" class="pl" stroke-width="2.4"/><rect x="${x0 + 150}" y="${y(-2) - 8}" width="64" height="16" fill="transparent"/></g>`;
     o += `<g class="pc-add" data-st="12"><line x1="${x0 + 280}" x2="${x0 + 324}" y1="${y(12)}" y2="${y(12)}" class="pl" stroke-width="2.4"/><rect x="${x0 + 270}" y="${y(12) - 8}" width="64" height="16" fill="transparent"/></g>`; }
-  const sc = E * .3;
-  o += `<g class="pc-clave${clave ? ' anim' : ''}"><path d="${CLAVE_SOL}" transform="translate(${x0 + 30 - 12 * sc} ${y(2) - 15.2 * sc}) scale(${sc})" fill="var(--ink)"/></g>`;
+  o += `<g class="pc-clave${clave ? ' anim' : ''}">${claveEn(x0 + 14, y(2), E, 'var(--ink)')}</g>`;
   if(dibujos) Object.entries(DIBUJO_LINEA).forEach(([l, img]) => { o += `<image href="assets/emoji/${img}.svg" x="${+l % 2 ? 44 : 10}" y="${y(+l * 2) - 13}" width="26" height="26"/><line x1="${+l % 2 ? 72 : 38}" x2="${x0 - 6}" y1="${y(+l * 2)}" y2="${y(+l * 2)}" stroke="var(--line)" stroke-dasharray="3 3"/>`; });
   if(dibujos) o += `<text x="57" y="${y(6) + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="var(--ink-2)">Re</text><line x1="72" x2="${x0 - 6}" y1="${y(6)}" y2="${y(6)}" stroke="var(--line)" stroke-dasharray="3 3"/>`;
   return o + '<g class="pc-nota"></g></svg>';
@@ -4540,13 +5050,34 @@ function capPentaViolin(body, root, fin){
     if(m === era){ k++; setTimeout(() => { if(ms[k] != null && body.isConnected) $('[data-pv-nota]', body).innerHTML = notaSolaSVG(ms[k]); }, 900); }
   }));
 }
-const FIGURAS = [['redonda', 4, 'duerme'], ['blanca', 2, 'camina'], ['negra', 1, 'marcha'], ['corchea', .5, 'corre']];
-function figuraSVG(d){ const hueca = d >= 2; return `<svg viewBox="0 0 40 60" width="40" height="60" aria-hidden="true"><ellipse cx="16" cy="46" rx="9" ry="6.5" transform="rotate(-20 16 46)" fill="${hueca ? 'none' : 'currentColor'}" stroke="currentColor" stroke-width="2.4"/>${d < 4 ? '<line x1="24" x2="24" y1="44" y2="6" stroke="currentColor" stroke-width="2.4"/>' : ''}${d < 1 ? '<path d="M24 6c9 4 13 12 8 20" stroke="currentColor" stroke-width="2.6" fill="none"/>' : ''}</svg>`; }
+/* las figuras en la pizza: cada pizza es un pulso */
+const FIGURAS_PIZZA = [
+  ['red', 'Redonda', ['red']], ['bla', 'Blanca', ['bla2']], ['neg', 'Negra', ['pan']],
+  ['cor', 'Corchea', ['luna']], ['sem', 'Semicorchea', ['choco']], ['pun', 'Puntillo', ['leey']]
+];
+const SILENCIOS_PIZZA = [
+  ['s1', 'Redonda', ['s1']], ['s2', 'Blanca', ['s2']], ['s4', 'Negra', ['s4']],
+  ['s8', 'Corchea', ['s8', 's8']], ['s16', 'Semicorchea', ['s16', 's16', 's16', 's16']]
+];
 function capFiguras(body, root, fin){
-  capBase(body, `<div class="figs">${FIGURAS.map(([n, d, v]) => `<button class="fig" data-fd="${d}">${figuraSVG(d)}<strong>${n[0].toUpperCase() + n.slice(1)}</strong><small>${v}: ${d === 4 ? '1-2-3-4' : d === 2 ? '1-2' : d === 1 ? 'pan' : 'lu'}</small><i style="width:${d * 22}px"></i></button>`).join('')}</div>`);
-  $$('[data-fd]', body).forEach(b => b.onclick = () => { const d = +b.dataset.fd; tone(mtof(69), d * .6); });
-  const pares = barajar([[0, 2], [1, 3], [0, 3], [1, 2]]).slice(0, 3);
-  quizOpciones(root, pares.map(([a, b]) => ({texto:'¿Cuál dura más?', opciones:[[FIGURAS[a][0], FIGURAS[a][0]], [FIGURAS[b][0], FIGURAS[b][0]]], ok:FIGURAS[Math.min(a, b)][0]})), fin);
+  const rel = reloj(); let silencios = false, actual = FIGURAS_PIZZA[0];
+  capBase(body, `<div class="seg" role="group" aria-label="Figuras o silencios"><button data-fs="0" aria-pressed="true">Figuras</button><button data-fs="1" aria-pressed="false">Silencios</button></div>
+    <div class="fig-fichas" data-ff></div>
+    <div data-fpz></div>
+    <div class="pr-play-fila">${pulsoHTML()}<button class="big-play" data-fplay aria-label="Escuchar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg></button></div>`);
+  const fichas = () => {
+    const lista = silencios ? SILENCIOS_PIZZA : FIGURAS_PIZZA;
+    $('[data-ff]', body).innerHTML = lista.map(([k, n, cels]) => `<button class="btn fig-ficha${k === actual[0] ? ' on' : ''}" data-fk="${k}">${celdaSVG([notasDeCelula(cels[0])[0]], {alto:34})}<span>${n}</span></button>`).join('');
+    $$('[data-fk]', body).forEach(b => b.onclick = () => { actual = lista.find(x => x[0] === b.dataset.fk); fichas(); pintar(); sonar(); });
+  };
+  const pintar = () => { $('[data-fpz]', body).innerHTML = pizzaHTML(actual[2]); };
+  const sonar = () => tocarPizza(body, actual[2], 66, rel);
+  $$('[data-fs]', body).forEach(b => b.onclick = () => { silencios = b.dataset.fs === '1'; $$('[data-fs]', body).forEach(x => x.setAttribute('aria-pressed', String(x === b))); actual = (silencios ? SILENCIOS_PIZZA : FIGURAS_PIZZA)[0]; rel.clear(); pararRitmo(); fichas(); pintar(); });
+  $('[data-fplay]', body).onclick = sonar;
+  fichas(); pintar();
+  const preguntas = barajar([['red', 'Cuatro pizzas'], ['bla', 'Dos pizzas'], ['neg', 'Una pizza'], ['cor', 'Media pizza']]).slice(0, 3);
+  quizOpciones(root, preguntas.map(([k, txt]) => ({texto:`¿Qué figura es ${txt.toLowerCase()}?`, opciones:barajar(FIGURAS_PIZZA.filter(f => f[0] !== 'pun').slice(0, 4)).map(([kk, n, cels]) => [kk, `${celdaSVG([notasDeCelula(cels[0])[0]], {alto:34})}`]), ok:k})), fin);
+  return () => rel.clear();
 }
 function capCompas(body, root, fin){
   capBase(body, `<div class="cajas">${[2, 3, 4].map(n => `<button class="caja" data-cj="${n}"><strong>${n}/4</strong><span>${'<i></i>'.repeat(n)}</span></button>`).join('')}</div><p class="cap-name">Cajitas de 2, 3 o 4 pulsos: el primero suena más fuerte</p>`);
@@ -4771,10 +5302,10 @@ function renderPresent(fromData){
   updateLiveDots();
   const body = $('#present-body');
   if(S.presentTab === 'postura') presentMounts.push(mountPostura(body, {vista:VISTA_2D[L.vista] || 'postura', big:true}));
-  if(S.presentTab === 'fb') presentMounts.push(mountFingerboard(body, al, L, {big:true}));
   if(S.presentTab === 'metro') presentMounts.push(mountMetronome(body, {big:true}));
   if(S.presentTab === 'tuner') presentMounts.push(mountTuner(body, {big:true}));
-  if(S.presentTab === 'ritmo') presentMounts.push(mountRitmoPanel(body, al, L));
+  if(S.presentTab === 'taller') presentMounts.push(mountTallerRitmo(body, {big:true}));
+  if(S.presentTab === 'leer') presentMounts.push(mountLeerNotas(body, {modo:modoLeer(al.nivel || 1, n), nivel:al.nivel || 1, libre:true}));
   if(S.presentTab === 'cap') presentMounts.push(mountCapsulasPanel(body, L));
   if(S.presentTab === 'sheet'){ body.innerHTML = `<div class="card" style="max-width:1200px;margin:0 auto">${sheetBlockHTML(al, L)}</div>`; wireSheet(body, al, L); presentMounts.push(() => stopPlay()); }
   $('[data-pclose]', p).onclick = closePresent;

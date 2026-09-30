@@ -294,7 +294,10 @@ El movimiento se rige por la filosofía de Emil Kowalski (skills `animate` y `re
 | Botones y claros del mapa | Muchas veces | `scale(0.97)` al presionar, 140 ms `--ease-out` |
 | Lección actual en el mapa | Siempre visible | Anillo ocre que respira con opacidad de .5 a 1 en 3 s `ease-in-out`, sin escala |
 | Abrir una práctica | Varias veces al día | Sube desde `translateY(24px)` con opacidad, 320 ms `--ease-drawer`; cierra en 180 ms |
-| Pasar de paso | Varias veces por práctica | Entra desde `translateX(16px)` con opacidad, 240 ms `--ease-out`; el anterior sale en 160 ms |
+| Pasar de paso | Varias veces por práctica | Entra desde `translateX(16px)` con opacidad, 240 ms `--ease-out`; el anterior sale en 160 ms. Al volver con la flecha, entra desde `translateX(-16px)` y la barra retrocede |
+| Círculo de cuenta | Cada play de ritmo | Reloj en reposo; en la cuenta 1-2-3-4 fondo ocre suave y después el pulso (el 1 en musgo). Solo cambia el color, 80 ms `ease`, sin escala |
+| Pizza que suena (una por pulso) | Varias veces por compás | Capa ocre (multiplicar) de opacidad 0 → .55 en 80 ms y vuelve en 180 ms `ease` en todos los pedazos de la figura; la insignia y la figura de la tira cambian a ocre. Solo color |
+| Leer notas | Cada nota | Sobre la imagen del violín: la nota tocada crece a `scale(1.3)` con aro oscuro, 160 ms `--ease-out` (con movimiento reducido, solo el aro); la estrella ganada entra desde `scale(.95)` con opacidad, 240 ms `--ease-out`, sin rebote |
 | Barra de avance | Cada paso | `transform: scaleX()` desde la izquierda, 400 ms `--ease-out` |
 | Nota que suena | Varias veces por segundo | Solo cambia el color, 80 ms `ease` |
 | Toque en el Eco | Muchas veces por ronda | El botón baja 3 px en 90 ms |
