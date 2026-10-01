@@ -404,10 +404,10 @@ details.mas .sheet-box{border-top:0;padding-top:8px}
 button.rc{cursor:pointer;transition:transform .08s,border-color .15s}
 button.rc:active{transform:scale(.96)}
 .rc-notes{display:flex;gap:4px}
-.rc-n{height:36px;width:calc(var(--d) * 58px);min-width:28px;border-radius:10px;background:var(--pine);color:var(--on-accent);display:grid;place-items:center;font:800 .92rem "Nunito Sans";white-space:nowrap;padding:0 4px;transition:background .1s}
+.rc-n{height:36px;width:calc(var(--d) * 58px);min-width:fit-content;border-radius:10px;background:var(--pine);color:var(--on-accent);display:grid;place-items:center;font:800 .92rem "Nunito Sans";white-space:nowrap;padding:0 4px;transition:background .1s}
 .rc-n.rest{background:transparent;border:2px dashed var(--ink-2);color:var(--ink-2);font-style:italic;font-weight:600}
 .rc.big{padding:16px 18px}
-.rc.big .rc-n{height:58px;width:calc(var(--d) * 104px);font-size:1.3rem;border-radius:14px}
+.rc.big .rc-n{height:58px;width:calc(var(--d) * min(104px, 21vw));font-size:1.3rem;border-radius:14px}
 .rc.new{border-color:var(--gold);background:var(--gold-soft)}
 .rc.q{border-style:dashed;border-color:var(--gold)}
 .rc.q .rc-n{background:var(--gold-soft);color:var(--gold);font-size:1.3rem}
@@ -454,11 +454,18 @@ button.rc:active{transform:scale(.96)}
 .cap-body{display:grid;gap:14px;justify-items:center;width:100%}
 .cap-name{font:800 1.35rem var(--f-display);color:var(--pine);min-height:1.6em;margin:0}
 .quiz{font:700 1.3rem var(--f-display);color:var(--gold);min-height:1.6em;margin:0}
-.vio{width:min(250px,64vw);height:auto}
+.vio{height:min(60vh,560px);width:auto;max-width:100%;display:block;margin:0 auto;border-radius:var(--r-l)}
+.n7p .n7-cab{transform-box:fill-box}
 .vio .pt{cursor:pointer;outline:none}
-.vio .pt .hl{transition:fill .15s}
-.vio .pt.on .hl{fill:var(--gold);stroke:var(--gold-ink)}
-.vio .pt.on .hl-s{stroke:var(--gold);stroke-width:3.4}
+.vio .pt .hl{fill:var(--gold);fill-opacity:0;stroke:var(--gold);stroke-opacity:0;stroke-width:6;transition:fill-opacity 150ms ease,stroke-opacity 150ms ease}
+.vio .pt.on .hl{fill-opacity:.42;stroke-opacity:1}
+.vio .pt:focus-visible .hl{stroke-opacity:1}
+.n7-penta{width:min(620px,100%);height:auto;color:var(--ink)}
+.n7-penta .pl{stroke:var(--ink-2);stroke-width:1.3}
+.n7p{cursor:pointer;outline:none}
+.n7-nom{font:800 24px var(--f-display);fill:var(--c)}
+.n7p:focus-visible .n7-nom{text-decoration:underline}
+.n7p.hop .n7-cab{animation:hop 300ms var(--ease-out)}
 .n7{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .n7 button{border:0;background:none;display:grid;justify-items:center;gap:4px;font:800 1.05rem var(--f-display);color:var(--ink);padding:4px}
 .n7 svg{width:clamp(52px,11vw,76px);height:auto}
@@ -467,15 +474,12 @@ button.rc:active{transform:scale(.96)}
 .esc{width:100%}
 .esc svg{width:min(600px,100%);height:auto}
 .pollito{transition:transform var(--dur-base) var(--ease-out)}
-.huellas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.hu{width:80px;height:80px;border-radius:18px;border:2px dashed var(--line);display:flex;gap:4px;align-items:center;justify-content:center;color:var(--pine);transition:background .08s}
-.hu.on{border-style:solid;border-color:var(--gold);background:var(--gold-soft)}
 
 /* confeti */
 .confeti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
 .confeti i{position:absolute;top:-16px;width:10px;height:15px;border-radius:2px;animation:caer var(--t) linear forwards}
 @keyframes caer{to{transform:translateY(106vh) rotate(760deg)}}
-@media (prefers-reduced-motion: reduce){.confeti{display:none}.rc.bad,.g-end,.n7 button.hop svg{animation:none}.pollito{transition:none}}
+@media (prefers-reduced-motion: reduce){.confeti{display:none}.rc.bad,.g-end,.n7 button.hop svg,.n7p.hop .n7-cab{animation:none}.pollito{transition:none}}
 
 /* secciones del alumno */
 .al-nav{position:sticky;top:0;z-index:20;display:flex;justify-content:center;gap:6px;padding:8px clamp(10px,3vw,34px);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
@@ -690,7 +694,7 @@ button.fig,button.caja{cursor:pointer}
   .roster-list button:hover{background:var(--surface-2)}
   .pal:hover{background:color-mix(in srgb,var(--c) 14%,var(--surface))}
   button.rc:hover{border-color:var(--pine)}
-  .vio .pt:hover .hl,.vio .pt:focus-visible .hl{filter:brightness(1.15)}
+  .vio .pt:hover .hl{fill-opacity:.18}
   .al-nav button:hover{background:var(--surface-2)}
   .part-card:hover{border-color:var(--pine)}
   .bosque .celda:hover .hueco,.bosque .celda:focus-visible .hueco{fill:color-mix(in srgb,var(--surface) 35%,transparent);stroke:var(--pine)}
@@ -776,7 +780,7 @@ button.fig,button.caja{cursor:pointer}
 .fig-ficha.on{border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
 
 /* ---- Leer notas: el violín del club (proporción real, todo se mide con --n) ---- */
-.ln{display:grid;gap:12px;justify-items:center;width:100%}
+.ln{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;justify-items:center;width:100%}
 .ln-arriba{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 24px;width:100%}
 .ln-penta{background:#FBF7EE;border:1px solid var(--line);border-radius:var(--r-l);padding:2px 10px;color:#3A3128;width:min(100%,250px)}
 .ln-penta .nota-sola{width:100%;height:auto;display:block}
@@ -787,16 +791,17 @@ button.fig,button.caja{cursor:pointer}
 .ln-est .i-star{width:26px;height:26px}
 .ln-marca{font-weight:700;color:var(--ink-2);font-size:.85rem}
 .ln-violin{width:100%;display:flex;justify-content:center}
-.lv{display:block;width:100%;max-width:min(1040px,calc((100dvh - 250px) * 390 / 116));height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none;border-radius:var(--r-l);box-shadow:0 1px 0 var(--line)}
+.lv{display:block;width:100%;max-width:min(760px,calc((100dvh - 390px) * 194 / 100));height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none;border-radius:var(--r-l);box-shadow:0 1px 0 var(--line)}
 .ln [data-cuerda="sol"]{--c:#9C5B55;--on:#FBF7EE}
 .ln [data-cuerda="re"]{--c:#C4923A;--on:#3A3128}
 .ln [data-cuerda="la"]{--c:#647745;--on:#FBF7EE}
 .ln [data-cuerda="mi"]{--c:#567388;--on:#FBF7EE}
 .lv-cinta{stroke:#FBF7EE;opacity:.16;pointer-events:none}
 .lv-n{cursor:pointer}
-.lv-in{transform:scale(.4);transition:transform 160ms var(--ease-out)}
-.lv-n circle{fill:#FBF7EE;fill-opacity:.55;stroke:#3A3128;stroke-opacity:.35;stroke-width:.5}
-.lv-n text{fill:var(--on);font-family:var(--f-body);font-weight:800;opacity:0;pointer-events:none}
+.lv-in{transform:scale(.96);transition:transform 160ms var(--ease-out)}
+.lv-n circle{fill:#FBF7EE;fill-opacity:.72;stroke:#3A3128;stroke-opacity:.3;stroke-width:.5}
+.lv-n text{fill:#3A3128;font-family:var(--f-body);font-weight:800;opacity:.55;pointer-events:none}
+.lv-n.on text,.lv-n.activa text,.lv-n.ln-guia text{fill:var(--on)}
 .lv-n.on .lv-in{transform:scale(1)}
 .lv-n.on circle{fill:var(--c);fill-opacity:1;stroke:#FBF7EE;stroke-opacity:.9;stroke-width:.8}
 .lv-n.on text{opacity:1}
@@ -808,8 +813,18 @@ button.fig,button.caja{cursor:pointer}
 .lv-n.ln-guia text{opacity:1}
 .lv-n.activa,.lv-n.ln-guia{isolation:isolate}
 @media (max-width: 760px){
-  .lv{max-width:min(420px,100%);min-width:0}
-  .ln-arriba{position:sticky;top:0;z-index:5;background:var(--bg);padding:4px 0}
+  .lv{max-width:min(340px,100%,max(230px,calc((100dvh - 260px) * 100 / 194)));min-width:0}
+  .ln-arriba{position:sticky;top:0;z-index:5;background:var(--surface);padding:4px 0;flex-wrap:nowrap;gap:10px}
+  .ln-penta{width:auto;flex:0 1 220px;min-width:0}
+  .ln-estado{flex:none;max-width:44%}
+  .ln-estado .btn{padding-inline:14px}
+  .ln-msg{font-size:.92rem;text-align:center}
+}
+@media (min-width: 761px){
+  .ln{grid-template-columns:repeat(2,minmax(0,max-content));justify-content:center;column-gap:16px;grid-template-areas:"modos ver" "arriba arriba" "violin violin"}
+  .ln-modos{grid-area:modos}.ln-ver{grid-area:ver}.ln-arriba{grid-area:arriba}.ln-violin{grid-area:violin;width:min(760px,calc(100vw - 120px))}
+  .ln:not(:has(.ln-modos)) .ln-ver{grid-column:1 / -1}
+  .ln-penta{width:min(100%,210px)}
 }
 @media (prefers-reduced-motion: reduce){.lv-in{transition:none}}
 
@@ -819,20 +834,60 @@ button.fig,button.caja{cursor:pointer}
 .taller-barra .big-play{width:56px;height:56px}
 .pizza-btn[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#3A3128}
 .taller-lienzo{display:grid;gap:8px;max-height:52vh;overflow:auto;padding:2px}
-.taller-lienzo.en-pizza .pizza-vista{align-items:flex-start}
-.taller-lienzo.en-pizza .pizza{width:min(calc(var(--p) * 25%),calc(var(--p) * 140px))}
-.taller.big .taller-lienzo.en-pizza .pizza{width:min(calc(var(--p) * 25%),calc(var(--p) * 200px))}
+.taller-lienzo.en-pizza{padding:8px 0}
+.taller-lienzo.en-pizza .pizza{width:min(100%,calc(var(--p) * 200px),calc(var(--p) * 30vh))}
+.taller.big .taller-lienzo.en-pizza .pizza{width:min(100%,calc(var(--p) * 300px),calc(var(--p) * 40vh))}
+.taller-lienzo.en-pizza .pizza-tira svg{height:56px;width:auto}
+.tr-carta[aria-pressed="true"]{border-color:var(--gold);box-shadow:inset 0 0 0 2px var(--gold)}
 .tr-compas{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:6px 44px 6px 8px;color:var(--ink);transition:background-color 150ms ease,border-color 150ms ease}
 .tr-compas.playing{border-color:color-mix(in srgb,var(--gold) 45%,var(--line));background:color-mix(in srgb,var(--gold-soft) 30%,var(--surface))}
 .tr-basura{position:absolute;top:4px;right:4px;width:40px;height:40px;border-radius:50%;border:0;background:transparent;color:var(--ink-2);display:grid;place-items:center}
 @media (hover: hover){.tr-basura:hover{color:var(--danger);background:var(--surface-2)}}
 .tr-figs{display:flex;align-items:center;gap:6px;min-height:60px}
 .tr-hueco{border:1px dashed var(--line);border-radius:10px;align-self:stretch;display:grid;place-items:center;font-size:.8rem;color:var(--ink-2)}
-.taller-paleta{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.taller-cartas{display:grid;gap:8px;background:var(--surface-2);border-radius:var(--r-l);padding:8px;position:sticky;bottom:8px;z-index:4;box-shadow:0 6px 18px rgba(58,49,40,.08)}
+@media (max-width: 760px){.alumno .taller-cartas{bottom:calc(80px + env(safe-area-inset-bottom,0px))}}
+.taller-cartas-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.taller-cartas-top .seg{background:var(--surface);--desliza-bg:var(--surface);min-width:0}
+.tr-ocultar{flex:none;gap:4px}
+.tr-ocultar svg{transition:transform 220ms var(--ease-out)}
+.taller-cartas.oculta .tr-ocultar svg{transform:rotate(180deg)}
+.taller-paleta-caja{display:grid;grid-template-rows:1fr;transition:grid-template-rows 240ms var(--ease-out)}
+.taller-cartas.oculta .taller-paleta-caja{grid-template-rows:0fr}
+.taller-paleta{display:flex;gap:8px;min-height:0;overflow-y:hidden;scroll-snap-type:x proximity;--desliza-bg:var(--surface-2)}
+.taller-paleta .tr-carta{flex:0 0 104px;scroll-snap-align:start}
 .tr-carta{display:grid;justify-items:center;gap:2px;padding:8px 6px;color:var(--ink)}
+@media (max-width: 480px){.tr-ocultar span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.tr-ocultar{width:44px;height:44px;padding:0;justify-content:center}}
+@media (prefers-reduced-motion: reduce){.taller-paleta-caja,.tr-ocultar svg{transition:none}}
 .tr-carta[aria-disabled="true"]{opacity:.4}
 .tr-sil{font:600 1rem var(--f-hand);color:var(--ink-2)}
 .taller-vacio{color:var(--ink-2);text-align:center;padding:24px}
+
+/* ---- listas que se deslizan: flecha pegada al borde ---- */
+.seg{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none;--desliza-bg:var(--surface-2)}
+.seg::-webkit-scrollbar,.tabs::-webkit-scrollbar,.desliza::-webkit-scrollbar{display:none}
+.seg button{white-space:nowrap;flex:none}
+.desliza{overflow-x:auto;scrollbar-width:none}
+:is(.seg,.tabs,.desliza) > .desliza-flecha{position:sticky;right:0;flex:none;align-self:stretch;margin-left:auto;width:48px;min-height:36px;border:0;border-radius:0;padding:0 0 0 18px;display:grid;place-items:center;color:var(--ink);background:linear-gradient(to right,transparent,var(--desliza-bg,var(--surface)) 38%);z-index:2;box-shadow:none}
+.desliza-flecha svg{transition:transform 200ms var(--ease-out)}
+.desliza-flecha.fin svg{transform:scaleX(-1)}
+@media (prefers-reduced-motion: reduce){.desliza-flecha svg{transition:none}}
+
+/* ---- cápsulas de ritmo ---- */
+.ej-ritmo{display:grid;gap:10px;justify-items:center;width:100%}
+.ej-ritmo .big-play{width:64px;height:64px}
+.ej-ritmo .pizza{width:min(100%,calc(var(--p) * 150px),calc(var(--p) * 22vh))}
+.fig-ficha[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.fig-fichas.desliza{flex-wrap:nowrap;justify-content:flex-start;max-width:100%;margin-inline:auto;width:max-content}
+.fig-fichas .fig-ficha{flex:none;white-space:nowrap}
+.cel-opts.desliza{flex-wrap:nowrap;justify-content:flex-start;max-width:100%;width:max-content;margin-inline:auto;padding:2px}
+.cel-opts .rc{flex:none}
+.cel-opts .rc[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.caja span i{transition:background-color 80ms ease}
+.caja span i.on{background:var(--ink)}
+
+/* ninguna fila ensancha la columna: lo que no cabe se desliza o se encoge */
+.pr-body,.game,.cap,.cap-body,.ej-ritmo,.taller,.metro,.tuner,.pos-wrap{grid-template-columns:minmax(0,1fr)}
 </style>
 </head>
 <body>
@@ -4001,19 +4056,23 @@ function miniQuiz(root, preguntas, onFin){
     setTimeout(() => { if(!q.isConnected) return; if(i < preguntas.length) mostrar(); else { q.textContent = '¡Cápsula lista!'; onFin?.(); } }, 900);
   };
 }
+/* el violín de la dueña (assets/ilustraciones/violin-partes.webp) con cada parte marcada encima; coordenadas del recorte de 530×1330 */
+const CAJA_DER = [[260, 455], [340, 485], [400, 520], [440, 580], [448, 640], [435, 710], [440, 750], [400, 780], [388, 820], [390, 880], [405, 910], [460, 940], [485, 1020], [498, 1100], [490, 1180], [460, 1230], [400, 1275], [310, 1300], [260, 1305]];
+const CAJA_PATH = 'M' + [...CAJA_DER, ...CAJA_DER.slice(1, -1).reverse().map(([x, y]) => [520 - x, y])].map(p => p.join(' ')).join('L') + 'Z';
 function violinSVG(){
   const pt = (id, nombre, inner) => `<g class="pt" data-pt="${id}" tabindex="0" role="button" aria-label="${nombre}">${inner}</g>`;
-  const madera = 'fill="#C27A3E" stroke="#6B3A17" stroke-width="3"';
-  return `<svg class="vio" viewBox="0 0 200 500" role="group" aria-label="Partes del violín">
-    ${pt('caja', 'La caja', `<path class="hl" ${madera} d="M100 165C135 165 170 172 170 205C170 238 150 250 148 262C142 280 142 305 150 320C175 330 182 360 182 395C182 450 145 478 100 478C55 478 18 450 18 395C18 360 25 330 50 320C58 305 58 280 52 262C50 250 30 238 30 205C30 172 65 165 100 165Z"/>`)}
-    ${pt('efes', 'Las efes', `<path class="hl" fill="#2A1F18" d="M64 318c-6 8 4 14 2 24s-10 16-4 22c3-8 9-12 8-22s-10-14-6-24z"/><path class="hl" fill="#2A1F18" d="M136 318c6 8-4 14-2 24s10 16 4 22c-3-8-9-12-8-22s10-14 6-24z"/>`)}
-    ${pt('barbada', 'La barbada', `<ellipse class="hl" cx="58" cy="452" rx="30" ry="14" fill="#3B2A1E"/>`)}
-    ${pt('cordal', 'El cordal', `<path class="hl" fill="#2A1F18" d="M90 400h20l6 56c-10 8-22 8-32 0z"/>`)}
-    ${pt('diapason', 'El diapasón', `<path class="hl" fill="#2A1F18" d="M91 72h18l4 250h-26z"/>`)}
-    ${pt('clavijas', 'Las clavijas', `<rect class="hl" x="64" y="40" width="24" height="8" rx="4" fill="#2A1F18"/><rect class="hl" x="112" y="48" width="24" height="8" rx="4" fill="#2A1F18"/><rect class="hl" x="64" y="58" width="24" height="8" rx="4" fill="#2A1F18"/><rect class="hl" x="112" y="66" width="24" height="8" rx="4" fill="#2A1F18"/>`)}
-    ${pt('voluta', 'La voluta', `<path class="hl" ${madera} d="M88 80V38c0-10 4-14 12-14s12 4 12 14v42z"/><circle class="hl" cx="100" cy="20" r="14" ${madera}/>`)}
-    ${pt('puente', 'El puente', `<path class="hl" fill="#E9DCC2" stroke="#8a6528" stroke-width="1.5" d="M76 370h48l-4 11h-10l-4-5h-12l-4 5h-10z"/>`)}
-    ${pt('cuerdas', 'Las cuerdas', `<rect x="90" y="80" width="20" height="316" fill="transparent"/>${[94,98,102,106].map((x, i) => `<line class="hl-s" x1="${x}" y1="74" x2="${x - 3 + i * 2}" y2="402" stroke="${Object.values(STR)[i].color}" stroke-width="1.8"/>`).join('')}`)}
+  const cla = [[185, 160], [185, 208], [325, 147], [325, 195]].map(([x, y]) => `<ellipse class="hl" cx="${x}" cy="${y}" rx="42" ry="18"/>`).join('');
+  return `<svg class="vio" viewBox="0 0 530 1330" role="group" aria-label="Partes del violín">
+    <image href="assets/ilustraciones/violin-partes.webp" width="530" height="1330"/>
+    ${pt('caja', 'La caja', `<path class="hl" d="${CAJA_PATH}"/>`)}
+    ${pt('efes', 'Las efes', `<ellipse class="hl" cx="165" cy="918" rx="34" ry="88"/><ellipse class="hl" cx="355" cy="918" rx="34" ry="88"/>`)}
+    ${pt('barbada', 'La barbada', `<ellipse class="hl" cx="150" cy="1228" rx="80" ry="48"/>`)}
+    ${pt('cordal', 'El cordal', `<path class="hl" d="M220 1018h80l-10 165h-60z"/>`)}
+    ${pt('cuerdas', 'Las cuerdas', `<path class="hl" d="M210 772h98l6 131h-110z"/>`)}
+    ${pt('puente', 'El puente', `<rect class="hl" x="198" y="903" width="120" height="36" rx="8"/>`)}
+    ${pt('diapason', 'El diapasón', `<path class="hl" d="M230 228h58l20 540h-100z"/>`)}
+    ${pt('clavijas', 'Las clavijas', cla)}
+    ${pt('voluta', 'La voluta', `<ellipse class="hl" cx="255" cy="82" rx="36" ry="50"/>`)}
   </svg>`;
 }
 function capViolin(body, root, fin){
@@ -4031,12 +4090,27 @@ function capViolin(body, root, fin){
 const SIETE = [['Do',60],['Re',62],['Mi',64],['Fa',65],['Sol',67],['La',69],['Si',71]];
 const COL7 = ['#B0685A','#C98A4E','#C4A13A','#7D9150','#5E9187','#6E8DA3','#8B7596'];
 const carita = col => `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="${col}"/><circle cx="23" cy="27" r="4.4" fill="#fff"/><circle cx="41" cy="27" r="4.4" fill="#fff"/><circle cx="24" cy="28" r="2.2" fill="#1b1408"/><circle cx="42" cy="28" r="2.2" fill="#1b1408"/><path d="M21 40q11 10 22 0" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></svg>`;
+/* las 7 notas en el pentagrama, con su nombre debajo */
+function pentaSieteSVG(){
+  const top = 40, E = 12, base = top + 4 * E, y = st => base - st * E / 2, x = i => 128 + i * 56;
+  let o = `<svg class="n7-penta" viewBox="0 0 520 176" role="group" aria-label="Las 7 notas en el pentagrama">`;
+  for(let l = 0; l < 5; l++) o += `<line x1="8" x2="512" y1="${top + l * E}" y2="${top + l * E}" class="pl"/>`;
+  o += claveEn(14, base - E, E);
+  SIETE.forEach(([n, m], i) => {
+    const {st} = pasoDe(m), cx = x(i), cy = y(st), abajo = st >= 4, sx = abajo ? cx - 8.4 : cx + 8.4;
+    o += `<g class="n7p" data-n7="${n}" data-m="${m}" tabindex="0" role="button" aria-label="${n}" style="--c:${COL7[i]}"><rect x="${cx - 27}" y="0" width="54" height="176" fill="transparent"/><g class="n7-cab">`;
+    if(st <= -2) o += `<line x1="${cx - 16}" x2="${cx + 16}" y1="${y(-2)}" y2="${y(-2)}" class="pl"/>`;
+    o += `<line x1="${sx}" x2="${sx}" y1="${cy}" y2="${cy + (abajo ? 40 : -40)}" stroke="var(--c)" stroke-width="2.2"/><ellipse cx="${cx}" cy="${cy}" rx="9" ry="6.8" transform="rotate(-20 ${cx} ${cy})" fill="var(--c)"/></g>`;
+    o += `<text x="${cx}" y="168" text-anchor="middle" class="n7-nom">${n}</text></g>`;
+  });
+  return o + '</svg>';
+}
 function capNotas(body, root, fin){
-  body.innerHTML = `<div class="n7">${SIETE.map(([n, m], i) => `<button data-n7="${n}" data-m="${m}">${carita(COL7[i])}<span>${n}</span></button>`).join('')}</div><button class="btn" data-n7-todas><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg> Escuchar las 7</button>`;
+  body.innerHTML = `${pentaSieteSVG()}<button class="btn" data-n7-todas><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg> Escuchar las 7</button>`;
   const bts = $$('[data-n7]', body);
-  const salta = (b, suena) => { if(suena) tone(mtof(+b.dataset.m), .7); b.classList.remove('hop'); void b.offsetWidth; b.classList.add('hop'); };
+  const salta = (b, suena) => { if(suena) tone(mtof(+b.dataset.m), .7); b.classList.remove('hop'); void b.getBoundingClientRect(); b.classList.add('hop'); };
   const responder = miniQuiz(root, barajar(SIETE.map(x => x[0])).slice(0, 3).map(n => ({texto:`Toca a ${n}`, ok:v => v === n})), fin);
-  bts.forEach(b => b.onclick = () => { salta(b, true); responder(b.dataset.n7); });
+  bts.forEach(b => { const act = () => { salta(b, true); responder(b.dataset.n7); }; b.addEventListener('click', act); b.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); act(); } }); });
   $('[data-n7-todas]', body).onclick = () => playSeq(SIETE.map(([, m]) => [m, 1]), 100, i => salta(bts[i], false));
   return () => stopPlay();
 }
@@ -4065,28 +4139,41 @@ function capEscalera(body, root, fin){
   responder = miniQuiz(root, preguntas, () => { qopts.innerHTML = ''; fin(); });
   return () => stopPlay();
 }
+/* ejemplo de ritmo de las cápsulas: la pizza, el círculo de cuenta y el play (cuenta de 4 y se pinta lo que suena) */
+const ICONO_PLAY = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg>';
+function ejemploRitmo(el, rel, {bpm = 66, silabas = false, tira = true} = {}){
+  let cels = [];
+  const api = {
+    pintar(c){ cels = c; pararRitmo(); rel.clear(); el.innerHTML = `${pizzaHTML(c, {silabas, tira})}<div class="pr-play-fila">${pulsoHTML()}<button class="big-play" data-ej-play aria-label="Escuchar">${ICONO_PLAY}</button></div>`; $('[data-ej-play]', el).onclick = () => api.sonar(); },
+    sonar(){ tocarPizza(el, cels, bpm, rel); }
+  };
+  return api;
+}
+/* fichas para elegir el ejemplo: [clave, texto, células] */
+function fichasEjemplo(lista, actual){
+  return `<div class="fig-fichas desliza">${lista.map(([k, t]) => `<button class="btn fig-ficha" data-fe="${k}" aria-pressed="${k === actual}">${t}</button>`).join('')}</div>`;
+}
+/* conecta las fichas con el ejemplo: al tocar una, se dibuja y suena */
+function unirFichas(body, lista, ej){
+  $$('[data-fe]', body).forEach(b => b.onclick = () => { $$('[data-fe]', body).forEach(x => x.setAttribute('aria-pressed', String(x === b))); ej.pintar(lista.find(p => p[0] === b.dataset.fe)[2]); ej.sonar(); });
+  ej.pintar(lista[0][2]);
+}
 function capPanLuna(body, root, fin){
-  const pie = s => `<svg viewBox="0 0 30 40" width="${s}" height="${s * 4 / 3}" aria-hidden="true"><ellipse cx="15" cy="25" rx="10" ry="14" fill="currentColor"/><circle cx="7" cy="6" r="3.6" fill="currentColor"/><circle cx="15" cy="3.6" r="3.6" fill="currentColor"/><circle cx="23" cy="6" r="3.6" fill="currentColor"/></svg>`;
-  const patrones = {pan:['pan','pan','pan','pan'], luna:['luna','luna','luna','luna'], mezcla:['pan','luna','pan','luna']};
-  body.innerHTML = `<div class="huellas"></div>
-    <div class="row" style="justify-content:center"><button class="btn" data-pl="pan">pan pan pan pan</button><button class="btn" data-pl="luna">lu-na lu-na lu-na lu-na</button><button class="btn" data-pl="mezcla">pan lu-na pan lu-na</button></div>
-    <div class="row q-opts" style="justify-content:center"></div>`;
-  const hu = $('.huellas', body), qopts = $('.q-opts', body), rel = reloj();
-  const pintar = cels => hu.innerHTML = cels.map(id => `<div class="hu">${id === 'pan' ? pie(36) : pie(22) + pie(22)}</div>`).join('');
-  const tocar = cels => { rel.clear(); pintar(cels); tocarCelulas(cels, 72, {previa:2, rel, onNota:(i, e) => $$('.hu', hu).forEach((h, k) => h.classList.toggle('on', !!e && k === e.ci))}); };
-  pintar(patrones.pan);
-  $$('[data-pl]', body).forEach(b => b.onclick = () => tocar(patrones[b.dataset.pl]));
+  const patrones = [['pan', 'pan', ['pan', 'pan', 'pan', 'pan']], ['luna', 'lu-na', ['luna', 'luna', 'luna', 'luna']], ['mezcla', 'pan y lu-na', ['pan', 'luna', 'pan', 'luna']]];
+  body.innerHTML = `${fichasEjemplo(patrones, 'pan')}<div class="ej-ritmo" data-ej></div><div class="row q-opts" style="justify-content:center"></div>`;
+  const rel = reloj(), qopts = $('.q-opts', body);
+  unirFichas(body, patrones, ejemploRitmo($('[data-ej]', body), rel, {bpm:72, silabas:true, tira:false}));
   let responder = null;
   const preguntas = [0, 1, 2].map(() => {
     const id = Math.random() < .5 ? 'pan' : 'luna';
     return {texto:'¿Sonó pan o lu-na?', ok:v => v === id, preparar:() => {
-      qopts.innerHTML = `<button class="btn primary" data-q="oir"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg> Escuchar</button>${cartaRitmo('pan', {tag:'button', attrs:'data-q="pan"'})}${cartaRitmo('luna', {tag:'button', attrs:'data-q="luna"'})}`;
-      $('[data-q="oir"]', qopts).onclick = () => { rel.clear(); tocarCelulas([id, id, id, id], 72, {previa:2}); };
+      qopts.innerHTML = `<button class="btn primary" data-q="oir">${ICONO_PLAY} Escuchar</button>${cartaRitmo('pan', {tag:'button', attrs:'data-q="pan"'})}${cartaRitmo('luna', {tag:'button', attrs:'data-q="luna"'})}`;
+      $('[data-q="oir"]', qopts).onclick = () => { pararRitmo(); rel.clear(); tocarCelulas([id, id, id, id], 72, {previa:2}); };
       $$('button.rc', qopts).forEach(b => b.onclick = () => responder(b.dataset.q));
     }};
   });
   responder = miniQuiz(root, preguntas, () => { qopts.innerHTML = ''; fin(); });
-  return () => rel.clear();
+  return () => { rel.clear(); pararRitmo(); };
 }
 const CAPSULAS = {
   violin:{titulo:'Conoce tu violín', mount:capViolin},
@@ -4522,10 +4609,10 @@ function pulsoEstado(el, modo, n){
    El puntillo es la mitad de su figura: una negra con puntillo es una pizza y media.
    Las pizzas de una misma figura van sobre la misma bandeja; se pinta lo que suena y su figura cambia de color. */
 let pizzaN = 0;
-/* la cuenta empieza arriba y avanza hacia la izquierda: media pizza = mitad izquierda, un cuarto = arriba a la izquierda */
+/* la cuenta empieza a la izquierda y avanza como las manecillas del reloj: un cuarto = arriba a la izquierda */
 function sectorPath(cx, cy, r, a0, a1){
-  const p = a => `${(cx - r * Math.sin(2 * Math.PI * a)).toFixed(2)} ${(cy - r * Math.cos(2 * Math.PI * a)).toFixed(2)}`;
-  return `M${cx} ${cy} L${p(a0)} A${r} ${r} 0 ${a1 - a0 > .5 ? 1 : 0} 0 ${p(a1)} Z`;
+  const p = a => `${(cx - r * Math.cos(2 * Math.PI * a)).toFixed(2)} ${(cy - r * Math.sin(2 * Math.PI * a)).toFixed(2)}`;
+  return `M${cx} ${cy} L${p(a0)} A${r} ${r} 0 ${a1 - a0 > .5 ? 1 : 0} 1 ${p(a1)} Z`;
 }
 function figuraEnPizza(n, cx, cy, radio){
   const svg = celdaSVG([n], {alto:Math.round(radio * 1.55)});
@@ -4539,7 +4626,7 @@ function tramosPizza(a, b){
   return out;
 }
 /* cels: células; silabas: en los niveles 1 y 2 va la sílaba en lugar de la figura */
-function pizzaHTML(cels, {silabas = false, tira = true} = {}){
+function pizzaHTML(cels, {silabas = false, tira = true, insignias = true} = {}){
   const ev = eventosDe(cels), notas = ev.map(e => notasDeCelula(cels[e.ci])[e.ni]);
   const total = ev.reduce((a, e) => Math.max(a, e.t + e.d), 0), P = Math.max(1, Math.ceil(total - 1e-6));
   const CW = 220, CY = 110, R = 100, cx = p => CW * p + CW / 2, id = 'pz' + (++pizzaN);
@@ -4565,7 +4652,7 @@ function pizzaHTML(cels, {silabas = false, tira = true} = {}){
   for(let p = 0; p < P; p++){
     const segs = partes.flatMap(x => [...x.main, ...x.dot]).filter(s => s.p === p);
     if(segs.length === 1 && segs[0].b - segs[0].a >= 1 - 1e-6) continue;
-    [...new Set(segs.flatMap(s => [redond(s.a % 1), redond(s.b % 1)]))].forEach(a => { const x = cx(p) - R * Math.sin(2 * Math.PI * a), y = CY - R * Math.cos(2 * Math.PI * a); o += `<line class="pz-corte-luz" x1="${cx(p)}" y1="${CY}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/><line class="pz-corte" x1="${cx(p)}" y1="${CY}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; });
+    [...new Set(segs.flatMap(s => [redond(s.a % 1), redond(s.b % 1)]))].forEach(a => { const x = cx(p) - R * Math.cos(2 * Math.PI * a), y = CY - R * Math.sin(2 * Math.PI * a); o += `<line class="pz-corte-luz" x1="${cx(p)}" y1="${CY}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/><line class="pz-corte" x1="${cx(p)}" y1="${CY}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; });
   }
   // lo que suena
   partes.forEach(({k, main, dot}) => [...main, ...dot].forEach(s => { o += forma(s, R, 'class="pz-luz"', `data-sl="${k}"`); }));
@@ -4575,9 +4662,9 @@ function pizzaHTML(cels, {silabas = false, tira = true} = {}){
     if(enteras.length) return {x:(cx(enteras[0].p) + cx(enteras[enteras.length - 1].p)) / 2, y:CY, len:enteras.length};
     const s = segs.reduce((m, v) => v.b - v.a > m.b - m.a ? v : m), th = (s.b - s.a) * 2 * Math.PI, am = (s.a + s.b) * Math.PI;
     const rho = Math.max(.45 * R, Math.min(.66 * R, 4 * R * Math.sin(th / 2) / (3 * th)));
-    return {x:cx(s.p) - rho * Math.sin(am), y:CY - rho * Math.cos(am), len:s.b - s.a};
+    return {x:cx(s.p) - rho * Math.cos(am), y:CY - rho * Math.sin(am), len:s.b - s.a};
   };
-  partes.forEach(({k, e, n, main, dot}) => {
+  if(insignias) partes.forEach(({k, e, n, main, dot}) => {
     const L = lugar(main), ri = L.len >= 2 ? 50 : L.len >= 1 - 1e-6 ? 38 : L.len >= .5 - 1e-6 ? 30 : L.len >= 1 / 3 - 1e-3 ? 26 : 23;
     const c = CELULAS[cels[e.ci]], dentro = silabas
       ? `<text x="${L.x.toFixed(1)}" y="${(L.y + ri * .22).toFixed(1)}" text-anchor="middle" class="pz-sil${e.r ? ' rest' : ''}" style="font-size:${Math.round(ri * .95)}px">${esc(c.syl[e.ni] || '')}</text>`
@@ -4627,13 +4714,15 @@ const modoLeer = (nivel, n) => nivel === 3 && n === 1 ? 'lineas' : nivel === 3 &
 const CUERDAS_LEER = [['sol', 55], ['re', 62], ['la', 69], ['mi', 76]];
 const ESCALA_DO = new Set(['sol-5', 're-0', 're-2', 're-3', 're-5', 'la-0', 'la-2', 'la-3']);
 const esNatural = m => [0, 2, 4, 5, 7, 9, 11].includes(((m % 12) + 12) % 12);
-/* el violín del club (assets/ilustraciones/violin-mastil.webp): recorte del mástil de 116×390 con la voluta arriba.
-   Cada nota va donde de verdad se pisa: la cuerda mide 692 y cada semitono acorta la cuerda 2^(-1/12). */
-const MASTIL = {W:116, H:390, x0:500, y0:262, cejilla:328, largo:692};
-const POS_LEER = CUERDAS_LEER.flatMap(([id, base], i) => Array.from({length:11}, (_, k) => {
-  const y = k ? MASTIL.cejilla + MASTIL.largo * (1 - 2 ** (-k / 12)) : 312, sep = 13 + .02333 * (y - 350);
-  return {id, k, m:base + k, x:557.5 + .00111 * (y - 350) + (i - 1.5) * sep - MASTIL.x0, y:y - MASTIL.y0, r:.47 * sep};
-}));
+/* el violín del club (assets/ilustraciones/violin-mastil.webp): recorte del mástil de 100×194 con la cejilla arriba.
+   Las cuerdas siguen la imagen; las notas van pegadas una a la otra a lo largo de la cuerda (cada círculo toca al siguiente). */
+const MASTIL = {W:100, H:194, x0:508, y0:286, cejilla:328};
+const sepMastil = y => 13 + .02333 * (y - 350);
+const POS_LEER = (() => {
+  const ys = [[312, .48 * sepMastil(312)]]; let y = MASTIL.cejilla, r = .48 * sepMastil(y + 7); ys.push([y + r + 1, r]);
+  for(let k = 2; k <= 10; k++){ const [py, pr] = ys[k - 1]; r = .48 * sepMastil(py + 2 * pr); ys.push([py + pr + r + .8, r]); }
+  return CUERDAS_LEER.flatMap(([id, base], i) => ys.map(([y, r], k) => ({id, k, m:base + k, x:557.5 + .00111 * (y - 350) + (i - 1.5) * sepMastil(y) - MASTIL.x0, y:y - MASTIL.y0, r})));
+})();
 /* vertical: Sol a la izquierda y Mi a la derecha; horizontal: la voluta a la izquierda, Mi arriba y Sol abajo */
 function violinLeerSVG(horizontal){
   const W = horizontal ? MASTIL.H : MASTIL.W, H = horizontal ? MASTIL.W : MASTIL.H;
@@ -4642,7 +4731,7 @@ function violinLeerSVG(horizontal){
     return `<line class="lv-cinta" x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke-width="${(2 * r).toFixed(1)}"/>`; }).join('');
   const notas = POS_LEER.map(p => { const [x, y] = xy(p), nom = noteName(p.m);
     return `<g class="lv-n" data-cuerda="${p.id}" data-m="${p.m}" data-pos="${p.id}-${p.k}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" role="button" aria-label="${nom} en la cuerda ${STR[p.id].nombre}"><g class="lv-in"><circle r="${p.r.toFixed(1)}"/><text y="${(p.r * .3).toFixed(1)}" text-anchor="middle" style="font-size:${(p.r * (nom.length > 3 ? .62 : .8)).toFixed(1)}px">${nom}</text></g></g>`; }).join('');
-  return `<svg class="lv" viewBox="0 0 ${W} ${H}" role="group" aria-label="Violín: toca la nota"><image href="assets/ilustraciones/violin-mastil${horizontal ? '-h' : ''}.webp" width="${W}" height="${H}"/>${cintas}${notas}</svg>`;
+  return `<svg class="lv" viewBox="0 0 ${W} ${H}" role="group" aria-label="Violín: toca la nota"><image href="assets/ilustraciones/violin-mastil${horizontal ? '-h' : ''}.webp?v=3" width="${W}" height="${H}"/>${cintas}${notas}</svg>`;
 }
 const leerHorizontal = () => !matchMedia('(max-width: 760px)').matches;
 function diapasonLeerHTML(){ return `<div class="ln-violin" data-h="${leerHorizontal()}">${violinLeerSVG(leerHorizontal())}</div>`; }
@@ -4753,8 +4842,8 @@ const TALLER_GRUPOS = {
 };
 function mountTallerRitmo(el, {big = false} = {}){
   const KEY = 'sprinkloud-taller';
-  let st = {comp:[], bpm:70, loop:false, pizza:false, grupo:'base'};
-  try{ Object.assign(st, JSON.parse(localStorage.getItem(KEY) || '{}')); st.comp = (st.comp || []).filter(id => CELULAS[id]); }catch(e){}
+  let st = {comp:[], bpm:70, loop:false, pizza:false, grupo:'base', carta:'pan', oculta:false};
+  try{ Object.assign(st, JSON.parse(localStorage.getItem(KEY) || '{}')); st.comp = (st.comp || []).filter(id => CELULAS[id]); if(!CELULAS[st.carta]) st.carta = 'pan'; }catch(e){}
   const guardar = () => { try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} };
   const rel = reloj(); let sonando = false;
   const total = () => st.comp.reduce((a, id) => a + durCel(id), 0);
@@ -4766,46 +4855,64 @@ function mountTallerRitmo(el, {big = false} = {}){
       <label class="row fine">Tempo <input type="range" min="40" max="160" value="${st.bpm}" data-tr-bpm style="width:110px;accent-color:var(--pine)"> <output>${st.bpm}</output></label>
       <label class="switch"><input type="checkbox" data-tr-loop ${st.loop ? 'checked' : ''}> Repetir</label>
       <button class="btn pizza-btn" data-tr-pizza aria-pressed="${st.pizza}">Pizza</button>
-      <button class="btn ghost small" data-tr-borrar>Borrar la última</button>
+      <button class="btn ghost small" data-tr-borrar ${st.pizza ? 'hidden' : ''}>Borrar la última</button>
     </div>
     <div class="taller-lienzo" data-tr-lienzo></div>
-    <div class="seg" role="group" aria-label="Grupo de cartas">${Object.entries(TALLER_GRUPOS).map(([k, g]) => `<button data-tr-g="${k}" aria-pressed="${k === st.grupo}">${g.nombre}</button>`).join('')}</div>
-    <div class="taller-paleta" data-tr-paleta></div>
+    <div class="taller-cartas${st.oculta ? ' oculta' : ''}">
+      <div class="taller-cartas-top"><div class="seg" role="group" aria-label="Grupo de cartas">${Object.entries(TALLER_GRUPOS).map(([k, g]) => `<button data-tr-g="${k}" aria-pressed="${k === st.grupo}">${g.nombre}</button>`).join('')}</div>
+        <button class="btn ghost small tr-ocultar" data-tr-ocultar aria-expanded="${!st.oculta}" aria-controls="tr-paleta-${++pizzaN}"><svg class="i i-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 9.5 12 16l6.5-6.5"/></svg><span>${st.oculta ? 'Mostrar tarjetas' : 'Ocultar tarjetas'}</span></button></div>
+      <div class="taller-paleta-caja"><div class="taller-paleta desliza" id="tr-paleta-${pizzaN}" data-tr-paleta></div></div>
+    </div>
   </div>`;
   const lienzo = $('[data-tr-lienzo]', el), paleta = $('[data-tr-paleta]', el), bplay = $('[data-tr-play]', el);
   const ICON_PLAY = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2l10.4-6.6z"/></svg>', ICON_STOP = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.5h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/></svg>';
   function pintarPaleta(){
     const libre = libreEnCompas();
-    paleta.innerHTML = TALLER_GRUPOS[st.grupo].ids.map(id => { const cabe = durCel(id) <= libre + 1e-6; return `<button class="rc tr-carta" data-tr-add="${id}" ${cabe ? '' : 'aria-disabled="true"'} aria-label="Añadir ${esc(notasDeCelula(id).map(nombreFiguraDe).join(', '))}">${celdaSVG(notasDeCelula(id), {alto:40, cls:'rc-fig'})}<span class="tr-sil">${esc(CELULAS[id].syl.join(' '))}</span></button>`; }).join('');
+    paleta.innerHTML = TALLER_GRUPOS[st.grupo].ids.map(id => { const cabe = st.pizza || durCel(id) <= libre + 1e-6; return `<button class="rc tr-carta" data-tr-add="${id}" ${cabe ? '' : 'aria-disabled="true"'} ${st.pizza ? `aria-pressed="${id === st.carta}"` : ''} aria-label="${st.pizza ? 'Ver' : 'Añadir'} ${esc(notasDeCelula(id).map(nombreFiguraDe).join(', '))}">${celdaSVG(notasDeCelula(id), {alto:40, cls:'rc-fig'})}<span class="tr-sil">${esc(CELULAS[id].syl.join(' '))}</span></button>`; }).join('');
     $$('[data-tr-add]', paleta).forEach(b => b.onclick = () => {
+      if(st.pizza){ parar(); st.carta = b.dataset.trAdd; guardar(); pintar(); sonarPizza(0, 1); return; }
       if(b.getAttribute('aria-disabled')){ toast(`En este compás solo caben ${libre} ${libre === 1 ? 'pulso' : 'pulsos'}.`); return; }
       parar(); st.comp.push(b.dataset.trAdd); guardar(); pintar(); tocarCelulas([b.dataset.trAdd], st.bpm, {previa:0});
     });
   }
   function pintarLienzo(){
+    lienzo.classList.toggle('en-pizza', st.pizza);
+    // modo pizza: solo la carta elegida, para ver cómo se divide el tiempo
+    if(st.pizza){ lienzo.innerHTML = pizzaHTML([st.carta], {insignias:false}); return; }
     const bars = compases();
     if(!bars.length){ lienzo.innerHTML = '<p class="taller-vacio">Toca una carta para empezar tu ritmo</p>'; return; }
     let k = 0;
     lienzo.innerHTML = bars.map((idxs, bi) => {
       const cels = idxs.map(i => st.comp[i]), usados = cels.reduce((a, id) => a + durCel(id), 0);
       const inicio = k; k += cels.reduce((a, id) => a + CELULAS[id].d.length, 0);
-      const dentro = st.pizza ? pizzaHTML(cels, {tira:false}) : `<div class="tr-figs">${(() => { let j = inicio; return cels.map(id => { const ns = notasDeCelula(id), s = celdaSVG(ns, {prefijo:'tr', inicio:j, alto:56}); j += ns.length; return s; }).join(''); })()}${usados < 4 - 1e-6 ? `<span class="tr-hueco" style="flex:${4 - usados}">${redond(4 - usados)} ${4 - usados === 1 ? 'pulso' : 'pulsos'}</span>` : ''}</div>`;
+      const dentro = `<div class="tr-figs">${(() => { let j = inicio; return cels.map(id => { const ns = notasDeCelula(id), s = celdaSVG(ns, {prefijo:'tr', inicio:j, alto:56}); j += ns.length; return s; }).join(''); })()}${usados < 4 - 1e-6 ? `<span class="tr-hueco" style="flex:${4 - usados}">${redond(4 - usados)} ${4 - usados === 1 ? 'pulso' : 'pulsos'}</span>` : ''}</div>`;
       return `<section class="tr-compas" data-tr-c="${bi}" data-ini="${inicio}"><button class="tr-basura" data-tr-del="${bi}" aria-label="Borrar el compás ${bi + 1}"><svg class="i i-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button>${dentro}</section>`;
     }).join('');
-    lienzo.classList.toggle('en-pizza', st.pizza);
     $$('[data-tr-del]', lienzo).forEach(b => b.onclick = () => { parar(); const quitar = compases()[+b.dataset.trDel]; st.comp = st.comp.filter((_, i) => !quitar.includes(i)); guardar(); pintar(); });
   }
   const pintar = () => { pintarLienzo(); pintarPaleta(); };
   const marcar = i => {
+    if(st.pizza){ pizzaMarcar(lienzo, i < 0 ? -1 : i % CELULAS[st.carta].d.length); return; }
     $$('.tr-compas.playing, .tr-figs .nt.on', lienzo).forEach(x => x.classList.remove('playing', 'on'));
-    if(i < 0){ $$('.tr-compas', lienzo).forEach(c => pizzaMarcar(c, -1)); return; }
+    if(i < 0) return;
     $$(`[data-nid="tr-${i}"]`, lienzo).forEach(x => x.classList.add('on'));
     const cs = $$('.tr-compas', lienzo); let c = null;
     cs.forEach(x => { if(+x.dataset.ini <= i) c = x; });
-    if(c){ c.classList.add('playing'); if(st.pizza){ cs.forEach(x => x !== c && pizzaMarcar(x, -1)); pizzaMarcar(c, i - +c.dataset.ini); } c.scrollIntoView?.({block:'nearest', inline:'nearest'}); }
+    if(c){ c.classList.add('playing'); c.scrollIntoView?.({block:'nearest', inline:'nearest'}); }
   };
   function parar(){ sonando = false; rel.clear(); pararRitmo(); pulsoEstado($('.pulso', el), 'off'); marcar(-1); bplay.innerHTML = ICON_PLAY; bplay.setAttribute('aria-label', 'Reproducir'); }
+  /* modo pizza: la cuenta de 4 y la misma carta 4 veces (al tocar una carta suena una vez, sin cuenta) */
+  function sonarPizza(previa, veces){
+    const vista = veces === 1;
+    if(!vista){ sonando = true; bplay.innerHTML = ICON_STOP; bplay.setAttribute('aria-label', 'Detener'); }
+    const pul = $('.pulso', el);
+    tocarCelulas(Array(veces).fill(st.carta), st.bpm, {previa, rel, metro:previa ? 'fuerte' : undefined,
+      onCuenta:n => pulsoEstado(pul, 'cuenta', n),
+      onPulso:b => { if(!vista && b >= 0) pulsoEstado(pul, 'pulso', b % 4); },
+      onNota:i => { if(i >= 0){ marcar(i); return; } if(vista){ marcar(-1); return; } if(sonando && st.loop) sonarPizza(0, 4); else parar(); }});
+  }
   function sonar(previa){
+    if(st.pizza){ sonarPizza(previa, 4); return; }
     if(!st.comp.length){ toast('Toca una carta para empezar tu ritmo.'); return; }
     sonando = true; bplay.innerHTML = ICON_STOP; bplay.setAttribute('aria-label', 'Detener');
     const pul = $('.pulso', el);
@@ -4817,12 +4924,43 @@ function mountTallerRitmo(el, {big = false} = {}){
   bplay.onclick = () => { if(sonando){ parar(); return; } pararRitmo(); sonar(4); };
   const bpm = $('[data-tr-bpm]', el); bpm.oninput = () => { st.bpm = +bpm.value; bpm.nextElementSibling.textContent = bpm.value; guardar(); };
   $('[data-tr-loop]', el).onchange = e => { st.loop = e.target.checked; guardar(); };
-  $('[data-tr-pizza]', el).onclick = e => { parar(); st.pizza = !st.pizza; e.currentTarget.setAttribute('aria-pressed', st.pizza); guardar(); pintarLienzo(); };
+  $('[data-tr-pizza]', el).onclick = e => { parar(); st.pizza = !st.pizza; e.currentTarget.setAttribute('aria-pressed', st.pizza); $('[data-tr-borrar]', el).hidden = st.pizza; guardar(); pintar(); };
   $('[data-tr-borrar]', el).onclick = () => { parar(); st.comp.pop(); guardar(); pintar(); };
+  $('[data-tr-ocultar]', el).onclick = e => {
+    st.oculta = !st.oculta; guardar(); const b = e.currentTarget;
+    $('.taller-cartas', el).classList.toggle('oculta', st.oculta); b.setAttribute('aria-expanded', String(!st.oculta)); $('span', b).textContent = st.oculta ? 'Mostrar tarjetas' : 'Ocultar tarjetas';
+  };
   $$('[data-tr-g]', el).forEach(b => b.onclick = () => { st.grupo = b.dataset.trG; $$('[data-tr-g]', el).forEach(x => x.setAttribute('aria-pressed', String(x === b))); guardar(); pintarPaleta(); });
   pintar();
   return () => parar();
 }
+
+/* ============ listas que se deslizan ============
+   Si una lista no cabe (pestañas, grupos de botones, tarjetas), aparece una flecha pegada al borde:
+   avisa que hay más opciones y al tocarla desliza; al llegar al final apunta de vuelta al inicio. */
+const DESLIZABLES = '.tabs, .seg, .desliza';
+function flechaDesliza(el){
+  const f = $(':scope > .desliza-flecha', el); if(!f) return;
+  const fin = el.scrollLeft + el.clientWidth >= el.scrollWidth - 6;
+  f.classList.toggle('fin', fin); f.setAttribute('aria-label', fin ? 'Volver al inicio de la lista' : 'Ver más opciones');
+}
+function revisarDeslizables(){
+  $$(DESLIZABLES).forEach(el => {
+    let f = $(':scope > .desliza-flecha', el);
+    const sobra = el.scrollWidth - (f ? f.offsetWidth : 0) > el.clientWidth + 4;
+    if(!sobra){ f?.remove(); return; }
+    if(!f){
+      f = document.createElement('button'); f.type = 'button'; f.className = 'desliza-flecha'; f.tabIndex = -1;
+      f.innerHTML = '<svg class="i i-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>';
+      f.onclick = e => { e.stopPropagation(); el.scrollBy({left:f.classList.contains('fin') ? -el.scrollWidth : el.clientWidth * .7, behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); };
+      el.append(f);
+      if(!el.dataset.desliza){ el.dataset.desliza = '1'; el.addEventListener('scroll', () => flechaDesliza(el), {passive:true}); }
+    }
+    flechaDesliza(el);
+  });
+}
+{ let pendiente = 0; const pedir = () => { if(!pendiente) pendiente = requestAnimationFrame(() => { pendiente = 0; revisarDeslizables(); }); };
+  new MutationObserver(pedir).observe(document.body, {childList:true, subtree:true}); addEventListener('resize', pedir); }
 
 /* ============ MusicXML (exportado desde MuseScore 3) ============ */
 function leerMusicXML(texto){
@@ -5080,28 +5218,41 @@ function capFiguras(body, root, fin){
   return () => rel.clear();
 }
 function capCompas(body, root, fin){
-  capBase(body, `<div class="cajas">${[2, 3, 4].map(n => `<button class="caja" data-cj="${n}"><strong>${n}/4</strong><span>${'<i></i>'.repeat(n)}</span></button>`).join('')}</div><p class="cap-name">Cajitas de 2, 3 o 4 pulsos: el primero suena más fuerte</p>`);
-  const sonar = n => { const c = audio(), spb = .55, t0 = c.currentTime + .1; for(let k = 0; k < n * 2; k++) click(t0 + k * spb, k % n === 0); };
-  $$('[data-cj]', body).forEach(b => b.onclick = () => sonar(+b.dataset.cj));
+  capBase(body, `<div class="cajas">${[2, 3, 4].map(n => `<button class="caja" data-cj="${n}"><strong>${n}/4</strong><span>${'<i></i>'.repeat(n)}</span></button>`).join('')}</div><p class="cap-name">El primer pulso suena más fuerte</p>`);
+  const rel = reloj();
+  const sonar = (n, caja) => {
+    pararRitmo(); rel.clear(); $$('.caja i.on', body).forEach(d => d.classList.remove('on'));
+    const c = audio(), spb = .55, t0 = c.currentTime + .1, bus = ritmoBus();
+    for(let k = 0; k < n * 2; k++){ const w = t0 + k * spb; click(w, k % n === 0, bus); if(caja) rel.at(w, () => $$('i', caja).forEach((d, j) => d.classList.toggle('on', j === k % n))); }
+    if(caja) rel.at(t0 + n * 2 * spb, () => $$('i', caja).forEach(d => d.classList.remove('on')));
+  };
+  $$('[data-cj]', body).forEach(b => b.onclick = () => sonar(+b.dataset.cj, b));
   quizOpciones(root, barajar([2, 3, 4]).map(n => ({texto:'¿De cuántos pulsos es la cajita?', sonar:() => sonar(n), opciones:[[2, '2'], [3, '3'], [4, '4']], ok:n})), fin);
+  return () => { rel.clear(); pararRitmo(); };
 }
 function capCelulas(body, root, fin){
-  const ids = ['pan', 'luna', 'choco', 'gran', 'cama', 'bla2'];
-  capBase(body, `<div class="g-opts">${ids.map(id => `<button class="rc" data-cel="${id}">${notacionCelula(id)}<span class="rc-notes">${CELULAS[id].syl.map((s, i) => `<span class="rc-n" style="--d:${CELULAS[id].d[i]}">${esc(s)}</span>`).join('')}</span></button>`).join('')}</div><p class="cap-name">Las palabras de ritmo ahora tienen su figura</p>`);
-  $$('[data-cel]', body).forEach(b => b.onclick = () => tocarCelulas([b.dataset.cel], 66, {previa:1}));
-  quizOpciones(root, barajar(ids).slice(0, 3).map(id => ({texto:'¿Qué figura sonó?', sonar:() => tocarCelulas([id], 66, {previa:1}), opciones:barajar([id, ...barajar(ids.filter(x => x !== id)).slice(0, 2)]).map(x => [x, notacionCelula(x)]), ok:id})), fin);
+  const ids = ['pan', 'luna', 'choco', 'gran', 'cama', 'bla2'], rel = reloj();
+  capBase(body, `<div class="ej-ritmo" data-ej></div><div class="g-opts cel-opts desliza">${ids.map((id, i) => `<button class="rc" data-cel="${id}" aria-pressed="${!i}">${notacionCelula(id)}<span class="rc-notes">${CELULAS[id].syl.map((s, k) => `<span class="rc-n" style="--d:${CELULAS[id].d[k]}">${esc(s)}</span>`).join('')}</span></button>`).join('')}</div>`);
+  const ej = ejemploRitmo($('[data-ej]', body), rel, {tira:false});
+  ej.pintar([ids[0]]);
+  $$('[data-cel]', body).forEach(b => b.onclick = () => { $$('[data-cel]', body).forEach(x => x.setAttribute('aria-pressed', String(x === b))); ej.pintar([b.dataset.cel]); ej.sonar(); });
+  quizOpciones(root, barajar(ids).slice(0, 3).map(id => ({texto:'¿Qué figura sonó?', sonar:() => { pararRitmo(); rel.clear(); tocarCelulas([id], 66, {previa:1}); }, opciones:barajar([id, ...barajar(ids.filter(x => x !== id)).slice(0, 2)]).map(x => [x, notacionCelula(x)]), ok:id})), fin);
+  return () => { rel.clear(); pararRitmo(); };
 }
 function capCompuesto(body, root, fin){
-  capBase(body, `<div class="figs"><div class="fig"><img src="assets/emoji/deer.svg" width="56" height="56" alt=""><strong>mú-si-ca</strong><small>dos pasos de tres</small></div><div class="fig"><img src="assets/emoji/rabbit.svg" width="56" height="56" alt=""><strong>pan pan</strong><small>dos pasos de dos</small></div></div>
-    <div class="row" style="justify-content:center"><button class="btn" data-cp="3">Escuchar 6/8</button><button class="btn" data-cp="2">Escuchar 2/4</button></div>`);
-  const sonar = n => tocarCelulas(n === 3 ? ['musi', 'musi', 'musi', 'musi'] : ['luna', 'luna', 'luna', 'luna'], 60, {previa:0});
-  $$('[data-cp]', body).forEach(b => b.onclick = () => sonar(+b.dataset.cp));
+  const ejs = [['3', '6/8', ['musi', 'musi']], ['2', '2/4', ['luna', 'luna']]], rel = reloj();
+  capBase(body, `${fichasEjemplo(ejs, '3')}<div class="ej-ritmo" data-ej></div>`);
+  unirFichas(body, ejs, ejemploRitmo($('[data-ej]', body), rel, {bpm:60, silabas:true}));
+  const sonar = n => { pararRitmo(); rel.clear(); tocarCelulas(n === 3 ? ['musi', 'musi', 'musi', 'musi'] : ['luna', 'luna', 'luna', 'luna'], 60, {previa:0}); };
   quizOpciones(root, barajar([3, 2, 3]).map(n => ({texto:'¿Galopa en tres o camina en dos?', sonar:() => sonar(n), opciones:[[3, 'En tres (6/8)'], [2, 'En dos']], ok:n})), fin);
+  return () => { rel.clear(); pararRitmo(); };
 }
 function capPuntillo(body, root, fin){
-  capBase(body, `<div class="g-opts">${['pan', 'leey', 'blan'].map(id => cartaRitmo(id, {tag:'button', attrs:`data-pt2="${id}"`})).join('')}</div><p class="cap-name">El puntito le da a la nota media vida más</p>`);
-  $$('[data-pt2]', body).forEach(b => b.onclick = () => tocarCelulas([b.dataset.pt2, b.dataset.pt2], 66, {previa:1}));
-  quizOpciones(root, barajar(['leey', 'pan', 'leey']).map(id => ({texto:'¿Sonó con puntillo?', sonar:() => tocarCelulas([id, id], 66, {previa:1}), opciones:[['leey', 'Sí, con puntillo'], ['pan', 'No']], ok:id})), fin);
+  const ejs = [['sin', 'Sin puntillo', ['pan', 'pan']], ['con', 'Con puntillo', ['leey']], ['corto', 'Puntillo corto', ['blan', 'blan']]], rel = reloj();
+  capBase(body, `${fichasEjemplo(ejs, 'sin')}<div class="ej-ritmo" data-ej></div>`);
+  unirFichas(body, ejs, ejemploRitmo($('[data-ej]', body), rel));
+  quizOpciones(root, barajar(['leey', 'pan', 'leey']).map(id => ({texto:'¿Sonó con puntillo?', sonar:() => { pararRitmo(); rel.clear(); tocarCelulas([id, id], 66, {previa:1}); }, opciones:[['leey', 'Sí, con puntillo'], ['pan', 'No']], ok:id})), fin);
+  return () => { rel.clear(); pararRitmo(); };
 }
 function capRepeticion(body, root, fin){
   capBase(body, `<svg class="tren" viewBox="0 0 520 110" role="img" aria-label="Signos de repetición"><line x1="20" x2="500" y1="60" y2="60" stroke="var(--ink-2)" stroke-width="3"/>

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-30T21:15:31.565432+00:00",
+  "generatedAt": "2026-09-30T22:59:53.178890+00:00",
   "title": "Design System: Sprinkloud",
   "extensions": {
     "colorMeta": {
@@ -616,6 +616,7 @@
       "Don't uses vector plano, degradados digitales, 3D, neón ni negro puro.",
       "Don't pongas sombras grises duras ni bordes de acuarela sobre texto, botones o partituras.",
       "Don't llenes la pantalla con decoración ni con párrafos: el alumno tiene 6 años.",
+      "Don't dejes crecer una lista hacia abajo cuando puede deslizarse de lado u ocultarse (ver The No Scroll Rule).",
       "Don't uses confeti de colores; los festejos llevan hojas y pétalos de acuarela."
     ]
   }

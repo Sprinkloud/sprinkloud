@@ -200,6 +200,13 @@ Es una app de una columna centrada que en computadora abre en dos (lección y se
 
 **The One Protagonist Rule.** Cada pantalla tiene un solo protagonista. No se rellenan las esquinas con decoración.
 
+**The No Scroll Rule** (pedido de la fundadora). Se evita el scroll todo lo que se pueda, en cualquier tamaño de pantalla:
+- Lo que no cabe va en una ventana deslizable, no hacia abajo. Las listas largas (pestañas, grupos de botones, tarjetas, fichas) quedan en una fila que se desliza de lado (`.tabs`, `.seg` o `.desliza`). Cuando la fila no cabe, `revisarDeslizables` pone una flecha pegada al borde: avisa que hay más, desliza al tocarla y al final apunta de vuelta al inicio.
+- Los paneles que solo se usan a ratos se pueden ocultar, por ejemplo las tarjetas de Crear ritmo con "Ocultar tarjetas".
+- El protagonista (el violín, la pizza o el pentagrama) se mide con el alto de la pantalla (`dvh`), no solo con el ancho. Nunca se deforma: solo se escala.
+- Cuadros y textos caben desde 320 px de ancho, sin scroll horizontal de la página.
+- Hay casos donde el scroll no se puede evitar, como listas de alumnos, partituras largas o el violín vertical en un celular bajo. Ahí se deja, y lo que hay que mirar mientras se desliza queda fijo arriba (el pentagrama en Leer notas).
+
 ## Elevation & Depth
 
 La profundidad es de papel apilado, no de material flotante. Las tarjetas se separan del fondo solo con una línea de lápiz de 1 px, sin sombra. El fondo lleva una textura de papel con ruido SVG (`feTurbulence`) al 3–5 % de opacidad, que no se anima.
@@ -260,6 +267,7 @@ Las esquinas son redondeadas y amables: 9 px en las tarjetas de nota, 14 px en p
 - **Don't** uses vector plano, degradados digitales, 3D, neón ni negro puro.
 - **Don't** pongas sombras grises duras ni bordes de acuarela sobre texto, botones o partituras.
 - **Don't** llenes la pantalla con decoración ni con párrafos: el alumno tiene 6 años.
+- **Don't** dejes crecer una lista hacia abajo cuando puede deslizarse de lado u ocultarse (ver The No Scroll Rule).
 - **Don't** uses confeti de colores; los festejos llevan hojas y pétalos de acuarela.
 
 ## Motion
@@ -298,6 +306,9 @@ El movimiento se rige por la filosofía de Emil Kowalski (skills `animate` y `re
 | Círculo de cuenta | Cada play de ritmo | Reloj en reposo; en la cuenta 1-2-3-4 fondo ocre suave y después el pulso (el 1 en musgo). Solo cambia el color, 80 ms `ease`, sin escala |
 | Pizza que suena (una por pulso) | Varias veces por compás | Capa ocre (multiplicar) de opacidad 0 → .55 en 80 ms y vuelve en 180 ms `ease` en todos los pedazos de la figura; la insignia y la figura de la tira cambian a ocre. Solo color |
 | Leer notas | Cada nota | Sobre la imagen del violín: la nota tocada crece a `scale(1.3)` con aro oscuro, 160 ms `--ease-out` (con movimiento reducido, solo el aro); la estrella ganada entra desde `scale(.95)` con opacidad, 240 ms `--ease-out`, sin rebote |
+| Flecha de lista deslizable | Al tocarla | La lista se desliza con `scroll-behavior: smooth` (instantáneo con movimiento reducido); al llegar al final la flecha gira a `scaleX(-1)` en 200 ms `--ease-out` |
+| Ocultar tarjetas (Crear ritmo) | A ratos | El panel se cierra con `grid-template-rows` 1fr → 0fr en 240 ms `--ease-out` y el chevrón gira 180°; con movimiento reducido cambia sin transición |
+| Cajitas del compás | Cada pulso | El punto que suena cambia a tinta en 80 ms. Solo color |
 | Barra de avance | Cada paso | `transform: scaleX()` desde la izquierda, 400 ms `--ease-out` |
 | Nota que suena | Varias veces por segundo | Solo cambia el color, 80 ms `ease` |
 | Toque en el Eco | Muchas veces por ronda | El botón baja 3 px en 90 ms |
