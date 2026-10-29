@@ -166,7 +166,7 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 ## Música y ambiente por escena (`ESCENAS` en `js/sonido.js`)
 | Escena | Qué suena |
 |---|---|
-| Mapa | Wooden Inn / Forest, una tras otra. De día suenan los pájaros; la fogata crepita siempre (más de noche) |
+| Mapa | Un amanecer feliz de primavera (pedido de la dueña, 29-oct): `amanecer-1..3` (Good Morning, Bright Eyes y Minimalistic Flute & Strings, CC0), una tras otra. De día suenan los pájaros; la fogata crepita siempre (más de noche) |
 | Tienda | Bossa nova. Al entrar suena la campanita de la puerta, y al comprar la caja registradora con monedas |
 | Casita | Guitarra suave y la chimenea que crepita. Al pegar una calcomanía suena un «pop» |
 | Biblioteca | Piano tranquilo (dos piezas de Holizna, CC0, una tras otra). Cada hoja del libro suena al pasar (`Sonido.hojaLibro`: el papel roza y la hoja cae) |
@@ -175,6 +175,18 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 
 - Las canciones cambian con un fundido (`Sonido.escena`, que llama `ir()` en `app.js`).
 - El botón 🎵 apaga la música y el ambiente.
+- **Todas las canciones están niveladas a −24 dB de volumen medio** (ffmpeg `volumedetect` + `volume` + `alimiter`, 96 kbps). Las de la biblioteca estaban 10 dB más fuertes y tapaban los ejemplos. Al agregar una canción, nivelarla igual.
+
+## Sonidos que no se mezclan (pedido de la dueña, 29-oct)
+- **`Sonido.callar()`** corta de golpe todo lo que suena o está programado (notas, clics, tambor, el jingle): cambia el `bus` de los efectos por uno nuevo y apaga el viejo en 30 ms. La música de la escena no se toca.
+- Se llama al cambiar de pantalla (`ir`), al empezar cada actividad de la práctica, al pasar o cerrar una hoja del libro, y antes de tocar algo nuevo (`Sonido.tocar`, `tocarCompas` del ritmo y `Ejemplos.tocar`).
+- **`Sonido.luego(ms, fn)`** es como `setTimeout`, pero no hace nada si antes se llamó a `callar`. Se usa para las notas que se tocan con un poco de espera.
+- **Ejemplos del libro:** `Sonido.musica.silenciar(ms)` apaga la música mientras suena el ejemplo y la devuelve despacio. El volumen de los ejemplos subió de .26 a .42.
+- **La voz de piano tiene armónicos fuertes** (filtro en 5200 Hz), porque los parlantes del celular casi no dan los graves y la nota se reconoce por sus armónicos. El tambor lleva, además, el golpe del parche (ruido corto), que es lo que se oye en el celular.
+
+## Fijar la app en la pantalla (29-oct)
+- `manifest.json` **no tiene `start_url`** a propósito, y `api.js` deja la clave en la dirección (`?k=`). Así el ícono fijado abre la dirección con la clave. En el iPhone, la app fijada no comparte lo guardado con Safari, y sin la clave en la dirección pediría el enlace otra vez.
+- Las instrucciones para el alumno (iPhone, Android y computadora) van en el mensaje de bienvenida del panel del maestro (`Registro_Sprinkloud/maestros/Maestro.html`, `mensajeTareas`).
 
 ## Revisión de animaciones (`/review-animations`, 29-oct)
 Se corrigieron estos puntos:

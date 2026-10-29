@@ -89,7 +89,7 @@ window.Ejemplos = (function () {
     let t = 0; const ev = [];
     texto.trim().split(/\s+/).forEach(tok => {
       if (/^@\d+/.test(tok)) { estado.tempo = Number(tok.slice(1)); return; }
-      if (/^!(p|mf|f)$/.test(tok)) { estado.vol = { p: .12, mf: .22, f: .38 }[tok.slice(1)]; return; }
+      if (/^!(p|mf|f)$/.test(tok)) { estado.vol = { p: .18, mf: .34, f: .55 }[tok.slice(1)]; return; }
       const [cuerpo, dur] = tok.split(':'); const d = dur ? Number(dur) : 1;
       if (cuerpo === 'r') { t += d; return; }
       if (cuerpo === 'x' || cuerpo === 'X') ev.push({ t, d, clic: cuerpo === 'X' ? 'fuerte' : 'suave' });
@@ -99,9 +99,11 @@ window.Ejemplos = (function () {
     });
     return { ev, largo: t };
   }
-  /* toca una partitura con el sonido de la app; devuelve cuántos segundos dura */
+  /* toca una partitura con el sonido de la app; devuelve cuántos segundos dura. Calla el ejemplo anterior y la música
+     mientras suena (antes la música tapaba los ejemplos, 29-oct) */
   function tocar(partitura, S) {
-    const estado = { tempo: 90, vol: .26 };
+    S.callar();
+    const estado = { tempo: 90, vol: .42 };
     const voces = partitura.split('&').map(v => leerVoz(v, estado));
     const pulso = 60 / estado.tempo, t0 = S.ahora() + .08;
     voces.forEach(v => v.ev.forEach(e => {
@@ -110,7 +112,9 @@ window.Ejemplos = (function () {
       else if (e.tambor) S.tambor(t);
       else e.notas.forEach(n => S.notaEn(t, n, Math.max(.12, e.d * pulso * .95), e.vol / Math.sqrt(e.notas.length)));
     }));
-    return Math.max(...voces.map(v => v.largo)) * pulso + .4;
+    const seg = Math.max(...voces.map(v => v.largo)) * pulso + .4;
+    if (S.musica) S.musica.silenciar(seg * 1000 + 600);
+    return seg;
   }
   function de(semana, ins) { const x = E[semana]; return !x ? [] : Array.isArray(x) ? x : (x[ins] || x.piano || []); }
   return { de, tocar };

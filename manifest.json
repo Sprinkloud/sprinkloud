@@ -3,7 +3,6 @@
   "short_name": "Bosque",
   "description": "Tu práctica de música de cada día, en un bosque de cuento.",
   "lang": "es",
-  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

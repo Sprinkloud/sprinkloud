@@ -2,7 +2,9 @@
    la fogata que crepita) y la música de cada escena suena con Howler (archivos CC0 en assets/musica, ver CREDITOS.md). Los aciertos seguidos suben de tono, como una escalera que festeja. */
 window.Sonido = (function () {
   'use strict';
-  let ctx = null, bus = null, musicaBus = null;
+  /* bus: los efectos y las notas pasan por aquí; salida: el volumen general. Para callar todo de golpe (callar) se cambia
+     el bus por uno nuevo y el viejo se apaga: así se cortan también las notas que estaban programadas para después */
+  let ctx = null, bus = null, salida = null, musicaBus = null, turno = 0;
   const pref = { sonido: leer('bosque-sonido', true), musica: leer('bosque-musica', true) };
   function leer(k, def) { try { const v = localStorage.getItem(k); return v === null ? def : v === '1'; } catch (e) { return def; } }
   function guardar(k, v) { try { localStorage.setItem(k, v ? '1' : '0'); } catch (e) { } }
@@ -12,24 +14,27 @@ window.Sonido = (function () {
       ctx = new (window.AudioContext || window.webkitAudioContext)();
       const comp = ctx.createDynamicsCompressor();
       comp.threshold.value = -16; comp.ratio.value = 4;
-      bus = ctx.createGain(); bus.gain.value = .9;
+      salida = ctx.createGain(); salida.gain.value = .9;
+      bus = ctx.createGain(); bus.connect(salida);
       musicaBus = ctx.createGain(); musicaBus.gain.value = .22;
-      bus.connect(comp); musicaBus.connect(comp); comp.connect(ctx.destination);
+      salida.connect(comp); musicaBus.connect(comp); comp.connect(ctx.destination);
     }
     if (ctx.state === 'suspended') ctx.resume();
     return ctx;
   }
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
 
-  /* Voz de piano: parciales armónicos con ataque rápido y caída natural (la misma del sitio) */
+  /* Voz de piano: parciales armónicos con ataque rápido y caída natural. Lleva armónicos fuertes y el filtro abierto
+     (5200 Hz): los parlantes del celular casi no dan los graves y la nota se reconoce por sus armónicos (antes sonaba
+     «grave y bajito», 29-oct) */
   function piano(t, midi, dur, gain, destino) {
     const out = ctx.createGain(), lp = ctx.createBiquadFilter();
-    lp.type = 'lowpass'; lp.frequency.value = 3200;
+    lp.type = 'lowpass'; lp.frequency.value = 5200;
     out.gain.setValueAtTime(0.0001, t);
     out.gain.exponentialRampToValueAtTime(gain, t + .006);
     out.gain.setTargetAtTime(gain * .35, t + .006, .25);
     out.gain.setTargetAtTime(0.0001, t + Math.max(dur - .05, .08), .06);
-    [[1, 1], [2, .42], [3, .2], [4, .1], [5, .05]].forEach(([h, a], k) => {
+    [[1, 1], [2, .62], [3, .36], [4, .2], [5, .1], [6, .05]].forEach(([h, a], k) => {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.type = 'sine'; o.frequency.setValueAtTime(hz(midi) * h * (1 + (k ? .0009 * k : 0)), t);
       g.gain.value = a; o.connect(g); g.connect(lp); o.start(t); o.stop(t + dur + .4);
@@ -55,11 +60,26 @@ window.Sonido = (function () {
   }
   const ok = () => pref.sonido && audio();
 
+  let jingle = null;
   let escalera = 0;   // aciertos seguidos: cada uno suena un poco más agudo
   const ESCALA = [72, 74, 76, 79, 81, 84, 86, 88, 91, 93];
   const api = {
     get pref() { return pref; },
     despertar() { audio(); },
+    /* calla todo lo que está sonando o programado (notas, clics, tambor, jingle) al cambiar de pantalla, de actividad, de
+       tarjeta o de hoja del libro, para que no se mezcle con lo siguiente (pedido de la dueña, 29-oct). La música de la
+       escena no se toca: la maneja Sonido.escena */
+    callar() {
+      turno++;
+      if (jingle) { jingle.stop(); jingle.unload(); jingle = null; }
+      if (!ctx || !bus) return;
+      const viejo = bus, t = ctx.currentTime;
+      viejo.gain.cancelScheduledValues(t); viejo.gain.setValueAtTime(viejo.gain.value, t); viejo.gain.linearRampToValueAtTime(0, t + .03);
+      setTimeout(() => viejo.disconnect(), 80);
+      bus = ctx.createGain(); bus.connect(salida);
+    },
+    /* como setTimeout, pero no pasa nada si antes se llamó a callar (notas que se tocan con un poco de espera) */
+    luego(ms, fn) { const mio = turno; return setTimeout(() => { if (mio === turno) fn(); }, ms); },
     /* toque de botón: una gotita de madera */
     toque() {
       if (!ok()) return;
@@ -96,7 +116,7 @@ window.Sonido = (function () {
       if (window.BOSQUE_JINGLE && window.Howl) {
         // el jingle CC0 (la música de fondo se baja mientras suena) y unas chispitas encima
         musica.bajar(5600);   // la música de la escena se baja mientras suena el jingle
-        new Howl({ src: [window.BOSQUE_JINGLE], volume: .7 }).play();
+        jingle = new Howl({ src: [window.BOSQUE_JINGLE], volume: .7 }); jingle.play();
         [84, 88, 91, 96].forEach((m, i) => marimba(ctx.currentTime + .2 + i * .08, m, .12));
         return;
       }
@@ -150,9 +170,9 @@ window.Sonido = (function () {
     nota(midi, dur) { if (!ok()) return; piano(ctx.currentTime + .02, midi, dur || .9, .32); },
     /* una nota en un momento exacto del reloj de audio (los ejemplos que suenan de la biblioteca) */
     notaEn(t, midi, dur, gain) { if (!ok()) return; piano(t, midi, dur || .9, gain || .32); },
-    /* pasos: [[midis juntos], segundos] (oído) */
+    /* pasos: [[midis juntos], segundos] (oído). Lo que sonaba antes se calla */
     tocar(pasos) {
-      audio();
+      audio(); api.callar();
       let t = ctx.currentTime + .08;
       pasos.forEach(([notas, dur]) => { notas.forEach(m => piano(t, m, dur, .32 / Math.sqrt(notas.length))); t += dur; });
       return t - ctx.currentTime;
@@ -172,6 +192,7 @@ window.Sonido = (function () {
       o.type = 'sine'; o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(60, t + .18);
       g.gain.setValueAtTime(.6, t); g.gain.exponentialRampToValueAtTime(.0001, t + .25);
       o.connect(g); g.connect(bus); o.start(t); o.stop(t + .26);
+      ruido(t, .05, 1400, .5); ruido(t, .09, 420, .45);   // el golpe del parche: lo que se oye en el celular
     },
     notaRitmo(t, enPulso, dur) { audio(); piano(t, enPulso ? 72 : 67, Math.max(dur * .95, .09), enPulso ? .3 : .24); },
     ahora() { return audio().currentTime; },
@@ -225,6 +246,12 @@ window.Sonido = (function () {
       this.fuego(e.fuego ? e.fuego * (document.documentElement.dataset.hora === 'noche' ? 1.4 : 1) : 0);
     },
     soltar(h) { if (!h) return; const v = h.volume(); h.fade(v, 0, 600); setTimeout(() => h.unload(), 650); },
+    /* los ejemplos del libro: la música se calla del todo mientras suenan y vuelve despacio */
+    silenciar(ms) {
+      const h = this.howl; if (!h) return;
+      clearTimeout(this.vuelve); h.fade(h.volume(), 0, 150);
+      this.vuelve = setTimeout(() => { if (this.howl === h) h.fade(0, this.vol, 1500); }, ms);
+    },
     bajar(ms) { if (!this.howl) return; const h = this.howl; h.fade(this.vol, .05, 300); setTimeout(() => { if (this.howl === h) h.fade(.05, this.vol, 1200); }, ms); },
     parar(dejarEscena) {
       this.sonando = false;

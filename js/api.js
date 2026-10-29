@@ -10,8 +10,10 @@ window.Api = (function () {
     if (clave) localStorage.setItem('bosque-clave', clave);
     else clave = localStorage.getItem('bosque-clave');
   } catch (e) { }
-  /* la clave no se queda en la barra de direcciones (por si comparten una captura) */
-  if (q.get('k')) history.replaceState(null, '', location.pathname + (DEMO ? '?demo=1' : ''));
+  /* la clave se queda en la dirección: al fijar la app en la pantalla (agregar a inicio / instalar), el ícono abre esta
+     misma dirección (manifest.json no tiene start_url a propósito). En el iPhone, la app fijada no comparte lo guardado
+     con Safari: sin la clave en la dirección, pediría el enlace otra vez (29-oct) */
+  if (clave && !DEMO && q.get('k') !== clave) history.replaceState(null, '', location.pathname + '?k=' + encodeURIComponent(clave));
 
   /* Las lecciones 20 a 23 son distintas en piano y en violín: el tema viene como «piano / violín» y el objetivo como
      «Piano: … Violín: …». Cada alumno ve solo lo de su instrumento. */

@@ -58,7 +58,7 @@
   function ir(id) {
     const antes = document.querySelector('.pantalla.activa');
     document.querySelectorAll('.pantalla').forEach(p => p.classList.toggle('activa', p.id === id));
-    S.pagina();
+    S.callar(); S.pagina();
     if (S.pref.musica) S.escena(ESCENA[id] || 'mapa');
     if (id === 'tienda' && (!antes || antes.id !== 'tienda')) S.campanaPuerta();
   }
@@ -209,7 +209,7 @@
     for (let i = mem.hechas; i < lista.length; i++) {
       if (cancelado) return;
       [...pasos.children].forEach((x, k) => { x.classList.toggle('hecho', k < i); x.classList.toggle('ahora', k === i); });
-      escenario.replaceChildren();
+      escenario.replaceChildren(); S.callar();
       const r = await lista[i].correr(escenario);
       if (cancelado) return;
       if (r) {
@@ -554,7 +554,7 @@
     cerrar.focus();
     let hojas = [], i = 0, libro = null;
     const llave = 'bosque-libro-' + estado.instrumento + '-' + b.etapa;
-    function salir() { document.removeEventListener('keydown', teclas); lector.remove(); S.pagina(); if (lomo) lomo.focus(); }
+    function salir() { document.removeEventListener('keydown', teclas); lector.remove(); S.callar(); S.pagina(); if (lomo) lomo.focus(); }
     cerrar.onclick = salir;
     function teclas(e) {
       if (!lector.isConnected) { document.removeEventListener('keydown', teclas); return; }
@@ -577,6 +577,7 @@
     try { i = Math.min(hojas.length - 1, Math.max(0, Number(localStorage.getItem(llave)) || 0)); } catch (e) { }
     const dato = k => 'data:image/webp;base64,' + libro.imgs[k].replace(/-/g, '+').replace(/_/g, '/');
     function mostrar(dir) {
+      S.callar();   // el ejemplo de la hoja anterior no sigue sonando en la nueva
       const h = hojas[i];
       const cont = el('div', { class: 'libro-hoja' + (h.segunda ? ' segunda' : ''), html: h.html });
       cont.querySelectorAll('[data-img]').forEach(im => { if (libro.imgs[im.dataset.img]) im.src = dato(im.dataset.img); });

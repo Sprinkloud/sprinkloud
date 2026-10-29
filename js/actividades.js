@@ -145,6 +145,7 @@ window.Actividades = (function () {
     return null;
   }
   function tocarCompas(ids, compas, tempo) {
+    S.callar();   // el compás anterior no se mezcla con este
     const cm = R.COMPASES[compas], beat = 60 / tempo / cm.pulso, t0 = S.ahora() + .15;
     const largo = Math.round(cm.bar / cm.pulso);
     for (let b = 0; b < largo * 2; b++) S.clic(t0 + b * cm.pulso * beat, b % largo === 0);
@@ -194,7 +195,7 @@ window.Actividades = (function () {
     const lista = Array.from({ length: cuantas }, pregunta);
     bien = await conCorreccion(lista, async pr => {
       actual = { ids: pr.ids, opciones: mezclar(o.rnd, pr.opciones) };   // al corregir, las opciones cambian de lugar
-      const elegido = await new Promise(r => { pintar(actual, (ids, b) => r({ ids, b })); setTimeout(() => tocarCompas(actual.ids, p.compas, p.tempo), 300); });
+      const elegido = await new Promise(r => { pintar(actual, (ids, b) => r({ ids, b })); S.luego(300, () => tocarCompas(actual.ids, p.compas, p.tempo)); });
       const ok = elegido.ids.join() === actual.ids.join();
       opciones.querySelectorAll('.puff').forEach(b => { b.disabled = true; });
       if (ok) { S.acierto(); elegido.b.classList.add('pista'); msj.className = 'mensaje bien'; msj.textContent = '¡Así sonó!'; }
@@ -299,7 +300,7 @@ window.Actividades = (function () {
     const lista = Array.from({ length: cuantas }, () => M.crear(opts));
     const bien = await conCorreccion(lista, async pr => {
       actual = pr; pintar(actual.opciones);
-      setTimeout(() => S.tocar(actual.pasos), 250);
+      S.luego(250, () => S.tocar(actual.pasos));
       const r = await new Promise(res => { esperando = res; }); esperando = null;
       const ok = r === actual.correcta;
       if (ok) { S.acierto(); botones[r].classList.add('bien'); msj.className = 'mensaje bien'; msj.textContent = '¡Sí!'; }
@@ -369,7 +370,7 @@ window.Actividades = (function () {
       const d = toco - pr.desde, ok = d === pr.st;
       if (ok) {
         contar(pr.desde, toco); teclas[toco].classList.add('llega');
-        S.nota(60 + pr.desde); setTimeout(() => S.nota(60 + toco), 380); S.acierto();
+        S.nota(60 + pr.desde); S.luego(380, () => S.nota(60 + toco)); S.acierto();
         msj.className = 'mensaje bien'; msj.textContent = '¡Sí! ' + semis(pr.st);
       } else {
         S.error();
@@ -579,7 +580,7 @@ window.Actividades = (function () {
     const A = window.Acordes;
     return rondaElegir(cont, o, 'Acordes e inversiones', rnd => {
       const a = uno(rnd, A.ACORDES), inv = Math.floor(rnd() * 3), claves = A.clavesDe(a, inv), tipo = uno(rnd, ['inversion', 'nombre', 'barra']);
-      const base = { dibujar: d => pentagramaNotas(d, claves, true), sonar: () => claves.forEach((k, j) => setTimeout(() => S.nota(midiDeClave(k), 1.4), j * 110)) };
+      const base = { dibujar: d => pentagramaNotas(d, claves, true), sonar: () => { S.callar(); claves.forEach((k, j) => S.luego(j * 110, () => S.nota(midiDeClave(k), 1.4))); } };
       if (tipo === 'inversion') return Object.assign(base, { texto: '¿Qué inversión es?', ops: A.INVERSIONES.slice(), correcta: A.INVERSIONES[inv], regla: A.reglaDe(a, inv) });
       if (tipo === 'nombre') { const c = A.nombreAcorde(a); return Object.assign(base, { texto: '¿Qué acorde es?', correcta: c, ops: tres(rnd, A.ACORDES.map(A.nombreAcorde), c), regla: 'En terceras: ' + A.notasDe(a, 0).map(l => A.NOTAS_ES[l]).join('-') + ' → ' + c }); }
       const c = A.conBarra(a, inv);
@@ -605,7 +606,7 @@ window.Actividades = (function () {
       const m = uno(rnd, conocidos);
       return { texto: 'Escucha: ¿qué modo es? (todos empiezan en Do)', ops: conocidos.map(x => x.n), correcta: m.n,
         regla: 'Primero: ¿mayor o menor? Después, la nota característica. ' + m.n + ': ' + m.que + '.',
-        sonar: () => m.st.concat([12]).forEach((st, j) => setTimeout(() => S.nota(60 + st, .45), j * 300)) };
+        sonar: () => { S.callar(); m.st.concat([12]).forEach((st, j) => S.luego(j * 300, () => S.nota(60 + st, .45))); } };
     }, o.cuantas || 6);
   }
   /* ---------- palabras de música (en cualquier lección, hasta la etapa del alumno) ---------- */
