@@ -48,6 +48,13 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 | `js/arte.js` | Lista de los dibujos de `assets/arte/` que ya existen (los demás se ven como emoji) |
 | `js/motores/*.js` | **GENERADOS** por `herramientas/copiar_motores.py` desde el sitio: `hoja.js`, `lectura.js`, `ritmo.js`, `oido.js` y `leccion.js`. No se editan a mano |
 | `manifest.json`, `assets/icono-*.png` | Instalable en la pantalla de inicio |
+| `assets/vista-previa.jpg` | Imagen del enlace en WhatsApp, Facebook e Instagram (Open Graph, 1200×630): el osito y el logo de Sprinkloud. Se hace con `herramientas/vista-previa.html` y una captura de Playwright a 1200×630. WhatsApp guarda las vistas previas un tiempo, así que en los enlaces ya mandados puede tardar en aparecer |
+
+## El camino
+**Tocar una piedra lleva directo a la lección** (pedido de la dueña, 29-oct; antes solo mostraba el nombre y había que buscar «Practicar»):
+- la de hoy abre la práctica;
+- una pasada abre una práctica de repaso de esa lección (`practicar_(semana)`);
+- las futuras muestran el candado.
 
 ## La práctica de hoy (`Actividades.plan`)
 - **Semilla:** `hash(alumno | fecha del servidor | semana)`, así cambia a medianoche y es la misma todo el día. «Practicar más» usa otra vuelta de la semilla y da la mitad de malvaviscos.

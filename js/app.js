@@ -108,7 +108,7 @@
       el('h2', { html: '<small>Etapa ' + etapaVista + '</small>' + (nombre || '') }),
       el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Etapa siguiente', disabled: etapaVista >= etapas[etapas.length - 1], onclick: () => { etapaVista++; camino(); }, text: '▶' }));
     const mapa = el('div', { class: 'mapa' }, dibujarMapa(paradas));
-    const practicar = puff('<span class="ico">' + (j.hoy.terminada ? '🌟' : '▶') + '</span>' + (j.hoy.terminada ? 'Practicar más' : 'Practicar'), 'grande ' + (j.hoy.terminada ? '' : 'ocre respira'), () => practicar_());
+    const practicar = puff('<span class="ico">' + (j.hoy.terminada ? '🌟' : '▶') + '</span>' + (j.hoy.terminada ? 'Practicar más' : 'Practicar'), 'grande ' + (j.hoy.terminada ? '' : 'ocre respira'), () => practicar_(estado.leccion.semana));
     if (!l) practicar.disabled = true;
     const nav = el('div', { class: 'nav' },
       puff('<span class="ico">🏡</span>Casita', 'madera', () => casita()),
@@ -160,7 +160,9 @@
       const g = e.target.closest('.parada'); if (!g) return;
       const c = paradas.find(x => String(x.semana) === g.dataset.semana);
       S.toque();
-      aviso(c.estado === 'futura' ? '🔒 Lección ' + c.leccion + ': ' + c.tema + ' (pronto)' : 'Lección ' + c.leccion + ': ' + c.tema + (c.estado === 'hecha' ? ' ★' : ''));
+      // tocar la piedra lleva directo a la lección (pedido de la dueña): la de hoy o el repaso de una pasada; las futuras tienen candado
+      if (c.estado === 'futura') { aviso('🔒 Lección ' + c.leccion + ': ' + c.tema + ' (pronto)'); return; }
+      practicar_(c.semana);
     });
     return caja;
   }
@@ -175,15 +177,20 @@
   const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
   /* ---------- La práctica del día ---------- */
-  function memoriaHoy() { try { const m = JSON.parse(localStorage.getItem('bosque-hoy') || 'null'); return m && m.fecha === estado.hoy && m.semana === estado.leccion.semana ? m : null; } catch (e) { return null; } }
+  function memoriaHoy(semana) { try { const m = JSON.parse(localStorage.getItem('bosque-hoy') || 'null'); return m && m.fecha === estado.hoy && m.semana === semana ? m : null; } catch (e) { return null; } }
   function recordar(m) { try { localStorage.setItem('bosque-hoy', JSON.stringify(m)); } catch (e) { } }
 
-  async function practicar_() {
+  /* semana: la lección que se tocó en el camino (sin semana: la de hoy). Una lección pasada se practica igual, de repaso. */
+  async function practicar_(semana) {
+    if (typeof semana !== 'number') semana = estado.leccion.semana;
+    const c = estado.camino.find(x => x.semana === semana) || {};
+    const leccion = semana === estado.leccion.semana ? estado.leccion
+      : { semana, etapa: c.etapa, numero: c.leccion, nivel: 'Etapa ' + c.etapa + ' · Lección ' + c.leccion, tema: c.tema, app: c.app };
     const extra = estado.juego.hoy.terminada;   // ya terminó hoy: práctica libre (otras preguntas, menos malvaviscos)
-    let mem = memoriaHoy() || { fecha: estado.hoy, semana: estado.leccion.semana, hechas: 0, vuelta: 0 };
+    let mem = memoriaHoy(semana) || { fecha: estado.hoy, semana, hechas: 0, vuelta: 0 };
     if (extra) { mem.vuelta = (mem.vuelta || 0) + 1; mem.hechas = 0; }
     recordar(mem);
-    const base = Object.assign({}, estado, { alumno: estado.alumno + (mem.vuelta ? '#' + mem.vuelta : '') });
+    const base = Object.assign({}, estado, { leccion, alumno: estado.alumno + (mem.vuelta ? '#' + mem.vuelta : '') });
     const lista = A.plan(base);
     const p = $('#practica');
     const pasos = el('div', { class: 'pasos' }, lista.map(a => el('span', { class: 'paso', html: '<span style="font-size:1.1rem">' + a.icono + '</span>' })));
