@@ -37,10 +37,35 @@ escribir('hoja.js', AVISO.format('hojas.html') + """window.Hoja = (function () {
 'use strict';
 """ + codigo + """
 
-/* La hoja de una lección dentro de la app: las mismas preguntas, con la semilla del día */
+/* Las secciones de ritmo recuerdan sus figuras, para mostrar antes cómo se llama cada una y cuánto dura */
+const _silabas = T.silabas, _completar = T.completar;
+T.silabas = function (o) { const x = _silabas.call(T, o); x._celdas = o.celdas; x._compas = o.compas; return x; };
+T.completar = function (o) { const x = _completar.call(T, o); x._celdas = o.celdas; x._compas = (o.compases || ['4/4'])[0]; return x; };
+function leyenda(celdas, compas) {
+  const caja = el('div', { class: 'leyenda' }, el('p', { class: 'leyenda-titulo', text: 'Las figuras de esta hoja' + (compas === '6/8' ? ' (en 6/8 el pulso es la negra con puntillo)' : '') }));
+  celdas.forEach(c => {
+    const d = el('div', { class: 'figura-dibujo' }); ritmoEn(d, c.f, null, 46 + 30 * c.f.length);
+    caja.append(el('div', { class: 'figura' }, d, el('b', { text: c.s }), el('span', { text: String(c.p).replace('.', ',') + (c.p === 1 ? ' pulso' : ' pulsos') })));
+  });
+  return caja;
+}
+/* La hoja de una lección dentro de la app: las mismas preguntas, con la semilla del día. Para no adivinar (pedido de la
+   dueña), cada ejercicio trae su primer ítem resuelto como ejemplo, y los de ritmo, las figuras con su nombre y sus pulsos. */
 function armar(contenedor, s, ins, semillaDelDia) {
   campos = []; idCampo = 0; semilla = semillaDelDia;
-  contenedor.replaceChildren(...ejerciciosDe(s, ins));
+  const secciones = ejerciciosDe(s, ins);
+  contenedor.replaceChildren(...secciones);
+  secciones.forEach(sec => {
+    if (sec._celdas) sec.insertBefore(leyenda(sec._celdas, sec._compas), sec.querySelector('.items'));
+    const items = sec.querySelectorAll('.items > .item');
+    if (items.length < 2) return;
+    const primero = items[0], suyos = campos.filter(c => primero.contains(c.el));
+    if (!suyos.length || suyos.some(c => c.dibujo)) return;
+    suyos.forEach(c => { c.el.value = c.solucion; c.el.disabled = true; c.el.classList.add('ok'); });
+    campos = campos.filter(c => suyos.indexOf(c) < 0);   // el ejemplo no cuenta
+    primero.classList.add('ejemplo-hoja');
+    primero.prepend(el('span', { class: 'etiqueta-ejemplo', text: 'Ejemplo ✓' }));
+  });
   return campos.length;
 }
 /* Marca cada respuesta bien o mal; las vacías cuentan como no logradas */
@@ -77,6 +102,11 @@ reemplazos = [
     ("      est.clave = o.clave || 'treble'; est.pool = o.notas.slice(); est.nombres = false;\n",
      "      est.clave = o.clave || 'treble'; est.pool = o.notas.slice(); est.nombres = false; est.alTerminar = o.alTerminar || null;\n"),
 ]
+reemplazos.append((
+    "      nuevas();\n      dlg.showModal();\n      dibujar();\n",
+    "      nuevas();\n      dlg.showModal();\n      dibujar();\n"
+    "      /* la app del bosque: el micrófono se pide al abrir y queda encendido (sin botón), para que el ejercicio se haga bien */\n"
+    "      if (o.microfono && Reconocedor) { var bm = dlg.querySelector('.lh-mic'); bm.hidden = true; if (!est.mic) alternarMic(bm); }\n"))
 for a, b in reemplazos:
     assert a in lec, a[:60]
     lec = lec.replace(a, b, 1)

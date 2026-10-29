@@ -64,8 +64,13 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
      - `notas`: 10 notas, solo las aprendidas (`notasPiano`/`notasViolin`). Se responde con botones Do…Si.
      - `ritmo`: 5 dictados de un compás con 3 opciones dibujadas con sus sílabas. Si la lección tiene una sola figura (lección 1), se usa **marcar el pulso** con el tambor (2 rondas de 8).
      - `oido:modo[:nivel]`: 6 preguntas.
-  2. **La hoja de práctica**, con las preguntas de `ejerciciosDe`. Se revisa con «✓ Revisar» y muestra las soluciones. No la tienen las lecciones 1, 38, 40, 43, 45 y 48.
-  3. **Lectura en voz alta** (`lectura.js`, con micrófono): desde la semana 8 y solo si el navegador reconoce voz. Si se cierra sin resultado, se salta.
+  2. **La hoja de práctica**, con las preguntas de `ejerciciosDe`. Para no adivinar (pedido de la dueña, 29-oct):
+     - cada ejercicio trae su **primer ítem resuelto** («Ejemplo ✓»), que no cuenta;
+     - los de ritmo (sílabas y «¿cuántos pulsos faltan?») traen antes el cuadro **«Las figuras de esta hoja»**, con cada figura, su sílaba y sus pulsos (`leyenda` en `hoja.js`, armado por `copiar_motores.py`).
+     Se revisa con «✓ Revisar» y muestra las soluciones. No la tienen las lecciones 1, 38, 40, 43, 45 y 48.
+  3. **Lectura en voz alta** (`lectura.js`, con micrófono): desde la semana 8 y solo si el navegador reconoce voz.
+     - **El micrófono se pide al abrir y queda encendido** (`microfono: true`, sin botón), para que el ejercicio se haga bien (pedido de la dueña, 29-oct).
+     - Si se cierra sin resultado, se salta.
   4. **Repaso:** la actividad de una lección anterior al azar.
 - **Corregir los errores** (pedido de la dueña, 29-oct):
   - **Notas, ritmo y oído** (`conCorreccion`): al final de la ronda aparece «¡Corrijamos! ✏️» y vuelven solo las preguntas falladas, hasta acertarlas, con 3 vueltas como máximo.

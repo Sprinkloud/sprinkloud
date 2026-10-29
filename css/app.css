@@ -265,6 +265,15 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .hoja-papel .dibujable.ok { background: var(--hoja-bien-fondo); border-radius: 10px; }
 .hoja-papel .solucion { font-size: .9rem; color: var(--hoja-bien); font-weight: 800; }
 .hoja-papel .dibujable { cursor: pointer; touch-action: manipulation; }
+/* antes de los ejercicios de ritmo: las figuras con su nombre y sus pulsos; y el primer ítem de cada ejercicio, resuelto */
+.hoja-papel .leyenda { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; background: var(--hoja-bien-fondo); border-radius: 14px; padding: 10px 12px; }
+.hoja-papel .leyenda-titulo { width: 100%; margin: 0; font-weight: 800; font-size: .9rem; color: var(--hoja-bien); }
+.hoja-papel .figura { display: grid; justify-items: center; gap: 2px; font-size: .85rem; color: var(--hoja-tinta-suave); }
+.hoja-papel .figura b { font-family: var(--f-hand); font-size: 1.35rem; color: var(--hoja-tinta); line-height: 1; }
+.hoja-papel .figura-dibujo svg { height: 64px; width: auto; }
+.hoja-papel .ejemplo-hoja { background: var(--hoja-bien-fondo); border-radius: 14px; padding: 6px; }
+.hoja-papel .ejemplo-hoja input:disabled, .hoja-papel .ejemplo-hoja select:disabled { opacity: 1; -webkit-text-fill-color: var(--hoja-tinta); }
+.hoja-papel .etiqueta-ejemplo { justify-self: start; background: var(--hoja-bien); color: var(--papel-claro); font-weight: 800; font-size: .75rem; padding: 2px 10px; border-radius: 999px; }
 .hoja-acciones { display: flex; gap: 10px; padding-top: 10px; }
 .hoja-acciones .puff { flex: 1; }
 

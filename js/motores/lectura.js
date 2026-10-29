@@ -299,6 +299,8 @@
       nuevas();
       dlg.showModal();
       dibujar();
+      /* la app del bosque: el micrófono se pide al abrir y queda encendido (sin botón), para que el ejercicio se haga bien */
+      if (o.microfono && Reconocedor) { var bm = dlg.querySelector('.lh-mic'); bm.hidden = true; if (!est.mic) alternarMic(bm); }
     },
     /* para probar sin micrófono */
     _silabas: silabas, _alinear: alinear

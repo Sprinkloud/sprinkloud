@@ -330,10 +330,10 @@ window.Actividades = (function () {
   const hayVoz = () => !!(window.SpeechRecognition || window.webkitSpeechRecognition);
   async function voz(cont, o) {
     const keys = poolNotas(o.semana, o.ins).filter(n => n.clave === 'treble').map(n => n.key);
-    cont.append(consigna('Lee las notas en voz alta 🎤'), el('div', { class: 'tarjeta', html: '<p class="mano" style="margin:0;font-size:1.4rem">Toca 🎤 Micrófono, luego ▶ Empezar, y di cada nota sin parar.</p>' }));
+    cont.append(consigna('Lee las notas en voz alta 🎤'), el('div', { class: 'tarjeta', html: '<p class="mano" style="margin:0;font-size:1.4rem">Permite el micrófono, toca ▶ Empezar y di cada nota sin parar.</p>' }));
     return new Promise(listo => {
       let terminado = false;
-      window.SprinkloudLectura.abrir({ clave: 'treble', notas: keys, alTerminar: (ok, total) => { terminado = true; setTimeout(() => { const d = document.querySelector('dialog.lh'); if (d && d.open) d.close(); listo({ aciertos: ok, intentos: total }); }, 1800); } });
+      window.SprinkloudLectura.abrir({ clave: 'treble', notas: keys, microfono: true, alTerminar: (ok, total) => { terminado = true; setTimeout(() => { const d = document.querySelector('dialog.lh'); if (d && d.open) d.close(); listo({ aciertos: ok, intentos: total }); }, 1800); } });
       const d = document.querySelector('dialog.lh');
       d.addEventListener('close', () => { if (!terminado) { terminado = true; listo(null); } }, { once: true });
     });
