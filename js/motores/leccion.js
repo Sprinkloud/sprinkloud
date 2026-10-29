@@ -22,7 +22,10 @@ window.Leccion = (function () {
     ['Combinaciones: ta di-mi y ta-ka di', 'Leer corchea con dos semicorcheas y al revés.'],
     ['Ligadura y síncopa', 'Tocar una síncopa sin acelerar.'],
     ['Coordinación: pulso y ritmo a la vez', 'Marcar el pulso con una mano y decir el ritmo con la voz.'],
-    ['Más notas en el pentagrama', 'Leer las notas de tu instrumento sin contar líneas.'],
+    ['Clave de fa: líneas / Cuerda Sol', 'Leer y tocar las 5 líneas de la clave de fa: sol, si, re, fa, la. / Leer y tocar Sol, La, Si y Do en la cuerda Sol.'],
+    ['Clave de fa: espacios / Cuerda Mi', 'Leer y tocar los 4 espacios de la clave de fa: la, do, mi, sol. / Leer y tocar Mi, Fa♯, Sol y La en la cuerda Mi.'],
+    ['Líneas adicionales: clave de sol / abajo', 'Leer de un vistazo las notas con rayitas en clave de sol. / Leer de un vistazo las notas con rayitas debajo del pentagrama.'],
+    ['Líneas adicionales: clave de fa / arriba', 'Leer de un vistazo las notas con rayitas en clave de fa. / Leer de un vistazo las notas con rayitas arriba del pentagrama.'],
     ['Lectura con todas las notas', 'Leer una melodía de 8 compases.'],
     ['Las 12 notas: sostenidos y bemoles', 'Nombrar y tocar las 12 notas.'],
     ['Tono y semitono', 'Distinguir tono y semitono.'],
@@ -31,14 +34,17 @@ window.Leccion = (function () {
     ['Intervalos 3: sextas y séptimas', 'Reconocer de oído al menos 6 intervalos.'],
     ['La escala mayor: fórmula e intervalos', 'Construir una escala mayor con T-T-S-T-T-T-S.'],
     ['Escalas de Sol y Fa mayor y su armadura', 'Tocar Sol y Fa mayor y leer la armadura.'],
-    ['Círculo de quintas', 'Ordenar las tonalidades y sus alteraciones.'],
+    ['Orden de los sostenidos: ¿en qué tonalidad estoy?', 'Decir el orden de los sostenidos y descubrir la tonalidad mayor de una armadura.'],
+    ['Orden de los bemoles', 'Decir el orden de los bemoles y descubrir la tonalidad mayor de una armadura con bemoles.'],
     ['Triadas mayor y menor', 'Distinguir de oído un acorde mayor de uno menor.'],
     ['Triadas aumentada y disminuida', 'Reconocer las 4 triadas.'],
+    ['Inversiones de acordes', 'Reconocer un acorde invertido, su nombre y la nota del bajo (Do/Mi).'],
     ['Armonizar la escala mayor', 'Conocer los 7 acordes de Do mayor.'],
     ['Centro tonal y reposo', 'Reconocer cuándo una canción llega a casa.'],
     ['Progresiones mayores: I, IV, V y vi', 'Acompañar una canción con I, IV, V y vi.'],
     ['Escala menor natural y su relativa', 'Distinguir mayor y menor de oído.'],
     ['Progresiones menores', 'Sentir el reposo en un acorde menor.'],
+    ['Círculo de quintas: mayores, menores y sus acordes', 'Ubicar cada tonalidad con su relativa menor y decir sus acordes.'],
     ['Escala pentatónica', 'Tocar la pentatónica mayor y menor.'],
     ['Improvisar con la pentatónica', 'Improvisar 8 compases y terminar en la nota casa.'],
     ['Compás de 6/8', 'Sentir el 6/8 en dos pulsos grandes.'],
@@ -47,10 +53,16 @@ window.Leccion = (function () {
     ['Tempo y términos', 'Tocar en Lento, Andante y Allegro.'],
     ['La forma: AB y ABA', 'Reconocer las partes de una canción.'],
     ['Lectura a primera vista', 'Leer 8 compases nuevos sin parar.'],
-    ['Dos contra tres', 'Hacer 2 contra 3 con las manos.'],
     ['Acorde de séptima de dominante', 'Sentir cómo el V7 pide volver al I.'],
-    ['Inversiones de acordes', 'Reconocer un acorde en sus inversiones.'],
-    ['Proyecto: mi primera composición', 'Componer y tocar 8 compases.']
+    ['Proyecto: mi primera composición', 'Componer y tocar 8 compases.'],
+    ['¿Qué es un modo?', 'Saber qué es un modo y nombrar los 7 con su tecla blanca.'],
+    ['El modo eólico: la menor natural', 'Tocar el eólico y compararlo con el jónico.'],
+    ['El modo mixolidio', 'Tocar el mixolidio y encontrar su nota característica.'],
+    ['El modo dórico', 'Tocar el dórico y encontrar su nota característica.'],
+    ['El modo lidio', 'Tocar el lidio y encontrar su nota característica.'],
+    ['El modo frigio', 'Tocar el frigio y encontrar su nota característica.'],
+    ['El modo locrio', 'Tocar el locrio y entender por qué suena inestable.'],
+    ['Los 7 modos, del más brillante al más oscuro', 'Ordenar los 7 modos por su brillo y reconocerlos de oído.']
   ];
 
   /* ---------- Notas del juego (piano y violín): solo las que ya se vieron ---------- */
@@ -62,17 +74,27 @@ window.Leccion = (function () {
     if (s === 8) return sol(['e/4', 'g/4', 'a/4']);
     if (s === 9) return sol(['c/4', 'd/4', 'e/4', 'g/4', 'a/4']);
     if (s <= 19) return sol(['c/4', 'd/4', 'e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5']);
-    if (s === 20) return sol(['a/3', 'b/3', 'c/4', 'd/4', 'e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5', 'd/5', 'e/5', 'f/5', 'a/5', 'b/5', 'c/6'])
-      .concat(fa(['g/2', 'a/2', 'b/2', 'c/3', 'd/3', 'e/3', 'f/3', 'g/3', 'a/3']));
-    return null;   // desde la semana 21: todas (el modo normal de la app)
+    /* 20 a 23: solo las notas nuevas de cada lección, para aprenderlas de a poco (pedido de la dueña, 29-oct) */
+    if (s === 20) return fa(['g/2', 'b/2', 'd/3', 'f/3', 'a/3']);                                 // clave de fa: líneas
+    if (s === 21) return fa(['g/2', 'a/2', 'b/2', 'c/3', 'd/3', 'e/3', 'f/3', 'g/3', 'a/3']);       // + los espacios
+    if (s === 22) return sol(['a/3', 'b/3', 'c/4', 'a/5', 'b/5']);                                // clave de sol: líneas adicionales
+    if (s === 23) return fa(['f/2', 'b/3', 'c/4', 'd/4', 'e/4']);                                 // clave de fa: líneas adicionales
+    return null;   // desde la semana 24: todas (el modo normal de la app)
   }
   function notasViolin(s) {
     if (s <= 7) return ['e/4', 'g/4'];
     if (s === 8) return ['e/4', 'g/4', 'a/4'];
     if (s === 9) return ['d/4', 'e/4', 'g/4', 'a/4'];
     if (s <= 19) return ['d/4', 'e/4', 'g/4', 'a/4', 'b/4', 'd/5'];   // escala de Re sin las notas con sostenido (el juego usa naturales)
+    if (s === 20) return ['g/3', 'a/3', 'b/3', 'c/4'];                 // cuerda Sol
+    if (s === 21) return ['e/5', 'g/5', 'a/5'];                        // cuerda Mi (sin Fa♯: el juego usa naturales)
+    if (s === 22) return ['g/3', 'a/3', 'b/3', 'c/4', 'd/4', 'e/4'];   // líneas adicionales abajo, con las vecinas
+    if (s === 23) return ['e/5', 'f/5', 'g/5', 'a/5', 'b/5'];          // líneas adicionales arriba
     return null;
   }
+
+  /* ---------- Intervalos en el piano (29-oct): las lecciones de intervalos se practican en el teclado ---------- */
+  var INTERVALOS = { 27: [1, 2, 3, 4], 28: [5, 6, 7, 12], 29: [8, 9, 10, 11] };
 
   /* ---------- Ritmo: compás, tarjetas permitidas y un ritmo de ejemplo ---------- */
   var R = {
@@ -88,8 +110,8 @@ window.Leccion = (function () {
     17: { compas: '4/4', celdas: ['pan', 'luna', 'choco', 'gran', 'cama', 's4', 'bla2'], ejemplo: ['pan', 'gran', 'cama', 'pan', 'cama', 'gran', 'bla2'], tempo: 60 },
     18: { latino: 'Cumbia', tempo: 90, repetir: true },
     19: { compas: '4/4', celdas: ['pan', 'luna', 'choco', 'gran', 'cama', 's4', 'bla2'], ejemplo: ['pan', 'luna', 'gran', 'bla2', 'cama', 'pan', 's4', 'pan'], tempo: 60 },
-    38: { compas: '4/4', ejemplo: ['pan', 'pan', 'pan', 'pan', 'pan', 'pan', 'pan', 'pan'], tempo: 80, repetir: true },
-    39: { compas: '6/8', ejemplo: ['negp6', 'negp6', 'tres8', 'negp6', 'neg8', 'neg8', 'blap6'], tempo: 50 }
+    44: { compas: '4/4', ejemplo: ['pan', 'pan', 'pan', 'pan', 'pan', 'pan', 'pan', 'pan'], tempo: 80, repetir: true },
+    45: { compas: '6/8', ejemplo: ['negp6', 'negp6', 'tres8', 'negp6', 'neg8', 'neg8', 'blap6'], tempo: 50 }
   };
   [4, 5, 7, 8, 9, 10].forEach(function (s) { R[s] = R[3]; });
   R[13] = R[11];

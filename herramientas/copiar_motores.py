@@ -151,3 +151,25 @@ escribir('leccion.js', AVISO.format('leccion.js') + """window.Leccion = (functio
   return { GUIA, notasPiano, notasViolin, ritmoDe, NOMBRE };
 })();
 """)
+
+# 6. Armaduras: el orden de los sostenidos y los bemoles, las tonalidades y sus relativas (29-oct)
+a = lineas('armaduras.html')
+codigo = entre(a, 'const SOSTENIDOS = ', '/* ---------- fin de los datos')
+escribir('armaduras.js', AVISO.format('armaduras.html') + """window.Armaduras = (function () {
+'use strict';
+""" + codigo + """
+return { SOSTENIDOS, BEMOLES, MAYORES_S, MAYORES_B, MENORES_S, MENORES_B, VF_S, VF_B, reglaDe };
+})();
+""")
+
+# 7. Círculo de quintas, acordes e inversiones, y modos griegos (29-oct): solo sus datos
+def datos(archivo, desde, nombre, exporta):
+    codigo = entre(lineas(archivo), desde, '/* ---------- fin de los datos')
+    escribir(nombre, AVISO.format(archivo) + 'window.' + exporta[0] + " = (function () {\n'use strict';\n" + codigo +
+             '\nreturn { ' + ', '.join(exporta[1]) + ' };\n})();\n')
+datos('circulo.html', 'const C_MAYORES = ', 'circulo.js', ('Circulo', ['C_MAYORES', 'C_MENORES', 'C_ALT', 'vecina', 'acordesDe', 'reglaAcordes', 'PREGUNTABLES', 'altTexto']))
+datos('acordes.html', 'const LETRAS = ', 'acordes.js', ('Acordes', ['NOTAS_ES', 'ACORDES', 'INVERSIONES', 'nombreAcorde', 'notasDe', 'conBarra', 'clavesDe', 'reglaDe']))
+datos('modos.html', 'const MODOS_G = ', 'modos.js', ('Modos', ['MODOS_G', 'BLANCAS_ES', 'escalaBlanca', 'ORDINAL']))
+
+# 8. Palabras de música: el archivo entero (lo genera Libro_Sprinkloud/herramientas/palabras.js)
+escribir('palabras.js', AVISO.format('palabras-datos.js') + (SITIO / 'palabras-datos.js').read_text(encoding='utf-8'))

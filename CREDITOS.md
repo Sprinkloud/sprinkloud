@@ -15,9 +15,11 @@ Todo lo que no es de Sprinkloud es de dominio público (CC0) o de licencia libre
 | `casita.mp3` | Etirwer (Looped) | Kistol | CC0 1.0 | https://opengameart.org/content/etirwer |
 | `pajaros.mp3` | Birds and Wind - Ambient | Spring Spring | CC0 1.0 | https://opengameart.org/content/birds-and-wind-ambient-birds-wind-and-synth |
 | `festejo.mp3` | Cozy Puzzle Clear (Jingle) | MintoDog | CC0 1.0 | https://opengameart.org/content/cozy-puzzle-jingle-result |
+| `biblioteca-1.mp3` | Beginning 4 | Holizna | CC0 1.0 | https://opengameart.org/content/title-screens-beginnings-collection |
+| `biblioteca-2.mp3` | Beginning 5 | Holizna | CC0 1.0 | https://opengameart.org/content/title-screens-beginnings-collection |
 
 ## Sonidos de los botones y aciertos
-Sintetizados en el navegador (`js/sonido.js`), sin archivos: toques, aciertos, campanita de la puerta de la tienda, caja registradora y monedas, la calcomanía que se pega y la fogata que crepita.
+Sintetizados en el navegador (`js/sonido.js`), sin archivos: toques, aciertos, la hoja del libro que se pasa, campanita de la puerta de la tienda, caja registradora y monedas, la calcomanía que se pega y la fogata que crepita.
 
 ## Recorte de las calcomanías
 rembg (MIT, https://github.com/danielgatis/rembg), con el modelo isnet-general-use.

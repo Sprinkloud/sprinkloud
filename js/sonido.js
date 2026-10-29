@@ -134,7 +134,22 @@ window.Sonido = (function () {
     fuego() { if (!ok()) return; ruido(ctx.currentTime, .7, 900, .5); ruido(ctx.currentTime + .1, .5, 400, .35); },
     /* pasar de página */
     pagina() { if (!ok()) return; ruido(ctx.currentTime, .18, 2400, .18); },
+    /* pasar la hoja de un libro: el papel roza (un soplo que sube y baja) y al final cae la hoja */
+    hojaLibro() {
+      if (!ok()) return;
+      const t = ctx.currentTime, dur = .34;
+      const n = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate), d = n.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = n; f.type = 'bandpass'; f.Q.value = .7;
+      f.frequency.setValueAtTime(900, t); f.frequency.exponentialRampToValueAtTime(3400, t + .14); f.frequency.exponentialRampToValueAtTime(1300, t + dur);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.2, t + .07); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      src.connect(f); f.connect(g); g.connect(bus); src.start(t);
+      ruido(t + .26, .06, 520, .22);   // la hoja cae
+    },
     nota(midi, dur) { if (!ok()) return; piano(ctx.currentTime + .02, midi, dur || .9, .32); },
+    /* una nota en un momento exacto del reloj de audio (los ejemplos que suenan de la biblioteca) */
+    notaEn(t, midi, dur, gain) { if (!ok()) return; piano(t, midi, dur || .9, gain || .32); },
     /* pasos: [[midis juntos], segundos] (oído) */
     tocar(pasos) {
       audio();
@@ -177,7 +192,7 @@ window.Sonido = (function () {
     mapa: { pistas: (window.BOSQUE_MUSICA || []), ambiente: 'pajaros', fuego: .5 },
     tienda: { pistas: [M + 'tienda.mp3'] },
     casita: { pistas: [M + 'casita.mp3'], fuego: .35 },
-    logros: { pistas: [M + 'casita.mp3'] },
+    logros: { pistas: [M + 'biblioteca-1.mp3', M + 'biblioteca-2.mp3'] },   // la biblioteca: piano tranquilo (Holizna, CC0)
     practica: { pistas: [] },
     silencio: { pistas: [] }
   };

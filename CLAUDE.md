@@ -133,13 +133,43 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
   - El tamaño base sale del lugar de la cosa en `POS` × 1,35.
 - **El recorte:** con rembg (IA libre de GitHub, modelo `isnet-general-use`, en `herramientas/arte.py`). Cada dibujo queda con todos sus colores, opaco. El borde blanco de calcomanía lo pone el CSS con `drop-shadow`.
 
+## Ejemplos que suenan en los libros (29-oct, pedido de la dueña; falta subir)
+- En la biblioteca, debajo del dibujo («Míralo») de cada lección aparece **«Escúchalo»** con botones 🔊 que tocan lo mismo que muestra el dibujo: el pulso, los ritmos (con tambor), las notas, los intervalos, los acordes y sus inversiones, las progresiones, los modos… y el dibujo brilla mientras suena (`ponerEjemplos` en `app.js`).
+- Los ejemplos están en `js/ejemplos.js` (`Ejemplos.de(semana, instrumento)` y `Ejemplos.tocar(partitura, Sonido)`), copiados a mano de `Libro_Sprinkloud/plantilla/diagramas.html`: si cambia un dibujo, cambiar también su ejemplo. Escritura: `c4 e4 g4` notas, `c4+e4+g4` acorde, `:2` duración en pulsos, `r` silencio, `x`/`X` clic del pulso, `o` tambor, `@80` tempo, `!p`/`!mf`/`!f` volumen y `&` otra voz a la vez. Las 60 lecciones tienen ejemplos (piano y violín).
+- `Sonido.notaEn(t, midi, dur, gain)`: una nota en un momento exacto del reloj de audio.
+
+## Por ahora, el bosque es de piano para todos (29-oct, decisión de la dueña; falta subir)
+- El bosque usa **el libro y la guía de piano para todos los alumnos**, también los de violín (`BOSQUE_INSTRUMENTO = 'Piano'` en `Registro_Sprinkloud/maestros/Código.js`; en la prueba, `instrumento: 'piano'` y los libros `demo-libros/piano-N.json`). Pronto habrá un bosque de violín: entonces se vuelve a usar el instrumento de cada alumno.
+- Biblioteca: cada lomo lleva su número y **una sola palabra** (`PALABRA_LIBRO`: Pulso, Lectura, Ritmo, Acordes, Tonalidad, Expresión, Modos); el nombre completo va en `aria-label` y al abrir el libro. La cinta del libro actual cuelga abajo, sin tapar el número.
+
+## 60 lecciones, 7 etapas y actividades nuevas (29-oct, revisión de la dueña; falta subir)
+- La guía tiene 60 lecciones en 7 etapas (la 7, los modos griegos: zona lila en el camino y un 7.º libro en la biblioteca, lomo `plum`). `api.js`: `LARGO = [6, 8, 13, 10, 9, 6, 8]`, `APPS` copiado de la columna «App para practicar» de `Guia.js` (se parte también en `armaduras`), hasta 53 en la prueba. `porInstrumento` deja solo la parte del instrumento en los temas «piano / violín» y objetivos «Piano: … Violín: …» (el servidor ya lo hace; esto cubre el modo de prueba). Los motores se volvieron a copiar del sitio.
+- **Intervalos en el teclado** (actividad `teclado` en `actividades.js`, 🎹): en piano, las lecciones de intervalos (27, 28 y 29) empiezan con un teclado de Do4 a Sol5: se marca una tecla, pide un intervalo y al tocar cuenta los semitonos con puntitos numerados (verde si acierta, rojo si no). Ejemplo primero y vueltas de corrección como las demás. Siempre claro, como la hoja.
+- **Armaduras** (actividad `armadura`, ♯, para `armaduras:sostenidos|bemoles|relativas`): ejemplo animado del orden y después 6 preguntas de varias maneras: ordenar las alteraciones, ¿qué tonalidad?, ¿cuántas? y (en el círculo) la relativa menor, con la regla debajo. Datos copiados del sitio (`js/motores/armaduras.js`).
+- **Rondas de elegir** (`rondaElegir` en `actividades.js`): ejemplo resuelto, botones esponjosos, la regla debajo y vuelta de corrección. Las usan:
+  - **círculo** (🧭, lección 42): el V, el IV, la relativa, las alteraciones y «¿qué acorde NO es?», con un círculo chiquito marcado;
+  - **acordes** (🎶, lección 36): inversión, nombre y barra, con el acorde en el pentagrama y su sonido;
+  - **modos** (🌈, lecciones 53 a 60, `modos:N`): ¿qué modo es?, nota característica y de oído, solo con los aprendidos;
+  - **palabras** (📖): un día sí y otro no desde la lección 7, con las palabras hasta la etapa del alumno.
+  Los datos vienen del sitio (`js/motores/circulo.js`, `acordes.js`, `modos.js` y `palabras.js`, copiados por `copiar_motores.py`).
+- **Repaso con más temas complejos:** en el repaso diario, las lecciones de intervalos, armaduras, mayor o menor y triadas valen 3 veces (pedido de la dueña: se repasan bastante y de varias maneras).
+- **Los 4 botones del camino son solo dibujos** (🏡 ▶ 🧺 📚, pedido de la dueña): el nombre queda en `aria-label` y `title`.
+
+## Biblioteca (antes «Logros», pedido de la dueña, 29-oct)
+- **El estante:** un libro por etapa (6), con lomos de colores sobre una repisa de madera. Se abren los de las etapas a las que el alumno ya llegó; los demás se ven vacíos con 🔒 y avisan «Se abre cuando llegues a la Etapa N». La cinta naranja marca el libro de la etapa en la que va.
+- **Cada libro viene COMPLETO** (portada con «Este libro es de <nombre>», apertura de la etapa, todas las lecciones, «¡Lo lograste!» con el certificado y las palabras de música), para que pueda volver a cualquier lección si algo no entiende. Cada lección son dos páginas (la explicación y la práctica), como en el papel. Sin enlaces ni botones a la página: todo se practica en la app. Si la etapa ya está terminada, el certificado lleva su nombre.
+- **Los libros NO están en este repo:** se venden en Amazon. Salen del sistema con la clave del alumno (`?api=libro&k=&etapa=N`, `apiLibro_` en `Registro_Sprinkloud/maestros`), solo de las etapas a las que llegó, con sus imágenes en WebP base64url (500 a 900 KB por libro). `Api.libro(n)` los guarda en memoria durante la visita.
+- **El lector** (`abrirLibro` en `app.js`): una hoja a la vez sobre papel claro (también de noche), ◀ ▶, flechas del teclado, deslizar con el dedo, ☰ índice (hoja que sube) y Escape para cerrar (el foco vuelve al lomo). Recuerda la página donde quedó (`localStorage` `bosque-libro-<ins>-<etapa>`). La hoja entra girando un poco desde el lomo (300 ms, `--ease-out`; con movimiento reducido, solo aparece).
+- El CSS del libro (`LIBRO_CSS`) se encierra en `.libro-hoja` al cargarlo (`estiloLibro`). `.pasos` de la app (la barra de la práctica) chocaba con `ol.pasos` del libro: se corrige con `.libro-hoja ol.pasos`.
+- **Para probar sin servidor:** `node herramientas/libros_demo.js` arma `demo-libros/<ins>-<etapa>.json` (en `.gitignore`, **nunca se sube**) y `?demo=1&semana=9` los abre. Antes hay que correr `Libro_Sprinkloud/herramientas/lecciones_maestros.js` si cambió algo del libro.
+
 ## Música y ambiente por escena (`ESCENAS` en `js/sonido.js`)
 | Escena | Qué suena |
 |---|---|
 | Mapa | Wooden Inn / Forest, una tras otra. De día suenan los pájaros; la fogata crepita siempre (más de noche) |
 | Tienda | Bossa nova. Al entrar suena la campanita de la puerta, y al comprar la caja registradora con monedas |
 | Casita | Guitarra suave y la chimenea que crepita. Al pegar una calcomanía suena un «pop» |
-| Logros | La canción de la casita |
+| Biblioteca | Piano tranquilo (dos piezas de Holizna, CC0, una tras otra). Cada hoja del libro suena al pasar (`Sonido.hojaLibro`: el papel roza y la hoja cae) |
 | Práctica | Silencio, porque los ejercicios de oído y ritmo necesitan escuchar |
 | Fin | El jingle |
 

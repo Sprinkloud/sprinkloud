@@ -13,17 +13,32 @@ window.Api = (function () {
   /* la clave no se queda en la barra de direcciones (por si comparten una captura) */
   if (q.get('k')) history.replaceState(null, '', location.pathname + (DEMO ? '?demo=1' : ''));
 
+  /* Las lecciones 20 a 23 son distintas en piano y en violín: el tema viene como «piano / violín» y el objetivo como
+     «Piano: … Violín: …». Cada alumno ve solo lo de su instrumento. */
+  function parte(t, ins) {
+    const x = String(t || ''), m = x.match(/^Piano: (.*?) Violín: (.*)$/);
+    if (m) return ins === 'violin' ? m[2] : m[1];
+    const p = x.split(' / ');
+    return p.length === 2 ? p[ins === 'violin' ? 1 : 0] : x;
+  }
+  function porInstrumento(d) {
+    const e = d && (d.camino ? d : d.estado);
+    if (!e || !e.instrumento) return d;
+    if (e.leccion) { e.leccion.tema = parte(e.leccion.tema, e.instrumento); e.leccion.objetivo = parte(e.leccion.objetivo, e.instrumento); }
+    (e.camino || []).forEach(c => { c.tema = parte(c.tema, e.instrumento); });
+    return d;
+  }
   async function get() {
     const r = await fetch(window.BOSQUE_API + '?api=juego&k=' + encodeURIComponent(clave));
     const d = await r.json();
     if (d.error) throw new Error(d.error);
-    return d;
+    return porInstrumento(d);
   }
   async function post(cuerpo) {
     const r = await fetch(window.BOSQUE_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ k: clave }, cuerpo)) });
     const d = await r.json();
     if (d.error) throw new Error(d.error);
-    return d;
+    return porInstrumento(d);
   }
 
   /* ---------- Modo de prueba: las reglas del servidor, guardadas en el navegador ---------- */
@@ -67,10 +82,10 @@ window.Api = (function () {
   ];
   const PERSONAJES = [['osito', 'Osito', 0], ['conejo', 'Conejo', 3], ['ardilla', 'Ardilla', 7], ['zorro', 'Zorro', 14], ['erizo', 'Erizo', 21], ['raton', 'Ratón', 30]]
     .map(([id, nombre, dias]) => ({ id, nombre, dias }));
-  const ETAPAS = ['Cuerpo y pulso', 'Primeras lecturas', 'Lectura y ritmo', 'Intervalos, escalas y acordes', 'Tonalidad: reposo, mayor y menor', 'Músico completo'];
-  const LARGO = [6, 8, 10, 8, 8, 8];
-  const APPS = ',ritmo,ritmo,ritmo,oido:sube,notas,ritmo,notas,notas,notas,notas,ritmo,ritmo:3/4,notas,ritmo,ritmo:3/4,ritmo,ritmo,ritmo,ritmo,notas,notas,notas,notas,oido:intervalos:segundas y terceras,oido:intervalos:cuartas, quintas y octavas,oido:intervalos:todos,notas,notas,notas,oido:mayorMenor,oido:triadas,notas,oido:reposo,oido:mayorMenor,oido:mayorMenor,oido:mayorMenor,notas,ritmo,ritmo:6/8,oido:intervalos:todos,ritmo,ritmo,ritmo,notas,ritmo,oido:reposo,oido:triadas,ritmo'
-    .split(/,(?=ritmo|oido|notas|$)/);
+  const ETAPAS = ['Cuerpo y pulso', 'Primeras lecturas', 'Lectura y ritmo', 'Intervalos, escalas y acordes', 'Tonalidad: reposo, mayor y menor', 'Músico completo', 'Los modos griegos'];
+  const LARGO = [6, 8, 13, 10, 9, 6, 8];   // 60 lecciones desde el 29-oct (ver Registro_Sprinkloud/Guia.js versión 8)
+  const APPS = ',ritmo,ritmo,ritmo,oido:sube,notas,ritmo,notas,notas,notas,notas,ritmo,ritmo:3/4,notas,ritmo,ritmo:3/4,ritmo,ritmo,ritmo,ritmo,notas,notas,notas,notas,notas,notas,notas,oido:intervalos:segundas y terceras,oido:intervalos:cuartas, quintas y octavas,oido:intervalos:todos,notas,notas,armaduras:sostenidos,armaduras:bemoles,oido:mayorMenor,oido:triadas,acordes,notas,oido:reposo,oido:mayorMenor,oido:mayorMenor,oido:mayorMenor,circulo,notas,ritmo,ritmo:6/8,oido:intervalos:todos,ritmo,ritmo,ritmo,notas,oido:reposo,ritmo,modos:1,modos:2,modos:3,modos:4,modos:5,modos:6,modos:7,modos:7'
+    .split(/,(?=ritmo|oido|notas|armaduras|circulo|acordes|modos|$)/);
   function etapaDe(s) { let e = 0, l = s; while (l > LARGO[e]) l -= LARGO[e++]; return { etapa: e + 1, leccion: l }; }
   const diasEntre = (a, b) => Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400000);
 
@@ -90,10 +105,10 @@ window.Api = (function () {
       return { estado: 'apagada', racha: 0 };
     },
     estado() {
-      const s = Math.min(48, Math.max(1, Number(q.get('semana')) || 1)), hoy = demo.hoy(), j = demo.leer(), f = demo.fogata(j, hoy), et = etapaDe(s);
+      const s = Math.min(60, Math.max(1, Number(q.get('semana')) || 1)), hoy = demo.hoy(), j = demo.leer(), f = demo.fogata(j, hoy), et = etapaDe(s);
       const tema = window.Leccion.GUIA[s];
       return {
-        alumno: 'Amiga', instrumento: q.get('ins') === 'piano' ? 'piano' : 'violin', hoy,
+        alumno: 'Amiga', instrumento: 'piano', hoy,   // por ahora el bosque es de piano para todos (29-oct)
         leccion: { semana: s, etapa: et.etapa, nombreEtapa: ETAPAS[et.etapa - 1], numero: et.leccion, nivel: 'Etapa ' + et.etapa + ' · Lección ' + et.leccion, tema: tema[0], objetivo: tema[1], app: APPS[s] },
         camino: window.Leccion.GUIA.slice(1).map((g, i) => { const x = etapaDe(i + 1); return { semana: i + 1, etapa: x.etapa, leccion: x.leccion, tema: g[0], app: APPS[i + 1], estado: i + 1 === s ? 'actual' : i + 1 < s ? 'hecha' : 'futura' }; }),
         juego: {
@@ -101,6 +116,7 @@ window.Api = (function () {
           insignias: j.insignias, casa: j.casa, inventario: j.inventario, personajes: PERSONAJES.filter(p => j.dias >= p.dias).map(p => p.id),
           hoy: j.hoy && j.hoy.fecha === hoy ? { terminada: !!j.hoy.terminada, actividades: j.hoy.actividades || 0, ganados: j.hoy.ganados || 0 } : { terminada: false, actividades: 0, ganados: 0 }
         },
+        biblioteca: ETAPAS.map((nombre, i) => ({ etapa: i + 1, nombre, abierto: i + 1 <= et.etapa })),
         catalogo: { tienda: TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(([id, nombre]) => ({ id, nombre })) }
       };
     },
@@ -156,12 +172,26 @@ window.Api = (function () {
   };
   const espera = v => new Promise(r => setTimeout(() => r(v), 180));
 
+  /* Los libros de la biblioteca (uno por etapa, completo). Vienen del sistema con la clave del alumno porque se venden en
+     Amazon: no están en esta app pública. En la prueba (?demo=1) se leen de demo-libros/, que arma
+     herramientas/libros_demo.js y no se sube a GitHub. Cada libro se baja una sola vez por visita. */
+  const libros = {};
+  async function bajarLibro(n) {
+    const url = DEMO ? 'demo-libros/piano-' + n + '.json'   // por ahora el bosque es de piano para todos
+      : window.BOSQUE_API + '?api=libro&k=' + encodeURIComponent(clave) + '&etapa=' + n;
+    let d;
+    try { d = await (await fetch(url)).json(); } catch (e) { throw new Error(DEMO ? 'En la prueba faltan los libros: corre node herramientas/libros_demo.js' : 'No se pudo abrir el libro. Revisa tu internet.'); }
+    if (d.error) throw new Error(d.error);
+    return d;
+  }
+
   return {
     demo: DEMO,
     tieneClave: () => DEMO || !!clave,
-    cargar: () => DEMO ? espera(demo.estado()) : get(),
-    practica: (actividad, terminada) => DEMO ? espera(demo.practica({ actividad, terminada })) : post({ accion: 'practicaJuego', actividad, terminada }),
+    cargar: () => DEMO ? espera(porInstrumento(demo.estado())) : get(),
+    practica: (actividad, terminada) => DEMO ? espera(porInstrumento(demo.practica({ actividad, terminada }))) : post({ accion: 'practicaJuego', actividad, terminada }),
     comprar: item => DEMO ? espera(demo.comprar(item)) : post({ accion: 'comprarJuego', item }),
+    libro: n => libros[n] || (libros[n] = bajarLibro(n).catch(e => { delete libros[n]; throw e; })),
     guardarCasa: casa => DEMO ? espera(demo.casa(casa)) : post({ accion: 'guardarCasa', casa })
   };
 })();

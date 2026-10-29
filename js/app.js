@@ -1,4 +1,4 @@
-/* El bosque de Sprinkloud: pantallas (entrada, camino, práctica, fin, casita, tienda, logros) y el estado del alumno. */
+/* El bosque de Sprinkloud: pantallas (entrada, camino, práctica, fin, casita, tienda, biblioteca) y el estado del alumno. */
 (function () {
   'use strict';
   const S = window.Sonido, A = window.Actividades, Api = window.Api;
@@ -108,13 +108,16 @@
       el('h2', { html: '<small>Etapa ' + etapaVista + '</small>' + (nombre || '') }),
       el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Etapa siguiente', disabled: etapaVista >= etapas[etapas.length - 1], onclick: () => { etapaVista++; camino(); }, text: '▶' }));
     const mapa = el('div', { class: 'mapa' }, dibujarMapa(paradas));
-    const practicar = puff('<span class="ico">' + (j.hoy.terminada ? '🌟' : '▶') + '</span>' + (j.hoy.terminada ? 'Practicar más' : 'Practicar'), 'grande ' + (j.hoy.terminada ? '' : 'ocre respira'), () => practicar_(estado.leccion.semana));
+    const practicar = puff('<span class="ico">' + (j.hoy.terminada ? '🌟' : '▶') + '</span>', 'grande ' + (j.hoy.terminada ? '' : 'ocre respira'), () => practicar_(estado.leccion.semana));
+    practicar.setAttribute('aria-label', j.hoy.terminada ? 'Practicar más' : 'Practicar');
     if (!l) practicar.disabled = true;
+    /* solo los dibujos, sin palabras (pedido de la dueña, 29-oct); el nombre queda para los lectores de pantalla */
+    const conNombre = (b, nombre) => { b.setAttribute('aria-label', nombre); b.title = nombre; return b; };
     const nav = el('div', { class: 'nav' },
-      puff('<span class="ico">🏡</span>Casita', 'madera', () => casita()),
+      conNombre(puff('<span class="ico">🏡</span>', 'madera', () => casita()), 'Mi casita'),
       practicar,
-      puff('<span class="ico">🧺</span>Tienda', 'rosa', () => tienda()),
-      puff('<span class="ico">🏅</span>Logros', 'cielo', () => logros()));
+      conNombre(puff('<span class="ico">🧺</span>', 'rosa', () => tienda()), 'Tienda'),
+      conNombre(puff('<span class="ico">📚</span>', 'cielo', () => logros()), 'Biblioteca'));
     p.replaceChildren(fichas(), heroe, zona, mapa, nav);
     ir('camino');
     const actual = mapa.querySelector('.parada.actual');
@@ -122,25 +125,29 @@
     if (actual) requestAnimationFrame(() => { const m = mapa.getBoundingClientRect(), b = actual.getBoundingClientRect(); mapa.scrollTop += (b.top + b.height / 2) - (m.top + m.height / 2); });
     else mapa.scrollTop = mapa.scrollHeight;
   }
-  const NOMBRES_ETAPA = ['Cuerpo y pulso', 'Primeras lecturas', 'Lectura y ritmo', 'Intervalos, escalas y acordes', 'Tonalidad: reposo, mayor y menor', 'Músico completo'];
-  const ZONAS = ['#E1E6CF', '#DCE5E8', '#F1E0BC', '#E6DDEB', '#F3DED8', '#DDE8D6'];
+  const NOMBRES_ETAPA = ['Cuerpo y pulso', 'Primeras lecturas', 'Lectura y ritmo', 'Intervalos, escalas y acordes', 'Tonalidad: reposo, mayor y menor', 'Músico completo', 'Los modos griegos'];
+  const ZONAS = ['#E1E6CF', '#DCE5E8', '#F1E0BC', '#E6DDEB', '#F3DED8', '#DDE8D6', '#E8E0F0'];   // la 7, los modos (29-oct)
 
   /* El sendero: la lección 1 abajo y se sube, como en un mapa de cuento; árboles y hongos a los lados */
   function dibujarMapa(paradas) {
-    const W = 360, PASO = 96, n = paradas.length, H = n * PASO + 60;
-    const pts = paradas.map((_, i) => ({ x: i % 2 ? 250 : 110, y: H - 50 - i * PASO }));
+    /* en computadora el sendero ocupa el mismo ancho que la ilustración de arriba (pedido de la dueña, 29-oct): el dibujo se
+       hace más ancho (no más grande), así las piedras y los árboles conservan su tamaño. En el celular, 360 de ancho. */
+    const ancho = ($('#app') && $('#app').clientWidth) || 360, W = Math.round(Math.min(720, Math.max(360, (ancho - 32) * 360 / 420)));
+    const X = v => Math.round(v * W / 360);   // las posiciones de siempre, repartidas en el ancho nuevo
+    const PASO = 96, n = paradas.length, H = n * PASO + 60;
+    const pts = paradas.map((_, i) => ({ x: X(i % 2 ? 250 : 110), y: H - 50 - i * PASO }));
     let d = 'M' + pts[0].x + ' ' + (pts[0].y + 40);
     pts.forEach((pt, i) => { const prev = i ? pts[i - 1] : { x: pt.x, y: pt.y + 40 }; d += ' C' + prev.x + ' ' + (prev.y - 48) + ',' + pt.x + ' ' + (pt.y + 48) + ',' + pt.x + ' ' + pt.y; });
     const NS = 'http://www.w3.org/2000/svg';
     let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="' + NS + '" role="list" aria-label="Lecciones de la etapa">' +
       '<defs><clipPath id="cara-osito"><circle cx="0" cy="0" r="24"/></clipPath>' +
       '<radialGradient id="luz" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>' +
-      '<rect class="fondo-zona" x="0" y="0" width="' + W + '" height="' + H + '" rx="26" fill="' + ZONAS[(etapaVista - 1) % 6] + '"/>' +
+      '<rect class="fondo-zona" x="0" y="0" width="' + W + '" height="' + H + '" rx="26" fill="' + ZONAS[(etapaVista - 1) % ZONAS.length] + '"/>' +
       '<path d="' + d + '" fill="none" stroke="#C9A27A" stroke-width="30" stroke-linecap="round" opacity=".45"/>' +
       '<path d="' + d + '" fill="none" stroke="#8A5A35" stroke-width="3" stroke-dasharray="2 12" stroke-linecap="round" opacity=".55"/>';
     // árboles y hongos (decorado del bosque)
     for (let i = 0; i < n; i++) {
-      const y = H - 70 - i * PASO, lado = i % 2 ? 40 : 320, otro = i % 2 ? 330 : 30;
+      const y = H - 70 - i * PASO, lado = X(i % 2 ? 40 : 320), otro = X(i % 2 ? 330 : 30);
       svg += pino(lado, y + 10, .9 + (i % 3) * .12) + (i % 2 ? hongo(otro, y + 40) : pino(otro, y + 50, .7));
     }
     paradas.forEach((c, i) => {
@@ -449,9 +456,23 @@
     if (document.querySelector('.pantalla.activa') !== p) ir('tienda');
   }
 
-  /* ---------- Logros ---------- */
+  /* ---------- Biblioteca (antes «Logros»): los libros de cada etapa, las medallas y los amigos del bosque ----------
+     Pedido de la dueña (29-oct): los libros se van juntando en el estante según avanza el alumno, cada libro viene
+     COMPLETO (para volver a cualquier lección si algo no entiende), cada hoja suena al pasar y de fondo suena un piano
+     tranquilo, como en una biblioteca elegante. Los libros vienen del sistema con la clave del alumno (Api.libro). */
+  const LOMOS = ['moss', 'ochre', 'rose', 'sky', 'wood', 'moss-deep', 'plum'];   // el 7: los modos griegos
+  /* en el lomo, una sola palabra por libro (el nombre completo va en aria-label y al abrirlo) */
+  const PALABRA_LIBRO = ['Pulso', 'Lectura', 'Ritmo', 'Acordes', 'Tonalidad', 'Expresión', 'Modos'];
   function logros() {
     const p = $('#logros'), j = estado.juego;
+    const actual = estado.leccion ? estado.leccion.etapa : 1;
+    const estante = el('div', { class: 'estante' }, (estado.biblioteca || []).map(b => {
+      const lomo = el('button', { class: 'lomo lomo-' + LOMOS[b.etapa - 1] + (b.abierto ? '' : ' cerrado') + (b.etapa === actual ? ' actual' : ''), type: 'button',
+        'aria-label': b.abierto ? 'Libro ' + b.etapa + ': ' + b.nombre : 'Libro ' + b.etapa + ', se abre cuando llegues a la Etapa ' + b.etapa,
+        onclick: () => b.abierto ? abrirLibro(b, lomo) : (S.toque(), aviso('🔒 Se abre cuando llegues a la Etapa ' + b.etapa)) },
+        el('span', { class: 'lomo-num', text: b.abierto ? String(b.etapa) : '🔒' }), el('span', { class: 'lomo-titulo', text: PALABRA_LIBRO[b.etapa - 1] || b.nombre }));
+      return lomo;
+    }));
     const numeros = el('div', { class: 'numeros' },
       el('div', { class: 'numero', html: '<b>' + j.mejor + '</b><span>mejor racha</span>' }),
       el('div', { class: 'numero', html: '<b>' + j.dias + '</b><span>días de práctica</span>' }),
@@ -466,9 +487,136 @@
       return el('div', { class: 'amigo' + (tiene ? '' : ' bloqueado') }, el('div', { class: 'retrato' }, el('img', { src: RETRATO(a.id), alt: '' })), el('span', { text: tiene ? a.nombre : a.dias + ' días' }));
     }));
     p.replaceChildren(
-      el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Mis logros' })),
-      el('div', { class: 'lista-scroll' }, numeros, el('h2', { class: 'seccion-titulo', text: 'Insignias' }), insignias, el('h2', { class: 'seccion-titulo', text: 'Amigos del bosque' }), amigos));
+      el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Biblioteca' })),
+      el('div', { class: 'lista-scroll' },
+        el('h2', { class: 'seccion-titulo', text: 'Mis libros' }), estante,
+        el('p', { class: 'mano pista-estante', text: 'Toca un libro para leerlo cuando quieras 📖' }),
+        el('h2', { class: 'seccion-titulo', text: 'Medallas' }), numeros, insignias,
+        el('h2', { class: 'seccion-titulo', text: 'Amigos del bosque' }), amigos));
     ir('logros');
+  }
+
+  /* el estilo del libro (LIBRO_CSS) se encierra en .libro-hoja para que no cambie el resto de la app */
+  function estiloLibro(css) {
+    if ($('#css-libro')) return;
+    const encerrado = css.replace(/@font-face[^}]*}/g, '').replace(/([^{}]+)\{/g, (m, sel) =>
+      sel.split(',').map(x => { x = x.trim(); return x === 'body' ? '.libro-hoja' : '.libro-hoja ' + x; }).join(', ') + ' {');
+    document.head.append(el('style', { id: 'css-libro', text: encerrado }));
+  }
+  /* cada lección del libro tiene dos hojas (la explicación y la práctica): en la app son dos páginas, como en papel */
+  function hojasDe(libro, terminado) {
+    const hojas = [];
+    const dueno = String(libro.alumno || '').replace(/[<>&"]/g, '');
+    libro.paginas.forEach((pg, grupo) => {
+      let html = pg.html;
+      if (pg.id === 'portada' && dueno) html += '<p class="dueno">Este libro es de ' + dueno + '</p>';
+      // si ya terminó la etapa, el certificado del final lleva su nombre
+      if (pg.id === 'fin' && dueno && terminado) html = html.replace('<p>Nombre</p><div class="linea"></div>', '<p>Nombre</p><p class="dueno">' + dueno + '</p>');
+      const partes = pg.semana ? html.split(/(?=<div class="hoja2">)/) : [html];
+      partes.forEach((h, k) => hojas.push({ titulo: pg.titulo, grupo, segunda: k > 0, html: h, semana: pg.semana || 0 }));
+    });
+    return hojas;
+  }
+  /* Ejemplos que suenan (pedido de la dueña, 29-oct): debajo del dibujo de cada lección, botones 🔊 que tocan lo que
+     muestra el dibujo (js/ejemplos.js); el dibujo brilla mientras suena */
+  function ponerEjemplos(cont, h) {
+    const lista = h.semana && !h.segunda ? window.Ejemplos.de(h.semana, estado.instrumento) : [];
+    const dib = cont.querySelector('.diagrama');
+    if (!lista.length || !dib) return;
+    let fin = 0;
+    const fila = el('div', { class: 'ejemplos-sonido' }, lista.map(([etiqueta, partitura]) => {
+      const b = el('button', { type: 'button', class: 'ejemplo-sonido' }, el('span', { class: 'ico', 'aria-hidden': 'true', text: '🔊' }), el('span', { text: etiqueta }));
+      b.addEventListener('click', () => {
+        S.despertar();
+        const seg = window.Ejemplos.tocar(partitura, S);
+        fila.querySelectorAll('.sonando').forEach(x => x.classList.remove('sonando'));
+        b.classList.add('sonando'); dib.classList.add('sonando');
+        clearTimeout(fin); fin = setTimeout(() => { b.classList.remove('sonando'); dib.classList.remove('sonando'); }, seg * 1000);
+      });
+      return b;
+    }));
+    dib.after(el('p', { class: 'ejemplos-titulo', text: 'Escúchalo' }), fila);
+  }
+  async function abrirLibro(b, lomo) {
+    S.toque();
+    const p = $('#logros');
+    const cerrar = el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Cerrar el libro', text: '✕' });
+    const indiceBtn = el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Índice del libro', text: '☰' });
+    const hoja = el('div', { class: 'libro-pagina', tabindex: '0' }, el('p', { class: 'cargando', text: 'Abriendo el libro…' }));
+    const cuenta = el('span', { class: 'libro-cuenta', 'aria-live': 'polite' });
+    const antes = puff('◀', 'papel libro-ant', () => pasar(-1)), despues = puff('▶', 'ocre libro-sig', () => pasar(1));
+    antes.setAttribute('aria-label', 'Página anterior'); despues.setAttribute('aria-label', 'Página siguiente');
+    antes.disabled = despues.disabled = true;
+    const lector = el('div', { class: 'lector', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Libro ' + b.etapa + ': ' + b.nombre },
+      el('div', { class: 'lector-barra' }, cerrar, el('h2', { text: 'Libro ' + b.etapa + ' · ' + b.nombre }), indiceBtn),
+      hoja, el('div', { class: 'lector-pie' }, antes, cuenta, despues));
+    p.append(lector);
+    cerrar.focus();
+    let hojas = [], i = 0, libro = null;
+    const llave = 'bosque-libro-' + estado.instrumento + '-' + b.etapa;
+    function salir() { document.removeEventListener('keydown', teclas); lector.remove(); S.pagina(); if (lomo) lomo.focus(); }
+    cerrar.onclick = salir;
+    function teclas(e) {
+      if (!lector.isConnected) { document.removeEventListener('keydown', teclas); return; }
+      const ind = lector.querySelector('.libro-indice');
+      if (e.key === 'Escape') { e.preventDefault(); if (ind) { ind.remove(); indiceBtn.focus(); } else salir(); }
+      else if (e.key === 'ArrowRight' && !ind) { e.preventDefault(); pasar(1); }
+      else if (e.key === 'ArrowLeft' && !ind) { e.preventDefault(); pasar(-1); }
+      else if (e.key === 'Tab') {   // el foco no se sale del libro
+        const f = [...lector.querySelectorAll('button:not([disabled]), [tabindex="0"]')];
+        if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+        else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+      }
+    }
+    document.addEventListener('keydown', teclas);
+    try { libro = await window.Api.libro(b.etapa); }
+    catch (e) { hoja.replaceChildren(el('p', { class: 'cargando', text: e.message })); return; }
+    if (!lector.isConnected) return;
+    estiloLibro(libro.css);
+    hojas = hojasDe(libro, b.etapa < (estado.leccion ? estado.leccion.etapa : 1));
+    try { i = Math.min(hojas.length - 1, Math.max(0, Number(localStorage.getItem(llave)) || 0)); } catch (e) { }
+    const dato = k => 'data:image/webp;base64,' + libro.imgs[k].replace(/-/g, '+').replace(/_/g, '/');
+    function mostrar(dir) {
+      const h = hojas[i];
+      const cont = el('div', { class: 'libro-hoja' + (h.segunda ? ' segunda' : ''), html: h.html });
+      cont.querySelectorAll('[data-img]').forEach(im => { if (libro.imgs[im.dataset.img]) im.src = dato(im.dataset.img); });
+      cont.querySelectorAll('a').forEach(a => a.replaceWith(...a.childNodes));   // en el libro de la app no hay enlaces
+      ponerEjemplos(cont, h);
+      if (dir) cont.classList.add(dir > 0 ? 'entra-sig' : 'entra-ant');
+      hoja.replaceChildren(cont);
+      hoja.scrollTop = 0;
+      if (dir) requestAnimationFrame(() => requestAnimationFrame(() => cont.classList.remove('entra-sig', 'entra-ant')));
+      cuenta.textContent = (i + 1) + ' de ' + hojas.length;
+      antes.disabled = i === 0; despues.disabled = i === hojas.length - 1;
+      try { localStorage.setItem(llave, String(i)); } catch (e) { }
+    }
+    function pasar(d) {
+      const n = i + d;
+      if (!hojas.length || n < 0 || n >= hojas.length) return;
+      i = n; S.hojaLibro(); mostrar(d);
+    }
+    function irA(n) { if (n === i) return; const d = n > i ? 1 : -1; i = n; S.hojaLibro(); mostrar(d); }
+    /* deslizar con el dedo pasa la hoja (si el movimiento es más de lado que hacia abajo) */
+    let x0 = null, y0 = 0;
+    hoja.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') { x0 = e.clientX; y0 = e.clientY; } });
+    hoja.addEventListener('pointerup', e => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) pasar(dx < 0 ? 1 : -1);
+    });
+    hoja.addEventListener('pointercancel', () => { x0 = null; });
+    indiceBtn.onclick = () => {
+      S.toque();
+      const viejo = lector.querySelector('.libro-indice'); if (viejo) { viejo.remove(); return; }
+      const lista = el('ol', { class: 'libro-indice-lista' }, libro.paginas.map((pg, g) => {
+        const n = hojas.findIndex(h => h.grupo === g);
+        return el('li', {}, el('button', { type: 'button', class: hojas[i].grupo === g ? 'aqui' : '', text: pg.titulo, onclick: () => { indice.remove(); irA(n); despues.focus(); } }));
+      }));
+      const indice = el('div', { class: 'libro-indice' }, el('h3', { text: 'Índice' }), lista);
+      lector.append(indice);
+      (lista.querySelector('.aqui') || lista.querySelector('button')).focus();
+    };
+    mostrar(0);
   }
 
   window.addEventListener('pointerdown', () => S.despertar(), { once: true });

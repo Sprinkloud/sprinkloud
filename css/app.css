@@ -178,7 +178,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .zona h2 small { display: block; font-family: var(--f-body); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--label-ochre); }
 .mapa { flex: 1 1 0; min-height: 190px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -webkit-mask-image: linear-gradient(transparent, #000 14px, #000 calc(100% - 14px), transparent); }
 .mapa::-webkit-scrollbar { display: none; }
-.mapa svg { display: block; width: 100%; max-width: 420px; margin: 0 auto; height: auto; overflow: visible; }
+.mapa svg { display: block; width: 100%; margin: 0 auto; height: auto; overflow: visible; }   /* tan ancho como la ilustración: el dibujo se arma con ese ancho (dibujarMapa) */
 .mapa .fondo-zona { opacity: .55; }
 :root[data-hora="noche"] .mapa .fondo-zona { opacity: .07; }
 .parada { cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -191,10 +191,10 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 @keyframes halo { 0% { opacity: .7; transform: scale(.85); } 100% { opacity: 0; transform: scale(1.5); } }
 .parada text { font-family: var(--f-display); font-weight: 700; }
 .nav { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1fr; gap: 10px; align-items: end; padding-top: 10px; }
-.nav .puff .cara { flex-direction: column; gap: 0; padding: 6px 4px 8px; font-size: .78rem; }
-.nav .puff .cara .ico { font-size: 1.5rem; line-height: 1.1; }
-.nav .puff.grande .cara { font-size: 1.05rem; }
-.nav .puff.grande .cara .ico { font-size: 1.8rem; }
+.nav .puff .cara { flex-direction: column; gap: 0; padding: 8px 4px 10px; min-height: 56px; }
+.nav .puff .cara .ico { font-size: 1.9rem; line-height: 1; }   /* solo el dibujo */
+.nav .puff.grande .cara { min-height: 64px; }
+.nav .puff.grande .cara .ico { font-size: 2.2rem; }
 .hecho-hoy { text-align: center; font-family: var(--f-hand); font-size: 1.35rem; color: var(--ok-text); margin-top: 6px; }
 
 /* ---------- Práctica ---------- */
@@ -369,6 +369,69 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .numero { background: var(--surface); border-radius: 18px; box-shadow: var(--sombra-papel); padding: 12px 6px; text-align: center; }
 .numero b { display: block; font-family: var(--f-display); font-size: 1.6rem; }
 .numero span { font-size: .78rem; font-weight: 800; color: var(--ink-soft); }
+.numeros + .insignias { margin-top: 22px; }   /* el aro de las medallas sobresale 6 px: sin este espacio pisaba las tarjetas */
+
+/* ---------- Biblioteca: el estante de madera con un libro por etapa ---------- */
+.estante { display: grid; grid-template-columns: repeat(7, minmax(38px, 1fr)); gap: 6px; align-items: end; height: 196px; padding: 16px 14px 0;
+  border-radius: 14px 14px 6px 6px; background: linear-gradient(to bottom, var(--paper-deep), var(--ochre-soft));
+  border-bottom: 16px solid var(--wood); box-shadow: inset 0 -2px 0 var(--wood-deep), 0 10px 16px -12px var(--sombra-boton); }
+.lomo { position: relative; border: 0; padding: 26px 0 26px; height: 150px; border-radius: 7px 7px 3px 3px; color: var(--cream); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; overflow: hidden;
+  background: linear-gradient(to bottom, transparent 16px, var(--luz-cara) 16px, var(--luz-cara) 19px, transparent 19px, transparent calc(100% - 20px), var(--borde-cara) calc(100% - 20px), var(--borde-cara) calc(100% - 17px), transparent calc(100% - 17px)), var(--lomo);
+  box-shadow: inset 3px 0 0 var(--brillo-cara), inset -4px 0 0 var(--borde-cara), 0 2px 0 var(--wood-deep);
+  transition: transform 180ms var(--ease-out); -webkit-tap-highlight-color: transparent; }
+.lomo:nth-child(2) { height: 138px; } .lomo:nth-child(3) { height: 160px; } .lomo:nth-child(4) { height: 146px; } .lomo:nth-child(5) { height: 156px; } .lomo:nth-child(6) { height: 142px; }
+.lomo-moss { --lomo: var(--moss); } .lomo-ochre { --lomo: var(--ochre-strong); } .lomo-rose { --lomo: var(--rose-strong); }
+.lomo-sky { --lomo: var(--sky-strong); } .lomo-wood { --lomo: var(--wood); } .lomo-moss-deep { --lomo: var(--moss-deep); } .lomo-plum { --lomo: #6E5A7E; }
+.lomo-num { font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; line-height: 1; }
+.lomo-titulo { writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 800; font-size: .82rem; line-height: 1; white-space: nowrap; letter-spacing: .02em; }   /* una sola palabra (pedido de la dueña) */
+.lomo.cerrado { background: transparent; color: var(--ink-soft); box-shadow: inset 0 0 0 2px var(--wood-soft); border: 0; }
+.lomo.cerrado .lomo-num { font-size: .9rem; }
+.lomo.actual::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 10px; height: 22px; background: var(--fire);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%); }   /* la cinta marca el libro de la etapa en la que vas: cuelga abajo, sin tapar el número */
+@media (hover: hover) and (pointer: fine) { .lomo:not(.cerrado):hover:not(:active) { transform: translateY(-5px); } }
+.lomo:not(.cerrado):active { transform: translateY(-9px); transition-duration: 90ms; }   /* sacar el libro del estante */
+.lomo:focus-visible { outline: 3px solid var(--ochre); outline-offset: 3px; }
+.pista-estante { text-align: center; font-size: 1.3rem; color: var(--ink-soft); margin: 8px 0 0; }
+
+/* ---------- El libro abierto: papel claro siempre (también de noche), una hoja a la vez ---------- */
+.lector { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; gap: 10px; background: var(--paper);
+  padding: max(10px, env(safe-area-inset-top)) 16px max(14px, env(safe-area-inset-bottom)); }
+.lector-barra { display: flex; align-items: center; gap: 10px; flex: none; width: 100%; max-width: 720px; margin: 0 auto; }
+.lector-barra h2 { flex: 1; font-size: 1.05rem; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.libro-pagina { flex: 1; min-height: 0; overflow-y: auto; perspective: 1400px; border-radius: 6px 18px 18px 6px; background: var(--papel-claro); color: var(--hoja-tinta);
+  box-shadow: inset 10px 0 14px -10px rgba(58, 40, 20, .35), var(--sombra-papel); touch-action: pan-y; overscroll-behavior: contain;
+  width: 100%; max-width: 720px; margin: 0 auto; }
+.libro-pagina:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; }
+.libro-pagina .cargando { padding: 40px 20px; text-align: center; color: var(--hoja-tinta-suave); }
+.libro-hoja { padding: 18px 20px 26px; transform-origin: left center; transition: transform 300ms var(--ease-out), opacity 220ms ease; }
+.libro-hoja.entra-ant { transform-origin: right center; }
+.libro-hoja.entra-sig { transform: translateX(26px) rotateY(-7deg); opacity: 0; transition: none; }
+.libro-hoja.entra-ant { transform: translateX(-26px) rotateY(7deg); opacity: 0; transition: none; }
+.libro-hoja img { max-width: 100%; height: auto; }
+.libro-hoja .ilustracion { width: 100%; max-height: min(46vh, 380px); object-fit: contain; }
+.libro-hoja .certificado .dueno { margin: 4px 0 6px; }
+.libro-hoja ol.pasos { display: block; flex: none; }   /* .pasos de la app es la barra de la práctica: aquí manda el libro */
+.libro-hoja .dueno { font-family: var(--f-hand); font-size: 1.7rem; text-align: center; color: var(--hoja-ocre); margin: 10px 0 0; }
+.lector-pie { display: grid; grid-template-columns: 64px 1fr 64px; align-items: center; gap: 10px; flex: none; width: 100%; max-width: 720px; margin: 0 auto; }
+.lector-pie .puff .cara { font-size: 1.1rem; }
+.lector-pie .puff:disabled { opacity: .4; }
+.libro-cuenta { text-align: center; font-weight: 800; color: var(--ink-soft); font-size: .9rem; }
+.libro-indice { position: fixed; left: 0; right: 0; bottom: 0; z-index: 31; max-height: 72%; overflow-y: auto; background: var(--surface);
+  border-radius: 24px 24px 0 0; box-shadow: 0 -12px 30px -10px var(--sombra-cajon); padding: 16px 16px max(16px, env(safe-area-inset-bottom));
+  animation: sube-indice 280ms var(--ease-drawer); }
+@keyframes sube-indice { from { transform: translateY(40px); opacity: 0; } }
+.libro-indice h3 { font-size: 1.1rem; margin: 0 4px 8px; }
+.libro-indice-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.libro-indice-lista button { width: 100%; min-height: 44px; border: 0; border-radius: 12px; background: transparent; text-align: left; padding: 8px 12px; font: inherit; font-weight: 700; color: var(--ink); }
+.libro-indice-lista button.aqui { background: var(--ochre-soft); color: var(--ink); font-weight: 800; }
+.libro-indice-lista button:focus-visible { outline: 3px solid var(--ochre); }
+@media (prefers-reduced-motion: reduce) {
+  .libro-hoja, .lomo { transition: opacity 150ms ease; }
+  .libro-hoja.entra-sig, .libro-hoja.entra-ant { transform: none; }
+  .lomo:not(.cerrado):active, .lomo:not(.cerrado):hover:not(:active) { transform: none; }
+  .libro-indice { animation: none; }
+}
 
 /* ---------- Hojas que suben desde abajo (elegir un mueble, aviso de logro) ---------- */
 .velo { position: fixed; inset: 0; background: var(--velo); z-index: 20; opacity: 0; transition: opacity 220ms ease; }
@@ -423,3 +486,53 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
   .cajon.abierto { opacity: 1; }
   .aviso { transform: translate(-50%, 0); }
 }
+
+/* ---------- Intervalos en el teclado (piano, 29-oct): siempre claro, como la hoja ---------- */
+.pedido-intervalo { text-align: center; font-family: var(--f-display); font-size: 1.25rem; margin: 6px 0 0; min-height: 1.5em; }
+.teclado-juego { position: relative; display: flex; width: 100%; max-width: 560px; height: clamp(140px, 30vh, 190px); margin: 10px auto 4px;
+  --ancho-blanca: calc(100% / var(--blancas)); --ancho-negra: calc(100% / var(--blancas) * .62); touch-action: manipulation; }
+.tecla-j { position: relative; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform 90ms var(--ease-out); }
+.tecla-j.blanca { flex: 1; background: var(--papel-claro); border: 1.5px solid var(--hoja-tinta); border-radius: 0 0 9px 9px; margin-left: -1.5px; box-shadow: inset 0 -6px 0 var(--hoja-linea); }
+.tecla-j.negra { position: absolute; top: 0; width: var(--ancho-negra); height: 62%; background: var(--hoja-tinta); border-radius: 0 0 6px 6px; z-index: 2; }
+.tecla-j:active { transform: translateY(2px); }
+.tecla-j:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; z-index: 3; }
+.tecla-j.blanca.desde { background: var(--ochre-soft); box-shadow: inset 0 0 0 3px var(--ochre); }
+.tecla-j.negra.desde { background: var(--ochre-strong); }
+.tecla-j.blanca.llega { background: var(--hoja-bien-fondo); box-shadow: inset 0 0 0 3px var(--hoja-bien); }
+.tecla-j.negra.llega { background: var(--hoja-bien); }
+.tecla-j.blanca.mal { background: var(--hoja-mal-fondo); box-shadow: inset 0 0 0 3px var(--hoja-mal); }
+.tecla-j.negra.mal { background: var(--hoja-mal); }
+.cuenta-st { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); width: 21px; height: 21px; border-radius: 50%;
+  background: var(--hoja-bien); color: var(--papel-claro); font: 800 .72rem/21px var(--f-body); text-align: center; pointer-events: none; }
+.tecla-j.negra .cuenta-st { bottom: 7px; box-shadow: 0 0 0 2px var(--papel-claro); }
+.cuenta-st.mal { background: var(--hoja-mal); }
+@media (prefers-reduced-motion: reduce) { .tecla-j { transition: none; } }
+
+/* ---------- Armaduras (29-oct): el pentagrama en papel claro y la regla escrita a mano ---------- */
+.pentagrama-armadura { width: 100%; max-width: 380px; margin: 4px auto 0; background: var(--papel-claro); border-radius: 14px; padding: 4px 8px; }
+.pentagrama-armadura svg { width: 100%; height: auto; display: block; }
+.respuestas-juego.armaduras { grid-template-columns: repeat(auto-fit, minmax(min(88px, 100%), 1fr)); }
+.regla-armadura { text-align: center; font-family: var(--f-hand); font-size: 1.45rem; color: var(--label-ochre); margin: 4px 0 0; min-height: 1.3em; }
+
+/* ---------- Rondas de elegir (29-oct): círculo, acordes, modos y palabras ---------- */
+.visual-elegir { width: 100%; max-width: 360px; margin: 2px auto 0; }
+.visual-elegir:empty { display: none; }
+.papel-pentagrama { background: var(--papel-claro); border-radius: 14px; padding: 4px 8px; }
+.visual-elegir svg { width: 100%; height: auto; display: block; }
+.circulo-mini { max-width: 240px; margin: 0 auto; }
+.respuestas-juego.elegir { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.escuchar-chico { justify-self: center; margin: 4px auto 0; width: 64px; }
+.pedido-intervalo { overflow-wrap: anywhere; }
+
+/* ---------- Ejemplos que suenan en los libros (29-oct) ---------- */
+.libro-hoja .ejemplos-titulo { font-family: var(--f-hand); font-size: 1.5rem; color: var(--hoja-ocre); margin: 6px 0 4px; }
+.ejemplos-sonido { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+.ejemplo-sonido { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border: 0; border-radius: 999px; cursor: pointer; font: inherit; font-weight: 800; font-size: .9rem;
+  color: var(--hoja-tinta); background: var(--hoja-bien-fondo); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .08), 0 3px 0 var(--hoja-bien); transition: transform 120ms var(--ease-out); }
+.ejemplo-sonido:active { transform: translateY(2px); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .08), 0 1px 0 var(--hoja-bien); }
+.ejemplo-sonido.sonando { background: var(--ochre-soft); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .08), 0 3px 0 var(--ochre); }
+.ejemplo-sonido:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; }
+.libro-hoja .diagrama { transition: box-shadow 200ms ease, transform 200ms var(--ease-out); border-radius: 12px; }
+.libro-hoja .diagrama.sonando { box-shadow: 0 0 0 4px var(--ochre-soft), 0 0 24px 4px rgba(196, 146, 58, .45); }
+@media (prefers-reduced-motion: no-preference) { .libro-hoja .diagrama.sonando { animation: brilla-dibujo 1.2s ease-in-out infinite; } }
+@keyframes brilla-dibujo { 50% { box-shadow: 0 0 0 4px var(--ochre-soft), 0 0 34px 8px rgba(196, 146, 58, .55); } }

@@ -310,6 +310,306 @@ window.Actividades = (function () {
     return { aciertos: bien, intentos: cuantas };
   }
 
+  /* ---------- 4b. Intervalos en el teclado (piano; pedido de la dueña, 29-oct: que se vean y se practiquen) ----------
+     Se marca una tecla y se pide un intervalo hacia arriba; al tocar, cada tecla avanzada (blanca o negra) muestra su
+     número: así se cuentan los semitonos. El mismo juego que el modo «Intervalos» del piano virtual del sitio. */
+  const INTERVALOS_TECLADO = { 27: [1, 2, 3, 4], 28: [5, 6, 7, 12], 29: [8, 9, 10, 11] };
+  const NOMBRE_INT = { 1: '2ª menor', 2: '2ª mayor', 3: '3ª menor', 4: '3ª mayor', 5: '4ª justa', 6: 'tritono', 7: '5ª justa',
+    8: '6ª menor', 9: '6ª mayor', 10: '7ª menor', 11: '7ª mayor', 12: 'octava' };
+  const unaInt = st => (st === 6 ? 'un ' : 'una ') + NOMBRE_INT[st];
+  const semis = n => n + (n === 1 ? ' semitono' : ' semitonos');
+  const NOMBRE_ST = ['Do', 'Do♯', 'Re', 'Re♯', 'Mi', 'Fa', 'Fa♯', 'Sol', 'Sol♯', 'La', 'La♯', 'Si'];
+  const BLANCA = [0, 2, 4, 5, 7, 9, 11];
+  async function teclado(cont, o) {
+    const cuales = INTERVALOS_TECLADO[o.semana] || [1, 2, 3, 4];
+    const cuantas = o.cuantas || 6, HASTA = 19;   // de Do4 (0) a Sol5 (19)
+    const cuenta = el('span', { class: 'contador' });
+    const msj = el('div', { class: 'mensaje', 'aria-live': 'polite' });
+    const pedido = el('p', { class: 'pedido-intervalo' });
+    const teclas = {};
+    const tec = el('div', { class: 'teclado-juego', role: 'group', 'aria-label': 'Teclado' });
+    let blancas = 0;
+    for (let st = 0; st <= HASTA; st++) {
+      const negra = BLANCA.indexOf(st % 12) < 0;
+      const b = el('button', { type: 'button', class: 'tecla-j ' + (negra ? 'negra' : 'blanca'), 'aria-label': NOMBRE_ST[st % 12] + (st >= 12 ? ' de arriba' : '') });
+      if (negra) b.style.left = 'calc(' + blancas + ' * var(--ancho-blanca) - var(--ancho-negra) / 2)';
+      else blancas++;
+      b.addEventListener('pointerdown', e => { e.preventDefault(); if (esperando) esperando(st); });
+      b.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && esperando) { e.preventDefault(); esperando(st); } });
+      teclas[st] = b; tec.append(b);
+    }
+    tec.style.setProperty('--blancas', blancas);
+    cont.append(consigna('Cuenta los semitonos', cuenta), pedido, tec, msj);
+    let esperando = null;
+    const limpiar = () => Object.values(teclas).forEach(t => { t.classList.remove('desde', 'llega', 'mal'); t.replaceChildren(); });
+    const contar = (desde, hasta, mal) => { for (let k = 1; k <= hasta - desde; k++) teclas[desde + k].append(el('span', { class: 'cuenta-st' + (mal ? ' mal' : ''), text: String(k) })); };
+    function pregunta() {
+      const st = uno(o.rnd, cuales);
+      const ops = []; for (let d = 0; d + st <= HASTA; d++) if (BLANCA.indexOf(d % 12) >= 0) ops.push(d);
+      return { desde: uno(o.rnd, ops), st };
+    }
+    function mostrar(pr) {
+      limpiar(); teclas[pr.desde].classList.add('desde');
+      pedido.textContent = 'Desde ' + NOMBRE_ST[pr.desde % 12] + ', toca ' + unaInt(pr.st);
+    }
+    await ejemplo(cont, async () => {
+      const pr = { desde: 0, st: cuales[cuales.length - 1] };
+      mostrar(pr);
+      for (let k = 1; k <= pr.st; k++) { teclas[pr.desde + k].append(el('span', { class: 'cuenta-st', text: String(k) })); S.toque(); await espera(260); }
+      teclas[pr.desde + pr.st].classList.add('llega');
+      S.nota(60 + pr.desde); await espera(380); S.nota(60 + pr.desde + pr.st);
+      msj.textContent = '¡' + NOMBRE_INT[pr.st].charAt(0).toUpperCase() + NOMBRE_INT[pr.st].slice(1) + ': ' + semis(pr.st) + '!';
+      await espera(1800); msj.textContent = ''; limpiar(); pedido.textContent = '';
+    });
+    S.reiniciarEscalera();
+    const lista = Array.from({ length: cuantas }, pregunta);
+    const bien = await conCorreccion(lista, async pr => {
+      mostrar(pr);
+      const toco = await new Promise(res => { esperando = res; }); esperando = null;
+      const d = toco - pr.desde, ok = d === pr.st;
+      if (ok) {
+        contar(pr.desde, toco); teclas[toco].classList.add('llega');
+        S.nota(60 + pr.desde); setTimeout(() => S.nota(60 + toco), 380); S.acierto();
+        msj.className = 'mensaje bien'; msj.textContent = '¡Sí! ' + semis(pr.st);
+      } else {
+        S.error();
+        if (d > 0 && NOMBRE_INT[d]) { contar(pr.desde, toco, true); teclas[toco].classList.add('mal'); }
+        msj.className = 'mensaje mal';
+        msj.textContent = d > 0 && NOMBRE_INT[d] ? 'Esa es ' + unaInt(d) + ' (' + semis(d) + '). Busca ' + semis(pr.st) + '.' : 'Sube desde la tecla marcada.';
+      }
+      await espera(ok ? 1300 : 2200); msj.textContent = '';
+      return ok;
+    }, cuenta, msj);
+    limpiar(); pedido.textContent = '';
+    return { aciertos: bien, intentos: cuantas };
+  }
+
+  /* ---------- 4c. Armaduras (29-oct, pedido de la dueña): el orden de los sostenidos y los bemoles, la tonalidad de una
+     armadura y su relativa menor, de varias maneras en la misma práctica para interiorizarlo (como la app «Armaduras»
+     del sitio, que comparte sus datos: motores/armaduras.js). ---------- */
+  function dibujarArmadura(div, vfKey) {
+    div.replaceChildren();
+    const VF = Vex.Flow, r = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+    r.resize(300, 110);
+    const ctx = r.getContext(); ctx.setFillStyle('#2B241C'); ctx.setStrokeStyle('#2B241C');
+    const st = new VF.Stave(8, 8, 284); st.addClef('treble'); if (vfKey && vfKey !== 'C') st.addKeySignature(vfKey);
+    st.setContext(ctx).draw();
+    const svg = div.querySelector('svg'); svg.setAttribute('viewBox', '0 0 300 110'); svg.style.width = ''; svg.style.height = '';
+  }
+  async function armadura(cont, o) {
+    const A = window.Armaduras, modo = (o.app || '').split(':')[1] || 'sostenidos';
+    const fams = modo === 'sostenidos' ? ['s'] : modo === 'bemoles' ? ['b'] : ['s', 'b'];
+    const datos = f => f === 's' ? { orden: A.SOSTENIDOS, signo: '♯', mayores: A.MAYORES_S, menores: A.MENORES_S, vf: A.VF_S }
+      : { orden: A.BEMOLES, signo: '♭', mayores: A.MAYORES_B, menores: A.MENORES_B, vf: A.VF_B };
+    const cuenta = el('span', { class: 'contador' });
+    const msj = el('div', { class: 'mensaje', 'aria-live': 'polite' });
+    const pedido = el('p', { class: 'pedido-intervalo' });
+    const pent = el('div', { class: 'pentagrama-armadura' });
+    const regla = el('p', { class: 'regla-armadura', 'aria-live': 'polite' });
+    const fila = el('div', { class: 'respuestas-juego armaduras' });
+    cont.append(consigna('Armaduras', cuenta), pedido, pent, fila, msj, regla);
+    const botones = (ops, alElegir) => { fila.replaceChildren(); return ops.map(op => { const b = puff(op, 'papel', () => alElegir(op, b)); b.dataset.op = op; fila.append(b); return b; }); };
+    /* las preguntas: primero ordenar, después descubrir la tonalidad, contar las alteraciones y (en el círculo) la relativa */
+    function hacer(tipo) {
+      const f = uno(o.rnd, fams), d = datos(f), n = 1 + Math.floor(o.rnd() * (tipo === 'relativa' ? 5 : 7));
+      return { tipo, f, n, d };
+    }
+    const tipos = modo === 'relativas' ? ['orden', 'relativa', 'relativa', 'tonalidad', 'relativa', 'cuantas'] : ['orden', 'tonalidad', 'tonalidad', 'cuantas', 'tonalidad', 'cuantas'];
+    async function preguntar(pr) {
+      const { d, n, f } = pr;
+      regla.textContent = ''; msj.textContent = '';
+      if (pr.tipo === 'orden') {
+        pedido.textContent = 'Toca los ' + (f === 's' ? 'sostenidos' : 'bemoles') + ' en orden';
+        dibujarArmadura(pent, 'C');
+        let k = 0, errores = 0;
+        await new Promise(listo => {
+          const bs = botones(mezclar(o.rnd, d.orden.map(x => x + d.signo)), (op, b) => {
+            if (b.disabled) return;
+            if (op === d.orden[k] + d.signo) { k++; b.disabled = true; b.classList.add('bien'); dibujarArmadura(pent, d.vf[k]); S.toque(); if (k === 7) listo(); }
+            else { errores++; S.error(); b.classList.add('mal'); setTimeout(() => b.classList.remove('mal'), 500); }
+          });
+          if (!bs.length) listo();
+        });
+        regla.textContent = d.orden.map(x => x + d.signo).join(' · ');
+        const ok = errores === 0;
+        ok ? S.acierto() : null; msj.className = 'mensaje ' + (ok ? 'bien' : 'mal'); msj.textContent = ok ? '¡Perfecto!' : '¡Completo! Otra vez sin errores';
+        await espera(1800);
+        return ok;
+      }
+      let ops, correcta, texto;
+      if (pr.tipo === 'tonalidad') {
+        pedido.textContent = '¿En qué tonalidad mayor estás?'; dibujarArmadura(pent, d.vf[n]);
+        correcta = d.mayores[n] + ' mayor';
+        ops = mezclar(o.rnd, mezclar(o.rnd, d.mayores.slice(1).map(m => m + ' mayor').filter(m => m !== correcta)).slice(0, 3).concat([correcta]));
+        texto = A.reglaDe(f, n);
+      } else if (pr.tipo === 'cuantas') {
+        pedido.textContent = '¿Cuántos ' + (f === 's' ? 'sostenidos' : 'bemoles') + ' tiene ' + d.mayores[n] + ' mayor?'; dibujarArmadura(pent, 'C');
+        correcta = n + ' ' + d.signo; ops = [1, 2, 3, 4, 5, 6, 7].map(k => k + ' ' + d.signo);
+        texto = A.reglaDe(f, n);
+      } else {
+        pedido.textContent = d.mayores[n] + ' mayor: ¿su relativa menor?'; dibujarArmadura(pent, d.vf[n]);
+        correcta = d.menores[n] + ' menor';
+        ops = mezclar(o.rnd, mezclar(o.rnd, d.menores.slice(0, 7).map(m => m + ' menor').filter(m => m !== correcta)).slice(0, 3).concat([correcta]));
+        texto = 'Misma armadura, 3 semitonos abajo: ' + d.mayores[n] + ' → ' + d.menores[n];
+      }
+      const r = await new Promise(res => botones(ops, op => res(op)));
+      const ok = r === correcta;
+      fila.querySelectorAll('.puff').forEach(b => { b.disabled = true; if (b.dataset.op === correcta) b.classList.add('bien'); else if (b.dataset.op === r) b.classList.add('mal'); });
+      if (pr.tipo === 'cuantas') dibujarArmadura(pent, d.vf[n]);
+      ok ? S.acierto() : S.error();
+      msj.className = 'mensaje ' + (ok ? 'bien' : 'mal'); msj.textContent = ok ? '¡Sí!' : 'Era ' + correcta;
+      regla.textContent = texto;
+      await espera(ok ? 1500 : 2600);
+      return ok;
+    }
+    await ejemplo(cont, async () => {
+      const d = datos(fams[0]);
+      pedido.textContent = 'Mira el orden de los ' + (fams[0] === 's' ? 'sostenidos' : 'bemoles');
+      for (let k = 0; k <= 7; k++) { dibujarArmadura(pent, d.vf[k]); regla.textContent = d.orden.slice(0, k).map(x => x + d.signo).join(' · '); if (k) S.toque(); await espera(420); }
+      regla.textContent = A.reglaDe(fams[0], 2); await espera(2000);
+      regla.textContent = ''; pedido.textContent = ''; dibujarArmadura(pent, 'C');
+    });
+    S.reiniciarEscalera();
+    const lista = tipos.map(hacer);
+    const bien = await conCorreccion(lista, preguntar, cuenta, msj);
+    return { aciertos: bien, intentos: lista.length };
+  }
+
+  /* ---------- 4d. Rondas de elegir (29-oct): el círculo de quintas, acordes e inversiones, modos griegos y palabras de
+     música. Todas igual: un ejemplo resuelto, después las preguntas con botones esponjosos, la regla debajo de cada
+     respuesta y la vuelta de corrección. crear(rnd) devuelve { texto, ops, correcta, regla, dibujar(div), sonar() }. ---------- */
+  async function rondaElegir(cont, o, titulo, crear, cuantas) {
+    const cuenta = el('span', { class: 'contador' });
+    const msj = el('div', { class: 'mensaje', 'aria-live': 'polite' });
+    const pedido = el('p', { class: 'pedido-intervalo' });
+    const visual = el('div', { class: 'visual-elegir' });
+    const otraVez = puff('🔊', 'cielo escuchar-chico', () => actual && actual.sonar && actual.sonar());
+    otraVez.setAttribute('aria-label', 'Escuchar otra vez'); otraVez.hidden = true;
+    const fila = el('div', { class: 'respuestas-juego elegir' });
+    const regla = el('p', { class: 'regla-armadura', 'aria-live': 'polite' });
+    cont.append(consigna(titulo, cuenta), pedido, visual, otraVez, fila, msj, regla);
+    let actual = null;
+    function mostrar(pr) {
+      actual = pr; pedido.textContent = pr.texto; regla.textContent = ''; msj.textContent = '';
+      visual.replaceChildren(); if (pr.dibujar) pr.dibujar(visual);
+      otraVez.hidden = !pr.sonar; if (pr.sonar) pr.sonar();
+    }
+    const botones = (pr, alElegir) => { fila.replaceChildren(); pr.ops.forEach(op => { const b = puff(op, 'papel', () => alElegir(op)); b.dataset.op = op; fila.append(b); }); };
+    await ejemplo(cont, async () => {
+      const pr = crear(o.rnd); mostrar(pr); botones(pr, () => { });
+      await espera(1600);
+      const b = fila.querySelector('[data-op="' + CSS.escape(pr.correcta) + '"]'); if (b) b.classList.add('pista');
+      msj.textContent = '¡' + pr.correcta + '!'; regla.textContent = pr.regla;
+      await espera(2600); if (b) b.classList.remove('pista'); msj.textContent = ''; regla.textContent = '';
+    });
+    S.reiniciarEscalera();
+    const lista = Array.from({ length: cuantas }, () => crear(o.rnd));
+    const bien = await conCorreccion(lista, async pr => {
+      mostrar(pr);
+      const r = await new Promise(res => botones(pr, op => res(op)));
+      const ok = r === pr.correcta;
+      fila.querySelectorAll('.puff').forEach(b => { b.disabled = true; if (b.dataset.op === pr.correcta) b.classList.add('bien'); else if (b.dataset.op === r) b.classList.add('mal'); });
+      ok ? S.acierto() : S.error();
+      msj.className = 'mensaje ' + (ok ? 'bien' : 'mal'); msj.textContent = ok ? '¡Sí!' : 'Era ' + pr.correcta;
+      regla.textContent = pr.regla;
+      if (pr.alResponder) pr.alResponder(visual);
+      await espera(ok ? 1600 : 2700);
+      return ok;
+    }, cuenta, msj);
+    return { aciertos: bien, intentos: lista.length };
+  }
+  const tres = (rnd, todas, correcta) => mezclar(rnd, mezclar(rnd, todas.filter(x => x !== correcta)).slice(0, 3).concat([correcta]));
+  /* un pentagrama con notas (acorde o escala); resaltar: índice de la nota en ocre */
+  function pentagramaNotas(div, claves, juntas, resaltar) {
+    const VF = Vex.Flow, r = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+    r.resize(320, 120);
+    const ctx = r.getContext(); ctx.setFillStyle('#2B241C'); ctx.setStrokeStyle('#2B241C');
+    const st = new VF.Stave(6, 8, 308); st.addClef('treble').setContext(ctx).draw();
+    if (juntas) VF.Formatter.FormatAndDraw(ctx, st, [new VF.StaveNote({ keys: claves, duration: 'w' })]);
+    else {
+      const ns = claves.map((k, i) => { const n = new VF.StaveNote({ keys: [k], duration: 'q' }); if (i === resaltar) n.setStyle({ fillStyle: '#B07A2A', strokeStyle: '#B07A2A' }); return n; });
+      const v = new VF.Voice({ num_beats: claves.length, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT).addTickables(ns);
+      new VF.Formatter().joinVoices([v]).format([v], 250); v.draw(ctx, st);
+    }
+    const svg = div.querySelector('svg'); svg.setAttribute('viewBox', '0 0 320 120'); svg.style.width = ''; svg.style.height = '';
+    div.classList.add('papel-pentagrama');
+  }
+  const MIDI_LETRA = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+  const midiDeClave = k => { const [l, oct] = k.split('/'); return 12 * (Number(oct) + 1) + MIDI_LETRA[l]; };
+
+  /* el círculo de quintas en chiquito, con una tonalidad marcada */
+  function circuloMini(div, marcada) {
+    const C = window.Circulo, NS = 'http:/' + '/www.w3.org/2000/svg';
+    const n = (t, a, x) => { const e = document.createElementNS(NS, t); Object.entries(a).forEach(([k, v]) => e.setAttribute(k, v)); if (x != null) e.textContent = x; return e; };
+    const s = n('svg', { viewBox: '0 0 300 300', class: 'circulo-mini', role: 'img', 'aria-label': 'Círculo de quintas' });
+    for (let i = 0; i < 12; i++) {
+      const a = -Math.PI / 2 + i * Math.PI / 6;
+      [[118, C.C_MAYORES[i], 22, 17], [72, C.C_MENORES[i], 17, 12]].forEach(([R, t, rad, f], k) => {
+        const x = 150 + R * Math.cos(a), y = 150 + R * Math.sin(a), es = i === marcada && k === 0;
+        s.append(n('circle', { cx: x, cy: y, r: rad, fill: es ? '#F1E0BC' : k ? '#E1E6CF' : '#FFFDF8', stroke: es ? '#B07A2A' : '#CDBF9F', 'stroke-width': es ? 3 : 1.5 }));
+        s.append(n('text', { x, y: y + f / 3, 'text-anchor': 'middle', 'font-size': f, 'font-family': 'Caveat, cursive', fill: '#48592F' }, t));
+      });
+    }
+    div.append(s); div.classList.add('papel-pentagrama');
+  }
+  /* ---------- el círculo de quintas (lección 42) ---------- */
+  function circulo(cont, o) {
+    const C = window.Circulo;
+    return rondaElegir(cont, o, 'Círculo de quintas', rnd => {
+      const i = uno(rnd, C.PREGUNTABLES), tipo = uno(rnd, ['v', 'iv', 'relativa', 'alt', 'acordes']), M = C.C_MAYORES, m = C.C_MENORES;
+      const base = { dibujar: d => circuloMini(d, i) };
+      if (tipo === 'v') return Object.assign(base, { texto: '¿Cuál es el V de ' + M[i] + ' mayor? (su vecina de la derecha)', correcta: M[C.vecina(i, 1)], ops: tres(rnd, M, M[C.vecina(i, 1)]), regla: C.reglaAcordes(i) });
+      if (tipo === 'iv') return Object.assign(base, { texto: '¿Cuál es el IV de ' + M[i] + ' mayor? (su vecina de la izquierda)', correcta: M[C.vecina(i, -1)], ops: tres(rnd, M, M[C.vecina(i, -1)]), regla: C.reglaAcordes(i) });
+      if (tipo === 'relativa') return Object.assign(base, { texto: '¿Cuál es la relativa menor de ' + M[i] + ' mayor?', correcta: m[i], ops: tres(rnd, m, m[i]), regla: 'Justo adentro, con la misma armadura: ' + M[i] + ' → ' + m[i] });
+      if (tipo === 'alt') { const t = C.altTexto(i); return Object.assign(base, { texto: '¿Cuántas alteraciones tiene ' + M[i] + ' mayor?', correcta: t, ops: tres(rnd, C.PREGUNTABLES.map(C.altTexto), t), regla: 'Cada paso hacia la derecha suma un sostenido; hacia la izquierda, un bemol.' }); }
+      const fuera = C.PREGUNTABLES.map(k => M[k]).filter(x => ![M[i], M[C.vecina(i, -1)], M[C.vecina(i, 1)]].includes(x));
+      const intrusa = uno(rnd, fuera);
+      return Object.assign(base, { texto: '¿Qué acorde NO es de ' + M[i] + ' mayor?', correcta: intrusa, ops: mezclar(rnd, [M[i], M[C.vecina(i, -1)], M[C.vecina(i, 1)], intrusa]), regla: C.reglaAcordes(i) });
+    }, o.cuantas || 6);
+  }
+  /* ---------- acordes e inversiones (lección 36) ---------- */
+  function acordes(cont, o) {
+    const A = window.Acordes;
+    return rondaElegir(cont, o, 'Acordes e inversiones', rnd => {
+      const a = uno(rnd, A.ACORDES), inv = Math.floor(rnd() * 3), claves = A.clavesDe(a, inv), tipo = uno(rnd, ['inversion', 'nombre', 'barra']);
+      const base = { dibujar: d => pentagramaNotas(d, claves, true), sonar: () => claves.forEach((k, j) => setTimeout(() => S.nota(midiDeClave(k), 1.4), j * 110)) };
+      if (tipo === 'inversion') return Object.assign(base, { texto: '¿Qué inversión es?', ops: A.INVERSIONES.slice(), correcta: A.INVERSIONES[inv], regla: A.reglaDe(a, inv) });
+      if (tipo === 'nombre') { const c = A.nombreAcorde(a); return Object.assign(base, { texto: '¿Qué acorde es?', correcta: c, ops: tres(rnd, A.ACORDES.map(A.nombreAcorde), c), regla: 'En terceras: ' + A.notasDe(a, 0).map(l => A.NOTAS_ES[l]).join('-') + ' → ' + c }); }
+      const c = A.conBarra(a, inv);
+      return Object.assign(base, { texto: '¿Cómo se escribe con barra?', correcta: c, ops: mezclar(rnd, [...new Set([c, A.conBarra(a, 0), A.conBarra(a, 1), A.conBarra(a, 2)])]), regla: 'Después de la barra va la nota del bajo. ' + A.reglaDe(a, inv) });
+    }, o.cuantas || 6);
+  }
+  /* ---------- modos griegos (lecciones 53 a 60; modos:N = los N primeros) ---------- */
+  function modos(cont, o) {
+    const Mo = window.Modos, n = Math.max(1, Math.min(7, Number((o.app || '').split(':')[1]) || 7)), conocidos = Mo.MODOS_G.slice(0, n);
+    const tipos = n === 1 ? ['ver'] : n === 2 ? ['ver', 'oido'] : ['ver', 'car', 'oido'];
+    return rondaElegir(cont, o, 'Modos griegos', rnd => {
+      const tipo = uno(rnd, tipos);
+      if (tipo === 'ver') {
+        const m = n === 1 ? uno(rnd, Mo.MODOS_G) : uno(rnd, conocidos), e = Mo.escalaBlanca(m);
+        return { texto: 'Desde ' + e.nombres[0] + ', con las teclas blancas: ¿qué modo es?', ops: mezclar(rnd, Mo.MODOS_G.map(x => x.n)).slice(0, 7), correcta: m.n,
+          regla: e.nombres[0] + ' → ' + m.n.toLowerCase() + ': ' + m.que, dibujar: d => pentagramaNotas(d, e.claves, false) };
+      }
+      if (tipo === 'car') {
+        const m = uno(rnd, conocidos.filter(x => x.car !== null)), e = Mo.escalaBlanca(m), c = e.nombres[m.car];
+        return { texto: '¿Cuál es la nota característica de ' + e.nombres[0] + ' ' + m.n.toLowerCase() + '?', ops: tres(rnd, e.nombres.slice(1, 7), c), correcta: c,
+          regla: m.n + ': ' + m.que + ' → ' + c + ' (' + Mo.ORDINAL[m.car] + ')', dibujar: d => pentagramaNotas(d, e.claves, false), alResponder: d => { d.replaceChildren(); pentagramaNotas(d, e.claves, false, m.car); } };
+      }
+      const m = uno(rnd, conocidos);
+      return { texto: 'Escucha: ¿qué modo es? (todos empiezan en Do)', ops: conocidos.map(x => x.n), correcta: m.n,
+        regla: 'Primero: ¿mayor o menor? Después, la nota característica. ' + m.n + ': ' + m.que + '.',
+        sonar: () => m.st.concat([12]).forEach((st, j) => setTimeout(() => S.nota(60 + st, .45), j * 300)) };
+    }, o.cuantas || 6);
+  }
+  /* ---------- palabras de música (en cualquier lección, hasta la etapa del alumno) ---------- */
+  function palabras(cont, o) {
+    const todas = (window.PALABRAS_MUSICA || []).filter(x => x.e <= (o.etapa || 7));
+    return rondaElegir(cont, o, 'Palabras de música', rnd => {
+      const w = uno(rnd, todas);
+      return { texto: w.d, correcta: w.p, ops: tres(rnd, todas.map(x => x.p), w.p), regla: '«' + w.p + '»' };
+    }, o.cuantas || 5);
+  }
+
   /* ---------- 5. La hoja de práctica de la lección, resuelta en la pantalla ---------- */
   async function hoja(cont, o) {
     const papel = el('div', { class: 'hoja-papel' });
@@ -372,23 +672,29 @@ window.Actividades = (function () {
   }
 
   /* ---------- El plan de hoy: la actividad de la lección, la hoja, la voz y un repaso ---------- */
-  const ICONOS = { notas: '🎼', ritmo: '🥁', oido: '👂', hoja: '📝', voz: '🎤', repaso: '🌰' };
-  function tipoDe(app) { return /^oido/.test(app) ? 'oido' : app === 'notas' ? 'notas' : 'ritmo'; }
-  function correr(tipo, cont, o) { return tipo === 'notas' ? notas(cont, o) : tipo === 'oido' ? oido(cont, o) : ritmo(cont, o); }
+  const ICONOS = { notas: '🎼', ritmo: '🥁', oido: '👂', teclado: '🎹', armadura: '♯', circulo: '🧭', acordes: '🎶', modos: '🌈', palabras: '📖', hoja: '📝', voz: '🎤', repaso: '🌰' };
+  function tipoDe(app) { return /^oido/.test(app) ? 'oido' : /^armaduras/.test(app) ? 'armadura' : /^circulo/.test(app) ? 'circulo' : /^acordes/.test(app) ? 'acordes' : /^modos/.test(app) ? 'modos' : app === 'notas' ? 'notas' : 'ritmo'; }
+  function correr(tipo, cont, o) { return ({ notas, oido, armadura, circulo, acordes, modos, palabras })[tipo] ? ({ notas, oido, armadura, circulo, acordes, modos, palabras })[tipo](cont, o) : ritmo(cont, o); }
   function plan(estado) {
     const l = estado.leccion, ins = estado.instrumento;
     const semillaNum = semillaDe(estado.alumno + '|' + estado.hoy + '|' + l.semana);
     const rnd = azarCon(semillaNum);
-    const base = { semana: l.semana, ins, rnd, semillaNum, app: l.app };
+    const base = { semana: l.semana, ins, rnd, semillaNum, app: l.app, etapa: l.etapa };
     const tipo = tipoDe(l.app);
     const lista = [{ tipo, icono: ICONOS[tipo], correr: cont => correr(tipo, cont, base) }];
+    // piano, lecciones de intervalos: primero en el teclado (se ven los semitonos) y después de oído
+    if (ins === 'piano' && INTERVALOS_TECLADO[l.semana]) lista.unshift({ tipo: 'teclado', icono: ICONOS.teclado, correr: cont => teclado(cont, base) });
     if (window.Hoja.tieneHoja(l.semana)) lista.push({ tipo: 'hoja', icono: ICONOS.hoja, correr: cont => hoja(cont, base) });
+    // palabras de música, un día sí y otro no, con las palabras hasta su etapa (pedido de la dueña, 29-oct)
+    if (l.semana > 6 && rnd() < .5) lista.push({ tipo: 'palabras', icono: ICONOS.palabras, correr: cont => palabras(cont, base) });
     if (l.semana >= 8 && hayVoz()) {
       lista.push({ tipo: 'voz', icono: ICONOS.voz, correr: cont => voz(cont, base) });
       if (window.Voz && window.Voz.soportado()) window.Voz.preparar().catch(() => { });   // se va bajando mientras hace las otras actividades
     }
     if (l.semana > 1) {
-      const anteriores = estado.camino.filter(c => c.semana < l.semana).map(c => c.semana);
+      /* los temas complejos (intervalos, armaduras, relativas y el círculo) se repasan más: valen 3 veces (pedido de la dueña) */
+      const COMPLEJOS = /^(oido:intervalos|armaduras|circulo|acordes|modos|oido:mayorMenor|oido:triadas)/;
+      const anteriores = [].concat(...estado.camino.filter(c => c.semana < l.semana).map(c => COMPLEJOS.test(c.app || '') ? [c.semana, c.semana, c.semana] : [c.semana]));
       const s = uno(rnd, anteriores);
       const appRepaso = (estado.camino.find(c => c.semana === s) || {}).app || 'ritmo';
       const t = tipoDe(appRepaso);
