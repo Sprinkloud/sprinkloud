@@ -17,7 +17,10 @@ Es la **práctica diaria como juego**, con forma de cuento en acuarela:
 - **Sin apuro:** el alumno entra cuando quiera. Mientras el maestro no pase a la siguiente lección (botones Anterior/Siguiente de su panel), la app sigue con la misma lección, con ejercicios nuevos cada día.
 - **Sílabas de ritmo:** ta, ti-ti (las de la guía y los libros).
 - **Lo que ve el maestro:** solo la racha 🔥 de cada alumno. El mensaje de tareas lleva solo el enlace al bosque.
-- **Publicación:** al aprobarla, reemplaza a la vieja en GitHub Pages (`Sprinkloud/sprinkloud`, https://sprinkloud.github.io/sprinkloud/). Eso es lo que usa `URL_BOSQUE` en el servidor. **No se publica sin su «upload».**
+- **Publicación:** **publicada el 29-oct-2026**, en GitHub Pages (`Sprinkloud/sprinkloud`, rama `main`, https://sprinkloud.github.io/sprinkloud/). Eso es lo que usa `URL_BOSQUE` en el servidor.
+  - Esta carpeta es el clon del repo: basta con `git push` y Pages se actualiza en 1 o 2 minutos.
+  - La app vieja de violín queda en la etiqueta `app-vieja`.
+  - **No se publica sin su «upload».**
 
 ## Stack
 - Estático, sin build: `index.html`, `css/app.css` y scripts clásicos en `js/`.
