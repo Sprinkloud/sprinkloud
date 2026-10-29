@@ -55,6 +55,7 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 - la de hoy abre la práctica;
 - una pasada abre una práctica de repaso de esa lección (`practicar_(semana)`);
 - las futuras muestran el candado.
+- **Sin recuadro de foco al tocar:** el navegador dibujaba un cuadro grande alrededor de la piedra, el osito y el halo. Ahora `.parada:focus` no lleva outline, y con teclado (`:focus-visible`) se ve un aro dorado solo en la piedra.
 
 ## La práctica de hoy (`Actividades.plan`)
 - **Semilla:** `hash(alumno | fecha del servidor | semana)`, así cambia a medianoche y es la misma todo el día. «Practicar más» usa otra vuelta de la semilla y da la mitad de malvaviscos.

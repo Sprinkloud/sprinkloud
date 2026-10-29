@@ -66,7 +66,7 @@ El alumno entra a un libro de cuentos. Todo parece pintado sobre papel de acuare
   - **Rosa y cielo:** sus caras de botón usan los tonos `-strong` (5,0:1).
   - **De día:** la etiqueta de etapa es `label-ochre` y la racha, `fire-text`. De noche vuelven al ocre y al fuego, que ya contrastan.
   - **Los colores claros** (`ochre`, `rose`, `sky`) quedan para rellenos sin texto: medallas, zonas del camino y fogata.
-- **Todo color es un token** de `:root`. La hoja de práctica tiene su propia tinta de imprenta (`--hoja-*`), porque de noche se invierte con un filtro.
+- **Todo color es un token** de `:root`. La hoja de práctica tiene su propia tinta de imprenta (`--hoja-*`). El pentagrama y la hoja son papel: siempre claros (`--papel-claro`), también de noche, sin filtros, porque invertidos no se leían bien (pedido de la dueña, 29-oct).
 - **Un protagonista por pantalla:** el camino, la pregunta, la fogata del final o la casita.
 - **Sin scroll en las pantallas principales.**
   - Todo se mide con `dvh`.
@@ -77,7 +77,7 @@ El alumno entra a un libro de cuentos. Todo parece pintado sobre papel de acuare
   - en computadora, una columna de 760 px como máximo;
   - en pantallas bajas (menos de 640 px de alto), la ilustración de arriba se achica.
 - **Día y noche, por la hora real.**
-  - De 19:00 a 6:00 el papel se oscurece, aparecen luciérnagas y la fogata ilumina desde abajo.
+  - De 19:00 a 6:00 el papel se oscurece, aparecen luciérnagas y la fogata ilumina desde abajo. El pentagrama y la hoja de práctica siguen claros.
   - Los colores de noche están en `:root[data-hora="noche"]`.
 - **La casita es un lienzo de calcomanías:**
   - cada dibujo con todos sus colores (recorte con rembg) y un borde blanco de pegatina dibujado en la imagen (`herramientas/arte.py`, 7 px) más una sola sombra suave de CSS; antes eran 5 `drop-shadow`, que pesaban en cada zoom;

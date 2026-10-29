@@ -19,7 +19,8 @@
   --sombra-boton: rgba(58, 40, 20, .55); --brillo-cara: rgba(255, 255, 255, .42); --hondo-cara: rgba(0, 0, 0, .14);
   --borde-cara: rgba(0, 0, 0, .10); --luz-cara: rgba(255, 255, 255, .45); --velo: rgba(40, 30, 20, .45); --sombra-cajon: rgba(0, 0, 0, .2);
   --medalla-luz: #FFF6DA; --humo: rgba(160, 150, 140, .45); --luciernaga: #FFE9A3; --luciernaga-luz: rgba(255, 220, 120, .7);
-  /* la hoja de práctica: tinta de imprenta sobre papel (de noche se invierte con un filtro) */
+  /* la hoja de práctica y el pentagrama: tinta de imprenta sobre papel claro, de día y de noche */
+  --papel-claro: #FFFDF8;   /* no cambia de noche */
   --hoja-tinta: #2B241C; --hoja-tinta-suave: #5A4E40; --hoja-ocre: #8F6A2A; --hoja-linea: #CDBF9F;
   --hoja-bien: #48592F; --hoja-bien-fondo: #E1E6CF; --hoja-mal: #9A5245; --hoja-mal-fondo: #F3DED8;
   --f-display: 'Fraunces', Georgia, serif;
@@ -177,7 +178,10 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .mapa svg { display: block; width: 100%; max-width: 420px; margin: 0 auto; height: auto; overflow: visible; }
 .mapa .fondo-zona { opacity: .55; }
 :root[data-hora="noche"] .mapa .fondo-zona { opacity: .07; }
-.parada { cursor: pointer; }
+.parada { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+/* sin el recuadro del navegador (abarcaba piedra, osito y halo); con teclado, un aro dorado en la piedra misma */
+.parada:focus { outline: none; }
+.parada:focus-visible .piedra > circle:nth-child(2) { stroke: var(--ochre-strong); stroke-width: 5; }
 .parada .piedra { transition: transform 160ms var(--ease-out); transform-box: fill-box; transform-origin: center; }
 .parada:active .piedra { transform: scale(.94); }
 .parada.actual .halo { animation: halo 2.2s var(--ease-out) infinite; transform-box: fill-box; transform-origin: center; }
@@ -205,8 +209,8 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .consigna .cara-osito img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: scale(2.3) translateY(4%); }
 .consigna p { margin: 0; font-family: var(--f-hand); font-size: 1.5rem; line-height: 1.05; }
 .contador { margin-left: auto; font-weight: 800; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.pentagrama { background: var(--cream); border-radius: 18px; display: grid; place-items: center; padding: 6px; min-height: 150px; flex: 1; max-height: 320px; }
-:root[data-hora="noche"] .pentagrama, :root[data-hora="noche"] .hoja-papel { filter: invert(.88) hue-rotate(180deg); }
+.pentagrama { background: var(--papel-claro); color: var(--hoja-tinta); border-radius: 18px; display: grid; place-items: center; padding: 6px; min-height: 150px; flex: 1; max-height: 320px; }
+/* el pentagrama y la hoja son papel: siempre claros, también de noche (pedido de la dueña: invertidos no se leían bien) */
 .pentagrama svg { width: min(100%, 400px); height: auto; max-height: 100%; }
 .respuestas-juego { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 12px 10px; margin-top: auto; padding-bottom: 6px; }
 .respuestas-juego .puff .cara { font-size: 1.15rem; min-height: 58px; }
@@ -236,7 +240,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 
 /* Hoja de práctica dentro de la app (las mismas preguntas del sitio) */
 .hoja-scroll { flex: 1; min-height: 0; overflow-y: auto; border-radius: var(--radio); }
-.hoja-papel { background: var(--cream); color: var(--hoja-tinta); border-radius: var(--radio); padding: 16px; display: grid; gap: 22px; box-shadow: var(--sombra-papel); }
+.hoja-papel { background: var(--papel-claro); color: var(--hoja-tinta); border-radius: var(--radio); padding: 16px; display: grid; gap: 22px; box-shadow: var(--sombra-papel); }
 .hoja-papel .ejercicio { display: grid; gap: 10px; }
 .hoja-papel .ejercicio h3 { font-size: 1.15rem; color: var(--hoja-tinta); }
 .hoja-papel .ejercicio h3 small { display: none; }
