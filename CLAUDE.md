@@ -67,6 +67,11 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
   2. **La hoja de práctica**, con las preguntas de `ejerciciosDe`. Se revisa con «✓ Revisar» y muestra las soluciones. No la tienen las lecciones 1, 38, 40, 43, 45 y 48.
   3. **Lectura en voz alta** (`lectura.js`, con micrófono): desde la semana 8 y solo si el navegador reconoce voz. Si se cierra sin resultado, se salta.
   4. **Repaso:** la actividad de una lección anterior al azar.
+- **Corregir los errores** (pedido de la dueña, 29-oct):
+  - **Notas, ritmo y oído** (`conCorreccion`): al final de la ronda aparece «¡Corrijamos! ✏️» y vuelven solo las preguntas falladas, hasta acertarlas, con 3 vueltas como máximo.
+  - **Hoja:** al revisar, lo bueno queda fijo (`Hoja.fijarBien`) y se corrige lo rojo. La segunda vez aparecen las soluciones y la tercera deja seguir.
+  - **Pulso:** si una ronda sale con menos de 6 golpes a tiempo, se repite (hasta 2 veces).
+  - Los aciertos que se mandan al servidor son los del **primer intento**.
 - **Ejemplo:** cada actividad empieza con uno (etiqueta «Mira 👀»): el osito responde una pregunta y aparece «¡Ahora tú!».
 - **Al guardar:** cada actividad se manda al servidor al terminar. La última va con `terminada: true`, que aviva la fogata.
 - **Si sale a la mitad:** el avance del día se guarda en `localStorage['bosque-hoy']`, para seguir donde quedó.

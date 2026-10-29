@@ -56,11 +56,15 @@ function revisar() {
   });
   return { bien, total };
 }
+/* Lo que ya está bien queda fijo: al corregir solo se cambia lo que salió en rojo */
+function fijarBien() {
+  campos.forEach(c => { if (c.el.classList.contains('ok')) { if (c.dibujo) c.el.style.pointerEvents = 'none'; else c.el.disabled = true; } });
+}
 function soluciones() {
   document.querySelectorAll('.solucion').forEach(x => x.remove());
   campos.forEach(c => { if (!c.el.classList.contains('ok')) c.el.closest('.respuestas, .item').append(el('div', { class: 'solucion', text: c.solucion })); });
 }
-return { GUIA, armar, revisar, soluciones, tieneHoja, SIN_HOJA };
+return { GUIA, armar, revisar, fijarBien, soluciones, tieneHoja, SIN_HOJA };
 })();
 """)
 

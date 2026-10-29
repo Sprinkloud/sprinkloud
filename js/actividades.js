@@ -48,6 +48,27 @@ window.Actividades = (function () {
     });
   }
 
+  /* Una ronda de preguntas y, si hubo errores, la corrección (pedido de la dueña): vuelven a salir solo las que se
+     equivocó, hasta acertarlas (como máximo 3 vueltas, para no frustrar). Los aciertos que cuentan son los del primer intento. */
+  async function conCorreccion(items, preguntar, cuenta, msj) {
+    let bien = 0, pendientes = [];
+    for (let i = 0; i < items.length; i++) {
+      cuenta.textContent = (i + 1) + ' / ' + items.length;
+      if (await preguntar(items[i])) bien++; else pendientes.push(items[i]);
+    }
+    for (let vuelta = 0; pendientes.length && vuelta < 3; vuelta++) {
+      msj.className = 'mensaje'; msj.textContent = '¡Corrijamos! ✏️ ' + (pendientes.length === 1 ? 'Una más' : pendientes.length + ' más');
+      S.pagina(); await espera(1600); msj.textContent = '';
+      const otra = [];
+      for (let k = 0; k < pendientes.length; k++) {
+        cuenta.textContent = '✏️ ' + (k + 1) + ' / ' + pendientes.length;
+        if (!await preguntar(pendientes[k])) otra.push(pendientes[k]);
+      }
+      pendientes = otra;
+    }
+    return bien;
+  }
+
   /* ---------- 1. Leer notas en el pentagrama ---------- */
   function poolNotas(semana, ins) {
     let lista = ins === 'piano' ? L.notasPiano(semana) : L.notasViolin(semana);
@@ -87,18 +108,17 @@ window.Actividades = (function () {
       await espera(1300); botones[n.key[0]].classList.remove('pista', 'bien'); msj.textContent = '';
     });
     S.reiniciarEscalera();
-    for (i = 0; i < cuantas; i++) {
-      const n = preguntas[i];
-      cuenta.textContent = (i + 1) + ' / ' + cuantas;
+    bien = await conCorreccion(preguntas, async n => {
       dibujarNota(papel, n);
       const l = await new Promise(r => { esperando = r; });
       esperando = null;
       const ok = l === n.key[0];
-      if (ok) { bien++; S.acierto(); S.nota(midiDe(n.key), .6); botones[l].classList.add('bien'); msj.className = 'mensaje bien'; msj.textContent = uno(o.rnd, ['¡Sí!', '¡Muy bien!', '¡Eso!', '¡Bravo!']); }
+      if (ok) { S.acierto(); S.nota(midiDe(n.key), .6); botones[l].classList.add('bien'); msj.className = 'mensaje bien'; msj.textContent = uno(o.rnd, ['¡Sí!', '¡Muy bien!', '¡Eso!', '¡Bravo!']); }
       else { S.error(); botones[l].classList.add('mal'); botones[n.key[0]].classList.add('bien'); msj.className = 'mensaje mal'; msj.textContent = 'Era ' + NOMBRE[n.key[0]]; }
       await espera(ok ? 650 : 1300);
       Object.values(botones).forEach(b => b.classList.remove('bien', 'mal')); msj.textContent = '';
-    }
+      return ok;
+    }, cuenta, msj);
     return { aciertos: bien, intentos: cuantas };
   }
 
@@ -171,16 +191,17 @@ window.Actividades = (function () {
       b.classList.add('pista'); msj.textContent = '¡Esta!'; await espera(1400); b.classList.remove('pista'); msj.textContent = '';
     });
     S.reiniciarEscalera();
-    for (let i = 0; i < cuantas; i++) {
-      cuenta.textContent = (i + 1) + ' / ' + cuantas;
-      actual = pregunta();
+    const lista = Array.from({ length: cuantas }, pregunta);
+    bien = await conCorreccion(lista, async pr => {
+      actual = { ids: pr.ids, opciones: mezclar(o.rnd, pr.opciones) };   // al corregir, las opciones cambian de lugar
       const elegido = await new Promise(r => { pintar(actual, (ids, b) => r({ ids, b })); setTimeout(() => tocarCompas(actual.ids, p.compas, p.tempo), 300); });
       const ok = elegido.ids.join() === actual.ids.join();
       opciones.querySelectorAll('.puff').forEach(b => { b.disabled = true; });
-      if (ok) { bien++; S.acierto(); elegido.b.classList.add('pista'); msj.className = 'mensaje bien'; msj.textContent = '¡Así sonó!'; }
+      if (ok) { S.acierto(); elegido.b.classList.add('pista'); msj.className = 'mensaje bien'; msj.textContent = '¡Así sonó!'; }
       else { S.error(); opciones.querySelector('[data-ids="' + actual.ids.join() + '"]').classList.add('pista'); msj.className = 'mensaje mal'; msj.textContent = 'Sonó la marcada'; }
       await espera(ok ? 900 : 1700); msj.textContent = '';
-    }
+      return ok;
+    }, cuenta, msj);
     return { aciertos: bien, intentos: cuantas };
   }
 
@@ -219,8 +240,12 @@ window.Actividades = (function () {
     /* dos rondas: la segunda un poco más rápida */
     let total = 0;
     for (const tempo of [72, 88]) {
-      const bien = await ronda(false, tempo);
-      total += bien;
+      let bien = await ronda(false, tempo);
+      total += bien;   // cuenta el primer intento
+      for (let otra = 0; bien < 6 && otra < 2; otra++) {
+        msj.className = 'mensaje'; msj.textContent = bien + ' de ' + golpes + ' · ¡Otra vez! ✏️'; S.error(); await espera(1600); msj.textContent = '';
+        bien = await ronda(false, tempo);
+      }
       msj.className = 'mensaje ' + (bien >= 6 ? 'bien' : 'mal');
       msj.textContent = bien >= 6 ? '¡Qué buen pulso!' : bien + ' de ' + golpes + ' a tiempo';
       bien >= 6 ? S.acierto() : S.error();
@@ -254,17 +279,17 @@ window.Actividades = (function () {
       await espera(1500); botones[actual.correcta].classList.remove('pista', 'bien'); msj.textContent = '';
     });
     S.reiniciarEscalera();
-    let bien = 0;
-    for (let i = 0; i < cuantas; i++) {
-      cuenta.textContent = (i + 1) + ' / ' + cuantas;
-      actual = M.crear(opts); pintar(actual.opciones);
+    const lista = Array.from({ length: cuantas }, () => M.crear(opts));
+    const bien = await conCorreccion(lista, async pr => {
+      actual = pr; pintar(actual.opciones);
       setTimeout(() => S.tocar(actual.pasos), 250);
       const r = await new Promise(res => { esperando = res; }); esperando = null;
       const ok = r === actual.correcta;
-      if (ok) { bien++; S.acierto(); botones[r].classList.add('bien'); msj.className = 'mensaje bien'; msj.textContent = '¡Sí!'; }
+      if (ok) { S.acierto(); botones[r].classList.add('bien'); msj.className = 'mensaje bien'; msj.textContent = '¡Sí!'; }
       else { S.error(); botones[r].classList.add('mal'); botones[actual.correcta].classList.add('bien'); msj.className = 'mensaje mal'; msj.textContent = 'Era ' + actual.correcta; }
       await espera(ok ? 800 : 1600); msj.textContent = '';
-    }
+      return ok;
+    }, cuenta, msj);
     return { aciertos: bien, intentos: cuantas };
   }
 
@@ -276,15 +301,27 @@ window.Actividades = (function () {
     const acciones = el('div', { class: 'hoja-acciones' }, revisar);
     cont.append(consigna('Resuelve tu hoja'), scroll, acciones);
     window.Hoja.armar(papel, o.semana, o.ins, o.semillaNum);
+    /* Al revisar, lo que está bien queda fijo y solo se corrige lo que salió en rojo. Si vuelve a equivocarse,
+       aparecen las respuestas de lo que falta. Cuenta lo que estuvo bien la primera vez. */
     return new Promise(listo => {
+      let primera = null, vueltas = 0;
       revisar.addEventListener('click', () => {
         const r = window.Hoja.revisar();
-        window.Hoja.soluciones();
-        r.bien === r.total ? S.festejo() : r.bien ? S.acierto() : S.error();
-        revisar.remove();
-        const seguir = puff((r.bien === r.total ? '¡Hoja perfecta! ' : r.bien + ' de ' + r.total + ' · ') + 'Seguir →', 'ocre grande', () => listo({ aciertos: r.bien, intentos: Math.max(1, r.total) }));
-        acciones.append(seguir);
+        window.Hoja.fijarBien();
+        if (!primera) primera = r;
+        vueltas++;
         scroll.scrollTo({ top: 0, behavior: 'smooth' });
+        if (r.bien < r.total && vueltas < 3) {
+          r.bien ? S.acierto() : S.error();
+          if (vueltas === 2) window.Hoja.soluciones();
+          revisar.querySelector('.cara').textContent = '✏️ Revisar otra vez (' + (r.total - r.bien) + ')';
+          const rojo = papel.querySelector('.mal'); if (rojo) rojo.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          return;
+        }
+        r.bien === r.total ? S.festejo() : S.acierto();
+        if (r.bien < r.total) window.Hoja.soluciones();
+        revisar.remove();
+        acciones.append(puff((r.bien === r.total ? '¡Hoja perfecta! ' : '') + 'Seguir →', 'ocre grande', () => listo({ aciertos: primera.bien, intentos: Math.max(1, primera.total) })));
       });
     });
   }
