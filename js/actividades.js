@@ -394,6 +394,9 @@ window.Actividades = (function () {
     const ctx = r.getContext(); ctx.setFillStyle('#2B241C'); ctx.setStrokeStyle('#2B241C');
     const st = new VF.Stave(8, 8, 284); st.addClef('treble'); if (vfKey && vfKey !== 'C') st.addKeySignature(vfKey);
     st.setContext(ctx).draw();
+    const A = window.Armaduras, n = A.VF_S.indexOf(vfKey) > 0 ? A.VF_S.indexOf(vfKey) : A.VF_B.indexOf(vfKey), sost = A.VF_S.indexOf(vfKey) > 0;
+    div.setAttribute('role', 'img');   // lo que se ve, en palabras (lectores de pantalla)
+    div.setAttribute('aria-label', !vfKey || vfKey === 'C' ? 'Pentagrama en clave de sol, sin alteraciones' : 'Armadura con ' + n + (sost ? (n > 1 ? ' sostenidos' : ' sostenido') : (n > 1 ? ' bemoles' : ' bemol')));
     const svg = div.querySelector('svg'); svg.setAttribute('viewBox', '0 0 300 110'); svg.style.width = ''; svg.style.height = '';
   }
   async function armadura(cont, o) {
@@ -527,11 +530,15 @@ window.Actividades = (function () {
     const st = new VF.Stave(6, 8, 308); st.addClef('treble').setContext(ctx).draw();
     if (juntas) VF.Formatter.FormatAndDraw(ctx, st, [new VF.StaveNote({ keys: claves, duration: 'w' })]);
     else {
-      const ns = claves.map((k, i) => { const n = new VF.StaveNote({ keys: [k], duration: 'q' }); if (i === resaltar) n.setStyle({ fillStyle: '#B07A2A', strokeStyle: '#B07A2A' }); return n; });
+      const ocre = getComputedStyle(document.documentElement).getPropertyValue('--hoja-ocre').trim();   // VexFlow necesita el color, no var()
+      const ns = claves.map((k, i) => { const n = new VF.StaveNote({ keys: [k], duration: 'q' }); if (i === resaltar) n.setStyle({ fillStyle: ocre, strokeStyle: ocre }); return n; });
       const v = new VF.Voice({ num_beats: claves.length, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT).addTickables(ns);
       new VF.Formatter().joinVoices([v]).format([v], 250); v.draw(ctx, st);
     }
     const svg = div.querySelector('svg'); svg.setAttribute('viewBox', '0 0 320 120'); svg.style.width = ''; svg.style.height = '';
+    const NOTA = { c: 'Do', d: 'Re', e: 'Mi', f: 'Fa', g: 'Sol', a: 'La', b: 'Si' };
+    div.setAttribute('role', 'img');
+    div.setAttribute('aria-label', (juntas ? 'Acorde, de abajo hacia arriba: ' : 'Escala: ') + claves.map(k => NOTA[k[0]] + (k[1] === '#' ? '♯' : k[1] === 'b' && k[2] !== '/' ? '♭' : '')).join(', '));
     div.classList.add('papel-pentagrama');
   }
   const MIDI_LETRA = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
@@ -541,13 +548,13 @@ window.Actividades = (function () {
   function circuloMini(div, marcada) {
     const C = window.Circulo, NS = 'http:/' + '/www.w3.org/2000/svg';
     const n = (t, a, x) => { const e = document.createElementNS(NS, t); Object.entries(a).forEach(([k, v]) => e.setAttribute(k, v)); if (x != null) e.textContent = x; return e; };
-    const s = n('svg', { viewBox: '0 0 300 300', class: 'circulo-mini', role: 'img', 'aria-label': 'Círculo de quintas' });
+    const s = n('svg', { viewBox: '0 0 300 300', class: 'circulo-mini', role: 'img', 'aria-label': 'Círculo de quintas, con ' + C.C_MAYORES[marcada] + ' mayor marcado' });
     for (let i = 0; i < 12; i++) {
       const a = -Math.PI / 2 + i * Math.PI / 6;
       [[118, C.C_MAYORES[i], 22, 17], [72, C.C_MENORES[i], 17, 12]].forEach(([R, t, rad, f], k) => {
         const x = 150 + R * Math.cos(a), y = 150 + R * Math.sin(a), es = i === marcada && k === 0;
-        s.append(n('circle', { cx: x, cy: y, r: rad, fill: es ? '#F1E0BC' : k ? '#E1E6CF' : '#FFFDF8', stroke: es ? '#B07A2A' : '#CDBF9F', 'stroke-width': es ? 3 : 1.5 }));
-        s.append(n('text', { x, y: y + f / 3, 'text-anchor': 'middle', 'font-size': f, 'font-family': 'Caveat, cursive', fill: '#48592F' }, t));
+        s.append(n('circle', { cx: x, cy: y, r: rad, 'stroke-width': es ? 3 : 1.5, style: 'fill:var(' + (es ? '--hoja-marca' : k ? '--hoja-bien-fondo' : '--papel-claro') + ');stroke:var(' + (es ? '--hoja-ocre' : '--hoja-linea') + ')' }));
+        s.append(n('text', { x, y: y + f / 3, 'text-anchor': 'middle', 'font-size': f, 'font-family': 'Caveat, cursive', style: 'fill:var(--hoja-bien)' }, t));
       });
     }
     div.append(s); div.classList.add('papel-pentagrama');

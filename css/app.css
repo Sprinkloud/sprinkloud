@@ -21,6 +21,8 @@
   --medalla-luz: #FFF6DA; --humo: rgba(160, 150, 140, .45); --luciernaga: #FFE9A3; --luciernaga-luz: rgba(255, 220, 120, .7);
   /* la hoja de práctica y el pentagrama: tinta de imprenta sobre papel claro, de día y de noche */
   --papel-claro: #FFFDF8;   /* no cambia de noche */
+  --hoja-marca: #F1E0BC;   /* lo marcado sobre papel claro (círculo chiquito); tampoco cambia de noche */
+  --lomo-modos: #6E5A7E;   /* el lomo del libro 7, los modos griegos */
   --hoja-tinta: #2B241C; --hoja-tinta-suave: #5A4E40; --hoja-ocre: #8F6A2A; --hoja-linea: #CDBF9F;
   --hoja-bien: #48592F; --hoja-bien-fondo: #E1E6CF; --hoja-mal: #9A5245; --hoja-mal-fondo: #F3DED8;
   --f-display: 'Fraunces', Georgia, serif;
@@ -372,9 +374,10 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .numeros + .insignias { margin-top: 22px; }   /* el aro de las medallas sobresale 6 px: sin este espacio pisaba las tarjetas */
 
 /* ---------- Biblioteca: el estante de madera con un libro por etapa ---------- */
-.estante { display: grid; grid-template-columns: repeat(7, minmax(38px, 1fr)); gap: 6px; align-items: end; height: 196px; padding: 16px 14px 0;
-  border-radius: 14px 14px 6px 6px; background: linear-gradient(to bottom, var(--paper-deep), var(--ochre-soft));
-  border-bottom: 16px solid var(--wood); box-shadow: inset 0 -2px 0 var(--wood-deep), 0 10px 16px -12px var(--sombra-boton); }
+.estante { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; align-items: end; height: 196px; padding: 16px 6px 16px;
+  border-radius: 14px; background: linear-gradient(to bottom, var(--paper-deep), var(--ochre-soft)); box-shadow: 0 10px 16px -12px var(--sombra-boton); }
+/* la tabla del estante, dibujada aparte (un borde grueso chocaba con las esquinas redondeadas; auditoría 29-oct) */
+.estante::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 16px; border-radius: 0 0 14px 14px; background: var(--wood); box-shadow: inset 0 2px 0 var(--wood-soft), inset 0 -2px 0 var(--wood-deep); }
 .lomo { position: relative; border: 0; padding: 26px 0 26px; height: 150px; border-radius: 7px 7px 3px 3px; color: var(--cream); cursor: pointer;
   display: flex; flex-direction: column; align-items: center; gap: 8px; overflow: hidden;
   background: linear-gradient(to bottom, transparent 16px, var(--luz-cara) 16px, var(--luz-cara) 19px, transparent 19px, transparent calc(100% - 20px), var(--borde-cara) calc(100% - 20px), var(--borde-cara) calc(100% - 17px), transparent calc(100% - 17px)), var(--lomo);
@@ -382,7 +385,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
   transition: transform 180ms var(--ease-out); -webkit-tap-highlight-color: transparent; }
 .lomo:nth-child(2) { height: 138px; } .lomo:nth-child(3) { height: 160px; } .lomo:nth-child(4) { height: 146px; } .lomo:nth-child(5) { height: 156px; } .lomo:nth-child(6) { height: 142px; }
 .lomo-moss { --lomo: var(--moss); } .lomo-ochre { --lomo: var(--ochre-strong); } .lomo-rose { --lomo: var(--rose-strong); }
-.lomo-sky { --lomo: var(--sky-strong); } .lomo-wood { --lomo: var(--wood); } .lomo-moss-deep { --lomo: var(--moss-deep); } .lomo-plum { --lomo: #6E5A7E; }
+.lomo-sky { --lomo: var(--sky-strong); } .lomo-wood { --lomo: var(--wood); } .lomo-moss-deep { --lomo: var(--moss-deep); } .lomo-plum { --lomo: var(--lomo-modos); }
 .lomo-num { font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; line-height: 1; }
 .lomo-titulo { writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 800; font-size: .82rem; line-height: 1; white-space: nowrap; letter-spacing: .02em; }   /* una sola palabra (pedido de la dueña) */
 .lomo.cerrado { background: transparent; color: var(--ink-soft); box-shadow: inset 0 0 0 2px var(--wood-soft); border: 0; }
@@ -404,7 +407,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
   width: 100%; max-width: 720px; margin: 0 auto; }
 .libro-pagina:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; }
 .libro-pagina .cargando { padding: 40px 20px; text-align: center; color: var(--hoja-tinta-suave); }
-.libro-hoja { padding: 18px 20px 26px; transform-origin: left center; transition: transform 300ms var(--ease-out), opacity 220ms ease; }
+.libro-hoja { padding: 18px 20px 26px; transform-origin: left center; transition: transform 240ms var(--ease-out), opacity 200ms var(--ease-out); }
 .libro-hoja.entra-ant { transform-origin: right center; }
 .libro-hoja.entra-sig { transform: translateX(26px) rotateY(-7deg); opacity: 0; transition: none; }
 .libro-hoja.entra-ant { transform: translateX(-26px) rotateY(7deg); opacity: 0; transition: none; }
@@ -494,7 +497,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .tecla-j { position: relative; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform 90ms var(--ease-out); }
 .tecla-j.blanca { flex: 1; background: var(--papel-claro); border: 1.5px solid var(--hoja-tinta); border-radius: 0 0 9px 9px; margin-left: -1.5px; box-shadow: inset 0 -6px 0 var(--hoja-linea); }
 .tecla-j.negra { position: absolute; top: 0; width: var(--ancho-negra); height: 62%; background: var(--hoja-tinta); border-radius: 0 0 6px 6px; z-index: 2; }
-.tecla-j:active { transform: translateY(2px); }
+.tecla-j:active { transform: translateY(2px); transition-duration: 0ms; }   /* el toque, al instante; la tecla sube en 90 ms */
 .tecla-j:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; z-index: 3; }
 .tecla-j.blanca.desde { background: var(--ochre-soft); box-shadow: inset 0 0 0 3px var(--ochre); }
 .tecla-j.negra.desde { background: var(--ochre-strong); }
@@ -529,10 +532,14 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .ejemplos-sonido { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
 .ejemplo-sonido { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border: 0; border-radius: 999px; cursor: pointer; font: inherit; font-weight: 800; font-size: .9rem;
   color: var(--hoja-tinta); background: var(--hoja-bien-fondo); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .08), 0 3px 0 var(--hoja-bien); transition: transform 120ms var(--ease-out); }
-.ejemplo-sonido:active { transform: translateY(2px); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .08), 0 1px 0 var(--hoja-bien); }
+.ejemplo-sonido:active { transform: translateY(2px); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .08), 0 1px 0 var(--hoja-bien); transition-duration: 40ms; }
 .ejemplo-sonido.sonando { background: var(--ochre-soft); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .08), 0 3px 0 var(--ochre); }
 .ejemplo-sonido:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; }
-.libro-hoja .diagrama { transition: box-shadow 200ms ease, transform 200ms var(--ease-out); border-radius: 12px; }
-.libro-hoja .diagrama.sonando { box-shadow: 0 0 0 4px var(--ochre-soft), 0 0 24px 4px rgba(196, 146, 58, .45); }
-@media (prefers-reduced-motion: no-preference) { .libro-hoja .diagrama.sonando { animation: brilla-dibujo 1.2s ease-in-out infinite; } }
-@keyframes brilla-dibujo { 50% { box-shadow: 0 0 0 4px var(--ochre-soft), 0 0 34px 8px rgba(196, 146, 58, .55); } }
+/* el dibujo brilla mientras suena: el brillo es una capa aparte y solo cambia su opacidad (en la GPU; animar box-shadow
+   repintaba cada cuadro) */
+.libro-hoja .diagrama { position: relative; border-radius: 12px; }
+.libro-hoja .diagrama::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  box-shadow: 0 0 0 4px var(--ochre-soft), 0 0 30px 6px rgba(196, 146, 58, .5); transition: opacity 200ms var(--ease-out); }
+.libro-hoja .diagrama.sonando::after { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) { .libro-hoja .diagrama.sonando::after { animation: brilla-dibujo 1.2s ease-in-out infinite; } }
+@keyframes brilla-dibujo { 50% { opacity: .55; } }

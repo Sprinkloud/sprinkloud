@@ -560,8 +560,8 @@
       if (!lector.isConnected) { document.removeEventListener('keydown', teclas); return; }
       const ind = lector.querySelector('.libro-indice');
       if (e.key === 'Escape') { e.preventDefault(); if (ind) { ind.remove(); indiceBtn.focus(); } else salir(); }
-      else if (e.key === 'ArrowRight' && !ind) { e.preventDefault(); pasar(1); }
-      else if (e.key === 'ArrowLeft' && !ind) { e.preventDefault(); pasar(-1); }
+      else if (e.key === 'ArrowRight' && !ind) { e.preventDefault(); pasar(1, true); }
+      else if (e.key === 'ArrowLeft' && !ind) { e.preventDefault(); pasar(-1, true); }
       else if (e.key === 'Tab') {   // el foco no se sale del libro
         const f = [...lector.querySelectorAll('button:not([disabled]), [tabindex="0"]')];
         if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
@@ -590,10 +590,15 @@
       antes.disabled = i === 0; despues.disabled = i === hojas.length - 1;
       try { localStorage.setItem(llave, String(i)); } catch (e) { }
     }
-    function pasar(d) {
+    /* el giro de la hoja solo se anima al tocar o deslizar; con el teclado o pasando hojas seguidas (menos de 250 ms) la
+       hoja aparece al instante: quien hojea quiere llegar, no ver girar cada página (revisión de animaciones, 29-oct) */
+    let ultimaVuelta = 0;
+    function pasar(d, porTeclado) {
       const n = i + d;
       if (!hojas.length || n < 0 || n >= hojas.length) return;
-      i = n; S.hojaLibro(); mostrar(d);
+      const ahora = performance.now(), seguidas = ahora - ultimaVuelta < 250;
+      ultimaVuelta = ahora;
+      i = n; S.hojaLibro(); mostrar(porTeclado || seguidas ? 0 : d);
     }
     function irA(n) { if (n === i) return; const d = n > i ? 1 : -1; i = n; S.hojaLibro(); mostrar(d); }
     /* deslizar con el dedo pasa la hoja (si el movimiento es más de lado que hacia abajo) */

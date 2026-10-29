@@ -39,6 +39,8 @@ colors:
   hoja-linea: "#CDBF9F"
   hoja-mal: "#9A5245"
   hoja-mal-fondo: "#F3DED8"
+  hoja-marca: "#F1E0BC"
+  lomo-modos: "#6E5A7E"
 typography:
   display: "Fraunces (SOFT 100), 600–700"
   body: "Nunito Sans 400/700/800"
@@ -93,6 +95,13 @@ El alumno entra a un libro de cuentos. Todo parece pintado sobre papel de acuare
   - cada pantalla tiene su canción y su ambiente: pájaros y fogata en el mapa, campanita y caja registradora en la tienda, chimenea en la casita;
   - en la práctica hay silencio;
   - la música de fondo se puede apagar.
+
+## La biblioteca (29-oct)
+- **El estante:** una tabla de madera (`--wood`) con un libro por etapa. Cada lomo tiene su color (musgo, ocre, rosa, cielo, madera, musgo oscuro y `lomo-modos` para el 7), su número y **una sola palabra** (Pulso, Lectura, Ritmo, Acordes, Tonalidad, Expresión, Modos). La cinta naranja del libro en el que vas cuelga abajo. Los lomos miden 44 px de ancho en los celulares comunes (desde 375 px).
+- **El libro abierto:** papel claro siempre (`--papel-claro`), una hoja a la vez, que entra girando un poco desde el lomo (300 ms, `--ease-out`).
+- **Escúchalo:** debajo de cada dibujo, botones de papel verde (`--hoja-bien-fondo` con borde `--hoja-bien`) que tocan el ejemplo; el que suena y el dibujo se iluminan en ocre.
+- **Lo que va sobre papel claro no cambia de noche:** el pentagrama, la hoja, el círculo chiquito (`--hoja-marca`, `--hoja-linea`, `--hoja-bien`) y los teclados.
+- **Accesibilidad:** cada pentagrama dice en palabras lo que muestra (`role="img"` con la armadura, el acorde o la escala).
 
 ## Movimiento (Emil Kowalski)
 - Solo se animan `transform` y `opacity`. Nunca se parte de `scale(0)`: el mínimo es `.85` con opacidad 0.

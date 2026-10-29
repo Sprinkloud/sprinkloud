@@ -209,6 +209,12 @@ Se corrigieron estos puntos:
 - **Arrastre con el dedo:** probado con toques reales de Chrome (CDP `Input.dispatchTouchEvent`). Mueve y guarda, y no corre la página. **Falta probarlo en un iPhone y un Android de verdad.**
 - **La página no se corre:** `html, body { overflow: hidden }`, y el mapa centra la parada de hoy moviendo solo su propio scroll (antes `scrollIntoView` corría la página 14 px).
 
+## Revisión de animaciones `/review-animations` (29-oct)
+- **Giro de hoja del libro:** `pasar(d, porTeclado)` en `js/app.js` solo anima (`entra-sig`/`entra-ant`) al tocar o deslizar. Con las flechas del teclado o con vueltas a menos de 250 ms (`ultimaVuelta`), la hoja aparece sin giro. La transición dura 240 ms (transform) y 200 ms (opacity), ambas con `--ease-out`.
+- **Brillo del dibujo que suena:** va en `.diagrama::after` y solo anima `opacity` (`brilla-dibujo`). El `.diagrama` ya no tiene `box-shadow` ni transición propia.
+- **Presión asimétrica:** `.ejemplo-sonido:active` baja en 40 ms y sube en 120; `.tecla-j:active` baja al instante y sube en 90.
+- El movimiento reducido sigue apagando el giro y el pulso del brillo.
+
 ## Arte pendiente (Gemini)
 - Hoy, los muebles y las insignias se ven como emoji.
 - Las imágenes van en `assets/arte/<id>.webp`, con fondo transparente, y se agregan a `js/arte.js`.
