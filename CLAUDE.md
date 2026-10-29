@@ -80,6 +80,7 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 
 ## Marcar el pulso (tambor)
 - **El golpe cuenta al presionar** (`pointerdown`), no al soltar, así que responde al instante.
+- **Margen flexible:** un golpe vale si cae a ±220 ms del clic, descontando lo que tarda el sonido en salir del parlante (`S.retraso()` = `outputLatency`), porque se toca cuando se oye (pedido de la dueña, 29-oct).
 - **Valen todas las formas de golpear:** tocar el tambor, hacer clic o tocar en cualquier parte del ejercicio, o apretar cualquier tecla. Enter sigue sirviendo para «¡Ahora tú!».
 - Al salir con ✕ deja de escuchar el teclado.
 
@@ -185,3 +186,4 @@ Se corrigieron estos puntos:
 - Los pedidos están en `Libro_Sprinkloud/herramientas/ilustraciones/etapa7.txt`, y se generan con `.\ilustraciones.ps1 7`.
 - `herramientas/arte.py` vuelve transparente el papel (`sin_papel`, como «color a alfa», con más cuerpo), recorta cada dibujo al objeto y actualiza `js/arte.js`.
 - **29-oct:** 8 de 42 listas (cuadro, guirnalda, reloj, cortinas, maceta, farolito, tetera y calcetines). La tarea diaria de la sesión (10:41) sigue con el resto. Los muebles de piso se piden en vista desde arriba en diagonal, como la casa.
+- **29-oct (tarde):** 16 de 42 listas (más olla de chocolate, atril con violín, metrónomo, tazas, pastel de miel e insignias primera, racha3 y racha7). **Faltan 26.** Se borraron 8 que Gemini dibujó con el osito encima (sillón, piano, 2 alfombras, cojines, lámpara, libros y tarro de miel); se repiten. Causa: el estilo común de `ilustraciones.ps1` describía al osito; ahora la etapa 7 usa `$estiloObjeto` («solo el objeto, sin el osito ni ningún personaje»). `arte.py` ya no convierte `bosque-enlace` (es la vista previa del enlace).

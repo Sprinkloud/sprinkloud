@@ -160,6 +160,7 @@ window.Sonido = (function () {
     },
     notaRitmo(t, enPulso, dur) { audio(); piano(t, enPulso ? 72 : 67, Math.max(dur * .95, .09), enPulso ? .3 : .24); },
     ahora() { return audio().currentTime; },
+    retraso() { const c = audio(); return c.outputLatency || c.baseLatency || 0; },   // lo que tarda en oírse por el parlante
     alternarSonido() { pref.sonido = !pref.sonido; guardar('bosque-sonido', pref.sonido); return pref.sonido; },
     alternarMusica() { pref.musica = !pref.musica; guardar('bosque-musica', pref.musica); pref.musica ? musica.escena(musica.actual || 'mapa', true) : musica.parar(); return pref.musica; },
     /* cada pantalla tiene su canción y su ambiente (ver ESCENAS) */

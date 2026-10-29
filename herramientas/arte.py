@@ -56,7 +56,7 @@ def recortar(im):
 
 
 for jpg in sorted(ORIGEN.glob('bosque-*.jpg')):
-    if jpg.stem == 'bosque-casa-vacia':   # la casa es el lienzo, no una calcomanía
+    if jpg.stem in ('bosque-casa-vacia', 'bosque-enlace'):   # la casa es el lienzo y el enlace es la vista previa: no son calcomanías
         continue
     id_ = jpg.stem[len('bosque-'):]
     salida = DESTINO / (id_ + '.webp')

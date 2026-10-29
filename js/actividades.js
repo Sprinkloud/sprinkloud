@@ -245,7 +245,8 @@ window.Actividades = (function () {
       await espera((t0 - S.ahora() + (4 + golpes) * beat) * 1000 + 300);
       let bien = 0;
       for (let b = 0; b < golpes; b++) {
-        const t = t0 + (4 + b) * beat, cerca = toques.some(x => Math.abs(x - t) < .17);
+        // margen flexible (±220 ms) y contando el retraso del parlante: el alumno toca cuando OYE el clic (pedido de la dueña)
+        const t = t0 + (4 + b) * beat + S.retraso(), cerca = toques.some(x => Math.abs(x - t) < .22);
         luces.children[b].className = cerca ? 'bien' : 'mal';
         if (cerca) bien++;
       }
