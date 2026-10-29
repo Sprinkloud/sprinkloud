@@ -1,115 +1,140 @@
-# CLAUDE.md: Sprinkloud
+# CLAUDE.md: App_Bosque («El bosque de Sprinkloud»)
 
-App web de clases de violín del Club Musical Sprinkloud. Tiene tres roles: alumno (entra con un código de 6 letras), maestro (clave propia, guardada en la hoja `Maestros`) y administración (la clave de las Script Properties). Tiene 8 niveles (88 lecciones), repertorio, editor de canciones con importación desde MuseScore (MusicXML), partituras en tarjetas y en pentagrama, PDFs, postura con las acuarelas del club y puntos numerados, juegos, cápsulas visuales, metrónomo, afinador y un modo de presentación para Meet.
+La app nueva de Sprinkloud (desde el 28 de octubre de 2026). Reemplaza a la app vieja de violín (App_Sprinkloud), que se descartó: se hizo desde cero.
 
-- Repo: https://github.com/Sprinkloud/sprinkloud (rama `main`)
-- Producción: https://sprinkloud.github.io/sprinkloud/ (GitHub Pages, `main` / raíz)
-- Guía de puesta en marcha para la maestra: [README.md](README.md)
-- Diseño visual y movimiento: [DESIGN.md](DESIGN.md), gestionado por la skill `impeccable` (formato con tokens en la cabecera y archivo complementario `.impeccable/design.json`). Estilo de libro ilustrado en acuarela con el osito del club; las animaciones siguen a Emil Kowalski. Todo cambio visual lo sigue. Antes de un merge se corren `/impeccable audit` y `review-animations`.
-- Producto (usuarios, propósito, restricciones): [PRODUCT.md](PRODUCT.md), el registro que usa `impeccable`.
-- Mapa de la metodología (niveles, cápsulas visuales, gamificación, próximas entregas): [docs/METODOLOGIA.md](docs/METODOLOGIA.md). Es la copia del documento en línea de la Dirección Pedagógica; si no coinciden, manda el documento en línea.
+Es la **práctica diaria como juego**, con forma de cuento en acuarela:
+- un camino por el bosque (una parada por lección);
+- la práctica de hoy (3 o 4 actividades de la lección);
+- la **fogata** es la racha de días;
+- los **malvaviscos** son las monedas;
+- la **casita del osito** se decora con lo que se compra en la tienda;
+- hay insignias y amigos del bosque que llegan con los días de práctica;
+- se comparten logros por WhatsApp o Instagram.
 
-## Arquitectura
+## Decisiones de la dueña
+- **Entrar:** el alumno entra con su **enlace secreto**, que el maestro manda por WhatsApp (`?k=<clave>`). La clave queda guardada en el celular y se borra de la barra de direcciones.
+- **Una sola app por lección:** todo lo de la lección vive aquí: lectura de notas, ritmo, oído, la hoja de práctica (ya no se imprime) y la lectura en voz alta.
+- **Sin apuro:** el alumno entra cuando quiera. Mientras el maestro no pase a la siguiente lección (botones Anterior/Siguiente de su panel), la app sigue con la misma lección, con ejercicios nuevos cada día.
+- **Sílabas de ritmo:** ta, ti-ti (las de la guía y los libros).
+- **Lo que ve el maestro:** solo la racha 🔥 de cada alumno. El mensaje de tareas lleva solo el enlace al bosque.
+- **Publicación:** al aprobarla, reemplaza a la vieja en GitHub Pages (`Sprinkloud/sprinkloud`, https://sprinkloud.github.io/sprinkloud/). Eso es lo que usa `URL_BOSQUE` en el servidor. **No se publica sin su «upload».**
 
-No hay build, dependencias ni `package.json`:
+## Stack
+- Estático, sin build: `index.html`, `css/app.css` y scripts clásicos en `js/`.
+- Librerías desde jsDelivr con SRI: VexFlow 4.2.2, Howler 2.2.4 y canvas-confetti 1.9.4. La CSP está en un `<meta>`, porque GitHub Pages no deja poner encabezados.
+- **Backend:** la web app de `Registro_Sprinkloud/maestros/`, sección 9 de su `Código.js`. Guarda en la hoja del sistema (hojas «Juego» y «Práctica diaria», y la clave `Tipo: Alumno` en «Enlaces»).
+  - Todo lo que vale algo se calcula en el servidor: racha, leña, malvaviscos (con tope de 150 por día), precios, insignias y amigos.
+  - Las pruebas están en `Registro_Sprinkloud/pruebas/juego_test.js`.
 
-| Archivo | Rol |
+## Comandos
+```bash
+node servidor-local.js                        # http://localhost:8020/?demo=1
+python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios del sitio (página_Sprinkloud/practica)
+```
+**Modo de prueba `?demo=1`:** las mismas reglas del servidor, guardadas en el navegador, sin tocar datos reales. Se combina con `&semana=9&ins=piano&dia=2026-11-03` para elegir la lección, el instrumento y el día.
+
+## Archivos
+| Archivo | Qué hace |
 |---|---|
-| `index.html` | Toda la app: HTML, CSS y JS en un único archivo (unas 2100 líneas). Se sirve tal cual desde GitHub Pages. |
-| `config.js` | Solo define `window.SPRINKLOUD_API` (la URL `/exec`). `index.html` lo carga, y si falta o está vacío la app entra en modo demostración. |
-| `assets/ilustraciones/` | Acuarelas del club en WebP: postura, mano izquierda, mano del arco (3 pasos), osito y guías de sección. Originales en `assets/image/` (ignorada por git). |
-| `assets/lottie/` | Animaciones propias del club (osito, ardilla, abeja, cámara). Para probarlas en local hay que servir la carpeta con `python -m http.server`, porque `fetch` no funciona en `file://`. |
-| `assets/emoji/` | Ilustraciones Fluent Emoji (licencia MIT, ver `LICENCIA.md`), usadas en el mapa, el bosque y las cápsulas. |
-| `apps-script/Código.js` | Backend en Google Apps Script, ligado a la hoja de Google "Sprinkloud App". Se sincroniza con clasp (ver Despliegue). `appsscript.json` es el manifiesto (zona horaria, webapp). |
+| `js/config.js` | URL de la API (el despliegue de maestros), la música de fondo y el jingle |
+| `js/api.js` | GET `?api=juego&k=` y POST `text/plain` (`practicaJuego`, `comprarJuego`, `guardarCasa`), más el modo de prueba |
+| `js/actividades.js` | Las actividades y el plan del día (ver abajo) |
+| `js/app.js` | Pantallas: entrada, camino, práctica, fin, casita, tienda y logros, más el cajón de premios |
+| `js/compartir.js` | Tarjeta de 1080×1920 en canvas → `navigator.share({files})`; si no se puede, descarga + `wa.me` |
+| `js/sonido.js` | Sonidos sintetizados (toque, acierto que sube de tono con la racha, error suave, moneda, fuego, página) y la música |
+| `js/arte.js` | Lista de los dibujos de `assets/arte/` que ya existen (los demás se ven como emoji) |
+| `js/motores/*.js` | **GENERADOS** por `herramientas/copiar_motores.py` desde el sitio: `hoja.js`, `lectura.js`, `ritmo.js`, `oido.js` y `leccion.js`. No se editan a mano |
+| `manifest.json`, `assets/icono-*.png` | Instalable en la pantalla de inicio |
 
-**Flujo de datos:** `Api.call(accion, datos)` en `index.html` hace `fetch POST` a `API_URL` con el JSON `{accion, ...datos}`. `doPost` → `manejar(q)` en `Código.js` hace un `switch` por `accion` y responde siempre con `{ok, ...}` o con `{ok:false, error}`.
+## La práctica de hoy (`Actividades.plan`)
+- **Semilla:** `hash(alumno | fecha del servidor | semana)`, así cambia a medianoche y es la misma todo el día. «Practicar más» usa otra vuelta de la semilla y da la mitad de malvaviscos.
+- **Las actividades, en orden:**
+  1. **La de la lección**, según la columna «App para practicar» de la guía:
+     - `notas`: 10 notas, solo las aprendidas (`notasPiano`/`notasViolin`). Se responde con botones Do…Si.
+     - `ritmo`: 5 dictados de un compás con 3 opciones dibujadas con sus sílabas. Si la lección tiene una sola figura (lección 1), se usa **marcar el pulso** con el tambor (2 rondas de 8).
+     - `oido:modo[:nivel]`: 6 preguntas.
+  2. **La hoja de práctica**, con las preguntas de `ejerciciosDe`. Se revisa con «✓ Revisar» y muestra las soluciones. No la tienen las lecciones 1, 38, 40, 43, 45 y 48.
+  3. **Lectura en voz alta** (`lectura.js`, con micrófono): desde la semana 8 y solo si el navegador reconoce voz. Si se cierra sin resultado, se salta.
+  4. **Repaso:** la actividad de una lección anterior al azar.
+- **Ejemplo:** cada actividad empieza con uno (etiqueta «Mira 👀»): el osito responde una pregunta y aparece «¡Ahora tú!».
+- **Al guardar:** cada actividad se manda al servidor al terminar. La última va con `terminada: true`, que aviva la fogata.
+- **Si sale a la mitad:** el avance del día se guarda en `localStorage['bosque-hoy']`, para seguir donde quedó.
 
-Acciones: `alumno` (devuelve también `grupo`, el ranking semanal del grupo del mismo maestro, y `maestroNombre`), `guardarProgreso` (el alumno guarda su propia columna `progreso` con su código), `acceso` (login de maestro o administración, devuelve el `rol`), `nuevoAlumno`, `guardarAlumno`, `borrarAlumno`, `nuevoMaestro`, `guardarMaestro`, `borrarMaestro`, `guardarCancion`, `borrarCancion`. `verificar(clave, soloAdmin)` identifica al usuario con `identificar()`. Las acciones de alta y baja de alumnos y maestros, y `borrarCancion`, exigen `soloAdmin`. Las escrituras van dentro de `conCandado()` (LockService).
+## Diseño
+- `DESIGN.md` manda: tokens de acuarela heredados de la app vieja, botones esponjosos, día y noche según la hora real, y movimiento de Emil Kowalski.
+- Cuando se cambie algo visual, correr `/impeccable audit`. Para cualquier animación, usar la skill `review-animations`.
 
-**Base de datos:** hay tres hojas, definidas en `HOJAS` de `Código.js`:
-- `Alumnos`: id, nombre, codigo, nivel, leccion, estrellas, canciones, checks, notas, creado, actualizado, maestro, progreso
-  - `progreso` (JSON, lo escribe el alumno): `dias` (fechas de práctica), `juegos` (mejores estrellas por `nivel.leccion.juego`), `bosque` ([tipo, fila, col]), `festejos` (niveles ya celebrados), `semana` ({id ISO, puntos, dias}). `hoja()` agrega los encabezados que falten, así que no hace falta volver a ejecutar `configurar()` por columnas nuevas.
-- `Repertorio`: id, titulo, origen, porque, nivel, leccion, frases, creado, actualizado
-- `Maestros`: id, nombre, clave, activo, creado, actualizado
+## La casita: casa de muñecas vista desde arriba (idea de la dueña, 29-oct)
+- **La casa:** `assets/ilustraciones/casa-vacia.webp`, generada con Gemini (`etapa8.txt`). Es una cabaña de troncos vacía, sin techo, vista desde arriba en diagonal. Tiene sala (el cuarto grande), cocina (piso de baldosas), dormitorio (el cuarto del fondo) y jardín con la fogata afuera.
+- **15 lugares** (`LUGARES_CASA` en el servidor; `POS` en `js/app.js` con [x, y, tamaño] en % de la imagen):
+  - **sala:** pared, sillón, alfombra, música, mesa;
+  - **cocina:** estufa, ventana, mesa, repisa;
+  - **dormitorio:** cama, mesita, pared;
+  - **jardín:** banca, flores, fogata.
+- **Pestañas «Toda la casa · Sala · Cocina · Dormitorio · Jardín»:** la capa (la imagen y los lugares) hace zoom al cuarto (`CUARTOS`: centro y zoom; `encuadre()` no deja que se salga de la casa). Usa 520 ms con ease-in-out y, con movimiento reducido, va sin animación.
+  - En «Toda la casa» se ven solo las cosas puestas; tocar una lleva a su cuarto.
+  - En un cuarto aparecen los círculos ✨ de ese cuarto.
+- **La tienda filtra por cuarto.** Tiene 30 cosas (`TIENDA`): 2 o 3 por lugar.
+- La tarjeta para compartir la casita dibuja la misma casa cuadrada.
 
-Las columnas de `COLUMNAS_JSON` se guardan como JSON serializado (máximo `MAX_CELDA` = 45000 caracteres) y las de `COLUMNAS_BOOL` como booleanos. Solo se pueden escribir los campos de `EDITABLES_*`. Si agregas una hoja o una columna, hay que volver a ejecutar `configurar()` en producción.
+## Calcomanías (idea de la dueña, 29-oct)
+- **Cómo se pegan:** cada compra (una por cosa) queda en la bandeja «Mis calcomanías». Al tocarla, se pega en el cuarto que se está viendo.
+  - Se arrastra con el dedo o el mouse: `pointer` con captura, y la posición se calcula sobre la capa ya con zoom.
+  - Al tocar una pegada aparecen sus herramientas: −, +, ⇆ (voltear), ▲ (encima), ▼ (debajo) y ↩ (volver a la bandeja).
+- **Datos:** `casa = {id: {x, y, s, z, f}}` (posición en %, tamaño, capa, volteada). Se guarda 0,7 s después del último cambio (`guardarCasa_` lo valida en el servidor).
+  - El tamaño base sale del lugar de la cosa en `POS` × 1,35.
+- **El recorte:** con rembg (IA libre de GitHub, modelo `isnet-general-use`, en `herramientas/arte.py`). Cada dibujo queda con todos sus colores, opaco. El borde blanco de calcomanía lo pone el CSS con `drop-shadow`.
 
-**Seguridad:** la clave de administración está en las Script Properties (`CLAVE_MAESTRA`), nunca en el repo. Las claves de los maestros están en la hoja `Maestros`, y solo la administración las recibe. La acción `alumno` elimina `notas` y `codigo` de la respuesta. `guardarAlumno` descarta `maestro` si quien guarda no es administración. El ranking solo expone el nombre de pila y los puntos de la semana.
-
-## index.html: secciones
-
-El JS está dividido con comentarios `/* ============ nombre ============ */`. Para ubicarte, busca por el nombre de la sección:
-configuración (`API_URL`) · utilidades (`$`, `$$`, `esc`, `toast`) · música (`STR`, `DEDO`, `LECCIONES`) · niveles (`NIVELES`) · audio (WebAudio) · micrófono y detección de altura · conexión con la hoja de Google (`Api`, `Demo`, `Store`) · estado de la app (`S`, `go`, `renderApp`) · entrada · vista alumno · metrónomo · afinador · diapasón interactivo · violinista 3D (three.js) · vista maestra · repertorio: catálogo, editor y PDF (jsPDF) · modo presentación · inicio.
-
-- Librerías cargadas por CDN: jsPDF 2.5.1 (cdnjs) y Google Fonts (Sora, Nunito Sans). lottie-web 5.12.2 (`lottie_light`, cdnjs) se carga solo cuando aparece un `[data-lottie]`. Ya no se usa three.js. La postura usa las imágenes de `assets/ilustraciones/` con puntos (`POSTURA` y `mountPostura`); nunca dibujos SVG propios.
-- Estado global en `S`. `Store` hace actualizaciones optimistas y avisa a quien esté suscrito con `Store.on`/`emit`.
-- Los temas claro y oscuro usan las variables CSS de `:root` y `[data-theme]`.
-- La sesión se guarda en `localStorage` con la clave `sprinkloud-sesion`.
-
-## Desarrollo y pruebas
-
-- **Probar en local:** abre `index.html` en el navegador o sírvelo con `npx serve .` o `python -m http.server`. El micrófono (afinador) necesita `localhost` o HTTPS.
-- **Modo demostración:** si `SPRINKLOUD_API` está vacío, la app usa el objeto `Demo` en memoria (alumno `SOFIA1`, maestra `maestra1`, administración `demo`) y no guarda nada. ⚠️ `config.js` apunta a **producción**, así que al probar en local se escribe en la hoja real. Para experimentar, usa una copia con un `config.js` vacío y **no subas `config.js` vacío**.
-- No hay tests automatizados ni linter. Para comprobar que la página carga sin errores, ábrela en Chrome headless (`--headless=new --dump-dom --enable-logging=stderr`).
-
-## Despliegue
-
-- **Backend con clasp:** `.clasp.json` (en la raíz, ignorado) apunta al script `17Y9TA0cX0mvmlZBQnpkgGxyAoy_YOvo2og220UlUtMRhCXBmX6jysb8P` con `rootDir: apps-script`; si falta, `clasp clone <scriptId> --rootDir ./apps-script`. `clasp push` sube los cambios. Para publicar, `clasp deploy -i <deploymentId>` actualiza **la implementación existente** (producción: `AKfycbz6dZlLukO0fF58FbfALdmxhd_tyG3QjPo3QuKYDmQ1DThfQS2kIa91EEVeeL6CgPTN1g`), así la URL `/exec` no cambia. Nunca uses `clasp deploy` sin `-i`: crea una implementación nueva con otra URL. `.clasp.json` y `.clasprc.json` están en `.gitignore`.
-- **Frontend:** basta con hacer push a `main`. GitHub Pages se actualiza en 1 o 2 minutos.
-- **Orden:** si un cambio toca el protocolo (acciones u hojas), el frontend y el backend tienen que salir juntos. Primero se actualiza Apps Script, se ejecuta `configurar()` si hay hojas o columnas nuevas y se actualiza la implementación. Después se hace push del frontend.
-
-## Convenciones
-
-- Todo en **español**: identificadores (`alumno`, `leccion`, `guardarCancion`), mensajes de error y textos de la interfaz. Los mensajes de error van dirigidos a la maestra o a las familias, en tono amable.
-- JS compacto y de estilo funcional: arrow functions de una línea, plantillas HTML con template strings y `esc()` para escapar cualquier dato del usuario.
-- `Código.js` usa `function () {}` al estilo de Apps Script (V8). No uses sintaxis que Apps Script no admita.
-- Si agregas una acción nueva, impleméntala **en los dos lados**: `manejar()` en `Código.js` y `Demo.call()` en `index.html`.
-- Para agregar un nivel, añade un objeto a `NIVELES` (el formato está en el comentario de esa sección). Las claves de progreso siguen el formato `"nivel.leccion"` (función `K()`).
-- Contenido para el alumno: poco texto y visual, paso a paso (estilo Duolingo). No escribas en la app justificaciones de la metodología. No menciones ni insertes videos de YouTube. Las imágenes deben salir de fuentes gratuitas y quedar anotadas con su licencia.
-- Sílabas de ritmo: se usan las del club (pan, lu-na, cho-co-la-te, grán-chi-co, ca-ma-rón, va-lien-te, blan-co, que-so, mú-si-ca, Le-e, y, "1 - 2"…), las mismas de la herramienta https://sprinkloud.vercel.app/practica/ritmo.html (sprinkloud.vercel.app/practica/ritmo). En las tarjetas de canciones y en los PDF se calculan con `silabas(frase)`.
-- La vista del alumno va por secciones (`S.alSec`): Inicio, Partituras, Herramientas, Logros y Mi bosque (`SECCIONES`, `renderInicio`, `renderPartituras`, `herramientasHTML`, `renderLogros`, `renderBosque`). No mezcles contenidos entre secciones.
-- Hojitas del bosque: estrella del maestro 10, estrella de juego 1, día de práctica 2. Se calculan (`hojasGanadas`) y se restan los objetos puestos (`ITEMS`), así que no se pueden duplicar.
-- "Ver la app como alumno" (`abrirVistaPrevia`, `S.preview`): la administración y los maestros ven cualquier nivel y lección. En vista previa no se guarda nada en la hoja.
-- Práctica del alumno (Entrega 1 de docs/METODOLOGIA.md):
-  - Cada lección tiene `ritmo:{nueva, juego}` y `visual` (la cápsula), definidos en `PRACTICA_N1`.
-  - Secciones del código: "ritmo del club" (`CELULAS`, `celulasHasta`, `tocarCelulas`), "juegos de ritmo" (`mountJuego`: eco, cual, completa; `mountRitmoPanel`), "cápsulas visuales" (`CAPSULAS`, `miniQuiz`) y "práctica paso a paso" (`pasosDe`, `PASOS`, overlay `#practica`).
-  - Las estrellas de los juegos y los días de práctica van a `progreso` en la hoja (`guardarJuego`, `marcarPractica`, `guardarProgreso`). Lo que quedó guardado solo en el navegador se migra al entrar (`migrarAvanceLocal`).
-- No agregues un paso de build: la app es `index.html` más `config.js`, y se publica tal cual.
-- Niveles 2 a 8: `LECCIONES_N2`…`LECCIONES_N8`, con el mismo formato que el Nivel 1 más `ritmo` y `visual`. Los ejercicios están en `EJERCICIOS`. Las notas pueden ser `[midi, pulsos, cuerda, dedo]` para fijar la cuerda o la posición.
-- Lectura de notas por nivel (`modoNotas`): N1 y N2 usan tarjetas, N3 tarjetas y pentagrama, y de N4 en adelante pentagrama con las notas coloreadas por cuerda (`pentagramaHTML`, `partituraHTML`).
-- Canciones pendientes (`pendiente:true` en `CANCIONES`): Arroz con leche, Un elefante, La cucaracha, Aserrín aserrán, Cielito lindo, La bamba, Bella ciao, El cóndor pasa, La primavera y Aire de Londonderry. No se inventan melodías. Cuando el maestro crea o importa una canción con el mismo título, `catalogo()` la usa en su lugar.
-- Juegos (`JUEGOS`): de ritmo (eco, cual, completa) y de notas. `pentagrama` es "Leer notas" (`mountLeerNotas`, el violín de la página notasviolin.html); `oido` y `lluvia` siguen en `mountJuegoNotas`. El Eco aprende el retraso de cada equipo (`latencia`, guardada en `localStorage`).
-- Sonido del ritmo: todo pasa por un bus (`ritmoBus`, `pararRitmo`) para poder callarlo al cerrar; `golpe()` es una nota tipo piano (`pianoNota`: Do5 en el pulso, Sol4 a contratiempo) que dura lo que vale la figura. `tocarCelulas` acepta `metro:'fuerte'` (metrónomo), `onCuenta` y `onPulso`, que manejan el círculo de cuenta (`pulsoHTML`, `pulsoEstado`: reloj en reposo, 1-2-3-4 y el pulso).
-- Notación de figuras: `celdaSVG(notas)` es la misma de la página de ritmo (figuras con barras, puntillo, tresillo y silencios). `notasDeCelula(id)` traduce `CELULAS` (`d`, `r`) a `{b, dot, t, rest}`. `s1` es el silencio de redonda (solo en la cápsula de figuras y el taller).
-- **La pizza** (`pizzaHTML`, `pizzaMarcar`, `tocarPizza`, `compasDe`; imagen `assets/ilustraciones/pizza.webp`): cada pizza es un pulso. Negra = una pizza, blanca = dos, redonda = cuatro, corchea = media, semicorchea = un cuarto; el puntillo es la mitad de su figura (negra con puntillo = una pizza y media) y lleva su propia insignia con el punto. Las pizzas de una figura larga van sobre la misma bandeja, con la insignia al centro. La cuenta empieza a la izquierda y avanza como las manecillas del reloj (un cuarto = arriba a la izquierda). Debajo de las pizzas va la tira con las figuras. En Crear ritmo, el modo Pizza no arma compases: muestra solo la carta elegida, sin insignias, y al dar play suena la cuenta de 4 y la misma carta 4 veces (al tocar la carta suena una vez). Los silencios dejan el plato vacío. Al sonar se pinta en ocre lo que suena y cambia de color su figura. Se usa en la intro "Carta nueva" del paso de ritmo (en N1 y N2 con sílabas), en la cápsula `figuras` (todas las figuras, los 5 silencios y el puntillo) y en Crear ritmo.
-- **Leer notas** (`mountLeerNotas`): pentagrama con plica automática (`notaSolaSVG(m, {plica:true})`) y el violín de la dueña (`assets/ilustraciones/violin-mastil.webp` y `-h.webp`, recorte del mástil de `image/violin postura/violín.png`). Las notas son un SVG encima de la imagen: siguen las cuerdas reales y van pegadas una a la otra a lo largo de la cuerda (`MASTIL`, `POS_LEER`); se toca la nota más cercana al dedo (`notaTocada`). Las marcadas van en el color de su cuerda y las demás en crema pálido. El tamaño se mide con el alto de la pantalla para evitar el scroll. Horizontal en computadora (voluta a la izquierda, Mi arriba) y vertical en celulares (Sol a la izquierda). Por defecto marca todas las notas naturales hasta el 3.er dedo; también la escala de Do. Modos por lección (`modoLeer`): 3·1 líneas, 3·2 espacios, 3·3 líneas adicionales y el resto todas. Estrellas: 5 aciertos, 4 seguidos y 6 seguidos. En la lección termina con 3 estrellas o a las 12 notas; en Herramientas (`libre:true`) no termina.
-- Cápsulas `violin` y `notas7`: la primera marca las partes sobre la imagen del violín (`violin-partes.webp`, recorte de `image/violin postura/violín.png`; `violinSVG`); la segunda muestra las 7 notas en el pentagrama con su nombre debajo (`pentaSieteSVG`).
-- Listas que se deslizan (`revisarDeslizables`, en `.tabs`, `.seg` y `.desliza`): si no caben, aparece una flecha pegada al borde. En Crear ritmo, las tarjetas van en una fila deslizable dentro de un panel fijo abajo que se puede ocultar (`st.oculta`). Ver The No Scroll Rule en DESIGN.md.
-- Cápsulas de ritmo (`panluna`, `compas`, `celulas`, `compuesto`, `puntillo`): el ejemplo es la pizza con cuenta y play (`ejemploRitmo`, `fichasEjemplo`, `unirFichas`).
-- Clave de Sol: `CLAVE_SOL` es el glifo de Bravura (el mismo de VexFlow en las páginas del club); `claveEn(x, ySol, espacio)` la dibuja.
-- Herramientas del alumno: Leer notas, Postura, Metrónomo, Crear ritmo (`mountTallerRitmo`, con modo pizza, guardado en `localStorage` `sprinkloud-taller`) y Afinador. En Presentar del maestro: Postura, Leer notas, Notas, Crear ritmo, Cápsulas, Metrónomo y Afinador. `mountFingerboard` y `mountRitmoPanel` ya no tienen pestaña.
-- Práctica: la flecha `[data-pr-atras]` vuelve al paso anterior (`PR.dir` da el sentido del deslizamiento); repetir un juego nunca baja las estrellas.
-- Cápsulas (`CAPSULAS`): 24 en total, del catálogo de docs/METODOLOGIA.md. El Inicio del alumno es el mapa del bosque (`mapaSVG`): al tocar una lección se abre directamente su práctica (`abrirPractica(n, nivel)`).
-- Los roles en `S.rol` son `'admin'`, `'maestro'` y `'alumno'`. En cambio, `'maestra'` es el nombre de la **vista** (`go('maestra')`), no un rol.
-
-## Estado del proyecto
-
-Última actualización: 26 de septiembre de 2026 (mapa, postura 2D y niveles 2 a 8 publicados). Las entregas vienen de [docs/METODOLOGIA.md](docs/METODOLOGIA.md), sección "Siguientes pasos en la app".
-
-| Entrega | Estado |
+## Música y ambiente por escena (`ESCENAS` en `js/sonido.js`)
+| Escena | Qué suena |
 |---|---|
-| Roles de administración y maestros, `config.js`, servidor sincronizado con clasp | Publicado |
-| 1. Lección paso a paso, ritmo del club, juegos Eco / ¿Cuál sonó? / Completa el compás, cápsulas 1–4 del Nivel 1 | Publicado en GitHub Pages |
-| Secciones del alumno (Inicio, Partituras, Herramientas, Logros, Mi bosque), vista previa para la administración | Publicado (servidor: implementación de Apps Script, versión 3) |
-| 2. Premios: racha, calendario, insignias, medallas, festejo de fin de nivel, certificado PDF, ranking del grupo, aviso de video con 2 estrellas, bosque con tienda | Publicado |
-| 3. Ilustraciones 2D (postura, mano izquierda, mano del arco, brazo) en lugar del violinista 3D | Publicado |
-| 4. Niveles 2 a 8 completos (80 lecciones), cápsulas 5–24, ejercicios y repertorio | Publicado (faltan 10 partituras pendientes) |
-| 5. Pentagrama del club, juegos Del pentagrama al violín, Del oído al violín y Lluvia de notas, importación de MusicXML | Publicado |
-| Inicio como mapa del bosque, Eco más sensible | Publicado |
-| Migración visual al estilo de libro ilustrado (paleta, Fraunces y Caveat, papel, iconos SVG, movimiento según Emil, toques de 44 px) | Publicado el 28 de septiembre de 2026 sin `/review-animations` (la fundadora pidió publicar); queda pendiente correrla |
-| Acuarelas del club: postura con puntos numerados (en lugar de los dibujos 2D), osito y guías por sección, animaciones Lottie | Publicado el 28 de septiembre de 2026 sin `/impeccable audit` ni `/review-animations` (la fundadora pidió subir); quedan pendientes. Falta la imagen de primer plano de la mano izquierda |
-| Login sin scroll en computadora, flecha para volver en la práctica, ritmo con la pizza (una pizza por pulso; todas las figuras, silencios y puntillo), Leer notas sobre la imagen del violín en las lecciones de pentagrama, clave de Sol de Bravura, herramientas Leer notas y Crear ritmo | Publicado (30 de septiembre de 2026; solo la página, sin cambios en el servidor) |
+| Mapa | Wooden Inn / Forest, una tras otra. De día suenan los pájaros; la fogata crepita siempre (más de noche) |
+| Tienda | Bossa nova. Al entrar suena la campanita de la puerta, y al comprar la caja registradora con monedas |
+| Casita | Guitarra suave y la chimenea que crepita. Al pegar una calcomanía suena un «pop» |
+| Logros | La canción de la casita |
+| Práctica | Silencio, porque los ejercicios de oído y ritmo necesitan escuchar |
+| Fin | El jingle |
 
-Pendientes técnicos:
-- El sonido y la latencia del juego Eco no se han probado en celulares reales.
-- Hay 10 canciones pendientes de partitura (ver arriba). El maestro las agrega en Repertorio, creándolas o importándolas desde MuseScore.
+- Las canciones cambian con un fundido (`Sonido.escena`, que llama `ir()` en `app.js`).
+- El botón 🎵 apaga la música y el ambiente.
+
+## Revisión de animaciones (`/review-animations`, 29-oct)
+Se corrigieron estos puntos:
+- **Respiración del botón:** pasó al botón de afuera, porque pisaba el `:active` y los botones principales no se hundían.
+- **Arrastre de calcomanías:** con `transform` mientras se arrastra; `left/top` se fijan al soltar.
+- **Hover:** `:hover:not(:active)`, para que la presión le gane al hover con mouse.
+- **Tiempos:**
+  - festejo: 360 ms, con escalones de 70 ms;
+  - cambio de pantalla: 260 ms;
+  - zoom de la casita: 420 ms.
+- **`.btn-icono`:** tiene transición al hundirse (60 ms) y al soltarse (140 ms).
+- **Movimiento reducido:** el cajón y el aviso solo se desvanecen.
+- **Limpieza:** se borraron las reglas `.lugar`, que no se usaban.
+- **Pruebas automáticas:** a los botones que respiran hay que hacerles clic con `{ force: true }` en Playwright, porque nunca están quietos.
+
+## Auditoría `/impeccable audit` (29-oct): 15/20 → corregida
+- **Contraste AA:**
+  - el ocre lleva letra café (`--ochre-ink`);
+  - rosa y cielo usan los tonos `-strong`;
+  - la etiqueta de etapa y la racha de día usan `--label-ochre` y `--fire-text`.
+- **Teclado:** el cajón lleva el foco adentro, Escape lo cierra y devuelve el foco. Las paradas del camino se abren con Enter o con la barra espaciadora.
+- **Calcomanías:**
+  - el borde blanco va dibujado en la imagen (`con_borde` en `arte.py`), con una sola sombra de CSS;
+  - en «Toda la casa», tocar una acerca la cámara a su cuarto.
+- **Pestañas:** de 44 px.
+- **Colores:** todos en tokens de `:root`, y la hoja usa `--hoja-*`.
+- **Detector:** las excepciones están en `.impeccable/config.json` (papel crema, luces de las luciérnagas). Después de los cambios da 0 antipatrones.
+
+## Segunda auditoría (29-oct): 18/20; se corrigieron los pendientes
+- **Calcomanías con teclado:** al enfocarlas se eligen. Las flechas las mueven (Mayús + flecha, 5 %), `+` y `−` cambian el tamaño, y Supr las devuelve a la bandeja. En «Toda la casa», Enter acerca la cámara a su cuarto.
+- **«Toda la casa»:** las calcomanías tienen una zona de toque invisible de 14 px extra (`::after`).
+- **Arrastre con el dedo:** probado con toques reales de Chrome (CDP `Input.dispatchTouchEvent`). Mueve y guarda, y no corre la página. **Falta probarlo en un iPhone y un Android de verdad.**
+- **La página no se corre:** `html, body { overflow: hidden }`, y el mapa centra la parada de hoy moviendo solo su propio scroll (antes `scrollIntoView` corría la página 14 px).
+
+## Arte pendiente (Gemini)
+- Hoy, los muebles y las insignias se ven como emoji.
+- Las imágenes van en `assets/arte/<id>.webp`, con fondo transparente, y se agregan a `js/arte.js`.
+- Ids de los muebles: los de `TIENDA` en el servidor. Ids de las insignias: los de `INSIGNIAS`.
+- Los pedidos están en `Libro_Sprinkloud/herramientas/ilustraciones/etapa7.txt`, y se generan con `.\ilustraciones.ps1 7`.
+- `herramientas/arte.py` vuelve transparente el papel (`sin_papel`, como «color a alfa», con más cuerpo), recorta cada dibujo al objeto y actualiza `js/arte.js`.
+- **29-oct:** 8 de 42 listas (cuadro, guirnalda, reloj, cortinas, maceta, farolito, tetera y calcetines). La tarea diaria de la sesión (10:41) sigue con el resto. Los muebles de piso se piden en vista desde arriba en diagonal, como la casa.

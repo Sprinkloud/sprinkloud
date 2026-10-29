@@ -1,0 +1,16 @@
+{
+  "name": "El bosque de Sprinkloud",
+  "short_name": "Bosque",
+  "description": "Tu práctica de música de cada día, en un bosque de cuento.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F0E2",
+  "theme_color": "#F6F0E2",
+  "icons": [
+    { "src": "assets/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

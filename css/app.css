@@ -1,0 +1,402 @@
+/* El bosque de Sprinkloud · un cuento en acuarela: papel, madera, musgo y la luz de la fogata.
+   Tokens heredados de la app de Sprinkloud (DESIGN.md). Movimiento: solo transform y opacity, curvas fuertes (Emil Kowalski). */
+:root {
+  --moss: #647745; --moss-deep: #48592F; --moss-soft: #E1E6CF;
+  --ochre: #C4923A; --ochre-deep: #9C6F22; --ochre-soft: #F1E0BC;
+  --rose: #B0685A; --rose-deep: #8E4D41; --rose-soft: #F3DED8;
+  --sky: #7895A6; --sky-soft: #DCE5E8;
+  --paper: #F6F0E2; --paper-deep: #EFE6D1; --surface: #FBF7EE; --cream: #FFFDF8;
+  --ink: #3A3128; --ink-soft: #6D6152; --line: #DCCFB5;
+  --wood: #8A5A35; --wood-deep: #5E3B22; --wood-soft: #C9A27A;
+  --fire: #E8742A; --fire-glow: #FFB54A;
+  --mallow: #FFF4EC; --mallow-toast: #E6B98A;
+  /* para texto y caras de botón con texto (contraste AA ≥ 4.5:1, ver DESIGN.md) */
+  --ochre-ink: #2E2010; --ochre-strong: #8A6420; --label-ochre: #7E5A1A;
+  --sky-strong: #567285; --sky-strong-deep: #3E5563;
+  --rose-strong: #A15A4D; --rose-strong-deep: #7E4338;
+  --fire-text: #A64B17; --ok-text: var(--moss-deep); --mal-text: var(--rose-deep);
+  /* sombras y luces de los botones esponjosos y el papel */
+  --sombra-boton: rgba(58, 40, 20, .55); --brillo-cara: rgba(255, 255, 255, .42); --hondo-cara: rgba(0, 0, 0, .14);
+  --borde-cara: rgba(0, 0, 0, .10); --luz-cara: rgba(255, 255, 255, .45); --velo: rgba(40, 30, 20, .45); --sombra-cajon: rgba(0, 0, 0, .2);
+  --medalla-luz: #FFF6DA; --humo: rgba(160, 150, 140, .45); --luciernaga: #FFE9A3; --luciernaga-luz: rgba(255, 220, 120, .7);
+  /* la hoja de práctica: tinta de imprenta sobre papel (de noche se invierte con un filtro) */
+  --hoja-tinta: #2B241C; --hoja-tinta-suave: #5A4E40; --hoja-ocre: #8F6A2A; --hoja-linea: #CDBF9F;
+  --hoja-bien: #48592F; --hoja-bien-fondo: #E1E6CF; --hoja-mal: #9A5245; --hoja-mal-fondo: #F3DED8;
+  --f-display: 'Fraunces', Georgia, serif;
+  --f-body: 'Nunito Sans', system-ui, sans-serif;
+  --f-hand: 'Caveat', 'Comic Sans MS', cursive;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --sombra-papel: 0 1px 0 rgba(94, 59, 34, .06), 0 10px 24px -14px rgba(58, 49, 40, .45);
+  --radio: 22px;
+  color-scheme: light;
+}
+/* De noche (por la hora real): el bosque se oscurece y la fogata ilumina */
+:root[data-hora="noche"] {
+  --paper: #232A25; --paper-deep: #1C221E; --surface: #2C3530; --cream: #333D37;
+  --ink: #EDE6D6; --ink-soft: #B9AF9C; --line: #3E4A42;
+  --moss-soft: #34402E; --ochre-soft: #4A3C22; --rose-soft: #4A302B; --sky-soft: #2E3A40;
+  --sombra-papel: 0 1px 0 rgba(0, 0, 0, .3), 0 12px 26px -14px rgba(0, 0, 0, .7);
+  --label-ochre: var(--ochre); --fire-text: var(--fire); --ok-text: #B5CB93; --mal-text: #E2A699;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; }   /* cada pantalla mide la ventana; nada corre la página */
+body {
+  font-family: var(--f-body); color: var(--ink); background: var(--paper);
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none; overflow: hidden;
+}
+/* Textura de papel de acuarela: manchas suaves y grano */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(120% 60% at 15% 0%, rgba(196, 146, 58, .10), transparent 60%),
+    radial-gradient(90% 50% at 100% 100%, rgba(100, 119, 69, .12), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-hora="noche"] body::before {
+  background:
+    radial-gradient(80% 50% at 50% 100%, rgba(232, 116, 42, .14), transparent 65%),
+    radial-gradient(100% 60% at 0% 0%, rgba(120, 149, 166, .10), transparent 60%);
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+:focus-visible { outline: 3px solid var(--ochre); outline-offset: 3px; border-radius: 12px; }
+img { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-height: 1.15; font-variation-settings: 'SOFT' 100; }
+.mano { font-family: var(--f-hand); font-weight: 600; }
+
+/* ---------- Pantallas: cada una ocupa la ventana (100dvh), como una página del cuento ---------- */
+#app { position: relative; z-index: 1; height: 100dvh; max-width: 760px; margin: 0 auto; }
+.pantalla {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  padding: max(10px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
+  opacity: 0; transform: translateY(14px); pointer-events: none;
+  transition: opacity 260ms var(--ease-out), transform 260ms var(--ease-out);
+}
+.pantalla.activa { opacity: 1; transform: none; pointer-events: auto; }
+
+/* ---------- Botones esponjosos: una cara acolchada sobre un borde de madera que se hunde al tocarlos ---------- */
+.puff {
+  --c: var(--moss); --c-borde: var(--moss-deep); --c-texto: #FFFDF5; --alto: 6px;
+  position: relative; border: 0; padding: 0; background: transparent; border-radius: 20px;
+  min-height: 48px; font-weight: 800; letter-spacing: .01em;
+}
+.puff .borde {
+  position: absolute; inset: 0; border-radius: inherit; background: var(--c-borde);
+  box-shadow: 0 10px 14px -10px var(--sombra-boton);
+}
+.puff .cara {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: inherit; padding: 10px 18px; border-radius: inherit; color: var(--c-texto);
+  background:
+    radial-gradient(120% 90% at 30% 15%, var(--brillo-cara), transparent 55%),
+    radial-gradient(140% 120% at 70% 110%, var(--hondo-cara), transparent 60%),
+    var(--c);
+  box-shadow: inset 0 -3px 0 var(--borde-cara), inset 0 2px 1px var(--luz-cara);
+  transform: translateY(calc(var(--alto) * -1));
+  transition: transform 140ms var(--ease-out);
+}
+.puff:active .cara { transform: translateY(-1px); transition-duration: 60ms; }
+.puff[disabled] { opacity: .55; cursor: default; }
+.puff[disabled] .cara { transform: translateY(-2px); }
+.puff.ocre { --c: var(--ochre); --c-borde: var(--ochre-deep); --c-texto: var(--ochre-ink); }   /* dorado con letra café: 5.7:1 */
+.puff.rosa { --c: var(--rose-strong); --c-borde: var(--rose-strong-deep); }
+.puff.cielo { --c: var(--sky-strong); --c-borde: var(--sky-strong-deep); }
+.puff.papel { --c: var(--cream); --c-borde: var(--wood-soft); --c-texto: var(--ink); }
+.puff.madera { --c: var(--wood); --c-borde: var(--wood-deep); }
+.puff.grande { min-height: 64px; font-size: 1.25rem; border-radius: 26px; --alto: 8px; }
+.puff.redondo { border-radius: 50%; min-height: 0; width: var(--d, 56px); height: var(--d, 56px); }
+.puff.redondo .cara { padding: 0; width: 100%; height: 100%; }
+@media (hover: hover) and (pointer: fine) {
+  .puff:hover:not(:active) .cara { transform: translateY(calc(var(--alto) * -1 - 1px)); }   /* sin :active, el hover le ganaría a la presión */
+}
+/* Respira suave: el botón principal invita a tocarlo */
+.puff.respira { animation: respira 2.6s var(--ease-in-out) infinite; }   /* en el botón de afuera: la cara sigue hundiéndose al tocar */
+@keyframes respira { 50% { transform: scale(1.035); } }
+
+/* ---------- Barra de arriba: fogata, malvaviscos y sonido ---------- */
+.barra { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 52px; }
+.ficha {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 6px; border-radius: 999px;
+  background: var(--surface); box-shadow: var(--sombra-papel); font-weight: 800; font-size: 1.05rem; min-height: 44px;
+}
+.ficha svg, .ficha .fogata { width: 32px; height: 32px; flex: none; }
+.ficha .fogata svg { width: 32px; height: 32px; }
+.ficha .num { font-variant-numeric: tabular-nums; }
+.btn-icono { border: 0; background: var(--surface); box-shadow: var(--sombra-papel); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 1.2rem; }
+.btn-icono { transition: transform 140ms var(--ease-out); }
+.btn-icono:active { transform: scale(.94); transition-duration: 60ms; }
+
+/* ---------- La fogata (la racha): leños, llamas que tiemblan y humo que sube ---------- */
+.fogata { position: relative; display: inline-block; }
+.fogata svg { display: block; width: 100%; height: auto; }
+.fogata-grande .fogata { display: block; width: 100%; }
+.fogata-grande .humo { width: 22px; height: 22px; margin-left: -11px; filter: blur(5px); }
+.fogata .llama { transform-origin: 50% 100%; transform-box: fill-box; }
+.fogata[data-estado="grande"] .llama, .fogata[data-estado="encendida"] .llama { animation: tiembla 1.4s ease-in-out infinite; }
+.fogata .llama.dos { animation-delay: -.5s !important; animation-duration: 1.1s !important; }
+.fogata[data-estado="encendida"] .llama { opacity: .85; transform: scale(.78); }
+.fogata[data-estado="brasas"] .llama { opacity: 0; }
+.fogata[data-estado="apagada"] .llama { opacity: 0; }
+.fogata[data-estado="brasas"] .brasa { animation: brasa 2.4s ease-in-out infinite; }
+.fogata .brasa { opacity: 0; }
+.fogata[data-estado="brasas"] .brasa { opacity: 1; }
+@keyframes tiembla { 0%, 100% { transform: scale(1, 1) skewX(0); } 30% { transform: scale(.94, 1.06) skewX(-3deg); } 65% { transform: scale(1.04, .95) skewX(2deg); } }
+@keyframes brasa { 50% { opacity: .55; } }
+.humo { position: absolute; left: 50%; bottom: 70%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--humo); filter: blur(2px); opacity: 0; pointer-events: none; }
+.fogata[data-estado="grande"] .humo, .fogata[data-estado="encendida"] .humo { animation: humo 3.2s ease-out infinite; }
+.humo:nth-child(2) { animation-delay: 1.05s !important; }
+.humo:nth-child(3) { animation-delay: 2.1s !important; }
+@keyframes humo { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 20% { opacity: .7; } 100% { opacity: 0; transform: translate(10px, -46px) scale(2.2); } }
+
+/* ---------- Camino del bosque ---------- */
+.heroe {
+  position: relative; border-radius: var(--radio); overflow: hidden; flex: none; height: min(27dvh, 230px);
+  box-shadow: var(--sombra-papel); background: var(--paper-deep);
+}
+.heroe img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+:root[data-hora="noche"] .heroe img { filter: brightness(.55) saturate(.8) hue-rotate(-8deg); }
+.heroe .noche-luz { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+:root[data-hora="noche"] .heroe .noche-luz { opacity: 1; }
+.luciernaga { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--luciernaga); box-shadow: 0 0 10px 3px var(--luciernaga-luz); animation: luciernaga 5s ease-in-out infinite; }
+@keyframes luciernaga { 0%, 100% { opacity: .1; transform: translate(0, 0); } 50% { opacity: 1; transform: translate(14px, -10px); } }
+.burbuja {
+  position: absolute; left: 12px; bottom: 12px; right: 30%; padding: 10px 14px; border-radius: 18px 18px 18px 4px;
+  background: var(--cream); color: var(--ink); box-shadow: var(--sombra-papel); font-family: var(--f-hand); font-size: 1.35rem; line-height: 1.1;
+}
+.zona { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: 12px 0 4px; }
+.zona h2 { font-size: 1.25rem; text-align: center; flex: 1; }
+.zona h2 small { display: block; font-family: var(--f-body); font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--label-ochre); }
+.mapa { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; -webkit-mask-image: linear-gradient(transparent, #000 14px, #000 calc(100% - 14px), transparent); }
+.mapa::-webkit-scrollbar { display: none; }
+.mapa svg { display: block; width: 100%; max-width: 420px; margin: 0 auto; height: auto; overflow: visible; }
+.mapa .fondo-zona { opacity: .55; }
+:root[data-hora="noche"] .mapa .fondo-zona { opacity: .07; }
+.parada { cursor: pointer; }
+.parada .piedra { transition: transform 160ms var(--ease-out); transform-box: fill-box; transform-origin: center; }
+.parada:active .piedra { transform: scale(.94); }
+.parada.actual .halo { animation: halo 2.2s var(--ease-out) infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes halo { 0% { opacity: .7; transform: scale(.85); } 100% { opacity: 0; transform: scale(1.5); } }
+.parada text { font-family: var(--f-display); font-weight: 700; }
+.nav { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1fr; gap: 10px; align-items: end; padding-top: 10px; }
+.nav .puff .cara { flex-direction: column; gap: 0; padding: 6px 4px 8px; font-size: .78rem; }
+.nav .puff .cara .ico { font-size: 1.5rem; line-height: 1.1; }
+.nav .puff.grande .cara { font-size: 1.05rem; }
+.nav .puff.grande .cara .ico { font-size: 1.8rem; }
+.hecho-hoy { text-align: center; font-family: var(--f-hand); font-size: 1.35rem; color: var(--ok-text); margin-top: 6px; }
+
+/* ---------- Práctica ---------- */
+.practica-arriba { display: flex; align-items: center; gap: 10px; min-height: 52px; }
+.pasos { flex: 1; display: flex; gap: 8px; justify-content: center; }
+.paso { width: 30px; height: 30px; border-radius: 50%; background: var(--paper-deep); display: grid; place-items: center; transition: transform 200ms var(--ease-out); }
+.paso > span { opacity: .35; transition: opacity 200ms ease; }
+.paso.hecho > span, .paso.ahora > span { opacity: 1; }
+.paso.hecho { background: var(--moss-soft); }
+.paso.ahora { transform: scale(1.15); box-shadow: 0 0 0 3px var(--ochre-soft); }
+.escenario { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding-top: 8px; }
+.tarjeta { background: var(--surface); border-radius: var(--radio); box-shadow: var(--sombra-papel); padding: 16px; }
+.consigna { display: flex; align-items: center; gap: 10px; }
+.consigna .cara-osito { width: 54px; height: 54px; border-radius: 50%; overflow: hidden; flex: none; box-shadow: 0 0 0 3px var(--cream); }
+.consigna .cara-osito img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: scale(2.3) translateY(4%); }
+.consigna p { margin: 0; font-family: var(--f-hand); font-size: 1.5rem; line-height: 1.05; }
+.contador { margin-left: auto; font-weight: 800; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pentagrama { background: var(--cream); border-radius: 18px; display: grid; place-items: center; padding: 6px; min-height: 150px; flex: 1; max-height: 320px; }
+:root[data-hora="noche"] .pentagrama, :root[data-hora="noche"] .hoja-papel { filter: invert(.88) hue-rotate(180deg); }
+.pentagrama svg { width: min(100%, 400px); height: auto; max-height: 100%; }
+.respuestas-juego { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 12px 10px; margin-top: auto; padding-bottom: 6px; }
+.respuestas-juego .puff .cara { font-size: 1.15rem; min-height: 58px; }
+.respuestas-juego .puff.bien { --c: var(--moss); --c-borde: var(--moss-deep); --c-texto: var(--cream); }
+.respuestas-juego .puff.mal { --c: var(--rose-strong); --c-borde: var(--rose-strong-deep); --c-texto: var(--cream); }
+.respuestas-juego.ritmos { grid-template-columns: 1fr; }
+.opcion-ritmo .cara { min-height: 82px !important; color: var(--ink) !important; }
+.opcion-ritmo .celdas { display: flex; align-items: flex-end; gap: 4px; justify-content: center; flex-wrap: nowrap; }
+.opcion-ritmo .celda { display: grid; justify-items: center; }
+.opcion-ritmo .celda svg { height: 50px; width: auto; }
+.opcion-ritmo .sil { font-family: var(--f-hand); font-size: 1.1rem; color: var(--ochre-deep); }
+.escuchar { align-self: center; }
+.tambor { align-self: center; --d: min(46vw, 200px); }
+.tambor .cara { font-size: 3.4rem; }
+.tambor.golpe .cara { transform: translateY(-1px) scale(.97); }
+.pulso-luces { display: flex; justify-content: center; gap: 8px; }
+.pulso-luces i { width: 18px; height: 18px; border-radius: 50%; background: var(--paper-deep); transition: transform 120ms var(--ease-out), background-color 120ms ease; }
+.pulso-luces i.ya { background: var(--ochre); transform: scale(1.2); }
+.pulso-luces i.bien { background: var(--moss); }
+.pulso-luces i.mal { background: var(--rose); }
+.mensaje { text-align: center; font-family: var(--f-hand); font-size: 1.6rem; min-height: 2rem; }
+.mensaje.bien { color: var(--ok-text); }
+.mensaje.mal { color: var(--mal-text); }
+.ejemplo { position: relative; }
+.ejemplo::after { content: 'Mira 👀'; position: absolute; top: 4px; right: 14px; z-index: 2; background: var(--ochre-strong); color: var(--cream); font-weight: 800; font-size: .8rem; padding: 3px 10px; border-radius: 999px; }
+.pista { outline: 4px solid var(--ochre); outline-offset: 3px; border-radius: 22px; }
+
+/* Hoja de práctica dentro de la app (las mismas preguntas del sitio) */
+.hoja-scroll { flex: 1; min-height: 0; overflow-y: auto; border-radius: var(--radio); }
+.hoja-papel { background: var(--cream); color: var(--hoja-tinta); border-radius: var(--radio); padding: 16px; display: grid; gap: 22px; box-shadow: var(--sombra-papel); }
+.hoja-papel .ejercicio { display: grid; gap: 10px; }
+.hoja-papel .ejercicio h3 { font-size: 1.15rem; color: var(--hoja-tinta); }
+.hoja-papel .ejercicio h3 small { display: none; }
+.hoja-papel .consigna { margin: 0; color: var(--hoja-tinta-suave); font-family: var(--f-body); font-size: 1rem; display: block; }
+.hoja-papel .items { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px 10px; }
+.hoja-papel .items.anchos { grid-template-columns: 1fr; }
+.hoja-papel .items.medianos { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.hoja-papel .item { display: grid; gap: 6px; align-content: start; justify-items: center; text-align: center; min-width: 0; }
+.hoja-papel .items.anchos .item { justify-items: stretch; text-align: left; }
+.hoja-papel .item .num { font-weight: 800; font-size: .8rem; color: var(--hoja-ocre); justify-self: start; }
+.hoja-papel .item .enunciado { font-size: 1.05rem; font-weight: 700; }
+.hoja-papel .item svg { width: 100%; max-width: 220px; height: auto; display: block; }
+.hoja-papel .respuestas { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; max-width: 100%; }
+.hoja-papel .respuestas input, .hoja-papel .respuestas select { width: 7em; min-height: 44px; border: 0; border-bottom: 2px solid var(--hoja-tinta); border-radius: 0; background: transparent; padding: 4px 6px; text-align: center; font-family: var(--f-hand); font-size: 1.45rem; color: var(--hoja-tinta); }
+.hoja-papel .respuestas select { font-family: var(--f-body); font-size: 1rem; width: auto; max-width: 100%; border: 1px solid var(--hoja-linea); border-radius: 10px; }
+.hoja-papel .respuestas input.corto { width: 3.6em; }
+.hoja-papel .respuestas input.nota { width: 3.6em; }
+.hoja-papel .respuestas input.largo { width: min(14em, 100%); }
+.hoja-papel .respuestas .sep { color: var(--hoja-ocre); font-weight: 800; }
+.hoja-papel input.ok, .hoja-papel select.ok, .hoja-papel .ok input { border-color: var(--hoja-bien) !important; background: var(--hoja-bien-fondo) !important; }
+.hoja-papel input.mal, .hoja-papel select.mal, .hoja-papel .dibujable.mal { border-color: var(--hoja-mal) !important; background: var(--hoja-mal-fondo) !important; }
+.hoja-papel .dibujable.ok { background: var(--hoja-bien-fondo); border-radius: 10px; }
+.hoja-papel .solucion { font-size: .9rem; color: var(--hoja-bien); font-weight: 800; }
+.hoja-papel .dibujable { cursor: pointer; touch-action: manipulation; }
+.hoja-acciones { display: flex; gap: 10px; padding-top: 10px; }
+.hoja-acciones .puff { flex: 1; }
+
+/* ---------- Fin de la práctica ---------- */
+.fin { align-items: center; justify-content: center; text-align: center; gap: 14px; }
+.fin .fogata-grande { width: min(56vw, 230px); }
+.fin h1 { font-size: clamp(1.9rem, 7vw, 2.6rem); }
+.fin .ganado { display: inline-flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: 800; }
+.fin .ganado svg { width: 44px; height: 44px; }
+.fin .acciones { display: grid; gap: 14px; width: min(100%, 360px); margin-top: 8px; }
+.fin .racha-txt { font-family: var(--f-hand); font-size: 1.6rem; color: var(--fire-text); }
+.aparece { animation: aparece 360ms var(--ease-out) both; }
+.aparece.d1 { animation-delay: 70ms; } .aparece.d2 { animation-delay: 140ms; } .aparece.d3 { animation-delay: 210ms; } .aparece.d4 { animation-delay: 280ms; }
+@keyframes aparece { from { opacity: 0; transform: translateY(12px) scale(.96); } }
+
+/* ---------- Casita, tienda y logros ---------- */
+.cabecera { display: flex; align-items: center; gap: 10px; min-height: 52px; }
+.cabecera h1 { font-size: 1.5rem; flex: 1; }
+.casa { position: relative; border-radius: var(--radio); overflow: hidden; box-shadow: var(--sombra-papel); background: var(--paper-deep); aspect-ratio: 1000 / 718; flex: none; }
+.casa > img { width: 100%; height: 100%; object-fit: cover; }
+:root[data-hora="noche"] .casa > img { filter: brightness(.7) sepia(.2); }
+/* los dibujos de Gemini llegan sin papel (fondo transparente, ver herramientas/arte.py) */
+.medalla img { width: 78%; height: 78%; object-fit: contain; }
+.visitas { margin-top: 14px; display: grid; gap: 8px; justify-items: center; text-align: center; }
+.visitas .amigos { width: 100%; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+.visitas p { margin: 0; font-size: 1.3rem; color: var(--ink-soft); }
+/* Casa de muñecas vista desde arriba: la capa (imagen + lugares) se acerca al cuarto elegido */
+.casa-arriba { aspect-ratio: 1; max-height: 52dvh; margin: 0 auto; width: min(100%, 52dvh); background: var(--cream); }
+.casa-capa { position: absolute; inset: 0; transform-origin: 50% 50%; transition: transform 420ms var(--ease-in-out); }
+.casa-capa > img { width: 100%; height: 100%; object-fit: cover; }
+:root[data-hora="noche"] .casa-capa > img { filter: brightness(.72) sepia(.15); }
+/* Calcomanías: el dibujo con todos sus colores y un borde blanco de pegatina */
+.calco { position: absolute; padding: 0; border: 0; background: none; touch-action: none; cursor: grab; aspect-ratio: 1;
+  filter: drop-shadow(0 3px 3px rgba(58, 40, 20, .35)); }   /* el borde blanco ya viene en la imagen (herramientas/arte.py) */
+.calco img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; -webkit-user-drag: none; }
+.calco:not(:has(img)) { font-size: clamp(1rem, 6vw, 2.2rem); display: grid; place-items: center; }
+/* de lejos las calcomanías son chicas: una zona de toque invisible más grande (tocar acerca la cámara a su cuarto) */
+.casa-arriba[data-cuarto="todo"] .calco::after { content: ''; position: absolute; inset: -14px; border-radius: 50%; }
+.calco:focus-visible { outline: calc(3px / var(--zoom, 1)) solid var(--ochre-strong); outline-offset: calc(2px / var(--zoom, 1)); }
+.calco.elegida { outline: calc(2px / var(--zoom, 1)) dashed var(--ochre); outline-offset: calc(2px / var(--zoom, 1)); border-radius: 8px; cursor: grabbing; }
+.herramientas-calco { display: flex; justify-content: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.herramientas-calco .btn-icono { font-family: var(--f-display); font-size: 1.35rem; font-weight: 700; color: var(--ink); }
+.bandeja { min-height: 86px; }
+.bandeja-fila { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+.bandeja-fila::-webkit-scrollbar { display: none; }
+.calco-bandeja { flex: none; width: 76px; height: 76px; border: 0; border-radius: 18px; background: var(--surface); box-shadow: var(--sombra-papel); padding: 8px; display: grid; place-items: center; transition: transform 140ms var(--ease-out); }
+.calco-bandeja:active { transform: scale(.94); }
+.calco-bandeja .arte-mini { width: 100%; height: 100%; display: grid; place-items: center; font-size: 2rem; }
+.calco-bandeja img { width: 100%; height: 100%; object-fit: contain; }
+.bandeja .mano { margin: 0; text-align: center; font-size: 1.3rem; color: var(--ink-soft); }
+.pestanas.cuartos { justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { .casa-capa { transition: none; } }
+.pista-casa { text-align: center; font-size: 1.35rem; margin: 10px 0 0; color: var(--ink-soft); }
+.casa-acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.lista-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 6px 2px 12px; }
+.pestanas { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; flex: none; }
+.pestanas::-webkit-scrollbar { display: none; }
+.pestana { border: 0; border-radius: 999px; padding: 8px 14px; min-height: 44px; background: var(--surface); box-shadow: var(--sombra-papel); font-weight: 800; white-space: nowrap; }
+.pestana[aria-pressed="true"] { background: var(--ochre-strong); color: var(--cream); }   /* 5.3:1 */
+.tienda { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.articulo { background: var(--surface); border-radius: var(--radio); box-shadow: var(--sombra-papel); padding: 12px; display: grid; gap: 8px; justify-items: center; text-align: center; }
+.articulo .arte { width: 84px; height: 84px; border-radius: 50%; background: var(--paper-deep); display: grid; place-items: center; font-size: 2.8rem; }
+.articulo .arte img { width: 100%; height: 100%; object-fit: contain; }
+.articulo h3 { font-family: var(--f-body); font-size: .95rem; font-weight: 800; }
+.precio { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; }
+.precio svg { width: 22px; height: 22px; }
+.articulo .puff { width: 100%; }
+.seccion-titulo { font-size: 1.15rem; margin: 14px 2px 10px; }
+.insignias { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 14px 10px; }
+.insignia { border: 0; background: none; padding: 0; display: grid; gap: 6px; justify-items: center; text-align: center; font-size: .82rem; font-weight: 800; color: var(--ink); }
+.medalla { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; font-size: 2.2rem; position: relative;
+  background: radial-gradient(circle at 35% 30%, var(--medalla-luz), var(--ochre-soft) 55%, var(--ochre) 100%);
+  box-shadow: inset 0 -4px 0 var(--borde-cara), 0 0 0 4px var(--cream), 0 0 0 6px var(--ochre), var(--sombra-papel); }
+.insignia.bloqueada .medalla { filter: grayscale(1) opacity(.45); }
+.insignia.bloqueada { color: var(--ink-soft); }
+.amigos { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 14px 10px; }
+.amigo { display: grid; justify-items: center; gap: 6px; font-weight: 800; font-size: .85rem; text-align: center; }
+.amigo .retrato { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; background: var(--cream); box-shadow: 0 0 0 4px var(--cream), var(--sombra-papel); }
+.amigo .retrato img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; mix-blend-mode: multiply; }
+.amigo.bloqueado .retrato img { filter: grayscale(1) blur(5px) opacity(.5); }
+.amigo.bloqueado { color: var(--ink-soft); }
+.numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.numero { background: var(--surface); border-radius: 18px; box-shadow: var(--sombra-papel); padding: 12px 6px; text-align: center; }
+.numero b { display: block; font-family: var(--f-display); font-size: 1.6rem; }
+.numero span { font-size: .78rem; font-weight: 800; color: var(--ink-soft); }
+
+/* ---------- Hojas que suben desde abajo (elegir un mueble, aviso de logro) ---------- */
+.velo { position: fixed; inset: 0; background: var(--velo); z-index: 20; opacity: 0; transition: opacity 220ms ease; }
+.velo.abierto { opacity: 1; }
+.cajon {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; max-width: 760px; margin: 0 auto; max-height: 82dvh; overflow-y: auto;
+  background: var(--surface); border-radius: 28px 28px 0 0; padding: 10px 16px max(18px, env(safe-area-inset-bottom));
+  transform: translateY(100%); transition: transform 360ms var(--ease-drawer); box-shadow: 0 -10px 30px var(--sombra-cajon);
+}
+.cajon.abierto { transform: none; }
+.cajon::before { content: ''; display: block; width: 44px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 12px; }
+.cajon h2 { font-size: 1.3rem; text-align: center; margin-bottom: 12px; }
+.cajon .tienda { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+.premio { display: grid; justify-items: center; gap: 12px; text-align: center; padding: 6px 0 4px; }
+.premio .medalla, .premio .retrato { width: 110px; height: 110px; font-size: 3.2rem; }
+.premio .retrato { border-radius: 50%; overflow: hidden; background: var(--cream); }
+.premio .retrato img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; mix-blend-mode: multiply; }
+.premio p { margin: 0; font-family: var(--f-hand); font-size: 1.5rem; }
+.premio .acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+
+/* ---------- Entrada ---------- */
+.entrada { align-items: center; justify-content: center; text-align: center; gap: 18px; }
+.entrada .portada { width: min(86vw, 420px); border-radius: 50% 50% 28px 28px / 38% 38% 28px 28px; overflow: hidden; box-shadow: var(--sombra-papel); }
+.entrada h1 { font-size: clamp(2rem, 8vw, 2.8rem); }
+.entrada h1 span { display: block; font-family: var(--f-hand); color: var(--ochre-deep); font-size: .7em; }
+.entrada p { margin: 0; color: var(--ink-soft); max-width: 30ch; }
+.entrada .puff { width: min(100%, 320px); }
+.cargando { font-family: var(--f-hand); font-size: 1.5rem; color: var(--ink-soft); }
+
+.aviso {
+  position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 30; transform: translate(-50%, 20px); opacity: 0;
+  background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 14px; font-weight: 700; max-width: calc(100% - 32px);
+  transition: transform 260ms var(--ease-out), opacity 200ms ease; pointer-events: none;
+}
+.aviso.ver { opacity: 1; transform: translate(-50%, 0); }
+
+@media (min-width: 761px) {
+  .pantalla { padding-left: 24px; padding-right: 24px; }
+  .heroe { height: min(32dvh, 260px); }
+}
+@media (max-height: 640px) {
+  .heroe { height: 19dvh; }
+  .burbuja { font-size: 1.1rem; padding: 6px 10px; }
+  .zona { margin: 6px 0 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pantalla { transform: none; transition: opacity 200ms ease; }
+  .puff.respira .cara, .fogata .llama, .humo, .luciernaga, .parada.actual .halo, .fogata .brasa { animation: none !important; }
+  .aparece { animation: aparecer-suave 200ms ease both; }
+  @keyframes aparecer-suave { from { opacity: 0; } }
+  .cajon { transform: none; opacity: 0; transition: opacity 200ms ease; }
+  .cajon.abierto { opacity: 1; }
+  .aviso { transform: translate(-50%, 0); }
+}

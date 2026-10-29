@@ -1,0 +1,19 @@
+{
+  "detector": {
+    "ignoreRules": [
+      "pulsing-dot",
+      "dark-glow"
+    ],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-29T06:18:23.871Z"
+      }
+    ]
+  }
+}
