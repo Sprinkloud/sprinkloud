@@ -133,16 +133,16 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
   - El tamaño base sale del lugar de la cosa en `POS` × 1,35.
 - **El recorte:** con rembg (IA libre de GitHub, modelo `isnet-general-use`, en `herramientas/arte.py`). Cada dibujo queda con todos sus colores, opaco. El borde blanco de calcomanía lo pone el CSS con `drop-shadow`.
 
-## Ejemplos que suenan en los libros (29-oct, pedido de la dueña; falta subir)
+## Ejemplos que suenan en los libros (29-oct, pedido de la dueña; publicado el 29-oct)
 - En la biblioteca, debajo del dibujo («Míralo») de cada lección aparece **«Escúchalo»** con botones 🔊 que tocan lo mismo que muestra el dibujo: el pulso, los ritmos (con tambor), las notas, los intervalos, los acordes y sus inversiones, las progresiones, los modos… y el dibujo brilla mientras suena (`ponerEjemplos` en `app.js`).
 - Los ejemplos están en `js/ejemplos.js` (`Ejemplos.de(semana, instrumento)` y `Ejemplos.tocar(partitura, Sonido)`), copiados a mano de `Libro_Sprinkloud/plantilla/diagramas.html`: si cambia un dibujo, cambiar también su ejemplo. Escritura: `c4 e4 g4` notas, `c4+e4+g4` acorde, `:2` duración en pulsos, `r` silencio, `x`/`X` clic del pulso, `o` tambor, `@80` tempo, `!p`/`!mf`/`!f` volumen y `&` otra voz a la vez. Las 60 lecciones tienen ejemplos (piano y violín).
 - `Sonido.notaEn(t, midi, dur, gain)`: una nota en un momento exacto del reloj de audio.
 
-## Por ahora, el bosque es de piano para todos (29-oct, decisión de la dueña; falta subir)
+## Por ahora, el bosque es de piano para todos (29-oct, decisión de la dueña; publicado el 29-oct)
 - El bosque usa **el libro y la guía de piano para todos los alumnos**, también los de violín (`BOSQUE_INSTRUMENTO = 'Piano'` en `Registro_Sprinkloud/maestros/Código.js`; en la prueba, `instrumento: 'piano'` y los libros `demo-libros/piano-N.json`). Pronto habrá un bosque de violín: entonces se vuelve a usar el instrumento de cada alumno.
 - Biblioteca: cada lomo lleva su número y **una sola palabra** (`PALABRA_LIBRO`: Pulso, Lectura, Ritmo, Acordes, Tonalidad, Expresión, Modos); el nombre completo va en `aria-label` y al abrir el libro. La cinta del libro actual cuelga abajo, sin tapar el número.
 
-## 60 lecciones, 7 etapas y actividades nuevas (29-oct, revisión de la dueña; falta subir)
+## 60 lecciones, 7 etapas y actividades nuevas (29-oct, revisión de la dueña; publicado el 29-oct)
 - La guía tiene 60 lecciones en 7 etapas (la 7, los modos griegos: zona lila en el camino y un 7.º libro en la biblioteca, lomo `plum`). `api.js`: `LARGO = [6, 8, 13, 10, 9, 6, 8]`, `APPS` copiado de la columna «App para practicar» de `Guia.js` (se parte también en `armaduras`), hasta 53 en la prueba. `porInstrumento` deja solo la parte del instrumento en los temas «piano / violín» y objetivos «Piano: … Violín: …» (el servidor ya lo hace; esto cubre el modo de prueba). Los motores se volvieron a copiar del sitio.
 - **Intervalos en el teclado** (actividad `teclado` en `actividades.js`, 🎹): en piano, las lecciones de intervalos (27, 28 y 29) empiezan con un teclado de Do4 a Sol5: se marca una tecla, pide un intervalo y al tocar cuenta los semitonos con puntitos numerados (verde si acierta, rojo si no). Ejemplo primero y vueltas de corrección como las demás. Siempre claro, como la hoja.
 - **Armaduras** (actividad `armadura`, ♯, para `armaduras:sostenidos|bemoles|relativas`): ejemplo animado del orden y después 6 preguntas de varias maneras: ordenar las alteraciones, ¿qué tonalidad?, ¿cuántas? y (en el círculo) la relativa menor, con la regla debajo. Datos copiados del sitio (`js/motores/armaduras.js`).
