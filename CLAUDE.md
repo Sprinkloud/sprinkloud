@@ -48,7 +48,7 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 | `js/arte.js` | Lista de los dibujos de `assets/arte/` que ya existen (los demás se ven como emoji) |
 | `js/motores/*.js` | **GENERADOS** por `herramientas/copiar_motores.py` desde el sitio: `hoja.js`, `lectura.js`, `ritmo.js`, `oido.js` y `leccion.js`. No se editan a mano |
 | `manifest.json`, `assets/icono-*.png` | Instalable en la pantalla de inicio |
-| `assets/vista-previa.jpg` | Imagen del enlace en WhatsApp, Facebook e Instagram (Open Graph, 1200×630): el osito y el logo de Sprinkloud. Se hace con `herramientas/vista-previa.html` y una captura de Playwright a 1200×630. WhatsApp guarda las vistas previas un tiempo, así que en los enlaces ya mandados puede tardar en aparecer |
+| `assets/vista-previa.jpg` | Imagen del enlace en WhatsApp, Facebook e Instagram (Open Graph, 1200×630): el osito en el bosque con «Sprinkloud» arriba, hecha con Gemini (`Libro_Sprinkloud/img/gemini/bosque-enlace.jpg`, 29-oct) y recortada a 1200×630. WhatsApp guarda las vistas previas un tiempo, así que en los enlaces ya mandados puede tardar en aparecer |
 
 ## El camino
 **Tocar una piedra lleva directo a la lección** (pedido de la dueña, 29-oct; antes solo mostraba el nombre y había que buscar «Practicar»):
@@ -56,6 +56,32 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 - una pasada abre una práctica de repaso de esa lección (`practicar_(semana)`);
 - las futuras muestran el candado.
 - **Sin recuadro de foco al tocar:** el navegador dibujaba un cuadro grande alrededor de la piedra, el osito y el halo. Ahora `.parada:focus` no lleva outline, y con teclado (`:focus-visible`) se ve un aro dorado solo en la piedra.
+
+## El oído del osito: lectura en voz alta con Vosk (`js/voz.js`, 29-oct)
+- **Por qué:** el reconocimiento de voz del navegador está hecho para frases y se pierde con sílabas sueltas. Con un audio de prueba entendió 4 de 9; Vosk entendió 9 de 9.
+- **Qué se usa:**
+  - vosk-browser 0.0.8 (Apache-2.0, `assets/voz/vosk.js`);
+  - el modelo vosk-model-small-es-0.42 (Apache-2.0, `assets/voz/modelo-es.tar.gz`, 40 MB);
+  - una lista cerrada de palabras: do, re, mi, fa, sol, la, si.
+- **Cómo carga:**
+  - `Voz.preparar(progreso)` baja el modelo contando el avance, con una barra «Preparando el oído del osito…». Así queda en la caché del navegador, y luego `Vosk.createModel(URL)` lo abre.
+  - Empieza a bajarse en cuanto arranca una práctica que tiene lectura en voz alta.
+  - Tiene límites de tiempo: si no se prepara, la actividad se salta con un mensaje amable y la práctica sigue.
+- **Cómo escucha:** `window.BosqueReconocedor` imita a SpeechRecognition, y `motores/lectura.js` lo usa primero (`copiar_motores.py` lo parcha).
+- **Ojo con la CSP:** necesita `'wasm-unsafe-eval'` y `'unsafe-eval'` en `script-src`, porque el worker de Vosk usa `new Function`. Sin `'unsafe-eval'` se quedaba colgado sin avisar. También necesita `blob:` en `connect-src` y en `worker-src`.
+- **Lo probado:**
+  - el modelo dentro de la app, con un audio de la voz de Windows (`prueba-voz.wav`, fuera de git): 9 de 9;
+  - **falta probarlo con el micrófono real** (lo prueba la dueña).
+
+## Tamaño en cada pantalla (29-oct)
+- **Cada pantalla puede bajar con scroll** (`.pantalla { overflow-y: auto }`) cuando la ventana es más baja que su contenido; antes, en la computadora, la barra de tareas tapaba botones que no se podían alcanzar.
+- **Altura mínima** del mapa: 190 px; de la zona de ejercicios: 380 px.
+- Probado en 1280×560 y con el celular acostado (740×360): todos los botones se alcanzan.
+
+## Marcar el pulso (tambor)
+- **El golpe cuenta al presionar** (`pointerdown`), no al soltar, así que responde al instante.
+- **Valen todas las formas de golpear:** tocar el tambor, hacer clic o tocar en cualquier parte del ejercicio, o apretar cualquier tecla. Enter sigue sirviendo para «¡Ahora tú!».
+- Al salir con ✕ deja de escuchar el teclado.
 
 ## La práctica de hoy (`Actividades.plan`)
 - **Semilla:** `hash(alumno | fecha del servidor | semana)`, así cambia a medianoche y es la misma todo el día. «Practicar más» usa otra vuelta de la semilla y da la mitad de malvaviscos.

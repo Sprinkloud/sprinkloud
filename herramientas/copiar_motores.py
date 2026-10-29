@@ -103,6 +103,10 @@ reemplazos = [
      "      est.clave = o.clave || 'treble'; est.pool = o.notas.slice(); est.nombres = false; est.alTerminar = o.alTerminar || null;\n"),
 ]
 reemplazos.append((
+    "  var Reconocedor = window.SpeechRecognition || window.webkitSpeechRecognition;\n",
+    "  /* la app del bosque trae su propio oído (js/voz.js, Vosk con las 7 sílabas); si no, el del navegador */\n"
+    "  var Reconocedor = window.BosqueReconocedor || window.SpeechRecognition || window.webkitSpeechRecognition;\n"))
+reemplazos.append((
     "      nuevas();\n      dlg.showModal();\n      dibujar();\n",
     "      nuevas();\n      dlg.showModal();\n      dibujar();\n"
     "      /* la app del bosque: el micrófono se pide al abrir y queda encendido (sin botón), para que el ejercicio se haga bien */\n"

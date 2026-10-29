@@ -11,7 +11,8 @@
   /* Cómo suele escribir el reconocedor de voz cada nombre de nota */
   var OIDO = { do: 'Do', dos: 'Do', doh: 'Do', re: 'Re', rey: 'Re', reh: 'Re', mi: 'Mi', me: 'Mi', mis: 'Mi', fa: 'Fa', far: 'Fa', fah: 'Fa',
     sol: 'Sol', sole: 'Sol', sold: 'Sol', la: 'La', lah: 'La', si: 'Si', see: 'Si' };
-  var Reconocedor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  /* la app del bosque trae su propio oído (js/voz.js, Vosk con las 7 sílabas); si no, el del navegador */
+  var Reconocedor = window.BosqueReconocedor || window.SpeechRecognition || window.webkitSpeechRecognition;
   var CSS = '' +
     '.lh{border:0;border-radius:18px;padding:0;width:min(760px,calc(100vw - 24px));max-height:calc(100dvh - 24px);background:var(--surface,#FBF7EE);color:var(--ink,#3A3128);box-shadow:0 20px 60px rgba(0,0,0,.25)}' +
     '.lh::backdrop{background:rgba(30,37,33,.55)}' +

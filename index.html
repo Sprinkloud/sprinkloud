@@ -20,7 +20,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://sprinkloud.github.io/sprinkloud/assets/vista-previa.jpg">
   <meta name="theme-color" content="#F6F0E2">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; worker-src blob:; frame-src 'none'; object-src 'none'; base-uri 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob: data:; connect-src 'self' blob: https://script.google.com https://script.googleusercontent.com; worker-src blob:; frame-src 'none'; object-src 'none'; base-uri 'self'">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="assets/icono-192.png">
   <link rel="apple-touch-icon" href="assets/icono-192.png">
@@ -52,6 +52,7 @@
   <script src="js/motores/ritmo.js"></script>
   <script src="js/motores/oido.js"></script>
   <script src="js/motores/hoja.js"></script>
+  <script src="js/voz.js"></script>
   <script src="js/motores/lectura.js"></script>
   <script src="js/sonido.js"></script>
   <script src="js/api.js"></script>

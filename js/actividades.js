@@ -211,8 +211,23 @@ window.Actividades = (function () {
     const luces = el('div', { class: 'pulso-luces' }, Array.from({ length: golpes }, () => el('i')));
     const msj = el('div', { class: 'mensaje', 'aria-live': 'polite' });
     let toques = [];
-    const tambor = puff('🥁', 'madera redondo tambor', () => { toques.push(S.ahora()); S.tambor(S.ahora()); tambor.classList.add('golpe'); setTimeout(() => tambor.classList.remove('golpe'), 90); });
-    cont.append(consigna('Toca el tambor con el pulso'), luces, tambor, msj);
+    /* el golpe cuenta al presionar (no al soltar), y vale tocar el tambor, hacer clic o tocar en cualquier parte del ejercicio,
+       o apretar cualquier tecla: así es fácil y el sonido sale al instante (pedido de la dueña) */
+    const golpe = () => { const t = S.ahora(); toques.push(t); S.tambor(t); tambor.classList.add('golpe'); setTimeout(() => tambor.classList.remove('golpe'), 90); };
+    const tambor = el('button', { class: 'puff madera redondo tambor', type: 'button', 'aria-label': 'Tambor: toca con el pulso (o cualquier tecla)' },
+      el('span', { class: 'borde' }), el('span', { class: 'cara', text: '🥁' }));
+    const alTocar = e => { if (e.button > 0 || e.target.closest('.puff:not(.tambor)')) return; e.preventDefault(); golpe(); };
+    const alTeclear = e => {
+      if (!cont.closest('.pantalla.activa')) { soltarTeclas(); return; }   // salió del ejercicio (✕): ya no escucha el teclado
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.key === 'Tab' || e.key === 'Escape') return;
+      const enBoton = document.activeElement && document.activeElement.closest && document.activeElement.closest('.puff:not(.tambor), .btn-icono');
+      if (enBoton && (e.key === 'Enter' || e.key === ' ')) return;   // Enter sigue sirviendo para «¡Ahora tú!»
+      e.preventDefault(); golpe();
+    };
+    cont.addEventListener('pointerdown', alTocar);
+    document.addEventListener('keydown', alTeclear);
+    const soltarTeclas = () => { cont.removeEventListener('pointerdown', alTocar); document.removeEventListener('keydown', alTeclear); };
+    cont.append(consigna('Toca el tambor con el pulso'), luces, tambor, el('p', { class: 'mano pista-tambor', text: 'Vale tocar, hacer clic o apretar cualquier tecla 🥁' }), msj);
     async function ronda(automatico, tempo) {
       const beat = 60 / tempo;
       toques = [];
@@ -251,6 +266,7 @@ window.Actividades = (function () {
       bien >= 6 ? S.acierto() : S.error();
       await espera(1600); msj.textContent = '';
     }
+    soltarTeclas();
     return { aciertos: total, intentos: golpes * 2 };
   }
 
@@ -327,10 +343,25 @@ window.Actividades = (function () {
   }
 
   /* ---------- 6. Lectura en voz alta: di el nombre de cada nota (la lectura hablada del sitio) ---------- */
-  const hayVoz = () => !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  const hayVoz = () => !!((window.Voz && window.Voz.soportado()) || window.SpeechRecognition || window.webkitSpeechRecognition);
   async function voz(cont, o) {
     const keys = poolNotas(o.semana, o.ins).filter(n => n.clave === 'treble').map(n => n.key);
-    cont.append(consigna('Lee las notas en voz alta 🎤'), el('div', { class: 'tarjeta', html: '<p class="mano" style="margin:0;font-size:1.4rem">Permite el micrófono, toca ▶ Empezar y di cada nota sin parar.</p>' }));
+    cont.append(consigna('Lee las notas en voz alta 🎤'));
+    /* el oído del osito (Vosk): la primera vez se baja (40 MB) y queda guardado en el celular */
+    if (window.Voz && window.Voz.soportado() && !window.Voz.listo()) {
+      const barra = el('i'), pct = el('span', { text: '0 %' });
+      const carga = el('div', { class: 'tarjeta preparando' }, el('p', { class: 'mano', text: 'Preparando el oído del osito… 👂' }), el('div', { class: 'barra-carga' }, barra), pct);
+      cont.append(carga);
+      try {
+        await window.Voz.preparar(x => { barra.style.transform = 'scaleX(' + x + ')'; pct.textContent = Math.round(x * 100) + ' %'; });
+      } catch (e) {
+        carga.replaceChildren(el('p', { class: 'mano', text: 'Hoy no se pudo preparar el oído del osito. ¡Seguimos con lo demás! 🌲' }));
+        await espera(2200);
+        return null;   // se salta: no cuenta en contra
+      }
+      carga.remove();
+    }
+    cont.append(el('div', { class: 'tarjeta', html: '<p class="mano" style="margin:0;font-size:1.4rem">Permite el micrófono, toca ▶ Empezar y di cada nota sin parar.</p>' }));
     return new Promise(listo => {
       let terminado = false;
       window.SprinkloudLectura.abrir({ clave: 'treble', notas: keys, microfono: true, alTerminar: (ok, total) => { terminado = true; setTimeout(() => { const d = document.querySelector('dialog.lh'); if (d && d.open) d.close(); listo({ aciertos: ok, intentos: total }); }, 1800); } });
@@ -351,7 +382,10 @@ window.Actividades = (function () {
     const tipo = tipoDe(l.app);
     const lista = [{ tipo, icono: ICONOS[tipo], correr: cont => correr(tipo, cont, base) }];
     if (window.Hoja.tieneHoja(l.semana)) lista.push({ tipo: 'hoja', icono: ICONOS.hoja, correr: cont => hoja(cont, base) });
-    if (l.semana >= 8 && hayVoz()) lista.push({ tipo: 'voz', icono: ICONOS.voz, correr: cont => voz(cont, base) });
+    if (l.semana >= 8 && hayVoz()) {
+      lista.push({ tipo: 'voz', icono: ICONOS.voz, correr: cont => voz(cont, base) });
+      if (window.Voz && window.Voz.soportado()) window.Voz.preparar().catch(() => { });   // se va bajando mientras hace las otras actividades
+    }
     if (l.semana > 1) {
       const anteriores = estado.camino.filter(c => c.semana < l.semana).map(c => c.semana);
       const s = uno(rnd, anteriores);
