@@ -10,8 +10,6 @@ Todo lo que no es de Sprinkloud es de dominio público (CC0) o de licencia libre
 | Archivo | Obra | Autor | Licencia | Fuente |
 |---|---|---|---|---|
 | `amanecer-1.mp3` | Good Morning | Cakeflaps (You're Perfect Studio) | CC0 1.0 | https://opengameart.org/node/86566 |
-| `amanecer-2.mp3` | Bright Eyes | tomcat | CC0 1.0 | https://opengameart.org/content/bright-eyes |
-| `amanecer-3.mp3` | Minimalistic Flute & Strings Tune | Spring Spring | CC0 1.0 | https://opengameart.org/content/minimalistic-flute-strings-tune |
 | `tienda.mp3` | Buy Something! (Shop Theme) | Cleyton Kauffman | CC0 1.0 | https://opengameart.org/content/shop-theme |
 | `casita.mp3` | Etirwer (Looped) | Kistol | CC0 1.0 | https://opengameart.org/content/etirwer |
 | `pajaros.mp3` | Birds and Wind - Ambient | Spring Spring | CC0 1.0 | https://opengameart.org/content/birds-and-wind-ambient-birds-wind-and-synth |

@@ -166,7 +166,7 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 ## Música y ambiente por escena (`ESCENAS` en `js/sonido.js`)
 | Escena | Qué suena |
 |---|---|
-| Mapa | Un amanecer feliz de primavera (pedido de la dueña, 29-oct): `amanecer-1..3` (Good Morning, Bright Eyes y Minimalistic Flute & Strings, CC0), una tras otra. De día suenan los pájaros; la fogata crepita siempre (más de noche) |
+| Mapa | Un amanecer feliz de primavera (pedido de la dueña, 29-oct): `amanecer-1.mp3` (Good Morning, de Cakeflaps, CC0), en bucle. Bright Eyes y Flute & Strings se probaron y se quitaron porque sonaban mal. De día suenan los pájaros; la fogata crepita siempre (más de noche) |
 | Tienda | Bossa nova. Al entrar suena la campanita de la puerta, y al comprar la caja registradora con monedas |
 | Casita | Guitarra suave y la chimenea que crepita. Al pegar una calcomanía suena un «pop» |
 | Biblioteca | Piano tranquilo (dos piezas de Holizna, CC0, una tras otra). Cada hoja del libro suena al pasar (`Sonido.hojaLibro`: el papel roza y la hoja cae) |
