@@ -71,6 +71,8 @@
     return el('div', { class: 'barra' },
       el('span', { class: 'ficha', title: 'Días seguidos de práctica', html: fogata(j.fogata) + '<span class="num">' + j.racha + '</span>' }),
       el('span', { class: 'ficha', title: 'Malvaviscos', html: MALVAVISCO + '<span class="num">' + j.malvaviscos + '</span>' }),
+      j.energia ? el('span', { class: 'ficha energia' + (j.energia.queda ? '' : ' vacia'), title: 'Energía de hoy', html: '<span class="rayo" aria-hidden="true">⚡</span><span class="num">' + j.energia.queda + '</span>' }) : null,
+      estado.libre ? el('button', { class: 'btn-icono club-btn', type: 'button', 'aria-label': 'Club musical Sprinkloud', title: 'Club musical Sprinkloud', text: '⭐', onclick: () => { S.toque(); club(); } }) : null,
       el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Música', text: S.pref.musica ? '🎵' : '🔇', onclick: e => { const on = S.alternarMusica(); e.currentTarget.textContent = on ? '🎵' : '🔇'; } }));
   }
 
@@ -90,14 +92,21 @@
       catch (e) { boton.disabled = false; boton.querySelector('.cara').textContent = '🌲 Entrar al bosque'; aviso(e.message || 'No se pudo abrir. Revisa tu internet.'); }
     });
     p.replaceChildren(el('div', { class: 'portada aparece' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
-      el('h1', { class: 'aparece d1', html: 'El bosque<span>de Sprinkloud</span>' }), el('div', { class: 'aparece d2', style: 'width:100%;display:grid;justify-items:center' }, boton));
+      el('h1', { class: 'aparece d1', html: 'El bosque<span>de Sprinkloud</span>' }),
+      Api.libre ? el('p', { class: 'lema aparece d2', text: 'Aprende teoría musical jugando, unos minutos cada día' }) : null,
+      el('div', { class: 'aparece d2', style: 'width:100%;display:grid;justify-items:center' }, boton));
     ir('entrada');
   }
 
   /* ---------- El camino ---------- */
   function camino() {
     const p = $('#camino'), l = estado.leccion, j = estado.juego;
-    const saludo = !l ? '¡Terminaste toda la guía! 🎉' : j.hoy.terminada ? '¡Ya practicaste hoy! Vuelve mañana 🌙' : '¡Hola, ' + estado.alumno + '! Hoy toca: ' + l.tema;
+    const lb = estado.libre, sinEnergia = j.energia && !j.energia.queda;
+    const saludo = !l ? '¡Terminaste toda la guía! 🎉'
+      : lb && lb.completa ? '¡Terminaste la versión libre! 🎉 Sigue con un plan del club'
+      : sinEnergia ? '¡Se acabó tu energía de hoy! Vuelve mañana ⚡'
+      : j.hoy.terminada ? (lb && lb.paso ? '¡Pasaste la lección! Mañana se abre la siguiente 🌙' : '¡Ya practicaste hoy! Vuelve mañana 🌙')
+      : (estado.alumno ? '¡Hola, ' + estado.alumno + '! ' : '¡Hola! ') + 'Hoy toca: ' + l.tema;
     const luciernagas = Array.from({ length: 6 }, (_, i) => el('i', { class: 'luciernaga', style: 'left:' + (10 + i * 15) + '%;top:' + (20 + (i * 37) % 50) + '%;animation-delay:' + (-i * .8) + 's' }));
     const heroe = el('div', { class: 'heroe' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: '' }), el('div', { class: 'noche-luz' }, luciernagas), el('div', { class: 'burbuja', text: saludo }));
     const etapas = [...new Set(estado.camino.map(c => c.etapa))];
@@ -108,7 +117,8 @@
       el('h2', { html: '<small>Etapa ' + etapaVista + '</small>' + (nombre || '') }),
       el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Etapa siguiente', disabled: etapaVista >= etapas[etapas.length - 1], onclick: () => { etapaVista++; camino(); }, text: '▶' }));
     const mapa = el('div', { class: 'mapa' }, dibujarMapa(paradas));
-    const practicar = puff('<span class="ico">' + (j.hoy.terminada ? '🌟' : '▶') + '</span>', 'grande ' + (j.hoy.terminada ? '' : 'ocre respira'), () => practicar_(estado.leccion.semana));
+    const practicar = puff('<span class="ico">' + (sinEnergia ? '⚡' : j.hoy.terminada ? '🌟' : '▶') + '</span>', 'grande ' + (j.hoy.terminada || sinEnergia ? '' : 'ocre respira'),
+      () => lb && lb.completa ? club('completa') : practicar_(estado.leccion.semana));
     practicar.setAttribute('aria-label', j.hoy.terminada ? 'Practicar más' : 'Practicar');
     if (!l) practicar.disabled = true;
     /* solo los dibujos, sin palabras (pedido de la dueña, 29-oct); el nombre queda para los lectores de pantalla */
@@ -155,7 +165,7 @@
       svg += '<g class="parada ' + c.estado + '" role="listitem" tabindex="0" data-semana="' + c.semana + '" aria-label="Lección ' + c.leccion + ': ' + esc(c.tema) + '" transform="translate(' + pt.x + ' ' + pt.y + ')">' +
         (c.estado === 'actual' ? '<circle class="halo" r="40" fill="none" stroke="#FFB54A" stroke-width="5"/>' : '') +
         '<g class="piedra"><circle r="32" cy="6" fill="' + col[1] + '"/><circle r="32" fill="' + col[0] + '"/><circle r="32" fill="url(#luz)"/>' +
-        '<text y="9" text-anchor="middle" font-size="26" fill="' + (c.estado === 'futura' ? '#A8977A' : '#FFFDF5') + '">' + (c.estado === 'hecha' ? '★' : c.leccion) + '</text></g>' +
+        '<text y="9" text-anchor="middle" font-size="' + (c.premium ? 22 : 26) + '" fill="' + (c.estado === 'futura' ? '#A8977A' : '#FFFDF5') + '">' + (c.premium ? '🔒' : c.estado === 'hecha' ? '★' : c.leccion) + '</text></g>' +
         (c.estado === 'actual' ? '<g transform="translate(' + (i % 2 ? -66 : 66) + ' -14)"><circle r="27" fill="#FBF7EE"/><image href="assets/ilustraciones/osito-bosque.webp" x="-131" y="-104" width="262" height="231" clip-path="url(#cara-osito)"/><circle r="26" fill="none" stroke="#FBF7EE" stroke-width="3"/></g>' : '') +
         '</g>';
     });
@@ -168,7 +178,8 @@
       const c = paradas.find(x => String(x.semana) === g.dataset.semana);
       S.toque();
       // tocar la piedra lleva directo a la lección (pedido de la dueña): la de hoy o el repaso de una pasada; las futuras tienen candado
-      if (c.estado === 'futura') { aviso('🔒 Lección ' + c.leccion + ': ' + c.tema + ' (pronto)'); return; }
+      if (c.premium) { club('leccion'); return; }   // versión libre: después de la etapa 3, los planes del club
+      if (c.estado === 'futura') { aviso('🔒 Lección ' + c.leccion + ': ' + c.tema + (estado.libre ? ' (se abre cuando pases la anterior con 80 %)' : ' (pronto)')); return; }
       practicar_(c.semana);
     });
     return caja;
@@ -194,6 +205,7 @@
     const leccion = semana === estado.leccion.semana ? estado.leccion
       : { semana, etapa: c.etapa, numero: c.leccion, nivel: 'Etapa ' + c.etapa + ' · Lección ' + c.leccion, tema: c.tema, app: c.app };
     const extra = estado.juego.hoy.terminada;   // ya terminó hoy: práctica libre (otras preguntas, menos malvaviscos)
+    if (estado.juego.energia && !estado.juego.energia.queda) { club('energia'); return; }
     let mem = memoriaHoy(semana) || { fecha: estado.hoy, semana, hechas: 0, vuelta: 0 };
     if (extra) { mem.vuelta = (mem.vuelta || 0) + 1; mem.hechas = 0; }
     recordar(mem);
@@ -202,29 +214,60 @@
     const p = $('#practica');
     const pasos = el('div', { class: 'pasos' }, lista.map(a => el('span', { class: 'paso', html: '<span style="font-size:1.1rem">' + a.icono + '</span>' })));
     const escenario = el('div', { class: 'escenario' });
-    const cerrar = el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver al bosque', text: '✕', onclick: () => { cancelado = true; camino(); } });
-    p.replaceChildren(el('div', { class: 'practica-arriba' }, cerrar, pasos, el('span', { class: 'ficha', html: MALVAVISCO + '<span class="num" id="ganados">+0</span>' })), escenario);
+    const cerrar = el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver al bosque', text: '✕', onclick: () => { cancelado = true; soltar(); camino(); } });
+    /* versión libre: la energía baja al empezar cada actividad (2) y con cada error (2 más), mientras se juega. Se cuentan los
+       sonidos de acierto y de error de las actividades (no los del ejemplo del osito); al terminar cada actividad, la
+       cuenta buena es la del servidor (o del celular), con los aciertos e intentos de la actividad. */
+    const en = estado.juego.energia;
+    const rayo = en ? el('span', { class: 'ficha energia', title: 'Energía de hoy', html: '<span class="rayo" aria-hidden="true">⚡</span><span class="num">' + en.queda + '</span>' }) : null;
+    p.replaceChildren(el('div', { class: 'practica-arriba' }, cerrar, pasos, rayo, el('span', { class: 'ficha', html: MALVAVISCO + '<span class="num" id="ganados">+0</span>' })), escenario);
     ir('practica');
-    let cancelado = false, ganados = 0, ultimo = null;
+    let cancelado = false, ganados = 0, ultimo = null, vivoA = 0, vivoI = 0, actual = null;
+    const acierto = S.acierto, error = S.error;
+    function soltar() { S.acierto = acierto; S.error = error; }
+    const queda = () => estado.juego.energia.queda - Api.energia.gasto(vivoA, vivoI);
+    function pintarRayo() {
+      const n = Math.max(0, queda());
+      rayo.querySelector('.num').textContent = n; rayo.classList.toggle('vacia', !n);
+      rayo.classList.remove('baja'); void rayo.offsetWidth; rayo.classList.add('baja');
+    }
+    function contar(ok) {
+      if (!en || cancelado || escenario.classList.contains('ejemplo')) return;
+      const antes = queda();
+      vivoI++; if (ok) vivoA++;
+      if (queda() !== antes) pintarRayo();   // el rayo salta solo cuando la energía baja (la primera respuesta y cada error)
+      if (queda() <= 0) agotada();
+    }
+    async function agotada() {
+      cancelado = true; soltar();
+      try { if (vivoI && actual) await Api.practica({ tipo: actual, aciertos: vivoA, intentos: vivoI }, false).then(x => { estado = x.estado; }); } catch (e) { }
+      if (!estado.juego.energia || estado.juego.energia.queda) estado.juego.energia = Object.assign({}, estado.juego.energia, { queda: 0 });
+      camino(); club('energia');
+    }
+    if (en) { S.acierto = (...a) => { contar(true); return acierto.apply(S, a); }; S.error = (...a) => { contar(false); return error.apply(S, a); }; }
     for (let i = mem.hechas; i < lista.length; i++) {
       if (cancelado) return;
       [...pasos.children].forEach((x, k) => { x.classList.toggle('hecho', k < i); x.classList.toggle('ahora', k === i); });
       escenario.replaceChildren(); S.callar();
+      actual = lista[i].tipo; vivoA = vivoI = 0;
       const r = await lista[i].correr(escenario);
       if (cancelado) return;
       if (r) {
         const ultima = i === lista.length - 1;
         try {
           ultimo = await Api.practica({ tipo: lista[i].tipo, aciertos: r.aciertos, intentos: r.intentos }, ultima && !extra);
-          ganados += ultimo.ganados; estado = ultimo.estado;
+          ganados += ultimo.ganados; estado = ultimo.estado; vivoA = vivoI = 0;
+          if (en) pintarRayo();
           $('#ganados').textContent = '+' + ganados; if (ultimo.ganados) S.moneda(Math.ceil(ultimo.ganados / 4));
-        } catch (e) { aviso(e.message || 'No se pudo guardar. Revisa tu internet.'); }
+        } catch (e) { if (e.sinEnergia) { vivoA = vivoI = 0; agotada(); return; } aviso(e.message || 'No se pudo guardar. Revisa tu internet.'); }
+        if (en && !estado.juego.energia.queda && !ultima) { agotada(); return; }
       }
       mem.hechas = i + 1; recordar(mem);
       escenario.classList.remove('ejemplo');
     }
+    soltar();
     if (!ultimo || !ultimo.fogata) {   // si la última se saltó, la práctica igual se cierra para prender la fogata
-      try { if (!extra && !estado.juego.hoy.terminada) { ultimo = await Api.practica({ tipo: 'repaso', aciertos: 0, intentos: 1 }, true); estado = ultimo.estado; ganados += ultimo.ganados; } } catch (e) { }
+      try { if (!extra && !estado.juego.hoy.terminada) { ultimo = await Api.practica({ tipo: 'repaso', aciertos: 0, intentos: 1, cierre: true }, true); estado = ultimo.estado; ganados += ultimo.ganados; } } catch (e) { }
     }
     fin(ultimo, ganados, extra);
   }
@@ -237,8 +280,10 @@
       el('h1', { class: 'aparece d1', text: extra ? '¡Practicaste más!' : '¡Terminaste tu práctica de hoy!' }),
       el('div', { class: 'ganado aparece d2', html: MALVAVISCO + '+' + ganados }),
       j.racha ? el('div', { class: 'racha-txt aparece d3', text: '🔥 ' + j.racha + (j.racha === 1 ? ' día' : ' días seguidos') + (j.lena ? ' · 🪵 ' + j.lena : '') }) : null,
+      avanceTxt(r && r.avance),
       el('div', { class: 'acciones aparece d4' },
         puff('📸 Compartir mi logro', 'rosa', () => window.Compartir.dia(estado, ganados)),
+        r && r.avance && r.avance.paso && r.avance.ultima ? puff('⭐ Seguir con el club', 'ocre', () => club('completa')) : null,
         puff('🌲 Volver al bosque', 'grande', () => camino()))].filter(Boolean));
     ir('fin');
     S.festejo(); setTimeout(() => S.fuego(), 500);
@@ -246,6 +291,41 @@
     const premios = [].concat((r && r.insignias) || [], r && r.personaje ? ['amigo:' + r.personaje] : []);
     if (premios.length) setTimeout(() => mostrarPremios(premios), 2200);
   }
+  /* versión libre: cómo le fue para pasar a la lección siguiente (80 %) */
+  function avanceTxt(a) {
+    if (!a) return null;
+    const texto = a.paso && a.ultima ? '🎉 ¡Completaste la etapa 3 con ' + a.pct + ' %! Terminaste la versión libre.'
+      : a.paso ? '⭐ ¡' + a.pct + ' % de aciertos! Mañana se abre la lección siguiente.'
+      : '💪 ' + a.pct + ' % de aciertos. Con 80 % pasas a la lección siguiente: ¡mañana otra vez!';
+    return el('p', { class: 'avance-txt aparece d3' + (a.paso ? ' paso' : ''), text: texto });
+  }
+
+  /* ---------- El club (versión libre): planes con acceso total y clases en vivo, y los libros en Amazon ---------- */
+  const MOTIVOS = {
+    energia: ['¡Se acabó tu energía de hoy! ⚡', 'Mañana se recarga. ¿Quieres practicar sin límites?'],
+    leccion: ['Esta lección es del plan completo 🔒', 'La versión libre llega hasta la etapa 3.'],
+    libro: ['Este libro está en Amazon 📚', 'Cada libro trae sus lecciones con dibujos, ejemplos y prácticas.'],
+    completa: ['¡Terminaste la versión libre! 🎉', 'Llegaste al final de la etapa 3. ¡Qué gran músico!']
+  };
+  function club(motivo) {
+    const [titulo, sub] = MOTIVOS[motivo] || ['Club musical Sprinkloud ⭐', 'Aprende música con tu maestra, tu app y tus libros.'];
+    const abrir = url => { S.toque(); window.open(url, '_blank', 'noopener'); };
+    let cerrar;
+    const contenido = el('div', { class: 'premio club' },
+      el('div', { class: 'retrato' }, el('img', { src: RETRATO('osito'), alt: '' })),
+      el('h2', { text: titulo }), el('p', { text: sub }),
+      el('p', { class: 'club-dice', html: 'Con un plan del <b>Club musical Sprinkloud</b> tienes:' }),
+      el('ul', { class: 'club-lista' },
+        el('li', { text: '🌲 Las 60 lecciones del bosque y energía sin límite' }),
+        el('li', { text: '📚 Los 7 libros dentro de la app' }),
+        el('li', { text: '🎹 Clases de música en vivo con tu maestra' })),
+      el('div', { class: 'acciones' },
+        puff('💬 Quiero un plan', 'ocre', () => abrir(window.BOSQUE_CLUB.planes)),
+        puff('📚 Libros en Amazon', 'cielo', () => abrir(window.BOSQUE_CLUB.amazon)),
+        puff('Ahora no', 'papel', () => cerrar())));
+    cerrar = cajon(contenido);
+  }
+
   function confeti() {
     if (!window.confetti || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const formas = ['🍂', '⭐', '🎵', '🔥'].map(t => confetti.shapeFromText({ text: t, scalar: 2 }));
@@ -468,8 +548,8 @@
     const actual = estado.leccion ? estado.leccion.etapa : 1;
     const estante = el('div', { class: 'estante' }, (estado.biblioteca || []).map(b => {
       const lomo = el('button', { class: 'lomo lomo-' + LOMOS[b.etapa - 1] + (b.abierto ? '' : ' cerrado') + (b.etapa === actual ? ' actual' : ''), type: 'button',
-        'aria-label': b.abierto ? 'Libro ' + b.etapa + ': ' + b.nombre : 'Libro ' + b.etapa + ', se abre cuando llegues a la Etapa ' + b.etapa,
-        onclick: () => b.abierto ? abrirLibro(b, lomo) : (S.toque(), aviso('🔒 Se abre cuando llegues a la Etapa ' + b.etapa)) },
+        'aria-label': b.abierto ? 'Libro ' + b.etapa + ': ' + b.nombre : b.amazon ? 'Libro ' + b.etapa + ': ' + b.nombre + ', en Amazon' : 'Libro ' + b.etapa + ', se abre cuando llegues a la Etapa ' + b.etapa,
+        onclick: () => b.abierto ? abrirLibro(b, lomo) : b.amazon ? club('libro') : (S.toque(), aviso('🔒 Se abre cuando llegues a la Etapa ' + b.etapa)) },
         el('span', { class: 'lomo-num', text: b.abierto ? String(b.etapa) : '🔒' }), el('span', { class: 'lomo-titulo', text: PALABRA_LIBRO[b.etapa - 1] || b.nombre }));
       return lomo;
     }));
@@ -490,7 +570,7 @@
       el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Biblioteca' })),
       el('div', { class: 'lista-scroll' },
         el('h2', { class: 'seccion-titulo', text: 'Mis libros' }), estante,
-        el('p', { class: 'mano pista-estante', text: 'Toca un libro para leerlo cuando quieras 📖' }),
+        el('p', { class: 'mano pista-estante', text: estado.libre ? 'Los libros de la serie están en Amazon 📚' : 'Toca un libro para leerlo cuando quieras 📖' }),
         el('h2', { class: 'seccion-titulo', text: 'Medallas' }), numeros, insignias,
         el('h2', { class: 'seccion-titulo', text: 'Amigos del bosque' }), amigos));
     ir('logros');

@@ -14,6 +14,17 @@ window.Api = (function () {
      misma dirección (manifest.json no tiene start_url a propósito). En el iPhone, la app fijada no comparte lo guardado
      con Safari: sin la clave en la dirección, pediría el enlace otra vez (29-oct) */
   if (clave && !DEMO && q.get('k') !== clave) history.replaceState(null, '', location.pathname + '?k=' + encodeURIComponent(clave));
+  /* Versión libre (pedido de la dueña, 30-oct): quien entra sin el enlace del maestro juega gratis, guardado en su celular,
+     con energía diaria y hasta el final de la etapa 3; los libros quedan en Amazon y los planes del club dan acceso total.
+     ?demo=1&libre=1 la prueba con su propio guardado. */
+  const LIBRE = q.has('libre') || (!DEMO && !clave);
+  const LOCAL = DEMO || LIBRE;   // todo pasa en el navegador, con las mismas reglas del servidor
+  /* cada actividad gasta 2 y cada error 2 más; se recarga a medianoche. Una práctica del día trae de 18 a 30 preguntas
+     (4 actividades): sin errores gasta 8 y alcanza; con muchos errores se acaba antes (pedido de la dueña, 30-oct) */
+  const ENERGIA_DIA = 20, COSTO_ACTIVIDAD = 2, COSTO_ERROR = 2;
+  const ULTIMA_LIBRE = 27;   // la versión libre llega hasta el final de la etapa 3 (6 + 8 + 13 lecciones)
+  const PARA_PASAR = .8;   // con el 80 % de aciertos en la práctica del día, al día siguiente se abre la lección siguiente
+  const gasto = (aciertos, intentos) => intentos ? COSTO_ACTIVIDAD + COSTO_ERROR * (intentos - aciertos) : 0;
 
   /* Las lecciones 20 a 23 son distintas en piano y en violín: el tema viene como «piano / violín» y el objetivo como
      «Piano: … Violín: …». Cada alumno ve solo lo de su instrumento. */
@@ -93,11 +104,22 @@ window.Api = (function () {
 
   const demo = {
     hoy() { if (q.get('dia')) return q.get('dia'); const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); },
+    llave: LIBRE ? 'bosque-libre' : 'bosque-demo',
     leer() {
-      let d = null; try { d = JSON.parse(localStorage.getItem('bosque-demo') || 'null'); } catch (e) { }
-      return d || { malvaviscos: 60, racha: 0, mejor: 0, ultimo: '', lena: 0, dias: 0, aciertos: 0, insignias: [], casa: {}, inventario: [], hoy: {} };
+      let d = null; try { d = JSON.parse(localStorage.getItem(demo.llave) || 'null'); } catch (e) { }
+      d = d || { malvaviscos: 60, racha: 0, mejor: 0, ultimo: '', lena: 0, dias: 0, aciertos: 0, insignias: [], casa: {}, inventario: [], hoy: {} };
+      if (LIBRE && !d.libre) d.libre = { semana: 1, paso: '' };
+      return d;
     },
-    guardar(j) { try { localStorage.setItem('bosque-demo', JSON.stringify(j)); } catch (e) { } },
+    guardar(j) { try { localStorage.setItem(demo.llave, JSON.stringify(j)); } catch (e) { } },
+    /* versión libre: si ayer (o antes) pasó la lección con el 80 %, hoy se abre la siguiente */
+    avanzar(j, hoy) {
+      if (!j.libre.paso || j.libre.paso >= hoy) return false;
+      j.libre.paso = '';
+      if (j.libre.semana < ULTIMA_LIBRE) j.libre.semana++; else j.libre.completa = true;
+      return true;
+    },
+    hoyDe(j, hoy) { return j.hoy && j.hoy.fecha === hoy ? j.hoy : { fecha: hoy, actividades: 0, ganados: 0, terminada: false, gastada: 0, aciertos: 0, intentos: 0 }; },
     fogata(j, hoy) {
       if (!j.ultimo) return { estado: 'apagada', racha: 0 };
       const d = diasEntre(j.ultimo, hoy);
@@ -107,18 +129,26 @@ window.Api = (function () {
       return { estado: 'apagada', racha: 0 };
     },
     estado() {
-      const s = Math.min(60, Math.max(1, Number(q.get('semana')) || 1)), hoy = demo.hoy(), j = demo.leer(), f = demo.fogata(j, hoy), et = etapaDe(s);
-      const tema = window.Leccion.GUIA[s];
+      const hoy = demo.hoy(), j = demo.leer();
+      if (LIBRE && demo.avanzar(j, hoy)) demo.guardar(j);
+      const s = LIBRE ? j.libre.semana : Math.min(60, Math.max(1, Number(q.get('semana')) || 1)), f = demo.fogata(j, hoy), et = etapaDe(s);
+      const tema = window.Leccion.GUIA[s], h = demo.hoyDe(j, hoy);
       return {
-        alumno: 'Amiga', instrumento: 'piano', hoy,   // por ahora el bosque es de piano para todos (29-oct)
+        alumno: LIBRE ? (j.nombre || '') : 'Amiga', instrumento: 'piano', hoy,   // por ahora el bosque es de piano para todos (29-oct)
         leccion: { semana: s, etapa: et.etapa, nombreEtapa: ETAPAS[et.etapa - 1], numero: et.leccion, nivel: 'Etapa ' + et.etapa + ' · Lección ' + et.leccion, tema: tema[0], objetivo: tema[1], app: APPS[s] },
-        camino: window.Leccion.GUIA.slice(1).map((g, i) => { const x = etapaDe(i + 1); return { semana: i + 1, etapa: x.etapa, leccion: x.leccion, tema: g[0], app: APPS[i + 1], estado: i + 1 === s ? 'actual' : i + 1 < s ? 'hecha' : 'futura' }; }),
+        camino: window.Leccion.GUIA.slice(1).map((g, i) => {
+          const x = etapaDe(i + 1), premium = LIBRE && i + 1 > ULTIMA_LIBRE;
+          return { semana: i + 1, etapa: x.etapa, leccion: x.leccion, tema: g[0], app: APPS[i + 1], premium,
+            estado: i + 1 === s && !(LIBRE && j.libre.completa) ? 'actual' : i + 1 < s || (LIBRE && j.libre.completa && i + 1 === s) ? 'hecha' : 'futura' };
+        }),
         juego: {
           malvaviscos: j.malvaviscos, racha: f.racha, fogata: f.estado, mejor: j.mejor, lena: j.lena, dias: j.dias, aciertos: j.aciertos,
           insignias: j.insignias, casa: j.casa, inventario: j.inventario, personajes: PERSONAJES.filter(p => j.dias >= p.dias).map(p => p.id),
-          hoy: j.hoy && j.hoy.fecha === hoy ? { terminada: !!j.hoy.terminada, actividades: j.hoy.actividades || 0, ganados: j.hoy.ganados || 0 } : { terminada: false, actividades: 0, ganados: 0 }
+          hoy: { terminada: !!h.terminada, actividades: h.actividades || 0, ganados: h.ganados || 0 },
+          energia: LIBRE ? { max: ENERGIA_DIA, queda: Math.max(0, ENERGIA_DIA - (h.gastada || 0)), error: COSTO_ERROR } : null
         },
-        biblioteca: ETAPAS.map((nombre, i) => ({ etapa: i + 1, nombre, abierto: i + 1 <= et.etapa })),
+        libre: LIBRE ? { ultima: ULTIMA_LIBRE, paso: !!j.libre.paso, completa: !!j.libre.completa, cuenta: !!j.cuenta } : null,
+        biblioteca: ETAPAS.map((nombre, i) => ({ etapa: i + 1, nombre, abierto: !LIBRE && i + 1 <= et.etapa, amazon: LIBRE })),
         catalogo: { tienda: TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(([id, nombre]) => ({ id, nombre })) }
       };
     },
@@ -126,7 +156,19 @@ window.Api = (function () {
     practica(d) {
       const hoy = demo.hoy(), j = demo.leer(), x = d.actividad;
       if (!(x.intentos >= 1 && x.aciertos >= 0 && x.aciertos <= x.intentos)) throw new Error('El resultado no se entiende.');
-      if (!j.hoy || j.hoy.fecha !== hoy) j.hoy = { fecha: hoy, actividades: 0, ganados: 0, terminada: false };
+      j.hoy = demo.hoyDe(j, hoy);
+      let avance = null;
+      if (LIBRE) {
+        // cierre: la práctica se cierra sin respuestas (la última actividad se saltó): no gasta ni cuenta para pasar
+        if (!x.cierre && (j.hoy.gastada || 0) >= ENERGIA_DIA) throw sinEnergia();
+        if (!x.cierre) j.hoy.gastada = (j.hoy.gastada || 0) + gasto(x.aciertos, x.intentos);
+        if (!j.hoy.terminada && !x.cierre) { j.hoy.aciertos = (j.hoy.aciertos || 0) + x.aciertos; j.hoy.intentos = (j.hoy.intentos || 0) + x.intentos; }
+        if (d.terminada && !j.hoy.terminada) {
+          const pct = j.hoy.intentos ? j.hoy.aciertos / j.hoy.intentos : 0, paso = pct >= PARA_PASAR && !j.libre.completa;
+          if (paso) j.libre.paso = hoy;
+          avance = { pct: Math.round(pct * 100), paso, ultima: j.libre.semana >= ULTIMA_LIBRE };
+        }
+      }
       const perfecta = x.aciertos === x.intentos && x.intentos >= 4;
       let gana = Math.min(x.aciertos, 15) + (perfecta ? 5 : 0);
       if (j.hoy.terminada) gana = Math.floor(gana / 2);
@@ -147,7 +189,7 @@ window.Api = (function () {
       const nuevas = demo.insignias(j, { perfecta });
       const amigo = PERSONAJES.find(p => p.dias > antes && p.dias <= j.dias);
       demo.guardar(j);
-      return { ok: true, ganados: gana, perfecta, fogata: fuego, insignias: nuevas, personaje: amigo ? amigo.id : null, estado: demo.estado() };
+      return { ok: true, ganados: gana, perfecta, fogata: fuego, insignias: nuevas, personaje: amigo ? amigo.id : null, avance, estado: demo.estado() };
     },
     comprar(id) {
       const j = demo.leer(), item = TIENDA.find(t => t.id === id);
@@ -173,12 +215,17 @@ window.Api = (function () {
     }
   };
   const espera = v => new Promise(r => setTimeout(() => r(v), 180));
+  /* el servidor dice lo mismo con este texto: la app lo reconoce y muestra «vuelve mañana» */
+  const SIN_ENERGIA = '¡Se acabó tu energía de hoy! Vuelve mañana ⚡';
+  function sinEnergia() { const e = new Error(SIN_ENERGIA); e.sinEnergia = true; return e; }
+  const marcar = e => { if (e && e.message === SIN_ENERGIA) e.sinEnergia = true; throw e; };
 
   /* Los libros de la biblioteca (uno por etapa, completo). Vienen del sistema con la clave del alumno porque se venden en
      Amazon: no están en esta app pública. En la prueba (?demo=1) se leen de demo-libros/, que arma
      herramientas/libros_demo.js y no se sube a GitHub. Cada libro se baja una sola vez por visita. */
   const libros = {};
   async function bajarLibro(n) {
+    if (LIBRE) throw new Error('Este libro está en Amazon 📚');
     const url = DEMO ? 'demo-libros/piano-' + n + '.json'   // por ahora el bosque es de piano para todos
       : window.BOSQUE_API + '?api=libro&k=' + encodeURIComponent(clave) + '&etapa=' + n;
     let d;
@@ -187,13 +234,17 @@ window.Api = (function () {
     return d;
   }
 
+  /* en el modo local, los errores del motor llegan como promesa rechazada (igual que los del servidor) */
+  const local = fn => new Promise((ok, mal) => { try { ok(fn()); } catch (e) { mal(e); } }).then(espera);
   return {
     demo: DEMO,
-    tieneClave: () => DEMO || !!clave,
-    cargar: () => DEMO ? espera(porInstrumento(demo.estado())) : get(),
-    practica: (actividad, terminada) => DEMO ? espera(porInstrumento(demo.practica({ actividad, terminada }))) : post({ accion: 'practicaJuego', actividad, terminada }),
-    comprar: item => DEMO ? espera(demo.comprar(item)) : post({ accion: 'comprarJuego', item }),
+    libre: LIBRE,
+    energia: { max: ENERGIA_DIA, error: COSTO_ERROR, gasto },
+    tieneClave: () => LOCAL || !!clave,
+    cargar: () => LOCAL ? local(() => porInstrumento(demo.estado())) : get(),
+    practica: (actividad, terminada) => (LOCAL ? local(() => porInstrumento(demo.practica({ actividad, terminada }))) : post({ accion: 'practicaJuego', actividad, terminada })).catch(marcar),
+    comprar: item => LOCAL ? local(() => demo.comprar(item)) : post({ accion: 'comprarJuego', item }),
     libro: n => libros[n] || (libros[n] = bajarLibro(n).catch(e => { delete libros[n]; throw e; })),
-    guardarCasa: casa => DEMO ? espera(demo.casa(casa)) : post({ accion: 'guardarCasa', casa })
+    guardarCasa: casa => LOCAL ? local(() => demo.casa(casa)) : post({ accion: 'guardarCasa', casa })
   };
 })();

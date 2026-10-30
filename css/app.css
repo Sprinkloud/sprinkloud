@@ -543,3 +543,27 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .libro-hoja .diagrama.sonando::after { opacity: 1; }
 @media (prefers-reduced-motion: no-preference) { .libro-hoja .diagrama.sonando::after { animation: brilla-dibujo 1.2s ease-in-out infinite; } }
 @keyframes brilla-dibujo { 50% { opacity: .55; } }
+
+/* ---------- Versión libre (30-oct): energía, el club y el avance con 80 % ---------- */
+.ficha.energia { padding-left: 10px; color: var(--ochre-deep); }
+.ficha.energia .rayo { font-size: 1.15rem; line-height: 1; }
+.ficha.energia.vacia { color: var(--ink-soft); }
+.ficha.energia.vacia .rayo { filter: grayscale(1); opacity: .6; }
+/* cada respuesta: el rayo da un saltito chico (la energía bajó) */
+.ficha.energia.baja .rayo { animation: rayo-baja 260ms var(--ease-out); }
+@keyframes rayo-baja { 40% { transform: scale(.82); } }
+.club-btn { font-size: 1.1rem; }
+.entrada .lema { margin: -6px 0 6px; font-family: var(--f-hand); font-size: 1.45rem; color: var(--ink-soft); text-align: center; }
+.fin .avance-txt { margin: 0; max-width: 30ch; text-align: center; font-weight: 700; color: var(--ink-soft); }
+.fin .avance-txt.paso { color: var(--moss-deep); }
+.premio.club .club-dice { font-family: var(--f-body); font-size: 1rem; }
+.club-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; text-align: left; font-weight: 700; }
+.premio.club .acciones { grid-template-columns: 1fr; }
+/* en celulares chicos la barra lleva 5 cosas: fichas más compactas */
+@media (max-width: 380px) {
+  .barra { gap: 4px; }
+  .ficha { padding: 4px 8px 4px 4px; gap: 4px; font-size: .98rem; }
+  .ficha svg, .ficha .fogata, .ficha .fogata svg { width: 26px; height: 26px; }
+  .barra .btn-icono { width: 40px; height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) { .ficha.energia.baja .rayo { animation: none; } }

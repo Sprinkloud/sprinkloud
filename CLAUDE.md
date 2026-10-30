@@ -227,6 +227,16 @@ Se corrigieron estos puntos:
 - **Presión asimétrica:** `.ejemplo-sonido:active` baja en 40 ms y sube en 120; `.tecla-j:active` baja al instante y sube en 90.
 - El movimiento reducido sigue apagando el giro y el pulso del brillo.
 
+## Versión libre (30-oct, pedido de la dueña; falta subir)
+Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestra del club para atraer alumnos a los planes y vender los libros de Amazon. Se prueba con `?demo=1&libre=1`.
+- **Guardado:** en el celular (`localStorage` `bosque-libre`), con el mismo motor del modo de prueba (`demo` en `js/api.js`, con `LIBRE`/`LOCAL`). Pendiente: el botón «Guardar mi progreso con Google» (fase 2, ver abajo).
+- **Energía ⚡:** 20 al día, se recarga a medianoche. Cada actividad gasta 2 y cada error 2 más (`gasto` en `js/api.js`). Una práctica del día trae de 18 a 30 preguntas en 4 actividades: sin errores gasta 8 y alcanza. Primero se pensó en 1 por respuesta, pero así no alcanzaba ni sin errores. En la práctica, el rayo baja mientras se juega (se cuentan `S.acierto` y `S.error` fuera del ejemplo). Si llega a 0, se guarda lo respondido y se abre el espacio del club (`club('energia')`). El motor rechaza con `SIN_ENERGIA`, y el servidor debe usar el mismo texto.
+- **Avance:** si la práctica del día termina con el 80 % o más de aciertos (`PARA_PASAR`), al día siguiente se abre la lección siguiente (`j.libre.paso`, `demo.avanzar`). Llega hasta la lección 27, el final de la etapa 3 (`ULTIMA_LIBRE`). Las lecciones 28 a 60 se ven con 🔒 (`premium`) y llevan al club.
+- **Biblioteca:** los 7 libros con candado (`amazon: true`), que llevan al club con el botón de Amazon.
+- **El club** (`club(motivo)` en `js/app.js`, la estrella ⭐ de la barra): las 60 lecciones y energía sin límite, los 7 libros en la app y clases en vivo. Botones «Quiero un plan» (WhatsApp del club) y «Libros en Amazon» (`BOSQUE_CLUB` en `js/config.js`; Amazon es la búsqueda de la serie hasta tener el enlace de la página de la serie).
+- **Alumnos del club:** con su enlace no cambia nada (sin energía ni candados).
+- **Fase 2, pendiente:** inicio de sesión con Google (Google Identity Services). Hace falta que la dueña cree el ID de cliente OAuth en Google Cloud (origen `https://sprinkloud.github.io`). El servidor verifica el token con `UrlFetchApp` (tokeninfo); esto agrega un permiso a la web app de maestros y la dueña tiene que volver a autorizarla. Se guarda en la hoja «Juego» con `AlumnoID` `G-<sub>` y una clave tipo `Público` en «Enlaces», más una hoja «Público» con el nombre y el correo. Al entrar, el progreso del celular pasa a la cuenta. Después viene Google Play (paquete TWA, `assetlinks.json` en el repo `Sprinkloud/sprinkloud.github.io`, página de privacidad y prueba cerrada de 12 personas por 14 días).
+
 ## Arte pendiente (Gemini)
 - Hoy, los muebles y las insignias se ven como emoji.
 - Las imágenes van en `assets/arte/<id>.webp`, con fondo transparente, y se agregan a `js/arte.js`.
