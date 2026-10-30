@@ -231,7 +231,8 @@ Se corrigieron estos puntos:
 - Hoy, los muebles y las insignias se ven como emoji.
 - Las imágenes van en `assets/arte/<id>.webp`, con fondo transparente, y se agregan a `js/arte.js`.
 - Ids de los muebles: los de `TIENDA` en el servidor. Ids de las insignias: los de `INSIGNIAS`.
-- Los pedidos están en `Libro_Sprinkloud/herramientas/ilustraciones/etapa7.txt`, y se generan con `.\ilustraciones.ps1 7`.
+- Los pedidos están en `Libro_Sprinkloud/herramientas/ilustraciones/etapa9.txt` (antes `etapa7.txt`; la etapa 7 ahora es el libro de los modos), y se generan con `.\ilustraciones.ps1 9`.
 - `herramientas/arte.py` vuelve transparente el papel (`sin_papel`, como «color a alfa», con más cuerpo), recorta cada dibujo al objeto y actualiza `js/arte.js`.
 - **29-oct:** 8 de 42 listas (cuadro, guirnalda, reloj, cortinas, maceta, farolito, tetera y calcetines). La tarea diaria de la sesión (10:41) sigue con el resto. Los muebles de piso se piden en vista desde arriba en diagonal, como la casa.
 - **29-oct (tarde):** 16 de 42 listas (más olla de chocolate, atril con violín, metrónomo, tazas, pastel de miel e insignias primera, racha3 y racha7). **Faltan 26.** Se borraron 8 que Gemini dibujó con el osito encima (sillón, piano, 2 alfombras, cojines, lámpara, libros y tarro de miel); se repiten. Causa: el estilo común de `ilustraciones.ps1` describía al osito; ahora la etapa 7 usa `$estiloObjeto` («solo el objeto, sin el osito ni ningún personaje»). `arte.py` ya no convierte `bosque-enlace` (es la vista previa del enlace).
+- **30-oct:** 26 de 42 listas (más sillón, piano de madera, alfombra redonda, cojines, alfombra de hojas, lámpara, libros, tarro de miel e insignias racha14 y racha30, ya sin el osito). **Faltan 16.** Se probaron en la casita (Sala y Toda la casa) y quedan bien; el sillón se movió a `sala-sillon: [30, 53, 13]` porque tapaba la pared. Cuando estén las 42, se sube (la dueña lo autorizó el 30-oct).

@@ -38,7 +38,7 @@
     'cocina-estufa': 'Estufa', 'cocina-ventana': 'Ventana', 'cocina-mesa': 'Mesita', 'cocina-repisa': 'Repisa',
     'dorm-cama': 'Cama', 'dorm-mesita': 'Mesita de noche', 'dorm-pared': 'Pared del cuarto',
     'jardin-banca': 'Para sentarse', 'jardin-flores': 'Huerto', 'jardin-fogata': 'Fogata' };
-  const POS = { 'sala-pared': [19, 40, 8], 'sala-sillon': [27, 52, 13], 'sala-alfombra': [40, 57, 15], 'sala-musica': [35, 46, 11], 'sala-mesa': [52, 62, 12],
+  const POS = { 'sala-pared': [19, 40, 8], 'sala-sillon': [30, 53, 13], 'sala-alfombra': [40, 57, 15], 'sala-musica': [35, 46, 11], 'sala-mesa': [52, 62, 12],
     'cocina-estufa': [71, 46, 10], 'cocina-ventana': [78, 42, 7], 'cocina-mesa': [67, 53, 9], 'cocina-repisa': [65, 41, 7],
     'dorm-cama': [55, 37, 11], 'dorm-mesita': [47, 35, 7], 'dorm-pared': [52, 28, 7],
     'jardin-banca': [63, 85, 10], 'jardin-flores': [19, 72, 11], 'jardin-fogata': [76, 80, 8] };
