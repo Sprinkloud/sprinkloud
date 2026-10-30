@@ -227,7 +227,7 @@ Se corrigieron estos puntos:
 - **Presión asimétrica:** `.ejemplo-sonido:active` baja en 40 ms y sube en 120; `.tecla-j:active` baja al instante y sube en 90.
 - El movimiento reducido sigue apagando el giro y el pulso del brillo.
 
-## Versión libre (30-oct, pedido de la dueña; falta subir)
+## Versión libre (30-oct, pedido de la dueña; publicado el 30-oct)
 Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestra del club para atraer alumnos a los planes y vender los libros de Amazon. Se prueba con `?demo=1&libre=1`.
 - **Guardado:** en el celular (`localStorage` `bosque-libre`), con el mismo motor del modo de prueba (`demo` en `js/api.js`, con `LIBRE`/`LOCAL`). Pendiente: el botón «Guardar mi progreso con Google» (fase 2, ver abajo).
 - **Energía ⚡:** 20 al día, se recarga a medianoche. Cada actividad gasta 2 y cada error 2 más (`gasto` en `js/api.js`). Una práctica del día trae de 18 a 30 preguntas en 4 actividades: sin errores gasta 8 y alcanza. Primero se pensó en 1 por respuesta, pero así no alcanzaba ni sin errores. En la práctica, el rayo baja mientras se juega (se cuentan `S.acierto` y `S.error` fuera del ejemplo). Si llega a 0, se guarda lo respondido y se abre el espacio del club (`club('energia')`). El motor rechaza con `SIN_ENERGIA`, y el servidor debe usar el mismo texto.
