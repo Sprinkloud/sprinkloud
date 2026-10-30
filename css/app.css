@@ -567,3 +567,6 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
   .barra .btn-icono { width: 40px; height: 40px; }
 }
 @media (prefers-reduced-motion: reduce) { .ficha.energia.baja .rayo { animation: none; } }
+/* «Guardar mi progreso con Google»: el botón lo dibuja Google adentro */
+.google-boton { width: 100%; min-height: 48px; display: grid; place-items: center; }
+.entrada .enlace-texto { border: 0; background: none; min-height: 44px; padding: 8px 12px; font: inherit; font-weight: 700; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }

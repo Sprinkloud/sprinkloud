@@ -11,5 +11,9 @@ window.BOSQUE_CLUB = {
   amazon: 'https://www.amazon.com/s?k=' + encodeURIComponent('Aprendo música con Sprinkloud') + '&i=digital-text',
   sitio: 'https://sprinkloud.vercel.app'
 };
+/* «Guardar mi progreso con Google» (versión libre): ID de cliente OAuth del proyecto «Bosque Sprinkloud» de Google Cloud
+   (cuenta del club). No es secreto. Orígenes autorizados: https://sprinkloud.github.io y http://localhost:8020. El mismo ID
+   está en GOOGLE_CLIENT_ID (Registro_Sprinkloud/maestros/Código.js). */
+window.BOSQUE_GOOGLE_ID = '219016713423-ut0n7sbdjhepmdhdua98a0mqkc5ndi4n.apps.googleusercontent.com';
 /* Jingle del festejo al terminar la práctica (CC0) */
 window.BOSQUE_JINGLE = 'assets/musica/festejo.mp3';

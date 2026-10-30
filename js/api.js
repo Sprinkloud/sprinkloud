@@ -245,6 +245,14 @@ window.Api = (function () {
     practica: (actividad, terminada) => (LOCAL ? local(() => porInstrumento(demo.practica({ actividad, terminada }))) : post({ accion: 'practicaJuego', actividad, terminada })).catch(marcar),
     comprar: item => LOCAL ? local(() => demo.comprar(item)) : post({ accion: 'comprarJuego', item }),
     libro: n => libros[n] || (libros[n] = bajarLibro(n).catch(e => { delete libros[n]; throw e; })),
-    guardarCasa: casa => LOCAL ? local(() => demo.casa(casa)) : post({ accion: 'guardarCasa', casa })
+    guardarCasa: casa => LOCAL ? local(() => demo.casa(casa)) : post({ accion: 'guardarCasa', casa }),
+    /* «Guardar mi progreso con Google»: el servidor revisa el token, pasa lo jugado en este celular (solo la primera vez)
+       y devuelve la clave del bosque de esa persona; desde ahí la app entra con esa clave, como un alumno */
+    async entrarGoogle(credencial) {
+      const r = await post({ accion: 'entrarGoogle', credencial, local: LIBRE ? demo.leer() : null });
+      try { localStorage.setItem('bosque-clave', r.clave); } catch (e) { }
+      location.replace(location.pathname + '?k=' + encodeURIComponent(r.clave));
+      return r;
+    }
   };
 })();

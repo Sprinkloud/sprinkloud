@@ -94,7 +94,8 @@
     p.replaceChildren(el('div', { class: 'portada aparece' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
       el('h1', { class: 'aparece d1', html: 'El bosque<span>de Sprinkloud</span>' }),
       Api.libre ? el('p', { class: 'lema aparece d2', text: 'Aprende teoría musical jugando, unos minutos cada día' }) : null,
-      el('div', { class: 'aparece d2', style: 'width:100%;display:grid;justify-items:center' }, boton));
+      el('div', { class: 'aparece d2', style: 'width:100%;display:grid;justify-items:center' }, boton),
+      Api.libre && !Api.demo && window.BOSQUE_GOOGLE_ID ? el('button', { class: 'enlace-texto aparece d3', type: 'button', text: '¿Ya guardaste tu progreso? Entra con Google', onclick: () => { S.toque(); cuenta(true); } }) : null);
     ir('entrada');
   }
 
@@ -284,6 +285,7 @@
       el('div', { class: 'acciones aparece d4' },
         puff('📸 Compartir mi logro', 'rosa', () => window.Compartir.dia(estado, ganados)),
         r && r.avance && r.avance.paso && r.avance.ultima ? puff('⭐ Seguir con el club', 'ocre', () => club('completa')) : null,
+        !extra && sinCuenta() ? puff('🔐 Guardar mi progreso', 'madera', () => cuenta()) : null,
         puff('🌲 Volver al bosque', 'grande', () => camino()))].filter(Boolean));
     ir('fin');
     S.festejo(); setTimeout(() => S.fuego(), 500);
@@ -322,8 +324,46 @@
       el('div', { class: 'acciones' },
         puff('💬 Quiero un plan', 'ocre', () => abrir(window.BOSQUE_CLUB.planes)),
         puff('📚 Libros en Amazon', 'cielo', () => abrir(window.BOSQUE_CLUB.amazon)),
+        sinCuenta() ? puff('🔐 Guardar mi progreso', 'madera', () => { cerrar(); setTimeout(cuenta, 420); }) : null,
         puff('Ahora no', 'papel', () => cerrar())));
     cerrar = cajon(contenido);
+  }
+
+  /* ---------- «Guardar mi progreso con Google» (versión libre, 30-oct) ----------
+     El botón lo dibuja Google (Google Identity Services, se carga solo al abrir este cajón). Al entrar, la app se recarga
+     con la clave del bosque de esa persona (Api.entrarGoogle). */
+  const sinCuenta = () => !!(estado && estado.libre && !estado.libre.cuenta && window.BOSQUE_GOOGLE_ID);
+  let googleListo = null;
+  function cargarGoogle() {
+    if (window.google && google.accounts && google.accounts.id) return Promise.resolve();
+    return googleListo || (googleListo = new Promise((ok, mal) => {
+      const s = el('script', { src: 'https://accounts.google.com/gsi/client', async: true });
+      s.onload = ok; s.onerror = () => { googleListo = null; mal(new Error('No se pudo abrir Google. Revisa tu internet.')); };
+      document.head.append(s);
+    }));
+  }
+  function cuenta(volver) {
+    let cerrar;
+    const lugar = el('div', { class: 'google-boton' }, el('p', { class: 'cargando', text: 'Abriendo Google…' }));
+    const contenido = el('div', { class: 'premio club' },
+      el('div', { class: 'retrato' }, el('img', { src: RETRATO('osito'), alt: '' })),
+      el('h2', { text: volver ? 'Entra con tu cuenta 🔐' : 'Guarda tu progreso 🔐' }),
+      el('p', { text: volver ? 'Sigue donde te quedaste, en este celular o en la computadora.' : 'Con tu cuenta de Google no pierdes tu avance y puedes seguir en otro celular o en la computadora.' }),
+      lugar,
+      el('div', { class: 'acciones' }, puff('Ahora no', 'papel', () => cerrar())));
+    cerrar = cajon(contenido);
+    cargarGoogle().then(() => {
+      google.accounts.id.initialize({
+        client_id: window.BOSQUE_GOOGLE_ID,
+        callback: async resp => {
+          lugar.replaceChildren(el('p', { class: 'cargando', text: 'Guardando tu progreso…' }));
+          try { await Api.entrarGoogle(resp.credential); }
+          catch (e) { lugar.replaceChildren(el('p', { class: 'cargando', text: e.message || 'No se pudo entrar con Google. Intenta otra vez.' })); }
+        }
+      });
+      lugar.replaceChildren();
+      google.accounts.id.renderButton(lugar, { theme: 'outline', size: 'large', shape: 'pill', text: 'continue_with', locale: 'es', width: Math.min(300, lugar.clientWidth || 280) });
+    }).catch(e => lugar.replaceChildren(el('p', { class: 'cargando', text: e.message })));
   }
 
   function confeti() {
