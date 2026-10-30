@@ -237,6 +237,17 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - **Alumnos del club:** con su enlace no cambia nada (sin energía ni candados).
 - **Fase 2, pendiente:** inicio de sesión con Google (Google Identity Services). Hace falta que la dueña cree el ID de cliente OAuth en Google Cloud (origen `https://sprinkloud.github.io`). El servidor verifica el token con `UrlFetchApp` (tokeninfo); esto agrega un permiso a la web app de maestros y la dueña tiene que volver a autorizarla. Se guarda en la hoja «Juego» con `AlumnoID` `G-<sub>` y una clave tipo `Público` en «Enlaces», más una hoja «Público» con el nombre y el correo. Al entrar, el progreso del celular pasa a la cuenta. Después viene Google Play (paquete TWA, `assetlinks.json` en el repo `Sprinkloud/sprinkloud.github.io`, página de privacidad y prueba cerrada de 12 personas por 14 días).
 
+## El alumno avanza solo, prueba de nivel, Gmail y reportes (30-oct, pedido de la dueña)
+- **Avance:** los alumnos del club pasan de lección con 80 % o más en 2 días (el servidor; ver `Registro_Sprinkloud/CLAUDE.md`). Al terminar la práctica, `avanceTxt` dice cuántos días lleva («Llevas 1 de 2 días con 80 %»). La versión libre sigue con 1 día.
+- **Prueba de nivel** (`js/encuesta.js` y `encuesta()` en `js/app.js`): al entrar por primera vez (`estado.encuesta`), 12 preguntas, 2 por etapa de la 1 a la 6, de lo fácil a lo difícil (una con sonido y otra con la nota en el pentagrama). Donde se equivoca o toca «No lo sé todavía», empieza en la primera lección de esa etapa (`INICIO`); todo bien, en la etapa 7. También «Empezar desde la lección 1». Se guarda con `Api.nivel` (servidor `nivelJuego_`; en la versión libre, en el celular). Para probarla sin libre: `?demo=1&encuesta`.
+- **Gmail:** `estado.cuenta === false` muestra «🔐 Guardar mi progreso» (al terminar la práctica, en la biblioteca y en el espacio del club), también a los alumnos.
+- **Reportes:** «💬 Reportar un error o reclamo» abajo del camino y «💬 ¿Algo está mal en este ejercicio?» en la práctica (`reportar()`), con tipo (Error en un ejercicio, La app no funciona, Reclamo, Idea), mensaje y el contexto (lección, actividad, pantalla y dispositivo). Llega a la hoja «Reportes». En `?demo=1` no se manda.
+
+## Textos sueltos y modo nocturno (30-oct, la dueña vio «null» y una insignia que no se veía de noche)
+- **Causa del «null»:** `replaceChildren`/`append` del navegador escriben «null» si reciben un hijo opcional vacío (`cond ? el(...) : null`). Pasó en la entrada (la frase de la versión libre). Ahora todas las pantallas de `js/app.js` se llenan con `llenar(nodo, ...hijos)`, que descarta null y false; `el()` de `actividades.js` y `hoja.js` ya lo hacía. `aviso()` nunca muestra «undefined».
+- **Revisión automática:** `herramientas/revisar_textos.js` (se pega en Playwright con el servidor local): recorre la entrada, la prueba de nivel, prácticas de varias lecciones, la casita, la tienda, la biblioteca y un libro, y busca «null», «undefined», «NaN» o texto suelto. Después del arreglo: sin hallazgos ni errores de JavaScript.
+- **Modo nocturno:** de noche las medallas quedan de metal claro (las bloqueadas, grises al 62 %), y los retratos (amigos, premios, prueba de nivel) van sobre papel claro: con `mix-blend-mode: multiply` sobre el fondo oscuro se veían casi negros.
+
 ## Arte pendiente (Gemini)
 - Hoy, los muebles y las insignias se ven como emoji.
 - Las imágenes van en `assets/arte/<id>.webp`, con fondo transparente, y se agregan a `js/arte.js`.

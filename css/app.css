@@ -242,7 +242,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .mensaje.bien { color: var(--ok-text); }
 .mensaje.mal { color: var(--mal-text); }
 .ejemplo { position: relative; }
-.ejemplo::after { content: 'Mira 👀'; position: absolute; top: 4px; right: 14px; z-index: 2; background: var(--ochre-strong); color: var(--cream); font-weight: 800; font-size: .8rem; padding: 3px 10px; border-radius: 999px; }
+.ejemplo::after { content: 'Ejemplo 👀'; position: absolute; top: 4px; right: 14px; z-index: 2; background: var(--ochre-strong); color: var(--cream); font-weight: 800; font-size: .95rem; padding: 4px 12px; border-radius: 999px; }
 .pista { outline: 4px solid var(--ochre); outline-offset: 3px; border-radius: 22px; }
 
 /* Hoja de práctica dentro de la app (las mismas preguntas del sitio) */
@@ -569,4 +569,32 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 @media (prefers-reduced-motion: reduce) { .ficha.energia.baja .rayo { animation: none; } }
 /* «Guardar mi progreso con Google»: el botón lo dibuja Google adentro */
 .google-boton { width: 100%; min-height: 48px; display: grid; place-items: center; }
-.entrada .enlace-texto { border: 0; background: none; min-height: 44px; padding: 8px 12px; font: inherit; font-weight: 700; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+.enlace-texto { border: 0; background: none; min-height: 44px; padding: 8px 12px; font: inherit; font-weight: 700; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+/* La prueba de nivel (30-oct) */
+.escenario.encuesta { display: grid; justify-items: center; align-content: start; gap: 14px; text-align: center; padding-top: 12px; }
+.encuesta h1 { margin: 0; font-size: clamp(1.5rem, 6vw, 2rem); }
+.encuesta .mano { margin: 0; max-width: 32ch; font-size: 1.35rem; color: var(--ink-soft); }
+.retrato-encuesta { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background: var(--cream); box-shadow: var(--sombra-papel); }
+.retrato-encuesta img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; }
+.acciones-encuesta, .respuestas-encuesta { display: grid; gap: 12px; width: 100%; max-width: 420px; }
+.respuestas-encuesta { grid-template-columns: 1fr 1fr; }
+.pregunta-encuesta { margin: 6px 0 0; font-family: var(--f-display, inherit); font-size: 1.35rem; }
+.pentagrama-encuesta { width: 100%; max-width: 280px; background: var(--surface); border-radius: 18px; box-shadow: var(--sombra-papel); padding: 4px 8px; }
+.pentagrama-encuesta svg { width: 100%; height: auto; display: block; }
+/* Reportar un error o un reclamo (30-oct) */
+.enlace-texto.reportar { display: block; margin: 10px auto 0; font-size: .95rem; }
+.tipos-reporte { flex-wrap: wrap; justify-content: center; }
+.reporte-texto { width: 100%; box-sizing: border-box; min-height: 96px; padding: 12px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-size: 16px; resize: vertical; }
+.reporte-texto:focus { outline: 3px solid var(--ochre); outline-offset: 1px; }
+.puntos-encuesta { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.puntos-encuesta i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+.puntos-encuesta i.hecho { background: var(--moss); }
+.puntos-encuesta i.ahora { background: var(--ochre); transform: scale(1.3); }
+.escenario.encuesta { min-width: 0; width: 100%; box-sizing: border-box; }
+/* Modo nocturno (30-oct): la dueña vio una insignia que casi no se veía de noche. Las medallas y los retratos son
+   dibujos de acuarela sobre papel claro: de noche el fondo oscuro los apagaba (y el retrato con mix-blend-mode: multiply
+   se volvía casi negro). De noche las medallas quedan de metal claro, como encendidas, y los retratos sobre papel claro. */
+:root[data-hora="noche"] .medalla { background: radial-gradient(circle at 35% 30%, #FFF6DA, #F1E0BC 60%, #C4923A 100%); }
+:root[data-hora="noche"] .insignia.bloqueada .medalla { filter: grayscale(1) opacity(.62); }
+:root[data-hora="noche"] .amigo .retrato, :root[data-hora="noche"] .premio .retrato, :root[data-hora="noche"] .retrato-encuesta { background: #F6F0E2; }
+:root[data-hora="noche"] .amigo.bloqueado .retrato img { filter: grayscale(1) blur(5px) opacity(.6); }

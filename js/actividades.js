@@ -1,5 +1,5 @@
 /* Las actividades de la práctica diaria. Cada una recibe un contenedor y devuelve una promesa con
-   {aciertos, intentos} (o null si se saltó). Primero el osito muestra un ejemplo («Mira»), después «¡Ahora tú!».
+   {aciertos, intentos} (o null si se saltó). Primero el osito muestra un ejemplo (el sello «Ejemplo 👀», pedido de la dueña, 30-oct), después «¡Ahora tú!».
    Las preguntas salen de un azar con semilla: el mismo día dan lo mismo y a medianoche cambian. */
 window.Actividades = (function () {
   'use strict';

@@ -147,7 +147,9 @@ window.Api = (function () {
           hoy: { terminada: !!h.terminada, actividades: h.actividades || 0, ganados: h.ganados || 0 },
           energia: LIBRE ? { max: ENERGIA_DIA, queda: Math.max(0, ENERGIA_DIA - (h.gastada || 0)), error: COSTO_ERROR } : null
         },
-        libre: LIBRE ? { ultima: ULTIMA_LIBRE, paso: !!j.libre.paso, completa: !!j.libre.completa, cuenta: !!j.cuenta } : null,
+        libre: LIBRE ? { ultima: ULTIMA_LIBRE, paso: !!j.libre.paso, completa: !!j.libre.completa, cuenta: false } : null,
+        encuesta: LIBRE ? !j.libre.nivelado : q.has('encuesta'),   // la prueba de nivel (en la prueba sin libre: ?demo=1&encuesta)
+        cuenta: LIBRE ? false : undefined,
         biblioteca: ETAPAS.map((nombre, i) => ({ etapa: i + 1, nombre, abierto: !LIBRE && i + 1 <= et.etapa, amazon: LIBRE })),
         catalogo: { tienda: TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(([id, nombre]) => ({ id, nombre })) }
       };
@@ -190,6 +192,22 @@ window.Api = (function () {
       const amigo = PERSONAJES.find(p => p.dias > antes && p.dias <= j.dias);
       demo.guardar(j);
       return { ok: true, ganados: gana, perfecta, fogata: fuego, insignias: nuevas, personaje: amigo ? amigo.id : null, avance, estado: demo.estado() };
+    },
+    /* la prueba de nivel: en la versión libre, la lección donde empieza (hasta la 27); en la prueba sin libre, la semana */
+    nivel(s) {
+      const j = demo.leer();
+      if (!(s >= 1 && s <= 60)) throw new Error('La lección no se entiende.');
+      if (LIBRE) {
+        if (j.libre.nivelado) throw new Error('Ya hiciste la prueba de nivel.');
+        Object.assign(j.libre, { semana: Math.min(s, ULTIMA_LIBRE), paso: '', completa: false, nivelado: demo.hoy() });
+        demo.guardar(j);
+        return { ok: true, estado: demo.estado() };
+      }
+      const e = demo.estado(), x = etapaDe(s), g = window.Leccion.GUIA[s];
+      e.encuesta = false;
+      e.leccion = { semana: s, etapa: x.etapa, nombreEtapa: ETAPAS[x.etapa - 1], numero: x.leccion, nivel: 'Etapa ' + x.etapa + ' · Lección ' + x.leccion, tema: g[0], objetivo: g[1], app: APPS[s] };
+      e.camino.forEach(c => { c.estado = c.semana === s ? 'actual' : c.semana < s ? 'hecha' : 'futura'; });
+      return { ok: true, estado: e };
     },
     comprar(id) {
       const j = demo.leer(), item = TIENDA.find(t => t.id === id);
@@ -246,6 +264,9 @@ window.Api = (function () {
     comprar: item => LOCAL ? local(() => demo.comprar(item)) : post({ accion: 'comprarJuego', item }),
     libro: n => libros[n] || (libros[n] = bajarLibro(n).catch(e => { delete libros[n]; throw e; })),
     guardarCasa: casa => LOCAL ? local(() => demo.casa(casa)) : post({ accion: 'guardarCasa', casa }),
+    nivel: semana => LOCAL ? local(() => porInstrumento(demo.nivel(semana))) : post({ accion: 'nivelJuego', semana }),
+    /* reportar un error o un reclamo (llega a la hoja «Reportes» del sistema); en la prueba (?demo=1) no se manda */
+    reporte: datos => DEMO ? local(() => ({ ok: true })) : post(Object.assign({ accion: 'reporteJuego' }, datos)),
     /* «Guardar mi progreso con Google»: el servidor revisa el token, pasa lo jugado en este celular (solo la primera vez)
        y devuelve la clave del bosque de esa persona; desde ahí la app entra con esa clave, como un alumno */
     async entrarGoogle(credencial) {

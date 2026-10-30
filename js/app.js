@@ -62,8 +62,11 @@
     if (S.pref.musica) S.escena(ESCENA[id] || 'mapa');
     if (id === 'tienda' && (!antes || antes.id !== 'tienda')) S.campanaPuerta();
   }
+  /* pone los hijos en un elemento y descarta los que no van (null, false): sin esto, el navegador escribe «null» en la
+     pantalla (lo vio la dueña el 30-oct en la entrada). Todas las pantallas se llenan con esta función. */
+  const llenar = (nodo, ...hijos) => nodo.replaceChildren(...hijos.flat().filter(h => h != null && h !== false));
   function aviso(texto) {
-    const a = $('#aviso'); a.textContent = texto; a.classList.add('ver');
+    const a = $('#aviso'); a.textContent = texto || 'Algo no salió bien. Intenta otra vez.'; a.classList.add('ver');
     clearTimeout(aviso.t); aviso.t = setTimeout(() => a.classList.remove('ver'), 2600);
   }
   function fichas() {
@@ -80,7 +83,7 @@
   function entrada() {
     const p = $('#entrada');
     if (!Api.tieneClave()) {
-      p.replaceChildren(el('div', { class: 'portada' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
+      llenar(p, el('div', { class: 'portada' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
         el('h1', { html: 'El bosque<span>de Sprinkloud</span>' }),
         el('p', { text: 'Para entrar, abre el enlace que te mandó tu maestro por WhatsApp.' }));
       ir('entrada'); return;
@@ -88,15 +91,88 @@
     const boton = puff('🌲 Entrar al bosque', 'grande respira', async () => {
       S.despertar();
       boton.disabled = true; boton.querySelector('.cara').textContent = 'Abriendo el bosque…';
-      try { estado = await Api.cargar(); etapaVista = estado.leccion ? estado.leccion.etapa : 6; camino(); }
+      try { estado = await Api.cargar(); etapaVista = estado.leccion ? estado.leccion.etapa : 6; estado.encuesta ? encuesta() : camino(); }
       catch (e) { boton.disabled = false; boton.querySelector('.cara').textContent = '🌲 Entrar al bosque'; aviso(e.message || 'No se pudo abrir. Revisa tu internet.'); }
     });
-    p.replaceChildren(el('div', { class: 'portada aparece' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
+    llenar(p, el('div', { class: 'portada aparece' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
       el('h1', { class: 'aparece d1', html: 'El bosque<span>de Sprinkloud</span>' }),
       Api.libre ? el('p', { class: 'lema aparece d2', text: 'Aprende teoría musical jugando, unos minutos cada día' }) : null,
       el('div', { class: 'aparece d2', style: 'width:100%;display:grid;justify-items:center' }, boton),
       Api.libre && !Api.demo && window.BOSQUE_GOOGLE_ID ? el('button', { class: 'enlace-texto aparece d3', type: 'button', text: '¿Ya guardaste tu progreso? Entra con Google', onclick: () => { S.toque(); cuenta(true); } }) : null);
     ir('entrada');
+  }
+
+  /* ---------- La prueba de nivel (30-oct): una vez, al entrar; preguntas de lo fácil a lo difícil (js/encuesta.js) ---------- */
+  function encuesta() {
+    const p = $('#practica'), E = window.Encuesta;
+    const escenario = el('div', { class: 'escenario encuesta' });
+    llenar(p, escenario);
+    ir('practica');
+    llenar(escenario,
+      el('div', { class: 'retrato-encuesta' }, el('img', { src: RETRATO('osito'), alt: '' })),
+      el('h1', { text: 'Antes de empezar, una prueba cortita 🎵' }),
+      el('p', { class: 'mano', text: 'Contesta lo que sepas. Si no sabes, toca «' + E.NO_SE + '»: así empiezas en tu lección justa.' }),
+      el('div', { class: 'acciones-encuesta' },
+        puff('Empezar la prueba', 'grande ocre', () => preguntar(0)),
+        puff('Empezar desde la lección 1', 'papel', () => terminar(1))));
+    function preguntar(i) {
+      if (i >= E.PREGUNTAS.length) return terminar(E.semanaDe(null));
+      const q = E.PREGUNTAS[i];
+      const puntos = el('div', { class: 'puntos-encuesta', 'aria-label': 'Pregunta ' + (i + 1) + ' de ' + E.PREGUNTAS.length }, E.PREGUNTAS.map((_, k) => el('i', { class: k < i ? 'hecho' : k === i ? 'ahora' : '' })));
+      const dibujo = q.pentagrama ? el('div', { class: 'pentagrama-encuesta' }) : null;
+      const escuchar = q.sonido ? puff('🔊 Escuchar', 'cielo', () => { S.despertar(); S.callar(); S.nota(q.sonido[0], .7); S.luego(800, () => S.nota(q.sonido[1], .7)); }) : null;
+      const responder = op => {
+        S.callar();
+        if (op === q.correcta) { S.acierto(); preguntar(i + 1); }
+        else { if (op !== E.NO_SE) S.error(); terminar(E.semanaDe(q.etapa)); }
+      };
+      llenar(escenario, puntos, el('h2', { class: 'pregunta-encuesta', text: q.texto }), dibujo, escuchar,
+        el('div', { class: 'respuestas-encuesta' }, q.opciones.map(op => puff(op, 'papel', () => responder(op)))),
+        el('button', { class: 'enlace-texto', type: 'button', text: E.NO_SE, onclick: () => responder(E.NO_SE) }));
+      if (dibujo) E.pentagrama(dibujo, q.pentagrama);
+      if (q.sonido) setTimeout(() => escuchar.click(), 350);
+    }
+    async function terminar(semana) {
+      llenar(escenario, el('p', { class: 'cargando', text: 'Buscando tu lección…' }));
+      try {
+        const r = await Api.nivel(semana);
+        estado = r.estado; etapaVista = estado.leccion ? estado.leccion.etapa : 1;
+        const l = estado.leccion;
+        llenar(escenario, 
+          el('div', { class: 'retrato-encuesta' }, el('img', { src: RETRATO('osito'), alt: '' })),
+          el('h1', { text: '¡Listo! 🎉' }),
+          el('p', { class: 'mano', text: 'Empiezas en la ' + l.nivel + ': ' + l.tema + '.' }),
+          el('div', { class: 'acciones-encuesta' }, puff('🌲 Ir al bosque', 'grande', () => camino())));
+        S.festejo();
+      } catch (e) { aviso(e.message || 'No se pudo guardar. Revisa tu internet.'); llenar(escenario, el('div', { class: 'acciones-encuesta' }, puff('Intentar otra vez', 'ocre', () => terminar(semana)))); }
+    }
+  }
+
+  /* ---------- Reportar un error o un reclamo (30-oct): llega a la hoja «Reportes» del sistema ---------- */
+  const TIPOS_REPORTE = ['Error en un ejercicio', 'La app no funciona', 'Reclamo', 'Idea'];
+  function reportar(contexto) {
+    contexto = contexto || {};
+    let tipo = contexto.actividad ? TIPOS_REPORTE[0] : '', cerrar;
+    const chips = el('div', { class: 'pestanas tipos-reporte', role: 'group', 'aria-label': 'Qué pasó' }, TIPOS_REPORTE.map(t => el('button', {
+      class: 'pestana', type: 'button', 'aria-pressed': String(t === tipo), text: t,
+      onclick: e => { S.toque(); tipo = t; chips.querySelectorAll('.pestana').forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); }
+    })));
+    const texto = el('textarea', { class: 'reporte-texto', rows: '4', maxlength: '1000', 'aria-label': 'Cuéntanos qué pasó', placeholder: 'Cuéntanos qué pasó o qué te gustaría…' });
+    const enviar = puff('Enviar', 'ocre', async () => {
+      if (!tipo) { aviso('Elige qué pasó 👆'); return; }
+      if (texto.value.trim().length < 3) { aviso('Cuéntanos un poquito qué pasó ✏️'); texto.focus(); return; }
+      enviar.disabled = true;
+      try {
+        const l = estado && estado.leccion;
+        await Api.reporte({ tipo, mensaje: texto.value, contexto: { leccion: l ? l.nivel : '', actividad: contexto.actividad || '', pantalla: contexto.pantalla || '', dispositivo: navigator.userAgent } });
+        cerrar(); aviso('¡Gracias! Ya nos llegó tu mensaje 💛');
+      } catch (e) { enviar.disabled = false; aviso(e.message || 'No se pudo enviar. Revisa tu internet.'); }
+    });
+    cerrar = cajon(el('div', { class: 'premio club reporte' },
+      el('h2', { text: 'Cuéntanos qué pasó 💬' }),
+      el('p', { text: 'Lo leemos para mejorar la app.' }),
+      chips, texto,
+      el('div', { class: 'acciones' }, enviar, puff('Cancelar', 'papel', () => cerrar()))));
   }
 
   /* ---------- El camino ---------- */
@@ -106,7 +182,7 @@
     const saludo = !l ? '¡Terminaste toda la guía! 🎉'
       : lb && lb.completa ? '¡Terminaste la versión libre! 🎉 Sigue con un plan del club'
       : sinEnergia ? '¡Se acabó tu energía de hoy! Vuelve mañana ⚡'
-      : j.hoy.terminada ? (lb && lb.paso ? '¡Pasaste la lección! Mañana se abre la siguiente 🌙' : '¡Ya practicaste hoy! Vuelve mañana 🌙')
+      : j.hoy.terminada ? ((lb && lb.paso) || (estado.avance && estado.avance.paso) ? '¡Pasaste la lección! Mañana se abre la siguiente 🌙' : '¡Ya practicaste hoy! Vuelve mañana 🌙')
       : (estado.alumno ? '¡Hola, ' + estado.alumno + '! ' : '¡Hola! ') + 'Hoy toca: ' + l.tema;
     const luciernagas = Array.from({ length: 6 }, (_, i) => el('i', { class: 'luciernaga', style: 'left:' + (10 + i * 15) + '%;top:' + (20 + (i * 37) % 50) + '%;animation-delay:' + (-i * .8) + 's' }));
     const heroe = el('div', { class: 'heroe' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: '' }), el('div', { class: 'noche-luz' }, luciernagas), el('div', { class: 'burbuja', text: saludo }));
@@ -129,7 +205,8 @@
       practicar,
       conNombre(puff('<span class="ico">🧺</span>', 'rosa', () => tienda()), 'Tienda'),
       conNombre(puff('<span class="ico">📚</span>', 'cielo', () => logros()), 'Biblioteca'));
-    p.replaceChildren(fichas(), heroe, zona, mapa, nav);
+    const reporte = el('button', { class: 'enlace-texto reportar', type: 'button', text: '💬 Reportar un error o reclamo', onclick: () => { S.toque(); reportar({ pantalla: 'camino' }); } });
+    llenar(p, fichas(), heroe, zona, mapa, nav, reporte);
     ir('camino');
     const actual = mapa.querySelector('.parada.actual');
     // centrar la parada de hoy solo dentro del mapa (scrollIntoView también correría la página entera)
@@ -221,7 +298,8 @@
        cuenta buena es la del servidor (o del celular), con los aciertos e intentos de la actividad. */
     const en = estado.juego.energia;
     const rayo = en ? el('span', { class: 'ficha energia', title: 'Energía de hoy', html: '<span class="rayo" aria-hidden="true">⚡</span><span class="num">' + en.queda + '</span>' }) : null;
-    p.replaceChildren(el('div', { class: 'practica-arriba' }, cerrar, pasos, rayo, el('span', { class: 'ficha', html: MALVAVISCO + '<span class="num" id="ganados">+0</span>' })), escenario);
+    const reporte = el('button', { class: 'enlace-texto reportar', type: 'button', text: '💬 ¿Algo está mal en este ejercicio?', onclick: () => { S.toque(); reportar({ actividad: actual, pantalla: 'practica' }); } });
+    llenar(p, el('div', { class: 'practica-arriba' }, cerrar, pasos, rayo, el('span', { class: 'ficha', html: MALVAVISCO + '<span class="num" id="ganados">+0</span>' })), escenario, reporte);
     ir('practica');
     let cancelado = false, ganados = 0, ultimo = null, vivoA = 0, vivoI = 0, actual = null;
     const acierto = S.acierto, error = S.error;
@@ -276,7 +354,7 @@
   /* ---------- ¡Terminaste tu práctica de hoy! ---------- */
   function fin(r, ganados, extra) {
     const p = $('#fin'), j = estado.juego;
-    p.replaceChildren(...[
+    llenar(p,
       el('div', { class: 'fogata-grande aparece', html: fogata(j.fogata) }),
       el('h1', { class: 'aparece d1', text: extra ? '¡Practicaste más!' : '¡Terminaste tu práctica de hoy!' }),
       el('div', { class: 'ganado aparece d2', html: MALVAVISCO + '+' + ganados }),
@@ -286,16 +364,22 @@
         puff('📸 Compartir mi logro', 'rosa', () => window.Compartir.dia(estado, ganados)),
         r && r.avance && r.avance.paso && r.avance.ultima ? puff('⭐ Seguir con el club', 'ocre', () => club('completa')) : null,
         !extra && sinCuenta() ? puff('🔐 Guardar mi progreso', 'madera', () => cuenta()) : null,
-        puff('🌲 Volver al bosque', 'grande', () => camino()))].filter(Boolean));
+        puff('🌲 Volver al bosque', 'grande', () => camino())));
     ir('fin');
     S.festejo(); setTimeout(() => S.fuego(), 500);
     confeti();
     const premios = [].concat((r && r.insignias) || [], r && r.personaje ? ['amigo:' + r.personaje] : []);
     if (premios.length) setTimeout(() => mostrarPremios(premios), 2200);
   }
-  /* versión libre: cómo le fue para pasar a la lección siguiente (80 %) */
+  /* cómo le fue para pasar a la lección siguiente (80 %): alumnos del club, en 2 días; versión libre, en 1 */
   function avanceTxt(a) {
     if (!a) return null;
+    if (a.dias != null) {
+      const t = a.paso ? '⭐ ¡' + a.pct + ' %! Lección lograda: mañana empiezas la siguiente.'
+        : a.pct >= 80 ? '⭐ ¡' + a.pct + ' %! Llevas ' + a.dias + ' de ' + a.necesita + ' días con 80 %. ¡Un día más y pasas!'
+        : '💪 ' + a.pct + ' % de aciertos. Para pasar de lección necesitas 80 % en ' + a.necesita + ' días. ¡Mañana otra vez!';
+      return el('p', { class: 'avance-txt aparece d3' + (a.pct >= 80 ? ' paso' : ''), text: t });
+    }
     const texto = a.paso && a.ultima ? '🎉 ¡Completaste la etapa 3 con ' + a.pct + ' %! Terminaste la versión libre.'
       : a.paso ? '⭐ ¡' + a.pct + ' % de aciertos! Mañana se abre la lección siguiente.'
       : '💪 ' + a.pct + ' % de aciertos. Con 80 % pasas a la lección siguiente: ¡mañana otra vez!';
@@ -332,7 +416,7 @@
   /* ---------- «Guardar mi progreso con Google» (versión libre, 30-oct) ----------
      El botón lo dibuja Google (Google Identity Services, se carga solo al abrir este cajón). Al entrar, la app se recarga
      con la clave del bosque de esa persona (Api.entrarGoogle). */
-  const sinCuenta = () => !!(estado && estado.libre && !estado.libre.cuenta && window.BOSQUE_GOOGLE_ID);
+  const sinCuenta = () => !!(estado && estado.cuenta === false && window.BOSQUE_GOOGLE_ID);   // alumnos y versión libre (30-oct)
   let googleListo = null;
   function cargarGoogle() {
     if (window.google && google.accounts && google.accounts.id) return Promise.resolve();
@@ -356,14 +440,14 @@
       google.accounts.id.initialize({
         client_id: window.BOSQUE_GOOGLE_ID,
         callback: async resp => {
-          lugar.replaceChildren(el('p', { class: 'cargando', text: 'Guardando tu progreso…' }));
+          llenar(lugar, el('p', { class: 'cargando', text: 'Guardando tu progreso…' }));
           try { await Api.entrarGoogle(resp.credential); }
-          catch (e) { lugar.replaceChildren(el('p', { class: 'cargando', text: e.message || 'No se pudo entrar con Google. Intenta otra vez.' })); }
+          catch (e) { llenar(lugar, el('p', { class: 'cargando', text: e.message || 'No se pudo entrar con Google. Intenta otra vez.' })); }
         }
       });
       lugar.replaceChildren();
       google.accounts.id.renderButton(lugar, { theme: 'outline', size: 'large', shape: 'pill', text: 'continue_with', locale: 'es', width: Math.min(300, lugar.clientWidth || 280) });
-    }).catch(e => lugar.replaceChildren(el('p', { class: 'cargando', text: e.message })));
+    }).catch(e => llenar(lugar, el('p', { class: 'cargando', text: e.message })));
   }
 
   function confeti() {
@@ -461,7 +545,7 @@
         capa.append(b);
       });
       const libres = j.inventario.filter(id => !casa[id]);
-      bandeja.replaceChildren(libres.length
+      llenar(bandeja, libres.length
         ? el('div', { class: 'bandeja-fila' }, libres.map(id => el('button', { class: 'calco-bandeja', type: 'button', 'aria-label': 'Pegar ' + nombreItem(id), onclick: () => pegar(id) }, el('span', { class: 'arte-mini' }, arte(id)))))
         : el('p', { class: 'mano', text: j.inventario.length ? '¡Pegaste todas tus calcomanías! 🧸' : 'Compra cosas en la tienda: llegan aquí como calcomanías 🧺' }));
     }
@@ -529,7 +613,7 @@
       lienzo.dataset.cuarto = id;   // en «Toda la casa» las calcomanías tienen una zona de toque más grande
       pestanas.querySelectorAll('.pestana').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cuarto === id)));
     }
-    p.replaceChildren(
+    llenar(p, 
       el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Mi casita' }), fichas().children[1]),
       lienzo, herramientas, pestanas,
       el('p', { class: 'mano pista-casa', text: j.inventario.length ? 'Toca una calcomanía y arrástrala ✨' : '' }),
@@ -547,7 +631,7 @@
     let lugar = filtro || 'todo';   // 'todo' o un cuarto: sala, cocina, dorm, jardin
     const lista = el('div', { class: 'tienda' });
     const pintar = () => {
-      lista.replaceChildren(...estado.catalogo.tienda.filter(t => lugar === 'todo' || t.lugar.startsWith(lugar + '-')).map(t => {
+      llenar(lista, ...estado.catalogo.tienda.filter(t => lugar === 'todo' || t.lugar.startsWith(lugar + '-')).map(t => {
         const tengo = estado.juego.inventario.includes(t.id), alcanza = estado.juego.malvaviscos >= t.precio;
         return el('div', { class: 'articulo' }, el('div', { class: 'arte' }, arte(t.id)), el('h3', { text: t.nombre }),
           tengo ? el('span', { class: 'mano', style: 'font-size:1.3rem;color:var(--moss-deep)', text: 'Ya es tuya ✓' })
@@ -569,7 +653,7 @@
       } catch (e) { aviso(e.message); }
     }
     pintar();
-    p.replaceChildren(
+    llenar(p, 
       el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Tienda del bosque' }), fichas().children[1]),
       pestanas, el('div', { class: 'lista-scroll' }, lista),
       el('div', { class: 'casa-acciones', style: 'grid-template-columns:1fr' }, puff('🏡 Ver mi casita', 'madera', () => casita())));
@@ -606,13 +690,14 @@
       const tiene = (j.personajes || []).includes(a.id);
       return el('div', { class: 'amigo' + (tiene ? '' : ' bloqueado') }, el('div', { class: 'retrato' }, el('img', { src: RETRATO(a.id), alt: '' })), el('span', { text: tiene ? a.nombre : a.dias + ' días' }));
     }));
-    p.replaceChildren(
+    llenar(p, 
       el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Biblioteca' })),
       el('div', { class: 'lista-scroll' },
         el('h2', { class: 'seccion-titulo', text: 'Mis libros' }), estante,
         el('p', { class: 'mano pista-estante', text: estado.libre ? 'Los libros de la serie están en Amazon 📚' : 'Toca un libro para leerlo cuando quieras 📖' }),
         el('h2', { class: 'seccion-titulo', text: 'Medallas' }), numeros, insignias,
-        el('h2', { class: 'seccion-titulo', text: 'Amigos del bosque' }), amigos));
+        el('h2', { class: 'seccion-titulo', text: 'Amigos del bosque' }), amigos,
+        sinCuenta() ? el('div', { class: 'casa-acciones', style: 'grid-template-columns:1fr;margin-top:18px' }, puff('🔐 Guardar mi progreso con Google', 'madera', () => cuenta())) : null));
     ir('logros');
   }
 
@@ -690,7 +775,7 @@
     }
     document.addEventListener('keydown', teclas);
     try { libro = await window.Api.libro(b.etapa); }
-    catch (e) { hoja.replaceChildren(el('p', { class: 'cargando', text: e.message })); return; }
+    catch (e) { llenar(hoja, el('p', { class: 'cargando', text: e.message })); return; }
     if (!lector.isConnected) return;
     estiloLibro(libro.css);
     hojas = hojasDe(libro, b.etapa < (estado.leccion ? estado.leccion.etapa : 1));
@@ -704,7 +789,7 @@
       cont.querySelectorAll('a').forEach(a => a.replaceWith(...a.childNodes));   // en el libro de la app no hay enlaces
       ponerEjemplos(cont, h);
       if (dir) cont.classList.add(dir > 0 ? 'entra-sig' : 'entra-ant');
-      hoja.replaceChildren(cont);
+      llenar(hoja, cont);
       hoja.scrollTop = 0;
       if (dir) requestAnimationFrame(() => requestAnimationFrame(() => cont.classList.remove('entra-sig', 'entra-ant')));
       cuenta.textContent = (i + 1) + ' de ' + hojas.length;
