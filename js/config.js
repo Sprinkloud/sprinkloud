@@ -8,6 +8,10 @@ window.BOSQUE_MUSICA = ['assets/musica/amanecer-1.mp3'];
    estén los 7 publicados se puede poner el enlace de la página de la serie). */
 window.BOSQUE_CLUB = {
   planes: 'https://wa.me/593987999154?text=' + encodeURIComponent('Hola, probé la app El bosque de Sprinkloud y quiero información sobre los planes del club 🎶'),
+  // la app sola venció (30-oct): para renovarla
+  renovar: 'https://wa.me/593987999154?text=' + encodeURIComponent('Hola, quiero renovar mi app El bosque de Sprinkloud 🌲'),
+  // un ex alumno que quiere volver al club
+  volver: 'https://wa.me/593987999154?text=' + encodeURIComponent('Hola, quiero volver al Club musical Sprinkloud 🎶'),
   amazon: 'https://www.amazon.com/s?k=' + encodeURIComponent('Aprendo música con Sprinkloud') + '&i=digital-text',
   sitio: 'https://sprinkloud.vercel.app'
 };

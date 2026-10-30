@@ -91,7 +91,12 @@
     const boton = puff('🌲 Entrar al bosque', 'grande respira', async () => {
       S.despertar();
       boton.disabled = true; boton.querySelector('.cara').textContent = 'Abriendo el bosque…';
-      try { estado = await Api.cargar(); etapaVista = estado.leccion ? estado.leccion.etapa : 6; estado.encuesta ? encuesta() : camino(); }
+      try {
+        estado = await Api.cargar(); etapaVista = estado.leccion ? estado.leccion.etapa : 6;
+        estado.encuesta ? encuesta() : camino();
+        // ex alumno o app vencida: al entrar, una vez, le cuenta que su avance sigue guardado y cómo volver a todo
+        if (estado.libre && estado.libre.motivo && !estado.encuesta) setTimeout(() => club(), 900);
+      }
       catch (e) { boton.disabled = false; boton.querySelector('.cara').textContent = '🌲 Entrar al bosque'; aviso(e.message || 'No se pudo abrir. Revisa tu internet.'); }
     });
     llenar(p, el('div', { class: 'portada aparece' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
@@ -391,10 +396,15 @@
     energia: ['¡Se acabó tu energía de hoy! ⚡', 'Mañana se recarga. ¿Quieres practicar sin límites?'],
     leccion: ['Esta lección es del plan completo 🔒', 'La versión libre llega hasta la etapa 3.'],
     libro: ['Este libro está en Amazon 📚', 'Cada libro trae sus lecciones con dibujos, ejemplos y prácticas.'],
-    completa: ['¡Terminaste la versión libre! 🎉', 'Llegaste al final de la etapa 3. ¡Qué gran músico!']
+    completa: ['¡Terminaste la versión libre! 🎉', 'Llegaste al final de la etapa 3. ¡Qué gran músico!'],
+    /* el enlace de un alumno inactivo o de una app vencida abre la versión de prueba, con su avance guardado (30-oct) */
+    exalumno: ['¡Te extrañamos en el club! 🌲', 'Tu avance sigue guardado. Vuelve al club para seguir con todo.'],
+    vencida: ['Tu app venció ⏳', 'Tu avance sigue guardado. Renuévala para seguir con las 60 lecciones y tus libros.']
   };
   function club(motivo) {
-    const [titulo, sub] = MOTIVOS[motivo] || ['Club musical Sprinkloud ⭐', 'Aprende música con tu maestra, tu app y tus libros.'];
+    const origen = estado && estado.libre && estado.libre.motivo;   // ex alumno o app vencida
+    const [titulo, sub] = MOTIVOS[motivo || origen] || ['Club musical Sprinkloud ⭐', 'Aprende música con tu maestra, tu app y tus libros.'];
+    const pedir = origen === 'vencida' ? ['🌲 Renovar mi app', window.BOSQUE_CLUB.renovar] : origen === 'exalumno' ? ['💬 Volver al club', window.BOSQUE_CLUB.volver] : ['💬 Quiero un plan', window.BOSQUE_CLUB.planes];
     const abrir = url => { S.toque(); window.open(url, '_blank', 'noopener'); };
     let cerrar;
     const contenido = el('div', { class: 'premio club' },
@@ -404,9 +414,10 @@
       el('ul', { class: 'club-lista' },
         el('li', { text: '🌲 Las 60 lecciones del bosque y energía sin límite' }),
         el('li', { text: '📚 Los 7 libros dentro de la app' }),
-        el('li', { text: '🎹 Clases de música en vivo con tu maestra' })),
+        el('li', { text: '🎹 Clases de música en vivo con tu maestra' }),
+        el('li', { text: '📱 O solo la app completa: 4,99 USD al mes o 39,99 USD al año' })),
       el('div', { class: 'acciones' },
-        puff('💬 Quiero un plan', 'ocre', () => abrir(window.BOSQUE_CLUB.planes)),
+        puff(pedir[0], 'ocre', () => abrir(pedir[1])),
         puff('📚 Libros en Amazon', 'cielo', () => abrir(window.BOSQUE_CLUB.amazon)),
         sinCuenta() ? puff('🔐 Guardar mi progreso', 'madera', () => { cerrar(); setTimeout(cuenta, 420); }) : null,
         puff('Ahora no', 'papel', () => cerrar())));

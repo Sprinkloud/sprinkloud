@@ -248,6 +248,11 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - **Revisión automática:** `herramientas/revisar_textos.js` (se pega en Playwright con el servidor local): recorre la entrada, la prueba de nivel, prácticas de varias lecciones, la casita, la tienda, la biblioteca y un libro, y busca «null», «undefined», «NaN» o texto suelto. Después del arreglo: sin hallazgos ni errores de JavaScript.
 - **Modo nocturno:** de noche las medallas quedan de metal claro (las bloqueadas, grises al 62 %), y los retratos (amigos, premios, prueba de nivel) van sobre papel claro: con `mix-blend-mode: multiply` sobre el fondo oscuro se veían casi negros.
 
+## La app sola, apps vencidas y ex alumnos (30-oct, pedido de la dueña)
+- Quien compra la app sola (4,99 USD al mes o 39,99 USD al año; la registra servicio al cliente, ver `Registro_Sprinkloud/CLAUDE.md`) entra con su enlace como un alumno: sin energía ni candados, con los libros de sus etapas y «Llevas N de 2 días» al terminar.
+- Si su app vence o un alumno queda inactivo, el mismo enlace abre la versión de prueba con su avance guardado. El servidor manda `estado.libre.motivo` (`vencida` o `exalumno`). Al entrar se abre una vez el espacio del club («Tu app venció ⏳» o «¡Te extrañamos en el club! 🌲»), con el botón «Renovar mi app» o «Volver al club» (`BOSQUE_CLUB.renovar` y `volver` en `js/config.js`, WhatsApp del club). Para probarlo: `?demo=1&libre=1&motivo=vencida`.
+- El espacio del club también ofrece «📱 O solo la app completa: 4,99 USD al mes o 39,99 USD al año».
+
 ## Arte pendiente (Gemini)
 - Hoy, los muebles y las insignias se ven como emoji.
 - Las imágenes van en `assets/arte/<id>.webp`, con fondo transparente, y se agregan a `js/arte.js`.
