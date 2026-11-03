@@ -65,6 +65,30 @@
   /* pone los hijos en un elemento y descarta los que no van (null, false): sin esto, el navegador escribe «null» en la
      pantalla (lo vio la dueña el 30-oct en la entrada). Todas las pantallas se llenan con esta función. */
   const llenar = (nodo, ...hijos) => nodo.replaceChildren(...hijos.flat().filter(h => h != null && h !== false));
+  /* Mientras carga (pedido de la dueña, 3-nov): el osito «carga» algo de la casita, con frases que cambian, para que no se
+     sienta la espera. Si ya existe el dibujo del osito con la carretilla de flores (assets/arte/osito-carretilla.webp), va
+     ese; si no, el osito con una cosita de la casita que cambia con cada frase. Con movimiento reducido, quieto. */
+  const FRASES_ESPERA = ['Afinando el violín…', 'Juntando malvaviscos…', 'Avivando la fogata…', 'Barriendo la casita…',
+    'Despertando a los amigos del bosque…', 'Buscando las partituras…', 'Casi listo, un compás más…'];
+  function esperando(primera) {
+    const arte = window.BOSQUE_ARTE || [], carretilla = true;   // ya está el dibujo del osito con la carretilla (3-nov): va siempre
+    const cosas = arte.filter(id => !/^(aciertos|dias|racha|primera|perfecta|compra|casa5|osito)/.test(id));
+    const cosa = carretilla || !cosas.length ? null : el('img', { class: 'espera-cosa', src: 'assets/arte/' + cosas[Math.floor(Math.random() * cosas.length)] + '.webp', alt: '' });
+    const frase = el('p', { class: 'espera-frase', text: primera || FRASES_ESPERA[0] });
+    const caja = el('div', { class: 'espera', role: 'status' },
+      el('div', { class: 'espera-escena', 'aria-hidden': 'true' },
+        el('img', { class: 'espera-osito' + (carretilla ? ' carretilla' : ''), src: 'assets/osito-cargando.webp', alt: '' }), cosa),
+      frase);
+    let i = 0;
+    const reloj = setInterval(() => {
+      if (!caja.isConnected) { clearInterval(reloj); return; }
+      i = (i + 1) % FRASES_ESPERA.length;
+      frase.textContent = FRASES_ESPERA[i];
+      frase.classList.remove('cambia'); void frase.offsetWidth; frase.classList.add('cambia');
+      if (cosa && cosas.length > 1) cosa.src = 'assets/arte/' + cosas[(cosas.indexOf(cosa.src.split('/').pop().replace('.webp', '')) + 1) % cosas.length] + '.webp';
+    }, 1800);
+    return caja;
+  }
   function aviso(texto) {
     const a = $('#aviso'); a.textContent = texto || 'Algo no salió bien. Intenta otra vez.'; a.classList.add('ver');
     clearTimeout(aviso.t); aviso.t = setTimeout(() => a.classList.remove('ver'), 2600);
@@ -91,13 +115,14 @@
     const boton = puff('🌲 Entrar al bosque', 'grande respira', async () => {
       S.despertar();
       boton.disabled = true; boton.querySelector('.cara').textContent = 'Abriendo el bosque…';
+      const espera = esperando('Abriendo el bosque…'); boton.after(espera);
       try {
         estado = await Api.cargar(); etapaVista = estado.leccion ? estado.leccion.etapa : 6;
         estado.encuesta ? encuesta() : camino();
         // ex alumno o app vencida: al entrar, una vez, le cuenta que su avance sigue guardado y cómo volver a todo
         if (estado.libre && estado.libre.motivo && !estado.encuesta) setTimeout(() => club(), 900);
       }
-      catch (e) { boton.disabled = false; boton.querySelector('.cara').textContent = '🌲 Entrar al bosque'; aviso(e.message || 'No se pudo abrir. Revisa tu internet.'); }
+      catch (e) { espera.remove(); boton.disabled = false; boton.querySelector('.cara').textContent = '🌲 Entrar al bosque'; aviso(e.message || 'No se pudo abrir. Revisa tu internet.'); }
     });
     llenar(p, el('div', { class: 'portada aparece' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
       el('h1', { class: 'aparece d1', html: 'El bosque<span>de Sprinkloud</span>' }),
@@ -138,7 +163,7 @@
       if (q.sonido) setTimeout(() => escuchar.click(), 350);
     }
     async function terminar(semana) {
-      llenar(escenario, el('p', { class: 'cargando', text: 'Buscando tu lección…' }));
+      llenar(escenario, esperando('Buscando tu lección…'));
       try {
         const r = await Api.nivel(semana);
         estado = r.estado; etapaVista = estado.leccion ? estado.leccion.etapa : 1;
@@ -758,7 +783,7 @@
     const p = $('#logros');
     const cerrar = el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Cerrar el libro', text: '✕' });
     const indiceBtn = el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Índice del libro', text: '☰' });
-    const hoja = el('div', { class: 'libro-pagina', tabindex: '0' }, el('p', { class: 'cargando', text: 'Abriendo el libro…' }));
+    const hoja = el('div', { class: 'libro-pagina', tabindex: '0' }, esperando('Abriendo el libro…'));
     const cuenta = el('span', { class: 'libro-cuenta', 'aria-live': 'polite' });
     const antes = puff('◀', 'papel libro-ant', () => pasar(-1)), despues = puff('▶', 'ocre libro-sig', () => pasar(1));
     antes.setAttribute('aria-label', 'Página anterior'); despues.setAttribute('aria-label', 'Página siguiente');

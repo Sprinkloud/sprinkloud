@@ -463,6 +463,23 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .entrada p { margin: 0; color: var(--ink-soft); max-width: 30ch; }
 .entrada .puff { width: min(100%, 320px); }
 .cargando { font-family: var(--f-hand); font-size: 1.5rem; color: var(--ink-soft); }
+/* El osito que espera mientras carga (3-nov): baila con una cosita de la casita; las frases cambian */
+.espera { display: grid; justify-items: center; gap: 6px; padding: 18px 10px; text-align: center; }
+.espera-escena { position: relative; height: 128px; width: 170px; }
+.espera-osito { position: absolute; left: 14px; bottom: 0; height: 120px; width: auto; transform-origin: 50% 100%; }
+.espera-osito.carretilla { left: 0; height: auto; width: 164px; }
+.espera-cosa { position: absolute; right: 0; top: 6px; width: 62px; height: 62px; object-fit: contain; filter: drop-shadow(0 4px 6px rgb(60 40 20 / .18)); }
+.espera-frase { margin: 0; font-family: var(--f-hand); font-size: 1.45rem; color: var(--ink-soft); min-height: 1.6em; }
+@media (prefers-reduced-motion: no-preference) {
+  .espera-osito { animation: osito-baila 1.1s ease-in-out infinite; }
+  .espera-osito.carretilla { animation: osito-empuja 1.4s ease-in-out infinite; }
+  .espera-cosa { animation: cosa-flota 1.8s ease-in-out infinite; }
+  .espera-frase.cambia { animation: frase-entra .35s var(--ease-out); }
+}
+@keyframes osito-baila { 0%, 100% { transform: rotate(-6deg) translateY(0); } 50% { transform: rotate(6deg) translateY(-6px); } }
+@keyframes osito-empuja { 0%, 100% { transform: translateX(-4px) rotate(-1deg); } 50% { transform: translateX(4px) rotate(1deg); } }
+@keyframes cosa-flota { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
+@keyframes frase-entra { from { opacity: 0; transform: translateY(4px); } }
 
 .aviso {
   position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 30; transform: translate(-50%, 20px); opacity: 0;
