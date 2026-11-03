@@ -52,7 +52,11 @@ def recortar(im):
         return sin_papel(im)
     if _sesion is None:
         _sesion = new_session('isnet-general-use')
-    return remove(im, session=_sesion, alpha_matting=True, alpha_matting_foreground_threshold=235, alpha_matting_background_threshold=20).convert('RGBA')
+    try:
+        return remove(im, session=_sesion, alpha_matting=True, alpha_matting_foreground_threshold=235, alpha_matting_background_threshold=20).convert('RGBA')
+    except MemoryError:
+        # el recorte fino (alpha matting) se queda sin memoria con objetos delgados, como los palitos (3-nov): recorte normal
+        return remove(im, session=_sesion).convert('RGBA')
 
 
 for jpg in sorted(ORIGEN.glob('bosque-*.jpg')):
