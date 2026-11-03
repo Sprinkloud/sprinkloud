@@ -63,6 +63,8 @@ window.Sonido = (function () {
   let jingle = null;
   let escalera = 0;   // aciertos seguidos: cada uno suena un poco más agudo
   const ESCALA = [72, 74, 76, 79, 81, 84, 86, 88, 91, 93];
+  const TOQUES = [84, 86, 88, 91, 93, 96];   // do, re, mi, sol, la y do agudos
+  let toques = 0;
   const api = {
     get pref() { return pref; },
     despertar() { audio(); },
@@ -80,13 +82,11 @@ window.Sonido = (function () {
     },
     /* como setTimeout, pero no pasa nada si antes se llamó a callar (notas que se tocan con un poco de espera) */
     luego(ms, fn) { const mio = turno; return setTimeout(() => { if (mio === turno) fn(); }, ms); },
-    /* toque de botón: una gotita de madera */
+    /* toque de botón: una nota aguda de piano (3-nov, pedido de la dueña: no le gustaba el «posh» de la gotita de madera).
+       Va cambiando entre notas de la escala pentatónica aguda, para que no canse. */
     toque() {
       if (!ok()) return;
-      const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = 'sine'; o.frequency.setValueAtTime(880, t); o.frequency.exponentialRampToValueAtTime(420, t + .07);
-      g.gain.setValueAtTime(.25, t); g.gain.exponentialRampToValueAtTime(.0001, t + .09);
-      o.connect(g); g.connect(bus); o.start(t); o.stop(t + .1);
+      piano(ctx.currentTime + .005, TOQUES[toques++ % TOQUES.length], .32, .2);
     },
     acierto() {
       if (!ok()) return;
@@ -152,8 +152,8 @@ window.Sonido = (function () {
     },
     /* la fogata se aviva */
     fuego() { if (!ok()) return; ruido(ctx.currentTime, .7, 900, .5); ruido(ctx.currentTime + .1, .5, 400, .35); },
-    /* pasar de página */
-    pagina() { if (!ok()) return; ruido(ctx.currentTime, .18, 2400, .18); },
+    /* pasar de página: ya no suena (3-nov): el soplido se oía como un «posh» en cada botón; basta la nota del toque */
+    pagina() { },
     /* pasar la hoja de un libro: el papel roza (un soplo que sube y baja) y al final cae la hoja */
     hojaLibro() {
       if (!ok()) return;
@@ -185,14 +185,11 @@ window.Sonido = (function () {
       g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(fuerte ? .22 : .14, t + .004); g.gain.exponentialRampToValueAtTime(.0001, t + .04);
       o.connect(g); g.connect(bus); o.start(t); o.stop(t + .05);
     },
-    /* tambor (para marcar el pulso) */
+    /* el pulso del ritmo: una campana clara (3-nov, pedido de la dueña: el tambor sonaba muy grave y casi no se oía en el
+       celular). Se llama tambor porque así lo usan las actividades y los ejemplos. */
     tambor(t) {
       audio();
-      const o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = 'sine'; o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(60, t + .18);
-      g.gain.setValueAtTime(.6, t); g.gain.exponentialRampToValueAtTime(.0001, t + .25);
-      o.connect(g); g.connect(bus); o.start(t); o.stop(t + .26);
-      ruido(t, .05, 1400, .5); ruido(t, .09, 420, .45);   // el golpe del parche: lo que se oye en el celular
+      campana(t, 88, .34, .4);   // corta, para que no se mezcle con el pulso siguiente
     },
     notaRitmo(t, enPulso, dur) { audio(); piano(t, enPulso ? 72 : 67, Math.max(dur * .95, .09), enPulso ? .3 : .24); },
     ahora() { return audio().currentTime; },
@@ -279,12 +276,13 @@ window.Sonido = (function () {
     s.buffer = n; f.type = 'bandpass'; f.frequency.value = frecuencia; f.Q.value = 1.2; g.gain.value = gain;
     s.connect(f); f.connect(g); g.connect(destino || bus); s.start(t);
   }
-  function campana(t, midi, gain) {
+  function campana(t, midi, gain, dur) {
+    dur = dur || 1.4;
     [[1, 1], [2.76, .35], [5.4, .12]].forEach(([k, a]) => {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.type = 'sine'; o.frequency.setValueAtTime(hz(midi) * k, t);
-      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain * a, t + .005); g.gain.exponentialRampToValueAtTime(.0001, t + 1.4);
-      o.connect(g); g.connect(bus); o.start(t); o.stop(t + 1.5);
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain * a, t + .005); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g); g.connect(bus); o.start(t); o.stop(t + dur + .1);
     });
   }
   api.musica = musica;

@@ -269,3 +269,8 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - `esperando(frase)` en `js/app.js`: el osito empuja una carretilla de flores (`assets/osito-cargando.webp`, de Gemini: `bosque-osito-carretilla` en `Libro_Sprinkloud/herramientas/ilustraciones/etapa10.txt`, recortada con rembg), con frases que cambian cada 1,8 s («Juntando malvaviscos…», «Avivando la fogata…»).
 - Aparece al entrar al bosque (debajo del botón), al buscar la lección después de la prueba de nivel y al abrir un libro. La pantalla de entrada ya empieza con él (`index.html`). Con movimiento reducido, queda quieto.
 - La misma imagen la usan los paneles del sistema (`Registro_Sprinkloud`), que la cargan desde GitHub Pages.
+
+## Sonidos más claros (3-nov-2026, pedido de la dueña)
+- **Toque de botón** (`Sonido.toque`): una nota aguda de piano que va cambiando (do, re, mi, sol, la y do agudos, `TOQUES`). Antes era una gotita de madera que sonaba a «posh».
+- **Cambio de pantalla** (`Sonido.pagina`): ya no suena. El soplido también se oía como «posh» en cada botón.
+- **Pulso del ritmo** (`Sonido.tambor`, en las actividades y los ejemplos): una campana clara y corta (`campana(t, 88, .34, .4)`). El tambor sonaba muy grave y casi no se oía en el celular.
