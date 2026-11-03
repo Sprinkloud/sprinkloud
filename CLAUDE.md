@@ -48,7 +48,7 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 | `js/arte.js` | Lista de los dibujos de `assets/arte/` que ya existen (los demás se ven como emoji) |
 | `js/motores/*.js` | **GENERADOS** por `herramientas/copiar_motores.py` desde el sitio: `hoja.js`, `lectura.js`, `ritmo.js`, `oido.js` y `leccion.js`. No se editan a mano |
 | `manifest.json`, `assets/icono-*.png` | Instalable en la pantalla de inicio |
-| `assets/vista-previa.jpg` | Imagen del enlace en WhatsApp, Facebook e Instagram (Open Graph, 1200×630): el osito en el bosque con «Sprinkloud» arriba, hecha con Gemini (`Libro_Sprinkloud/img/gemini/bosque-enlace.jpg`, 29-oct) y recortada a 1200×630. WhatsApp guarda las vistas previas un tiempo, así que en los enlaces ya mandados puede tardar en aparecer |
+| `assets/vista-previa-osito.jpg` | Imagen del enlace en WhatsApp, Facebook e Instagram (Open Graph, 1200×630): **el osito original del bosque** (`Libro_Sprinkloud/img/personajes/bear-recorte.jpg`), con los costados del color del papel. Cambiada el 3-nov a pedido de la dueña: el oso de Gemini con la palabra Sprinkloud no se parecía al personaje. El nombre cambió para que WhatsApp no muestre la vieja; en los enlaces ya mandados puede tardar en cambiar |
 
 ## El camino
 **Tocar una piedra lleva directo a la lección** (pedido de la dueña, 29-oct; antes solo mostraba el nombre y había que buscar «Practicar»):
