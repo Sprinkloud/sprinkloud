@@ -63,8 +63,6 @@ window.Sonido = (function () {
   let jingle = null;
   let escalera = 0;   // aciertos seguidos: cada uno suena un poco más agudo
   const ESCALA = [72, 74, 76, 79, 81, 84, 86, 88, 91, 93];
-  const TOQUES = [84, 86, 88, 91, 93, 96];   // do, re, mi, sol, la y do agudos
-  let toques = 0;
   const api = {
     get pref() { return pref; },
     despertar() { audio(); },
@@ -82,11 +80,22 @@ window.Sonido = (function () {
     },
     /* como setTimeout, pero no pasa nada si antes se llamó a callar (notas que se tocan con un poco de espera) */
     luego(ms, fn) { const mio = turno; return setTimeout(() => { if (mio === turno) fn(); }, ms); },
-    /* toque de botón: una nota aguda de piano (3-nov, pedido de la dueña: no le gustaba el «posh» de la gotita de madera).
-       Va cambiando entre notas de la escala pentatónica aguda, para que no canse. */
+    /* toque de botón: un «tic» corto y suave, sin nota musical (4-nov, pedido de la dueña). La nota aguda de piano del 3-nov
+       se mezclaba con las notas de los ejercicios (pentagrama, teclado). Tampoco es el «posh» (un soplo largo) que no le
+       gustaba: dura unos 40 ms. Es un clic de ruido filtrado en agudo y un golpecito que baja rápido, para que se sienta
+       como un botón y no como una nota. */
     toque() {
       if (!ok()) return;
-      piano(ctx.currentTime + .005, TOQUES[toques++ % TOQUES.length], .32, .2);
+      const t = ctx.currentTime + .003;
+      const n = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .018), ctx.sampleRate), d = n.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+      const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      s.buffer = n; f.type = 'bandpass'; f.frequency.value = 3800; f.Q.value = 1.4; g.gain.value = .32;
+      s.connect(f); f.connect(g); g.connect(bus); s.start(t);
+      const o = ctx.createOscillator(), go = ctx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(1500, t); o.frequency.exponentialRampToValueAtTime(700, t + .035);
+      go.gain.setValueAtTime(.0001, t); go.gain.exponentialRampToValueAtTime(.09, t + .003); go.gain.exponentialRampToValueAtTime(.0001, t + .04);
+      o.connect(go); go.connect(bus); o.start(t); o.stop(t + .05);
     },
     acierto() {
       if (!ok()) return;

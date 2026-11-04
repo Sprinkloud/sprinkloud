@@ -182,6 +182,7 @@ python herramientas/copiar_motores.py         # vuelve a copiar los ejercicios d
 - Se llama al cambiar de pantalla (`ir`), al empezar cada actividad de la práctica, al pasar o cerrar una hoja del libro, y antes de tocar algo nuevo (`Sonido.tocar`, `tocarCompas` del ritmo y `Ejemplos.tocar`).
 - **`Sonido.luego(ms, fn)`** es como `setTimeout`, pero no hace nada si antes se llamó a `callar`. Se usa para las notas que se tocan con un poco de espera.
 - **Ejemplos del libro:** `Sonido.musica.silenciar(ms)` apaga la música mientras suena el ejemplo y la devuelve despacio. El volumen de los ejemplos subió de .26 a .42.
+- **El toque de los botones es un «tic» corto sin nota** (4-nov, pedido de la dueña): la nota aguda de piano del 3-nov se mezclaba con las notas de los ejercicios. Es un clic de ruido en 3800 Hz más un golpecito de 1500 a 700 Hz, de unos 40 ms (`Sonido.toque`). También suena así al contar los semitonos y al armar las armaduras.
 - **La voz de piano tiene armónicos fuertes** (filtro en 5200 Hz), porque los parlantes del celular casi no dan los graves y la nota se reconoce por sus armónicos. El tambor lleva, además, el golpe del parche (ruido corto), que es lo que se oye en el celular.
 
 ## Fijar la app en la pantalla (29-oct)
