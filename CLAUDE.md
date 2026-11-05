@@ -240,7 +240,14 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 
 ## El alumno avanza solo, prueba de nivel, Gmail y reportes (30-oct, pedido de la dueña)
 - **Avance:** los alumnos del club pasan de lección con 80 % o más en 2 días (el servidor; ver `Registro_Sprinkloud/CLAUDE.md`). Al terminar la práctica, `avanceTxt` dice cuántos días lleva («Llevas 1 de 2 días con 80 %»). La versión libre sigue con 1 día.
-- **Prueba de nivel** (`js/encuesta.js` y `encuesta()` en `js/app.js`): al entrar por primera vez (`estado.encuesta`), 12 preguntas, 2 por etapa de la 1 a la 6, de lo fácil a lo difícil (una con sonido y otra con la nota en el pentagrama). Donde se equivoca o toca «No lo sé todavía», empieza en la primera lección de esa etapa (`INICIO`); todo bien, en la etapa 7. También «Empezar desde la lección 1». Se guarda con `Api.nivel` (servidor `nivelJuego_`; en la versión libre, en el celular). Para probarla sin libre: `?demo=1&encuesta`.
+- **Prueba de nivel** (`js/encuesta.js` y `encuesta(repetir)` en `js/app.js`). Más justa desde el 4-nov (pedido de la dueña: tocó mal la primera pregunta y la mandó al principio):
+  - **Preguntas:** 18, tres por etapa de la 1 a la 6, de lo fácil a lo difícil (una con sonido y otra con la nota en el pentagrama). Las opciones salen en otro orden en cada intento (`mezclar`).
+  - **Una etapa se aprueba con 2 de 3.** La prueba sigue hasta que una etapa ya no se puede aprobar (2 fallas en ella) o hasta 3 fallas en total (`evaluar`). Empieza en la primera lección de la primera etapa sin aprobar (`INICIO`); si aprueba todo, en la etapa 7. «No lo sé todavía» cuenta como falla.
+  - **Contra los toques sin querer:** cada pregunta espera 600 ms antes de aceptar un toque (`PAUSA_ENCUESTA`, botones a media opacidad con `.espera`) y solo acepta una respuesta.
+  - **Al final** dice «Contestaste bien N de M» y dónde empieza. También queda «Empezar desde la lección 1».
+  - **Repetirla desde la biblioteca** (botón «Subir de nivel», `pruebaNivel()`; antes de los 7 días queda gris, `.puff.plomo`, sin frases, y al tocarlo solo avisa «⏳ Desde el dd/mm»): una vez cada 7 días y **solo sube**. Si le va peor, «¡Buen intento!» y sigue en su lección. Si todavía no se puede, dice desde qué día. Lo decide el servidor (`estado.prueba` = {puede, desde, dias}, `pruebaNivel_` en `maestros/Código.js`).
+  - **Para probar:** `?demo=1&encuesta` (sin libre), `?demo=1&libre=1` y `&dia=2026-11-12` para simular que pasó la semana; `&prueba=no` la muestra bloqueada.
+  - De noche, el pentagrama de la prueba queda sobre papel claro (antes, la tinta oscura no se veía).
 - **Gmail:** `estado.cuenta === false` muestra «🔐 Guardar mi progreso» (al terminar la práctica, en la biblioteca y en el espacio del club), también a los alumnos.
 - **Reportes:** «💬 Reportar un error o reclamo» abajo del camino y «💬 ¿Algo está mal en este ejercicio?» en la práctica (`reportar()`), con tipo (Error en un ejercicio, La app no funciona, Reclamo, Idea), mensaje y el contexto (lección, actividad, pantalla y dispositivo). Llega a la hoja «Reportes». En `?demo=1` no se manda.
 
@@ -271,7 +278,22 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - Aparece al entrar al bosque (debajo del botón), al buscar la lección después de la prueba de nivel y al abrir un libro. La pantalla de entrada ya empieza con él (`index.html`). Con movimiento reducido, queda quieto.
 - La misma imagen la usan los paneles del sistema (`Registro_Sprinkloud`), que la cargan desde GitHub Pages.
 
+## La casita más de cerca (4-nov-2026, pedido de la dueña: más grande para decorar mejor)
+- `CUARTOS` en `js/app.js`: «Toda la casa» con zoom 1,3 (antes 1; el dibujo tenía mucho margen de árboles y pasto), sala 2,4 (antes 2), cocina y dormitorio 3,1 (antes 2,7).
+- Jardín: 1,6 (antes 1,7), centrado en 48 × 68 (más abajo se ve el papel blanco del borde del dibujo), porque más cerca quedaban afuera el huerto (x 19) o la fogata (x 76).
+- Con zoom 1,3, todos los lugares de `POS` siguen dentro de «Toda la casa».
+
+## Siempre de día (4-nov-2026, pedido de la dueña)
+- La app ya no cambia a modo noche según la hora: `js/app.js` pone siempre `data-hora="dia"`. De noche quedaba casi negra y costaba jugar, practicar y ver la tienda y la biblioteca.
+- Los estilos de `:root[data-hora="noche"]` siguen en `css/app.css`, pero no se usan. Las luciérnagas y los pájaros dependían de la hora: ahora siempre suenan los pájaros del día.
+- Lo que dicen otras secciones sobre «día y noche según la hora real» quedó viejo.
+
+## La pantalla final en el celular (4-nov-2026, la dueña vio la racha y los malvaviscos encima de las letras)
+- **La causa:** el texto del avance («Llevas 1 de 2 días con 80 %…») llevaba la clase `paso` cuando se sacaba 80 % o más. Esa clase es la del circulito de 30 px de la barra de la práctica, así que el texto quedaba metido en un círculo chiquito, de una palabra por línea, y se desbordaba sobre la racha y los botones. Ahora la clase es `bien` (`avanceTxt` en `js/app.js`).
+- **Además:** en `.fin` nada se aprieta (`.fin > * { flex-shrink: 0 }`). Si no cabe, la pantalla baja con scroll desde arriba (`justify-content: safe center`). De noche, el verde del avance usa `--ok-text`, porque el musgo oscuro no se leía.
+- Probado en 360×780 y 320×568: sin elementos encimados.
+
 ## Sonidos más claros (3-nov-2026, pedido de la dueña)
-- **Toque de botón** (`Sonido.toque`): una nota aguda de piano que va cambiando (do, re, mi, sol, la y do agudos, `TOQUES`). Antes era una gotita de madera que sonaba a «posh».
+- **Toque de botón** (`Sonido.toque`): el 3-nov fue una nota aguda de piano, que se mezclaba con las notas de los ejercicios. Desde el 4-nov es un «tic» corto sin nota (ver «Sonidos que no se mezclan»).
 - **Cambio de pantalla** (`Sonido.pagina`): ya no suena. El soplido también se oía como «posh» en cada botón.
 - **Pulso del ritmo** (`Sonido.tambor`, en las actividades y los ejemplos): una campana clara y corta (`campana(t, 88, .34, .4)`). El tambor sonaba muy grave y casi no se oía en el celular.

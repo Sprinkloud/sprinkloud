@@ -101,6 +101,14 @@ window.Api = (function () {
     .split(/,(?=ritmo|oido|notas|armaduras|circulo|acordes|modos|$)/);
   function etapaDe(s) { let e = 0, l = s; while (l > LARGO[e]) l -= LARGO[e++]; return { etapa: e + 1, leccion: l }; }
   const diasEntre = (a, b) => Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400000);
+  /* repetir la prueba de nivel (4-nov): igual que pruebaNivel_ del servidor, una vez cada 7 días */
+  const DIAS_REPETIR_PRUEBA = 7;
+  const pruebaDe = lb => {
+    const ult = lb && (lb.intento || lb.nivelado);
+    if (!ult) return null;
+    const d = new Date(Date.parse(ult + 'T12:00:00Z') + DIAS_REPETIR_PRUEBA * 86400000).toISOString().slice(0, 10);
+    return { puede: demo.hoy() >= d, desde: d, dias: DIAS_REPETIR_PRUEBA };
+  };
 
   const demo = {
     hoy() { if (q.get('dia')) return q.get('dia'); const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); },
@@ -149,6 +157,8 @@ window.Api = (function () {
         },
         libre: LIBRE ? { ultima: ULTIMA_LIBRE, paso: !!j.libre.paso, completa: !!j.libre.completa, cuenta: false, motivo: q.get('motivo') || '' } : null,   // ?motivo=vencida|exalumno para probar
         encuesta: LIBRE ? !j.libre.nivelado : q.has('encuesta'),   // la prueba de nivel (en la prueba sin libre: ?demo=1&encuesta)
+        // repetir la prueba desde la biblioteca; en la prueba sin libre se puede siempre (?demo=1&prueba=no para verla bloqueada)
+        prueba: LIBRE ? pruebaDe(j.libre) : q.has('encuesta') ? null : q.get('prueba') === 'no' ? { puede: false, desde: demo.hoy(), dias: DIAS_REPETIR_PRUEBA } : { puede: true, desde: demo.hoy(), dias: DIAS_REPETIR_PRUEBA },
         cuenta: LIBRE ? false : undefined,
         biblioteca: ETAPAS.map((nombre, i) => ({ etapa: i + 1, nombre, abierto: !LIBRE && i + 1 <= et.etapa, amazon: LIBRE })),
         catalogo: { tienda: TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(([id, nombre]) => ({ id, nombre })) }
@@ -198,16 +208,25 @@ window.Api = (function () {
       const j = demo.leer();
       if (!(s >= 1 && s <= 60)) throw new Error('La lección no se entiende.');
       if (LIBRE) {
-        if (j.libre.nivelado) throw new Error('Ya hiciste la prueba de nivel.');
-        Object.assign(j.libre, { semana: Math.min(s, ULTIMA_LIBRE), paso: '', completa: false, nivelado: demo.hoy() });
+        const repite = !!j.libre.nivelado, pr = pruebaDe(j.libre), nueva = Math.min(s, ULTIMA_LIBRE);
+        if (repite && !(pr && pr.puede)) throw new Error('Podrás repetir la prueba de nivel desde el ' + pr.desde.split('-').reverse().join('/') + '.');
+        if (!repite) j.libre.nivelado = demo.hoy();
+        j.libre.intento = demo.hoy();
+        const subio = !repite || nueva > (j.libre.semana || 1);
+        if (subio) Object.assign(j.libre, { semana: nueva, paso: '', completa: false });
         demo.guardar(j);
-        return { ok: true, estado: demo.estado() };
+        return { ok: true, repetida: repite, subio, estado: demo.estado() };
       }
+      // la prueba sin libre: la lección actual es la de ?semana= (o la que eligió la prueba); repetir solo sube
+      const antes = demo.estado(), repite = !q.has('encuesta') || !!demo.nivelada;
+      const subio = !repite || !antes.leccion || s > antes.leccion.semana;
+      if (!subio) return { ok: true, repetida: true, subio: false, estado: antes };
+      demo.nivelada = s;
       const e = demo.estado(), x = etapaDe(s), g = window.Leccion.GUIA[s];
       e.encuesta = false;
       e.leccion = { semana: s, etapa: x.etapa, nombreEtapa: ETAPAS[x.etapa - 1], numero: x.leccion, nivel: 'Etapa ' + x.etapa + ' · Lección ' + x.leccion, tema: g[0], objetivo: g[1], app: APPS[s] };
       e.camino.forEach(c => { c.estado = c.semana === s ? 'actual' : c.semana < s ? 'hecha' : 'futura'; });
-      return { ok: true, estado: e };
+      return { ok: true, repetida: repite, subio: true, estado: e };
     },
     comprar(id) {
       const j = demo.leer(), item = TIENDA.find(t => t.id === id);

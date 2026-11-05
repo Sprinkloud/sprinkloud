@@ -115,6 +115,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .puff.cielo { --c: var(--sky-strong); --c-borde: var(--sky-strong-deep); }
 .puff.papel { --c: var(--cream); --c-borde: var(--wood-soft); --c-texto: var(--ink); }
 .puff.madera { --c: var(--wood); --c-borde: var(--wood-deep); }
+.puff.plomo { --c: #C9C3B8; --c-borde: #9B9488; --c-texto: #4A443B; }   /* «Subir de nivel» antes de los 7 días: se ve apagado (letra 5,5:1) */
 .puff.grande { min-height: 64px; font-size: 1.25rem; border-radius: 26px; --alto: 8px; }
 .puff.redondo { border-radius: 50%; min-height: 0; width: var(--d, 56px); height: var(--d, 56px); }
 .puff.redondo .cara { padding: 0; width: 100%; height: 100%; }
@@ -290,7 +291,10 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .hoja-acciones .puff { flex: 1; }
 
 /* ---------- Fin de la práctica ---------- */
-.fin { align-items: center; justify-content: center; text-align: center; gap: 14px; }
+.fin { align-items: center; justify-content: safe center; text-align: center; gap: 14px; }
+/* en el celular no cabe todo: nada se aprieta (antes el texto del avance quedaba de una palabra por línea, encima de la racha
+   y de los botones, 4-nov) y, si no cabe, la pantalla baja con scroll desde arriba (safe center) */
+.fin > * { flex-shrink: 0; }
 .fin .fogata-grande { width: min(56vw, 230px); }
 .fin h1 { font-size: clamp(1.9rem, 7vw, 2.6rem); }
 .fin .ganado { display: inline-flex; align-items: center; gap: 8px; font-size: 1.6rem; font-weight: 800; }
@@ -571,8 +575,8 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 @keyframes rayo-baja { 40% { transform: scale(.82); } }
 .club-btn { font-size: 1.1rem; }
 .entrada .lema { margin: -6px 0 6px; font-family: var(--f-hand); font-size: 1.45rem; color: var(--ink-soft); text-align: center; }
-.fin .avance-txt { margin: 0; max-width: 30ch; text-align: center; font-weight: 700; color: var(--ink-soft); }
-.fin .avance-txt.paso { color: var(--moss-deep); }
+.fin .avance-txt { margin: 0; width: 100%; max-width: 30ch; text-align: center; font-weight: 700; color: var(--ink-soft); }
+.fin .avance-txt.bien { color: var(--ok-text); }   /* «bien» y no «paso»: .paso es el circulito de 30 px de la barra de la práctica y aplastaba el texto encima de la racha (4-nov). De noche, verde claro */
 .premio.club .club-dice { font-family: var(--f-body); font-size: 1rem; }
 .club-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; text-align: left; font-weight: 700; }
 .premio.club .acciones { grid-template-columns: 1fr; }
@@ -595,8 +599,11 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .retrato-encuesta img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; }
 .acciones-encuesta, .respuestas-encuesta { display: grid; gap: 12px; width: 100%; max-width: 420px; }
 .respuestas-encuesta { grid-template-columns: 1fr 1fr; }
+/* al aparecer cada pregunta, 600 ms sin poder tocar (un toque doble de la anterior no responde esta, 4-nov) */
+.respuestas-encuesta { transition: opacity 180ms var(--ease-out); }
+.respuestas-encuesta.espera { opacity: .55; pointer-events: none; }
 .pregunta-encuesta { margin: 6px 0 0; font-family: var(--f-display, inherit); font-size: 1.35rem; }
-.pentagrama-encuesta { width: 100%; max-width: 280px; background: var(--surface); border-radius: 18px; box-shadow: var(--sombra-papel); padding: 4px 8px; }
+.pentagrama-encuesta { width: 100%; max-width: 280px; background: var(--papel-claro);   /* claro también de noche, como .pentagrama: la tinta es oscura */ border-radius: 18px; box-shadow: var(--sombra-papel); padding: 4px 8px; }
 .pentagrama-encuesta svg { width: 100%; height: auto; display: block; }
 /* Reportar un error o un reclamo (30-oct) */
 .enlace-texto.reportar { display: block; margin: 10px auto 0; font-size: .95rem; }

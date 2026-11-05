@@ -7,8 +7,9 @@
   let estado = null, etapaVista = 1;
 
   /* ---------- Día y noche según la hora real ---------- */
-  function hora() { const h = new Date().getHours(); document.documentElement.dataset.hora = h >= 19 || h < 6 ? 'noche' : 'dia'; }
-  hora(); setInterval(hora, 60000);
+  // Siempre de día (4-nov, pedido de la dueña): de noche la app quedaba casi negra y costaba jugar, practicar, ver la tienda y
+  // la biblioteca. Los estilos de :root[data-hora="noche"] siguen en app.css por si algún día se vuelve a probar, pero no se usan.
+  document.documentElement.dataset.hora = 'dia';
 
   /* ---------- Dibujos chiquitos: fogata, malvavisco ---------- */
   const SVG_FOGATA = '<svg viewBox="0 0 64 64" aria-hidden="true">' +
@@ -43,11 +44,12 @@
     'dorm-cama': [55, 37, 11], 'dorm-mesita': [47, 35, 7], 'dorm-pared': [52, 28, 7],
     'jardin-banca': [63, 85, 10], 'jardin-flores': [19, 72, 11], 'jardin-fogata': [76, 80, 8] };
   const CUARTOS = [
-    { id: 'todo', nombre: 'Toda la casa', x: 50, y: 53, zoom: 1 },
-    { id: 'sala', nombre: 'Sala', x: 38, y: 53, zoom: 2 },
-    { id: 'cocina', nombre: 'Cocina', x: 71, y: 48, zoom: 2.7 },
-    { id: 'dorm', nombre: 'Dormitorio', x: 53, y: 35, zoom: 2.7 },
-    { id: 'jardin', nombre: 'Jardín', x: 48, y: 77, zoom: 1.7 }
+    // más cerca desde el 4-nov (pedido de la dueña: la casa más grande para decorar mejor); antes 1, 2, 2,7 y 2,7
+    { id: 'todo', nombre: 'Toda la casa', x: 51, y: 52, zoom: 1.3 },
+    { id: 'sala', nombre: 'Sala', x: 38, y: 53, zoom: 2.4 },
+    { id: 'cocina', nombre: 'Cocina', x: 71, y: 48, zoom: 3.1 },
+    { id: 'dorm', nombre: 'Dormitorio', x: 53, y: 35, zoom: 3.1 },
+    { id: 'jardin', nombre: 'Jardín', x: 48, y: 68, zoom: 1.6 }   // el huerto (x 19) y la fogata (x 76) tienen que verse a la vez
   ];
   let cuartoVisto = 'todo';
   const RETRATO = id => 'assets/ilustraciones/' + (id === 'osito' ? 'osito-bosque' : id) + '.webp';
@@ -132,49 +134,69 @@
     ir('entrada');
   }
 
-  /* ---------- La prueba de nivel (30-oct): una vez, al entrar; preguntas de lo fácil a lo difícil (js/encuesta.js) ---------- */
-  function encuesta() {
+  /* ---------- La prueba de nivel (30-oct; más justa desde el 4-nov): al entrar la primera vez, y desde la biblioteca para
+     subir de nivel (repetir). Las reglas están en js/encuesta.js: un toque equivocado no decide el nivel. ---------- */
+  const PAUSA_ENCUESTA = 600;   // ms sin poder responder al aparecer cada pregunta: el toque de la anterior no cuenta aquí
+  function encuesta(repetir) {
     const p = $('#practica'), E = window.Encuesta;
     const escenario = el('div', { class: 'escenario encuesta' });
+    const respuestas = [];
     llenar(p, escenario);
     ir('practica');
     llenar(escenario,
       el('div', { class: 'retrato-encuesta' }, el('img', { src: RETRATO('osito'), alt: '' })),
-      el('h1', { text: 'Antes de empezar, una prueba cortita 🎵' }),
-      el('p', { class: 'mano', text: 'Contesta lo que sepas. Si no sabes, toca «' + E.NO_SE + '»: así empiezas en tu lección justa.' }),
+      el('h1', { text: repetir ? '¿Listo para subir de nivel? 🎵' : 'Antes de empezar, una prueba cortita 🎵' }),
+      el('p', { class: 'mano', text: repetir
+        ? 'Contesta con calma. Si te va bien, subes de nivel; si no, sigues en tu lección y la puedes repetir en ' + ((estado.prueba && estado.prueba.dias) || 7) + ' días.'
+        : 'Contesta lo que sepas. Si no sabes, toca «' + E.NO_SE + '». Un error no decide tu nivel: así empiezas en tu lección justa.' }),
       el('div', { class: 'acciones-encuesta' },
-        puff('Empezar la prueba', 'grande ocre', () => preguntar(0)),
-        puff('Empezar desde la lección 1', 'papel', () => terminar(1))));
+        puff(repetir ? 'Empezar' : 'Empezar la prueba', 'grande ocre', () => preguntar(0)),
+        repetir ? puff('Ahora no', 'papel', () => logros()) : puff('Empezar desde la lección 1', 'papel', () => terminar(1))));
     function preguntar(i) {
-      if (i >= E.PREGUNTAS.length) return terminar(E.semanaDe(null));
       const q = E.PREGUNTAS[i];
       const puntos = el('div', { class: 'puntos-encuesta', 'aria-label': 'Pregunta ' + (i + 1) + ' de ' + E.PREGUNTAS.length }, E.PREGUNTAS.map((_, k) => el('i', { class: k < i ? 'hecho' : k === i ? 'ahora' : '' })));
       const dibujo = q.pentagrama ? el('div', { class: 'pentagrama-encuesta' }) : null;
       const escuchar = q.sonido ? puff('🔊 Escuchar', 'cielo', () => { S.despertar(); S.callar(); S.nota(q.sonido[0], .7); S.luego(800, () => S.nota(q.sonido[1], .7)); }) : null;
+      const listaDesde = Date.now() + PAUSA_ENCUESTA;
+      let hecha = false;
       const responder = op => {
+        if (hecha || Date.now() < listaDesde) return;   // un toque doble o muy rápido no responde por error
+        hecha = true;
         S.callar();
-        if (op === q.correcta) { S.acierto(); preguntar(i + 1); }
-        else { if (op !== E.NO_SE) S.error(); terminar(E.semanaDe(q.etapa)); }
+        const bien = op === q.correcta;
+        if (bien) S.acierto(); else if (op !== E.NO_SE) S.error();
+        respuestas.push({ etapa: q.etapa, bien });
+        const r = E.evaluar(respuestas);
+        if (r.sigue) setTimeout(() => preguntar(i + 1), 250);
+        else terminar(E.semanaDe(r.etapa), r);
       };
-      llenar(escenario, puntos, el('h2', { class: 'pregunta-encuesta', text: q.texto }), dibujo, escuchar,
-        el('div', { class: 'respuestas-encuesta' }, q.opciones.map(op => puff(op, 'papel', () => responder(op)))),
+      const opciones = el('div', { class: 'respuestas-encuesta espera' }, E.mezclar(q.opciones).map(op => puff(op, 'papel', () => responder(op))));
+      llenar(escenario, puntos, el('h2', { class: 'pregunta-encuesta', text: q.texto }), dibujo, escuchar, opciones,
         el('button', { class: 'enlace-texto', type: 'button', text: E.NO_SE, onclick: () => responder(E.NO_SE) }));
+      setTimeout(() => opciones.classList.remove('espera'), PAUSA_ENCUESTA);
       if (dibujo) E.pentagrama(dibujo, q.pentagrama);
       if (q.sonido) setTimeout(() => escuchar.click(), 350);
     }
-    async function terminar(semana) {
+    async function terminar(semana, resultado) {
       llenar(escenario, esperando('Buscando tu lección…'));
       try {
         const r = await Api.nivel(semana);
         estado = r.estado; etapaVista = estado.leccion ? estado.leccion.etapa : 1;
-        const l = estado.leccion;
-        llenar(escenario, 
+        const l = estado.leccion, subio = !r.repetida || r.subio;
+        const cuenta = resultado ? 'Contestaste bien ' + resultado.bien + ' de ' + resultado.total + '. ' : '';
+        llenar(escenario,
           el('div', { class: 'retrato-encuesta' }, el('img', { src: RETRATO('osito'), alt: '' })),
-          el('h1', { text: '¡Listo! 🎉' }),
-          el('p', { class: 'mano', text: 'Empiezas en la ' + l.nivel + ': ' + l.tema + '.' }),
+          el('h1', { text: !r.repetida ? '¡Listo! 🎉' : subio ? '¡Subiste de nivel! 🎉' : '¡Buen intento! 🌱' }),
+          el('p', { class: 'mano', text: cuenta + (!r.repetida ? 'Empiezas en la ' + l.nivel + ': ' + l.tema + '.'
+            : subio ? 'Ahora vas en la ' + l.nivel + ': ' + l.tema + '.'
+            : 'Sigues en la ' + l.nivel + ': ' + l.tema + '. Practica un poco más y vuelve a intentarlo en ' + ((estado.prueba && estado.prueba.dias) || 7) + ' días.') }),
           el('div', { class: 'acciones-encuesta' }, puff('🌲 Ir al bosque', 'grande', () => camino())));
-        S.festejo();
-      } catch (e) { aviso(e.message || 'No se pudo guardar. Revisa tu internet.'); llenar(escenario, el('div', { class: 'acciones-encuesta' }, puff('Intentar otra vez', 'ocre', () => terminar(semana)))); }
+        if (subio) S.festejo();
+      } catch (e) {
+        aviso(e.message || 'No se pudo guardar. Revisa tu internet.');
+        llenar(escenario, el('div', { class: 'acciones-encuesta' }, puff('Intentar otra vez', 'ocre', () => terminar(semana, resultado)),
+          repetir ? puff('Volver a la biblioteca', 'papel', () => logros()) : null));
+      }
     }
   }
 
@@ -408,12 +430,12 @@
       const t = a.paso ? '⭐ ¡' + a.pct + ' %! Lección lograda: mañana empiezas la siguiente.'
         : a.pct >= 80 ? '⭐ ¡' + a.pct + ' %! Llevas ' + a.dias + ' de ' + a.necesita + ' días con 80 %. ¡Un día más y pasas!'
         : '💪 ' + a.pct + ' % de aciertos. Para pasar de lección necesitas 80 % en ' + a.necesita + ' días. ¡Mañana otra vez!';
-      return el('p', { class: 'avance-txt aparece d3' + (a.pct >= 80 ? ' paso' : ''), text: t });
+      return el('p', { class: 'avance-txt aparece d3' + (a.pct >= 80 ? ' bien' : ''), text: t });
     }
     const texto = a.paso && a.ultima ? '🎉 ¡Completaste la etapa 3 con ' + a.pct + ' %! Terminaste la versión libre.'
       : a.paso ? '⭐ ¡' + a.pct + ' % de aciertos! Mañana se abre la lección siguiente.'
       : '💪 ' + a.pct + ' % de aciertos. Con 80 % pasas a la lección siguiente: ¡mañana otra vez!';
-    return el('p', { class: 'avance-txt aparece d3' + (a.paso ? ' paso' : ''), text: texto });
+    return el('p', { class: 'avance-txt aparece d3' + (a.paso ? ' bien' : ''), text: texto });
   }
 
   /* ---------- El club (versión libre): planes con acceso total y clases en vivo, y los libros en Amazon ---------- */
@@ -731,10 +753,21 @@
       el('div', { class: 'lista-scroll' },
         el('h2', { class: 'seccion-titulo', text: 'Mis libros' }), estante,
         el('p', { class: 'mano pista-estante', text: estado.libre ? 'Los libros de la serie están en Amazon 📚' : 'Toca un libro para leerlo cuando quieras 📖' }),
+        pruebaNivel(),
         el('h2', { class: 'seccion-titulo', text: 'Medallas' }), numeros, insignias,
         el('h2', { class: 'seccion-titulo', text: 'Amigos del bosque' }), amigos,
         sinCuenta() ? el('div', { class: 'casa-acciones', style: 'grid-template-columns:1fr;margin-top:18px' }, puff('🔐 Guardar mi progreso con Google', 'madera', () => cuenta())) : null));
     ir('logros');
+  }
+
+  /* repetir la prueba de nivel para subir (4-nov): una vez por semana; si todavía no se puede, dice desde qué día */
+  function pruebaNivel() {
+    const pr = estado.prueba;
+    if (!pr) return null;
+    const f = pr.desde.split('-');
+    // antes de los 7 días el botón queda gris (plomo), sin frases (pedido de la dueña, 4-nov): al tocarlo, solo la fecha
+    return el('div', { class: 'prueba-nivel casa-acciones', style: 'grid-template-columns:1fr;margin-top:14px' },
+      pr.puede ? puff('Subir de nivel', 'ocre', () => encuesta(true)) : puff('Subir de nivel', 'plomo', () => aviso('⏳ Desde el ' + f[2] + '/' + f[1])));
   }
 
   /* el estilo del libro (LIBRO_CSS) se encierra en .libro-hoja para que no cambie el resto de la app */
