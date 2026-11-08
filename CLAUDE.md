@@ -293,7 +293,40 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - **Además:** en `.fin` nada se aprieta (`.fin > * { flex-shrink: 0 }`). Si no cabe, la pantalla baja con scroll desde arriba (`justify-content: safe center`). De noche, el verde del avance usa `--ok-text`, porque el musgo oscuro no se leía.
 - Probado en 360×780 y 320×568: sin elementos encimados.
 
+## Lectura en voz alta: se puede repetir (7-nov-2026, comentario de una alumna)
+- **El problema:** si se equivocaba al nombrar las notas, el cuadro se cerraba solo a los 1,8 s y la práctica seguía. No había cómo repetir: la alumna tuvo que salir y volver a entrar.
+- **Ahora** (`voz` en `js/actividades.js`): con errores, el cuadro queda abierto con las notas rojas y el aviso «N de 8. Mira las rojas y toca ▶ Empezar para leerlas otra vez (2 de 3)». «▶ Empezar» repite las mismas notas.
+  - Son hasta 3 intentos. Con 8 de 8, o al tercer intento, sigue la práctica.
+  - Cuenta el primer intento, como en las vueltas de corrección.
+  - Si se cierra con «Cerrar» después de un intento, vale ese primer resultado. Si se cierra sin ningún intento, la actividad se salta.
+- **Las lecciones de clave de fa** (por ejemplo, la 21) rompían esta actividad: pedía solo notas de clave de sol, recibía una lista vacía, VexFlow fallaba y quedaba trabada. Ahora usa la clave que tiene más notas, y si no hay notas se salta.
+- **El cuadro en un celular de 320 px:** se salía de la pantalla y cortaba el título y las instrucciones, porque el pentagrama medía como mínimo 300 px. Ahora mide como mínimo 220 px: el parche está en `copiar_motores.py` y en `motores/lectura.js`. Además, en `app.css`, `dialog.lh` tiene `max-width` y sus hijos `min-width: 0`.
+- **La zona del ejercicio** (`.escenario`) ahora tiene `flex: 1 0 auto` (antes era `1 1 0`). Con contenido alto, por ejemplo armaduras en 320×640, se desbordaba y quedaba encima del enlace «¿Algo está mal en este ejercicio?». Ahora crece y la pantalla baja con scroll.
+- **Ordenar sostenidos o bemoles no se corta al primer error** (pedido de la dueña, 7-nov):
+  - el alumno pone las 7 en el orden que cree, en 7 lugares (`.ranuras-orden`), y con ↩ quita la última;
+  - al final, cada lugar queda verde o rojo, con la correcta debajo, y aparece el mensaje «N de 7 en su lugar»;
+  - el pentagrama muestra la armadura completa.
+  - Para la misma idea en las apps del sitio (formar escalas), se le pasó el pedido al agente que revisa las apps.
+  - Prueba: `herramientas/probar_orden.js` (320×640).
+- **Revisión de textos cortados:** `herramientas/revisar_cortes.js`. Se corre con Chrome propio, sin el MCP: `node herramientas/correr_revision.js herramientas/revisar_cortes.js 360x780 <lecciones>`, una lección por proceso. Si no se le pasan lecciones, revisa la prueba de nivel. Busca texto que se sale de la pantalla, que tapa un contenedor o que es más ancho que su caja.
+
 ## Sonidos más claros (3-nov-2026, pedido de la dueña)
 - **Toque de botón** (`Sonido.toque`): el 3-nov fue una nota aguda de piano, que se mezclaba con las notas de los ejercicios. Desde el 4-nov es un «tic» corto sin nota (ver «Sonidos que no se mezclan»).
 - **Cambio de pantalla** (`Sonido.pagina`): ya no suena. El soplido también se oía como «posh» en cada botón.
 - **Pulso del ritmo** (`Sonido.tambor`, en las actividades y los ejemplos): una campana clara y corta (`campana(t, 88, .34, .4)`). El tambor sonaba muy grave y casi no se oía en el celular.
+
+## Motores copiados del sitio, 7-nov-2026 (revisión de enlaces de los libros)
+- Se volvió a correr `herramientas/copiar_motores.py`:
+  - `oido.js` trae 3 ejercicios nuevos (`progresiones`, `reposoMenor` y `dictado`), que la guía v9 usa en las lecciones 39, 41 y 46. Sin ellos, el bosque habría caído en «¿sube o baja?»;
+  - `leccion.js` y `hoja.js` traen los temas 10, 22 y 23 corregidos y la hoja 10 del violín con la escala de Re;
+  - `lectura.js` trae el ancho mínimo de 220 px.
+- `copiar_motores.py` se salta el parche de 220 px si el sitio ya lo trae.
+- `actividades.js`, en `poolNotas`: el sitio suma notas con alteración (`'f/4:#'`, `[tecla, clave, '#']`) en las lecciones 10 a 19 del violín y en la 25. El juego del bosque responde con nombres naturales, así que las deja fuera. Prueba: `Registro_Sprinkloud/pruebas/juego_test.js` 117/117.
+
+## Hojas con todos los ejercicios de los libros nuevos (7-nov-2026)
+- Se volvió a correr `herramientas/copiar_motores.py`. `hoja.js` trae los ~45 tipos de ejercicio nuevos de `página_Sprinkloud/practica/hojas.html` (ver su `CLAUDE.md`, sección del 7-nov): ritmo, pulso y metrónomo, ostinato, escalera, melodías por pasos y saltos, leer una melodía, ligaduras y síncopa, enarmónicos y becuadro, nota de arriba, menor armónica y V en menor, progresiones, pentatónica, ordenar dinámicas y tempos, forma y repeticiones, anacrusa, acompañar con I-IV-V y modos desde cualquier nota. `leccion.js` trae los temas de la guía v9 y el violín 9 a 19 en Do (do fijo). `palabras.js` trae 108 palabras. El parche de `lectura.js` (`Math.max(220, …)`) sigue vivo.
+- **Las 60 lecciones tienen hoja** (`SIN_HOJA` vacío): ahora también la 1, 44, 46, 49 y 52. La actividad de hoja (`hoja` en `js/actividades.js`) no cambió: arma cualquier tipo, pone el primer ítem como «Ejemplo ✓», marca verde o rojo y a la segunda vuelta muestra las respuestas. `leerMelodia` devuelve dos ejercicios (la melodía y las preguntas sobre ella): `ejerciciosDe` ya los entrega aplanados.
+- `css/app.css`: `.hoja-papel .solucion` ocupa su propia línea; y para la biblioteca, las clases nuevas de `Libro_Sprinkloud/plantilla/libro.css` dentro de `.libro-hoja`: `.ejercicio`, `.num-ej`, `.items` (`.it`), `.sol` y `.sol-leccion`.
+- `herramientas/revisar_cortes.js`: con `INS=piano,violin` recorre los dos instrumentos, y ahora también junta los errores de la consola (no solo los de JavaScript).
+- **Arreglos de 320 px que salieron en el recorrido:** la barra de pasos de la práctica (hasta 6 actividades) empujaba los malvaviscos fuera de la pantalla: bajo 380 px los circulitos miden 26 px y van con 4 px de separación. «Aumentada» y «Disminuida» no cabían en los botones del oído: bajo 380 px la letra de `.respuestas-juego .puff .cara` es de 1rem.
+- **Recorrido (`revisar_cortes.js`, piano y violín, la práctica entera respondiendo sola):** las 60 lecciones a 320×640 y a 360×780 dieron 0 textos cortados y 0 errores de consola, con los arreglos de arriba. Se corre una lección por proceso, con 4 procesos como máximo y un tiempo límite por proceso: con 10 Chrome a la vez, Vosk se quedó sin memoria («Array buffer allocation failed») y algunos lotes se trabaron.

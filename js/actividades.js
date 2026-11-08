@@ -75,7 +75,10 @@ window.Actividades = (function () {
     if (!lista) lista = ins === 'piano'
       ? ['c/4', 'd/4', 'e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5', 'd/5', 'e/5', 'f/5', 'g/5'].map(k => [k, 'treble']).concat(['f/2', 'g/2', 'a/2', 'b/2', 'c/3', 'd/3', 'e/3', 'f/3', 'g/3', 'a/3'].map(k => [k, 'bass']))
       : ['g/3', 'a/3', 'b/3', 'c/4', 'd/4', 'e/4', 'f/4', 'g/4', 'a/4', 'b/4', 'c/5', 'd/5', 'e/5', 'f/5', 'g/5', 'a/5', 'b/5'];
-    return lista.map(x => typeof x === 'string' ? { key: x, clave: 'treble' } : { key: x[0], clave: x[1] });
+    /* el sitio (7-nov-2026) suma notas con alteración ('f/4:#' o [tecla, clave, '#']); aquí se responde con los nombres
+       naturales, así que esas se dejan fuera */
+    return lista.filter(x => typeof x === 'string' ? x.indexOf(':') < 0 : !x[2])
+      .map(x => typeof x === 'string' ? { key: x, clave: 'treble' } : { key: x[0], clave: x[1] });
   }
   const midiDe = key => { const [l, o] = key.split('/'); return 12 * (Number(o) + 1) + SEMI[l]; };
   function dibujarNota(div, n) {
@@ -423,21 +426,41 @@ window.Actividades = (function () {
       const { d, n, f } = pr;
       regla.textContent = ''; msj.textContent = '';
       if (pr.tipo === 'orden') {
+        /* 7-nov (pedido de la dueña): no se corta al primer error. El alumno pone las 7 en el orden que cree (con ↩ puede
+           quitar la última) y al final se corrige cada lugar: verde lo que estaba bien, rojo lo que no, con la correcta
+           debajo. Así ve dónde se equivocó y sabe que el resto lo tenía bien. */
         pedido.textContent = 'Toca los ' + (f === 's' ? 'sostenidos' : 'bemoles') + ' en orden';
         dibujarArmadura(pent, 'C');
-        let k = 0, errores = 0;
+        const correctas = d.orden.map(x => x + d.signo), puestas = [];
+        const lugares = correctas.map(() => el('span', { class: 'lugar-orden' }, el('b'), el('small')));
+        const ranuras = el('div', { class: 'ranuras-orden', 'aria-live': 'polite' }, lugares);
+        pent.after(ranuras);
+        const pintar = () => lugares.forEach((l, i) => { l.firstChild.textContent = puestas[i] ? puestas[i].op : ''; l.classList.toggle('lleno', !!puestas[i]); });
         await new Promise(listo => {
-          const bs = botones(mezclar(o.rnd, d.orden.map(x => x + d.signo)), (op, b) => {
-            if (b.disabled) return;
-            if (op === d.orden[k] + d.signo) { k++; b.disabled = true; b.classList.add('bien'); dibujarArmadura(pent, d.vf[k]); S.toque(); if (k === 7) listo(); }
-            else { errores++; S.error(); b.classList.add('mal'); setTimeout(() => b.classList.remove('mal'), 500); }
+          botones(mezclar(o.rnd, correctas), (op, b) => {
+            if (b.disabled || puestas.length >= 7) return;
+            puestas.push({ op, b }); b.disabled = true; S.toque(); pintar();
+            if (puestas.length === 7) { deshacer.remove(); listo(); }
           });
-          if (!bs.length) listo();
+          var deshacer = puff('↩', 'papel deshacer-orden', () => { const u = puestas.pop(); if (u) { u.b.disabled = false; pintar(); } });
+          deshacer.setAttribute('aria-label', 'Quitar la última');
+          fila.append(deshacer);
         });
-        regla.textContent = d.orden.map(x => x + d.signo).join(' · ');
-        const ok = errores === 0;
-        ok ? S.acierto() : null; msj.className = 'mensaje ' + (ok ? 'bien' : 'mal'); msj.textContent = ok ? '¡Perfecto!' : '¡Completo! Otra vez sin errores';
-        await espera(1800);
+        let bienPuestas = 0;
+        lugares.forEach((l, i) => {
+          const ok = puestas[i].op === correctas[i];
+          if (ok) bienPuestas++;
+          l.classList.add(ok ? 'bien' : 'mal');
+          l.lastChild.textContent = ok ? '' : correctas[i];
+        });
+        dibujarArmadura(pent, d.vf[7]);
+        regla.textContent = correctas.join(' · ');
+        const ok = bienPuestas === 7;
+        ok ? S.acierto() : S.error();
+        msj.className = 'mensaje ' + (ok ? 'bien' : 'mal');
+        msj.textContent = ok ? '¡Perfecto!' : bienPuestas + ' de 7 en su lugar. Mira las rojas 👀';
+        await espera(ok ? 1800 : 3600);
+        ranuras.remove();
         return ok;
       }
       let ops, correcta, texto;
@@ -654,7 +677,13 @@ window.Actividades = (function () {
   /* ---------- 6. Lectura en voz alta: di el nombre de cada nota (la lectura hablada del sitio) ---------- */
   const hayVoz = () => !!((window.Voz && window.Voz.soportado()) || window.SpeechRecognition || window.webkitSpeechRecognition);
   async function voz(cont, o) {
-    const keys = poolNotas(o.semana, o.ins).filter(n => n.clave === 'treble').map(n => n.key);
+    /* 7-nov: la lectura usa una sola clave. Antes pedía solo las de clave de sol, y en las lecciones de clave de fa
+       (p. ej. la 21) llegaba una lista vacía: VexFlow fallaba y la actividad quedaba trabada. Ahora usa la clave con más notas. */
+    const pool = poolNotas(o.semana, o.ins);
+    const deSol = pool.filter(n => n.clave === 'treble'), deFa = pool.filter(n => n.clave === 'bass');
+    const clave = deFa.length > deSol.length ? 'bass' : 'treble';
+    const keys = (clave === 'bass' ? deFa : deSol).map(n => n.key);
+    if (keys.length < 2) return null;   // sin notas para leer: se salta
     cont.append(consigna('Lee las notas en voz alta 🎤'));
     /* el oído del osito (Vosk): la primera vez se baja (40 MB) y queda guardado en el celular */
     if (window.Voz && window.Voz.soportado() && !window.Voz.listo()) {
@@ -671,11 +700,21 @@ window.Actividades = (function () {
       carga.remove();
     }
     cont.append(el('div', { class: 'tarjeta', html: '<p class="mano" style="margin:0;font-size:1.4rem">Permite el micrófono, toca ▶ Empezar y di cada nota sin parar.</p>' }));
+    /* Si se equivoca, el cuadro queda abierto con las notas marcadas en rojo y «▶ Empezar» repite LAS MISMAS notas
+       (pedido de la dueña, 7-nov: antes se cerraba solo y no dejaba repetir). Hasta 3 intentos; vale el primero,
+       como en las vueltas de corrección de las otras actividades. Con 8 de 8, o al tercer intento, sigue la práctica. */
     return new Promise(listo => {
-      let terminado = false;
-      window.SprinkloudLectura.abrir({ clave: 'treble', notas: keys, microfono: true, alTerminar: (ok, total) => { terminado = true; setTimeout(() => { const d = document.querySelector('dialog.lh'); if (d && d.open) d.close(); listo({ aciertos: ok, intentos: total }); }, 1800); } });
+      let terminado = false, primero = null, intentos = 0;
+      const cerrar = () => { if (terminado) return; terminado = true; const d = document.querySelector('dialog.lh'); if (d && d.open) d.close(); listo(primero); };
+      window.SprinkloudLectura.abrir({ clave, notas: keys, microfono: true, alTerminar: (ok, total) => {
+        intentos++;
+        if (!primero) primero = { aciertos: ok, intentos: total };
+        if (ok >= total || intentos >= 3) { setTimeout(cerrar, 1800); return; }
+        const c = document.querySelector('dialog.lh .lh-cuenta');
+        if (c) c.textContent = ok + ' de ' + total + '. Mira las rojas y toca ▶ Empezar para leerlas otra vez (' + (intentos + 1) + ' de 3).';
+      } });
       const d = document.querySelector('dialog.lh');
-      d.addEventListener('close', () => { if (!terminado) { terminado = true; listo(null); } }, { once: true });
+      d.addEventListener('close', () => { if (!terminado) { terminado = true; listo(primero); } }, { once: true });
     });
   }
 

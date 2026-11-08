@@ -111,7 +111,12 @@ reemplazos.append((
     "      nuevas();\n      dlg.showModal();\n      dibujar();\n"
     "      /* la app del bosque: el micrófono se pide al abrir y queda encendido (sin botón), para que el ejercicio se haga bien */\n"
     "      if (o.microfono && Reconocedor) { var bm = dlg.querySelector('.lh-mic'); bm.hidden = true; if (!est.mic) alternarMic(bm); }\n"))
+reemplazos.append((
+    "    var ancho = Math.max(300, caja.clientWidth - 12)",
+    "    var ancho = Math.max(220, caja.clientWidth - 12)"))   # 7-nov: con 300 el cuadro se salía de la pantalla en un celular de 320 px
 for a, b in reemplazos:
+    if b in lec and a not in lec:   # el sitio ya trae el arreglo (7-nov: el ancho de 220 se pasó también a página_Sprinkloud)
+        continue
     assert a in lec, a[:60]
     lec = lec.replace(a, b, 1)
 escribir('lectura.js', AVISO.format('lectura.js') + lec)

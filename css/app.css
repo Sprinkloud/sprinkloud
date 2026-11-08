@@ -202,13 +202,15 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 
 /* ---------- Práctica ---------- */
 .practica-arriba { display: flex; align-items: center; gap: 10px; min-height: 52px; }
-.pasos { flex: 1; display: flex; gap: 8px; justify-content: center; }
+.pasos { flex: 1; display: flex; gap: 8px; justify-content: center; min-width: 0; }
+/* 7-nov-2026: con 6 actividades (teclado, oído, hoja, palabras, voz y repaso) la barra no cabía a 320 px y empujaba los malvaviscos fuera */
+@media (max-width: 380px) { .pasos { gap: 4px; } .paso { width: 26px; height: 26px; font-size: .85rem; } }
 .paso { width: 30px; height: 30px; border-radius: 50%; background: var(--paper-deep); display: grid; place-items: center; transition: transform 200ms var(--ease-out); }
 .paso > span { opacity: .35; transition: opacity 200ms ease; }
 .paso.hecho > span, .paso.ahora > span { opacity: 1; }
 .paso.hecho { background: var(--moss-soft); }
 .paso.ahora { transform: scale(1.15); box-shadow: 0 0 0 3px var(--ochre-soft); }
-.escenario { flex: 1 1 0; min-height: 380px; display: flex; flex-direction: column; gap: 12px; padding-top: 8px; }
+.escenario { flex: 1 0 auto; min-height: 380px;   /* 7-nov: «1 0 auto» y no «1 1 0»: con 1 1 0 el contenido alto se desbordaba y quedaba debajo de «¿Algo está mal…?» en celulares chicos */ display: flex; flex-direction: column; gap: 12px; padding-top: 8px; }
 .tarjeta { background: var(--surface); border-radius: var(--radio); box-shadow: var(--sombra-papel); padding: 16px; }
 .consigna { display: flex; align-items: center; gap: 10px; }
 .consigna .cara-osito { width: 54px; height: 54px; border-radius: 50%; overflow: hidden; flex: none; box-shadow: 0 0 0 3px var(--cream); }
@@ -220,6 +222,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .pentagrama svg { width: min(100%, 400px); height: auto; max-height: 100%; }
 .respuestas-juego { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 12px 10px; margin-top: auto; padding-bottom: 6px; }
 .respuestas-juego .puff .cara { font-size: 1.15rem; min-height: 58px; }
+@media (max-width: 380px) { .respuestas-juego .puff .cara { font-size: 1rem; padding-inline: 6px; } }   /* 7-nov: «Aumentada» y «Disminuida» no cabían a 320 px */
 .respuestas-juego .puff.bien { --c: var(--moss); --c-borde: var(--moss-deep); --c-texto: var(--cream); }
 .respuestas-juego .puff.mal { --c: var(--rose-strong); --c-borde: var(--rose-strong-deep); --c-texto: var(--cream); }
 .respuestas-juego.ritmos { grid-template-columns: 1fr; }
@@ -271,7 +274,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .hoja-papel input.ok, .hoja-papel select.ok, .hoja-papel .ok input { border-color: var(--hoja-bien) !important; background: var(--hoja-bien-fondo) !important; }
 .hoja-papel input.mal, .hoja-papel select.mal, .hoja-papel .dibujable.mal { border-color: var(--hoja-mal) !important; background: var(--hoja-mal-fondo) !important; }
 .hoja-papel .dibujable.ok { background: var(--hoja-bien-fondo); border-radius: 10px; }
-.hoja-papel .solucion { font-size: .9rem; color: var(--hoja-bien); font-weight: 800; }
+.hoja-papel .solucion { font-size: .9rem; color: var(--hoja-bien); font-weight: 800; flex-basis: 100%; overflow-wrap: anywhere; }
 .hoja-papel .dibujable { cursor: pointer; touch-action: manipulation; }
 /* antes de los ejercicios de ritmo: las figuras con su nombre y sus pulsos; y el primer ítem de cada ejercicio, resuelto */
 .hoja-papel .leyenda { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; background: var(--hoja-bien-fondo); border-radius: 14px; padding: 10px 12px; }
@@ -419,6 +422,15 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .libro-hoja .ilustracion { width: 100%; max-height: min(46vh, 380px); object-fit: contain; }
 .libro-hoja .certificado .dueno { margin: 4px 0 6px; }
 .libro-hoja ol.pasos { display: block; flex: none; }   /* .pasos de la app es la barra de la práctica: aquí manda el libro */
+/* 7-nov-2026: los ejercicios numerados del libro nuevo y sus soluciones (las mismas clases de Libro_Sprinkloud/plantilla/libro.css) */
+.libro-hoja .ejercicio { margin: 0 0 .75em; }
+.libro-hoja .ejercicio > p { margin: 0 0 .25em; }
+.libro-hoja .num-ej { display: inline-block; min-width: 2.1em; font-weight: 800; color: var(--papel-claro); background: var(--hoja-bien); border-radius: 999px; text-align: center; padding: 0 .4em; margin-right: .3em; font-size: .9em; text-decoration: none; }
+.libro-hoja .items { margin: 0 0 0 .4em; line-height: 1.7; }
+.libro-hoja .items .it { display: inline-block; margin: 0 1.1em .1em 0; }
+.libro-hoja .items .it b, .libro-hoja .sol b { color: var(--hoja-ocre); }
+.libro-hoja .sol-leccion h3 { font-size: 1em; margin: 1em 0 .3em; }
+.libro-hoja .sol { margin: 0 0 .45em; font-size: .92em; overflow-wrap: anywhere; }
 .libro-hoja .dueno { font-family: var(--f-hand); font-size: 1.7rem; text-align: center; color: var(--hoja-ocre); margin: 10px 0 0; }
 .lector-pie { display: grid; grid-template-columns: 64px 1fr 64px; align-items: center; gap: 10px; flex: none; width: 100%; max-width: 720px; margin: 0 auto; }
 .lector-pie .puff .cara { font-size: 1.1rem; }
@@ -622,3 +634,20 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 :root[data-hora="noche"] .insignia.bloqueada .medalla { filter: grayscale(1) opacity(.62); }
 :root[data-hora="noche"] .amigo .retrato, :root[data-hora="noche"] .premio .retrato, :root[data-hora="noche"] .retrato-encuesta { background: #F6F0E2; }
 :root[data-hora="noche"] .amigo.bloqueado .retrato img { filter: grayscale(1) blur(5px) opacity(.6); }
+
+/* Lectura en voz alta en celulares chicos (7-nov): el cuadro no se sale de la pantalla y nada lo ensancha */
+dialog.lh { max-width: calc(100vw - 16px); box-sizing: border-box; }
+dialog.lh .lh-in > * { min-width: 0; }
+dialog.lh h2, dialog.lh p { overflow-wrap: anywhere; }
+
+/* Ordenar sostenidos o bemoles (7-nov): 7 lugares que se llenan; al final, verde o rojo con la correcta debajo */
+.ranuras-orden { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; max-width: 420px; width: 100%; margin: 0 auto; }
+.lugar-orden { display: grid; justify-items: center; align-content: start; gap: 2px; min-height: 64px; padding: 6px 2px; border-radius: 12px;
+  border: 2px dashed var(--line); background: var(--papel-claro); color: var(--hoja-tinta); transition: border-color 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+.lugar-orden b { font-size: 1.05rem; min-height: 1.4em; }
+.lugar-orden small { font-weight: 800; font-size: .85rem; color: var(--ok-text); min-height: 1.2em; }
+.lugar-orden.lleno { border-style: solid; }
+.lugar-orden.bien { border-color: var(--moss); background: color-mix(in srgb, var(--moss) 14%, var(--papel-claro)); }
+.lugar-orden.mal { border-color: var(--rose-strong); background: color-mix(in srgb, var(--rose-strong) 12%, var(--papel-claro)); }
+.lugar-orden.mal b { color: var(--mal-text); text-decoration: line-through; text-decoration-thickness: 2px; }
+.deshacer-orden { --d: 52px; }

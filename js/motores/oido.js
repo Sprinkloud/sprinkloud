@@ -60,6 +60,45 @@ const MODOS = {
       const pasos = [[I, .8], [uno([IV, vi]), .8], [V7, .8], [final, 1.6]].map(([n, d]) => [n.concat([n[0] - 12]), d]);
       return { pasos, notas: final, correcta: reposo ? 'Reposo' : 'Tensión', opciones: ['Reposo', 'Tensión'], detalle: reposo ? 'termina en el acorde I' : 'termina en el acorde V' };
     }
+  },
+  /* 7-nov-2026: las lecciones de progresiones y el dictado melódico abrían «¿mayor o menor?» y los intervalos, que no
+     practican su tema. Estos tres ejercicios sí. */
+  progresiones: {
+    nombre: 'Progresiones: I, IV, V y vi', guia: 'Etapa 5 · Lección 2: los cuatro acordes que acompañan cientos de canciones.',
+    pregunta: () => 'Primero suena la casa (I). ¿Qué acorde viene después?',
+    crear() {
+      const t = azar(55, 62), GRADOS = { I: [0, 4, 7], IV: [5, 9, 12], V: [7, 11, 14], vi: [9, 12, 16] };
+      const g = uno(['IV', 'V', 'vi', 'IV', 'V', 'vi', 'I']), ac = GRADOS[g].map(x => t + x), I = GRADOS.I.map(x => t + x);
+      const raiz = t + GRADOS[g][0];
+      return { pasos: [[I.concat([t - 12]), 1.1], [ac.concat([raiz - 12]), 1.6]], notas: ac, correcta: g, opciones: ['I', 'IV', 'V', 'vi'],
+        detalle: nombre(raiz) + (g === 'vi' ? ' menor' : ' mayor') + ' en ' + nombre(t) + ' mayor' };
+    }
+  },
+  reposoMenor: {
+    nombre: '¿Tensión o reposo? En menor', guia: 'Etapa 5 · Lección 4: la casa es un acorde menor.',
+    pregunta: () => 'En menor: ¿el final llega a casa (reposo) o pide seguir (tensión)?',
+    crear() {
+      const t = azar(55, 62), i = [t, t + 3, t + 7], iv = [t + 5, t + 8, t + 12], V = [t + 7, t + 11, t + 14];
+      const reposo = rnd() < .5, final = reposo ? i : V;
+      const pasos = [[i, .8], [iv, .8], [V, .8], [final, 1.6]].map(([n, d]) => [n.concat([n[0] - 12]), d]);
+      return { pasos, notas: final, correcta: reposo ? 'Reposo' : 'Tensión', opciones: ['Reposo', 'Tensión'],
+        detalle: reposo ? 'termina en ' + nombre(t) + ' menor, la casa (i)' : 'termina en ' + nombre(t + 7) + ' mayor (V)' };
+    }
+  },
+  dictado: {
+    nombre: 'Dictado melódico', guia: 'Etapa 5 · Lección 9: escucha, canta y elige la melodía que sonó.',
+    pregunta: () => 'Empieza en Do. ¿Qué melodía sonó?',
+    crear() {
+      // 4 notas de Do mayor, de Do a Sol, por pasos y saltos pequeños; las otras opciones cambian una sola nota
+      const ESC = [60, 62, 64, 65, 67], N = ['Do', 'Re', 'Mi', 'Fa', 'Sol'];
+      const mel = [0]; while (mel.length < 4) { const s = mel[mel.length - 1] + uno([-2, -1, 1, 1, 2]); if (s >= 0 && s <= 4 && s !== mel[mel.length - 1]) mel.push(s); }
+      const texto = m => m.map(i => N[i]).join(' – '), correcta = texto(mel), ops = new Set([correcta]);
+      let intentos = 0;
+      while (ops.size < 4 && intentos++ < 50) { const o = mel.slice(), k = azar(1, 3); o[k] = uno([0, 1, 2, 3, 4].filter(x => x !== mel[k] && x !== o[k - 1])); ops.add(texto(o)); }
+      const opciones = [...ops];   // mezcladas con azar() (el bosque lo siembra)
+      for (let i = opciones.length - 1; i > 0; i--) { const j = azar(0, i); [opciones[i], opciones[j]] = [opciones[j], opciones[i]]; }
+      return { pasos: mel.map(i => [[ESC[i]], .6]), notas: mel.map(i => ESC[i]), correcta, opciones };
+    }
   }
 };
 function acorde(tipos, forma) {
