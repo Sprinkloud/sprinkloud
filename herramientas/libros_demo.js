@@ -23,7 +23,7 @@ for (const ins of ['piano', 'violin']) {   // la app usa los de piano por ahora;
     const libro = ctx.LIBRO_BOSQUE[ins][n], imgs = {};
     const paginas = libro.paginas.map(pg => {
       let html = pg.html;
-      if (pg.semana) html = ctx.LIBRO_HTML[ins][pg.semana].html.replace(/<div class="practica">[\s\S]*?<\/div>\s*(?=<div class="logro">)/, '');
+      if (pg.semana) html = ctx.LIBRO_HTML[ins][pg.semana].html.replace(/\s*<h3>Ejercicios<\/h3>[\s\S]*$/, '</div>');   // igual que apiLibro_: solo teoría (8-nov-2026)
       (html.match(/data-img="[^"]+"/g) || []).forEach(x => {
         const rel = x.slice(10, -1);
         if (!imgs[rel]) tablas.forEach(t => { if (t[rel]) imgs[rel] = t[rel]; });

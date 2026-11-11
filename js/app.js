@@ -786,7 +786,19 @@
       if (pg.id === 'portada' && dueno) html += '<p class="dueno">Este libro es de ' + dueno + '</p>';
       // si ya terminó la etapa, el certificado del final lleva su nombre
       if (pg.id === 'fin' && dueno && terminado) html = html.replace('<p>Nombre</p><div class="linea"></div>', '<p>Nombre</p><p class="dueno">' + dueno + '</p>');
-      const partes = pg.semana ? html.split(/(?=<div class="hoja2">)/) : [html];
+      let partes = pg.semana ? html.split(/(?=<div class="hoja2">)/) : [html];
+      /* 11-nov-2026 (la dueña): el libro de la app es solo teoría, así que la segunda hoja de varias lecciones quedaba vacía
+         y en el celular «Míralo» se cortaba abajo de la primera. Como en el PDF: «Míralo» pasa a la segunda hoja, y una
+         hoja sin texto ni dibujo no se muestra. */
+      if (pg.semana && partes.length === 2) {
+        const doc = new DOMParser().parseFromString('<div id="r">' + html + '</div>', 'text/html');
+        const h1 = doc.querySelector('.hoja1'), h2 = doc.querySelector('.hoja2');
+        if (h1 && h2) {
+          const hijos = [...h1.children], iM = hijos.findIndex(k => k.tagName === 'H3' && k.textContent.trim() === 'Míralo');
+          if (iM >= 0) h2.prepend(...hijos.slice(iM).filter((k, j) => j === 0 || k.classList.contains('diagrama')));
+          partes = [h1.outerHTML, h2.outerHTML].filter((p, k) => k === 0 || /\S/.test(h2.textContent) || h2.querySelector('img'));
+        }
+      }
       partes.forEach((h, k) => hojas.push({ titulo: pg.titulo, grupo, segunda: k > 0, html: h, semana: pg.semana || 0 }));
     });
     return hojas;
@@ -794,8 +806,8 @@
   /* Ejemplos que suenan (pedido de la dueña, 29-oct): debajo del dibujo de cada lección, botones 🔊 que tocan lo que
      muestra el dibujo (js/ejemplos.js); el dibujo brilla mientras suena */
   function ponerEjemplos(cont, h) {
-    const lista = h.semana && !h.segunda ? window.Ejemplos.de(h.semana, estado.instrumento) : [];
-    const dib = cont.querySelector('.diagrama');
+    const dib = cont.querySelector('.diagrama');   // «Míralo» va ahora en la segunda hoja de la lección (11-nov-2026)
+    const lista = h.semana && dib ? window.Ejemplos.de(h.semana, estado.instrumento) : [];
     if (!lista.length || !dib) return;
     let fin = 0;
     const fila = el('div', { class: 'ejemplos-sonido' }, lista.map(([etiqueta, partitura]) => {

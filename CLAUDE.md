@@ -335,3 +335,9 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - **Lectura de notas** (`notas` en `js/actividades.js`): con 3 notas o menos puede repetir la misma, pero nunca 3 veces seguidas. Antes, sol y mi salían siempre alternadas.
 - **Sonido** (`js/sonido.js`): `latencyHint: 'interactive'`, el audio se despierta con el primer toque en cualquier parte, y `nota()` suena al instante (antes, +20 ms).
 - **Motores:** se volvieron a copiar con `copiar_motores.py`. La hoja de la lección 1 ya no tiene el metrónomo.
+
+## Libro de la biblioteca y botón del ejemplo (11-nov-2026, revisión del libro 1 con la dueña)
+- **Libro de la app** (`hojasDe` en `js/app.js`): como el libro es solo teoría, la segunda hoja de varias lecciones quedaba vacía, y en el celular «Míralo» se cortaba abajo de la primera. Ahora «Míralo» (el h3 y sus `.diagrama`) pasa al comienzo de la segunda hoja, igual que en el PDF, y una hoja sin texto ni imagen no se muestra. `ponerEjemplos` pone los botones «Escúchalo» en la hoja que tiene el dibujo.
+- **Botón del ejemplo** (`ejemplo` en `js/actividades.js`): está desde el principio y dice «Ejemplo 👀», apagado y gris (`.plomo`), mientras el osito muestra. Al terminar cambia a «¡Ahora tú! ✨». La dueña empezó a tocar el tambor durante el ejemplo y se le reiniciaba. En el pulso, el tambor y las teclas no cuentan mientras dura el ejemplo.
+- `herramientas/libros_demo.js` corta las lecciones igual que `apiLibro_`, desde «Ejercicios» (solo teoría). Antes la demo seguía mostrando los ejercicios.
+- **Para revisar un libro de la app:** con el servidor local en 8020, `node Libro_Sprinkloud/herramientas/capturar_libro_app.js N` guarda las capturas en `Libro_Sprinkloud/revision-app/`.

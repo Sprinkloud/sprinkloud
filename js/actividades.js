@@ -38,13 +38,21 @@ window.Actividades = (function () {
     return el('div', { class: 'tarjeta consigna' }, el('span', { class: 'cara-osito' }, el('img', { src: OSITO, alt: '' })), el('p', { text: texto }), contador || null);
   }
   /* Cada actividad empieza con un ejemplo: el osito responde una pregunta y aparece «¡Ahora tú!» */
+  /* 11-nov-2026 (la dueña): el botón está desde el principio y dice «Ejemplo 👀» (apagado) mientras el osito muestra; al
+     terminar cambia a «¡Ahora tú! ✨». Antes aparecía solo al final, y en el pulso ella empezó a tocar durante el ejemplo. */
   async function ejemplo(cont, mostrar) {
     cont.classList.add('ejemplo');
+    let listo = null;
+    const b = puff('Ejemplo 👀', 'plomo grande', () => { if (!listo) return; cont.classList.remove('ejemplo'); b.remove(); listo(); });
+    b.disabled = true; b.setAttribute('aria-label', 'Ejemplo: mira cómo lo hace el osito');
+    cont.append(b);
     await mostrar();
     await espera(400);
-    return new Promise(listo => {
-      const b = puff('¡Ahora tú! ✨', 'ocre grande respira', () => { cont.classList.remove('ejemplo'); b.remove(); listo(); });
-      cont.append(b);
+    if (b.parentNode !== cont) cont.append(b);   // algunas actividades vuelven a llenar la zona: el botón queda al final
+    return new Promise(r => {
+      listo = r;
+      b.disabled = false; b.classList.remove('plomo'); b.classList.add('ocre', 'respira'); b.removeAttribute('aria-label');
+      const cara = b.querySelector('.cara'); if (cara) cara.textContent = '¡Ahora tú! ✨'; else b.textContent = '¡Ahora tú! ✨';
     });
   }
 
@@ -226,9 +234,11 @@ window.Actividades = (function () {
     const golpe = () => { const t = S.ahora(); toques.push(t); S.tambor(t); tambor.classList.add('golpe'); setTimeout(() => tambor.classList.remove('golpe'), 90); };
     const tambor = el('button', { class: 'puff madera redondo tambor', type: 'button', 'aria-label': 'Tambor: toca con el pulso (o cualquier tecla)' },
       el('span', { class: 'borde' }), el('span', { class: 'cara', text: '🥁' }));
-    const alTocar = e => { if (e.button > 0 || e.target.closest('.puff:not(.tambor)')) return; e.preventDefault(); golpe(); };
+    /* durante el ejemplo el tambor no se toca: el que toca es el osito (11-nov-2026) */
+    const alTocar = e => { if (e.button > 0 || cont.classList.contains('ejemplo') || e.target.closest('.puff:not(.tambor)')) return; e.preventDefault(); golpe(); };
     const alTeclear = e => {
       if (!cont.closest('.pantalla.activa')) { soltarTeclas(); return; }   // salió del ejercicio (✕): ya no escucha el teclado
+      if (cont.classList.contains('ejemplo')) return;
       if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.key === 'Tab' || e.key === 'Escape') return;
       const enBoton = document.activeElement && document.activeElement.closest && document.activeElement.closest('.puff:not(.tambor), .btn-icono');
       if (enBoton && (e.key === 'Enter' || e.key === ' ')) return;   // Enter sigue sirviendo para «¡Ahora tú!»
