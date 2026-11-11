@@ -95,7 +95,13 @@ window.Actividades = (function () {
     const pool = poolNotas(o.semana, o.ins), cuantas = o.cuantas || 10;
     const letras = ORDEN.filter(l => pool.some(n => n.key[0] === l));
     const preguntas = []; let ant = null;
-    for (let i = 0; i < cuantas; i++) { let n; do { n = uno(o.rnd, pool); } while (pool.length > 1 && ant && n.key === ant.key); preguntas.push(n); ant = n; }
+    /* 10-nov-2026 (la dueña): con pocas notas (sol y mi) salía siempre sol, mi, sol, mi. Con 3 notas o menos se puede repetir
+       la misma, pero nunca 3 veces seguidas; con más notas, nunca la misma dos veces */
+    for (let i = 0; i < cuantas; i++) {
+      const dos = preguntas.length >= 2 && preguntas[preguntas.length - 1].key === preguntas[preguntas.length - 2].key;
+      let n; do { n = uno(o.rnd, pool); } while (pool.length > 1 && ant && n.key === ant.key && (pool.length > 3 || dos));
+      preguntas.push(n); ant = n;
+    }
     const cuenta = el('span', { class: 'contador' });
     const papel = el('div', { class: 'pentagrama tarjeta' });
     const msj = el('div', { class: 'mensaje', 'aria-live': 'polite' });

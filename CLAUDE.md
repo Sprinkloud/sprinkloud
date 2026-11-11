@@ -330,3 +330,8 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - `herramientas/revisar_cortes.js`: con `INS=piano,violin` recorre los dos instrumentos, y ahora también junta los errores de la consola (no solo los de JavaScript).
 - **Arreglos de 320 px que salieron en el recorrido:** la barra de pasos de la práctica (hasta 6 actividades) empujaba los malvaviscos fuera de la pantalla: bajo 380 px los circulitos miden 26 px y van con 4 px de separación. «Aumentada» y «Disminuida» no cabían en los botones del oído: bajo 380 px la letra de `.respuestas-juego .puff .cara` es de 1rem.
 - **Recorrido (`revisar_cortes.js`, piano y violín, la práctica entera respondiendo sola):** las 60 lecciones a 320×640 y a 360×780 dieron 0 textos cortados y 0 errores de consola, con los arreglos de arriba. Se corre una lección por proceso, con 4 procesos como máximo y un tiempo límite por proceso: con 10 Chrome a la vez, Vosk se quedó sin memoria («Array buffer allocation failed») y algunos lotes se trabaron.
+
+## Revisión del libro 1 de piano (10-nov-2026)
+- **Lectura de notas** (`notas` en `js/actividades.js`): con 3 notas o menos puede repetir la misma, pero nunca 3 veces seguidas. Antes, sol y mi salían siempre alternadas.
+- **Sonido** (`js/sonido.js`): `latencyHint: 'interactive'`, el audio se despierta con el primer toque en cualquier parte, y `nota()` suena al instante (antes, +20 ms).
+- **Motores:** se volvieron a copiar con `copiar_motores.py`. La hoja de la lección 1 ya no tiene el metrónomo.

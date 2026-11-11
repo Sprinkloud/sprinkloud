@@ -11,7 +11,9 @@ window.Sonido = (function () {
 
   function audio() {
     if (!ctx) {
-      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      /* 10-nov-2026 (la dueña: las notas sonaban con retraso): latencia de juego, y el audio se despierta con el primer toque */
+      const C = window.AudioContext || window.webkitAudioContext;
+      try { ctx = new C({ latencyHint: 'interactive' }); } catch (e) { ctx = new C(); }
       const comp = ctx.createDynamicsCompressor();
       comp.threshold.value = -16; comp.ratio.value = 4;
       salida = ctx.createGain(); salida.gain.value = .9;
@@ -23,6 +25,8 @@ window.Sonido = (function () {
     return ctx;
   }
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+  /* el primer toque en cualquier parte despierta el audio, así la primera nota no espera a que arranque (10-nov-2026) */
+  ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (ctx && ctx.state === 'suspended') ctx.resume(); }, { capture: true, passive: true }));
 
   /* Voz de piano: parciales armónicos con ataque rápido y caída natural. Lleva armónicos fuertes y el filtro abierto
      (5200 Hz): los parlantes del celular casi no dan los graves y la nota se reconoce por sus armónicos (antes sonaba
@@ -176,7 +180,7 @@ window.Sonido = (function () {
       src.connect(f); f.connect(g); g.connect(bus); src.start(t);
       ruido(t + .26, .06, 520, .22);   // la hoja cae
     },
-    nota(midi, dur) { if (!ok()) return; piano(ctx.currentTime + .02, midi, dur || .9, .32); },
+    nota(midi, dur) { if (!ok()) return; piano(ctx.currentTime, midi, dur || .9, .32); },   // al instante (antes +20 ms)
     /* una nota en un momento exacto del reloj de audio (los ejemplos que suenan de la biblioteca) */
     notaEn(t, midi, dur, gain) { if (!ok()) return; piano(t, midi, dur || .9, gain || .32); },
     /* pasos: [[midis juntos], segundos] (oído). Lo que sonaba antes se calla */
