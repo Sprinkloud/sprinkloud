@@ -1,7 +1,7 @@
 /* Arma los libros de la biblioteca para probar la app sin servidor (?demo=1): demo-libros/<instrumento>-<etapa>.json,
    con la misma forma que devuelve apiLibro_ en Registro_Sprinkloud/maestros/Código.js.
    Los libros se venden en Amazon: demo-libros/ está en .gitignore y NUNCA se sube a GitHub.
-   Desde el 12-nov-2026 los libros salen de Libro_Sprinkloud/datos-app (los mismos archivos que van al Drive), y el CSS de
+   Desde el 12-nov-2026 los libros salen de Libro_Sprinkloud/datos-app (los mismos que se suben a la hoja de libros), y el CSS de
    maestros/LibroIndice.js.
    Uso: node herramientas/libros_demo.js   (después de correr Libro_Sprinkloud/herramientas/lecciones_maestros.js) */
 const fs = require('fs');
