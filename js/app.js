@@ -114,12 +114,17 @@
         el('p', { text: 'Para entrar, abre el enlace que te mandó tu maestro por WhatsApp.' }));
       ir('entrada'); return;
     }
+    /* 12-nov-2026 (la app tardaba muchísimo): el bosque se empieza a pedir apenas se abre la página, mientras el alumno
+       mira la portada; al tocar «Entrar» casi siempre ya llegó. Si ese pedido falló, se vuelve a pedir. */
+    let pedido = Api.cargar();
+    pedido.catch(() => { });
     const boton = puff('🌲 Entrar al bosque', 'grande respira', async () => {
       S.despertar();
       boton.disabled = true; boton.querySelector('.cara').textContent = 'Abriendo el bosque…';
       const espera = esperando('Abriendo el bosque…'); boton.after(espera);
       try {
-        estado = await Api.cargar(); etapaVista = estado.leccion ? estado.leccion.etapa : 6;
+        try { estado = await pedido; } catch (e) { pedido = Api.cargar(); estado = await pedido; }
+        etapaVista = estado.leccion ? estado.leccion.etapa : 6;
         estado.encuesta ? encuesta() : camino();
         // ex alumno o app vencida: al entrar, una vez, le cuenta que su avance sigue guardado y cómo volver a todo
         if (estado.libre && estado.libre.motivo && !estado.encuesta) setTimeout(() => club(), 900);
@@ -354,6 +359,7 @@
     llenar(p, el('div', { class: 'practica-arriba' }, cerrar, pasos, rayo, el('span', { class: 'ficha', html: MALVAVISCO + '<span class="num" id="ganados">+0</span>' })), escenario, reporte);
     ir('practica');
     let cancelado = false, ganados = 0, ultimo = null, vivoA = 0, vivoI = 0, actual = null;
+    let cola = Promise.resolve();   // las actividades que se están guardando, en orden (12-nov-2026)
     const acierto = S.acierto, error = S.error;
     function soltar() { S.acierto = acierto; S.error = error; }
     const queda = () => estado.juego.energia.queda - Api.energia.gasto(vivoA, vivoI);
@@ -385,18 +391,33 @@
       if (cancelado) return;
       if (r) {
         const ultima = i === lista.length - 1;
-        try {
-          ultimo = await Api.practica({ tipo: lista[i].tipo, aciertos: r.aciertos, intentos: r.intentos }, ultima && !extra);
-          ganados += ultimo.ganados; estado = ultimo.estado; vivoA = vivoI = 0;
-          if (en) pintarRayo();
-          $('#ganados').textContent = '+' + ganados; if (ultimo.ganados) S.moneda(Math.ceil(ultimo.ganados / 4));
-        } catch (e) { if (e.sinEnergia) { vivoA = vivoI = 0; agotada(); return; } aviso(e.message || 'No se pudo guardar. Revisa tu internet.'); }
-        if (en && !estado.juego.energia.queda && !ultima) { agotada(); return; }
+        const datos = { tipo: lista[i].tipo, aciertos: r.aciertos, intentos: r.intentos };
+        if (en) {   // con energía (versión libre), cada actividad decide si se puede seguir: se espera la respuesta
+          try {
+            ultimo = await Api.practica(datos, ultima && !extra);
+            ganados += ultimo.ganados; estado = ultimo.estado; vivoA = vivoI = 0;
+            pintarRayo();
+            $('#ganados').textContent = '+' + ganados; if (ultimo.ganados) S.moneda(Math.ceil(ultimo.ganados / 4));
+          } catch (e) { if (e.sinEnergia) { vivoA = vivoI = 0; agotada(); return; } aviso(e.message || 'No se pudo guardar. Revisa tu internet.'); }
+          if (!estado.juego.energia.queda && !ultima) { agotada(); return; }
+        } else {
+          /* 12-nov-2026 (la app tardaba muchísimo): la actividad se guarda por detrás, en orden, y el alumno pasa enseguida a
+             la siguiente. Los malvaviscos se suman cuando llega la respuesta (sin sonido: puede estar en un ejercicio de oído). */
+          vivoA = vivoI = 0;
+          cola = cola.then(() => Api.practica(datos, ultima && !extra)).then(x => {
+            ultimo = x; ganados += x.ganados; estado = x.estado;
+            const g = $('#ganados'); if (g) g.textContent = '+' + ganados;
+          }).catch(e => { aviso(e.message || 'No se pudo guardar. Revisa tu internet.'); });
+        }
       }
       mem.hechas = i + 1; recordar(mem);
       escenario.classList.remove('ejemplo');
     }
     soltar();
+    /* lo que quedó guardándose por detrás termina aquí: el osito empuja su carretilla mientras tanto */
+    escenario.replaceChildren(esperando('Avivando la fogata…'));
+    await cola;
+    if (cancelado) return;
     if (!ultimo || !ultimo.fogata) {   // si la última se saltó, la práctica igual se cierra para prender la fogata
       try { if (!extra && !estado.juego.hoy.terminada) { ultimo = await Api.practica({ tipo: 'repaso', aciertos: 0, intentos: 1, cierre: true }, true); estado = ultimo.estado; ganados += ultimo.ganados; } } catch (e) { }
     }
@@ -758,6 +779,9 @@
         el('h2', { class: 'seccion-titulo', text: 'Amigos del bosque' }), amigos,
         sinCuenta() ? el('div', { class: 'casa-acciones', style: 'grid-template-columns:1fr;margin-top:18px' }, puff('🔐 Guardar mi progreso con Google', 'madera', () => cuenta())) : null));
     ir('logros');
+    /* 12-nov-2026: el libro de su etapa se empieza a bajar al entrar a la biblioteca, antes de tocar el lomo */
+    const suyo = (estado.biblioteca || []).find(b => b.abierto && estado.leccion && b.etapa === estado.leccion.etapa);
+    if (suyo) Api.libro(suyo.etapa).catch(() => { });
   }
 
   /* repetir la prueba de nivel para subir (4-nov): una vez por semana; si todavía no se puede, dice desde qué día */

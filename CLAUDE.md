@@ -341,3 +341,10 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - **Botón del ejemplo** (`ejemplo` en `js/actividades.js`): está desde el principio y dice «Ejemplo 👀», apagado y gris (`.plomo`), mientras el osito muestra. Al terminar cambia a «¡Ahora tú! ✨». La dueña empezó a tocar el tambor durante el ejemplo y se le reiniciaba. En el pulso, el tambor y las teclas no cuentan mientras dura el ejemplo.
 - `herramientas/libros_demo.js` corta las lecciones igual que `apiLibro_`, desde «Ejercicios» (solo teoría). Antes la demo seguía mostrando los ejercicios.
 - **Para revisar un libro de la app:** con el servidor local en 8020, `node Libro_Sprinkloud/herramientas/capturar_libro_app.js N` guarda las capturas en `Libro_Sprinkloud/revision-app/`.
+
+## Rapidez (12-nov-2026; la dueña: «se demora una eternidad en cargar cada cosa»)
+- **El servidor:** cada pedido tardaba de 5 a 9 s porque la web app llevaba los libros dentro del código. Ahora los libros están en el Drive (ver `Registro_Sprinkloud/CLAUDE.md`, «Rapidez»).
+- **La práctica no espera al servidor** (`practicar_` en `js/app.js`): cada actividad se guarda por detrás, en orden (`cola`), y el alumno pasa enseguida a la siguiente. Los malvaviscos se suman cuando llega la respuesta, sin sonido, porque puede estar en un ejercicio de oído. Solo al final se espera lo que falta, con el osito «Avivando la fogata…». Con energía (versión libre) se sigue esperando cada actividad, porque la energía decide si puede seguir. Prueba con un servidor simulado de 4 s por guardado: el alumno pasó de actividad sin esperar y llegó al final con sus malvaviscos.
+- **Entrar:** el estado se pide apenas se abre la página (`entrada`), mientras el alumno mira la portada. Si ese pedido falló, se repite al tocar «Entrar».
+- **Biblioteca:** el libro de su etapa se empieza a bajar al abrir la biblioteca, antes de tocar el lomo (`Api.libro` guarda la promesa).
+- `herramientas/libros_demo.js` lee los libros de `Libro_Sprinkloud/datos-app`.
