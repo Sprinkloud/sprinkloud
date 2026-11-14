@@ -348,3 +348,21 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - **Entrar:** el estado se pide apenas se abre la página (`entrada`), mientras el alumno mira la portada. Si ese pedido falló, se repite al tocar «Entrar».
 - **Biblioteca:** el libro de su etapa se empieza a bajar al abrir la biblioteca, antes de tocar el lomo (`Api.libro` guarda la promesa).
 - `herramientas/libros_demo.js` lee los libros de `Libro_Sprinkloud/datos-app`.
+
+## La casita animada: se intentó y se descartó (12-nov-2026)
+- **Lo que se probó, en ese orden:**
+  1. el osito como títere por piezas, caminando sobre el dibujo de la casita con fronteras invisibles y usando los muebles;
+  2. una casa armada por código;
+  3. una casita nueva en un mapa con cuadrícula, con arte de Gemini y después con los stickers de la tienda.
+- **La dueña:** «no me gustó como quedó». Se fue por la **opción 2**: escenarios con stickers. **Se borró todo** (el código, el arte de prueba y las piezas del títere), y la app quedó igual que la publicada.
+- **Lo que se aprendió:**
+  - a los alumnos les gusta pegar stickers sobre un fondo;
+  - el juego no explica reglas (memoria `sprinkloud-juego-sin-reglas`);
+  - la casa nunca debe competir con los muebles;
+  - nada de dibujos pálidos ni verdosos apagados.
+
+## EN CURSO: escenarios con stickers (opción 2, 12-nov-2026)
+El plan está en `plan-escenarios.md`.
+- La casita publicada se queda tal cual.
+- En la tienda se compran **escenarios** nuevos (lago para pescar, picnic en el prado, huerto), cada uno con sus stickers para pegar. Sin osito animado.
+- Los fondos y los stickers los pide la tarea diaria de Gemini (etapas 18 y 19 de `Libro_Sprinkloud/herramientas/ilustraciones`).
