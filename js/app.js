@@ -819,7 +819,7 @@
         const h1 = doc.querySelector('.hoja1'), h2 = doc.querySelector('.hoja2');
         if (h1 && h2) {
           const hijos = [...h1.children], iM = hijos.findIndex(k => k.tagName === 'H3' && k.textContent.trim() === 'Míralo');
-          if (iM >= 0) h2.prepend(...hijos.slice(iM).filter((k, j) => j === 0 || k.classList.contains('diagrama')));
+          if (iM >= 0) h2.prepend(...hijos.slice(iM));   // 14-nov-2026: también los párrafos que van entre dos dibujos (ligadura → síncopa)
           partes = [h1.outerHTML, h2.outerHTML].filter((p, k) => k === 0 || /\S/.test(h2.textContent) || h2.querySelector('img'));
         }
       }
@@ -830,7 +830,7 @@
   /* Ejemplos que suenan (pedido de la dueña, 29-oct): debajo del dibujo de cada lección, botones 🔊 que tocan lo que
      muestra el dibujo (js/ejemplos.js); el dibujo brilla mientras suena */
   function ponerEjemplos(cont, h) {
-    const dib = cont.querySelector('.diagrama');   // «Míralo» va ahora en la segunda hoja de la lección (11-nov-2026)
+    const dibujos = cont.querySelectorAll('.diagrama'), dib = dibujos[dibujos.length - 1];   // «Míralo» va en la segunda hoja (11-nov-2026); con dos dibujos, debajo del último (14-nov)
     const lista = h.semana && dib ? window.Ejemplos.de(h.semana, estado.instrumento) : [];
     if (!lista.length || !dib) return;
     let fin = 0;
