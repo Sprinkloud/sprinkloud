@@ -86,7 +86,27 @@ window.Api = (function () {
     ['flores-jardin', 'jardin-flores', 'Flores del jardín', 20],
     ['calabazas', 'jardin-flores', 'Calabazas', 25],
     ['palitos-malvavisco', 'jardin-fogata', 'Malvaviscos en palitos', 15]
-  ].map(([id, lugar, nombre, precio]) => ({ id, lugar, nombre, precio }));
+  ].map(([id, lugar, nombre, precio]) => ({ id, lugar, nombre, precio })).concat([
+    /* los mapas del álbum y sus stickers (16-nov-2026): igual que TIENDA en Registro_Sprinkloud/maestros/Código.js */
+    { id: 'mapa-lago', tipo: 'mapa', mapa: 'lago', lugar: 'lago', nombre: 'El lago', precio: 900 },
+    { id: 'lago-nenufares-rana', mapa: 'lago', lugar: 'lago', nombre: 'Nenúfares con ranita', precio: 60, tam: 17 },
+    { id: 'lago-peces', mapa: 'lago', lugar: 'lago', nombre: 'Peces saltando', precio: 80, tam: 14 },
+    { id: 'lago-cesta-pesca', mapa: 'lago', lugar: 'lago', nombre: 'Cesta de pesca', precio: 90, tam: 14 },
+    { id: 'lago-patitos', mapa: 'lago', lugar: 'lago', nombre: 'Mamá pata y patitos', precio: 110, tam: 20 },
+    { id: 'lago-cana-pescar', mapa: 'lago', lugar: 'lago', nombre: 'Caña de pescar', precio: 130, tam: 17 },
+    { id: 'lago-canoa', mapa: 'lago', lugar: 'lago', nombre: 'Canoa', precio: 250, tam: 30 }
+  ]);
+  /* mejoras: un sticker comprado se mejora pagando y desde entonces hace algo; los que tienen `uso` preparan un regalo */
+  const MEJORAS = {
+    'tetera': { precio: 200, accion: 'hornear', uso: 10, regalo: 'galletas' }, 'olla-chocolate': { precio: 150, accion: 'servir', uso: 8, regalo: 'cacao' },
+    'piano-madera': { precio: 250, accion: 'cancion' }, 'atril-violin': { precio: 200, accion: 'melodia' }, 'reloj-cuco': { precio: 120, accion: 'cucu' },
+    'cama-parches': { precio: 150, accion: 'dormir' }, 'cama-hojas': { precio: 150, accion: 'dormir' }, 'columpio': { precio: 100, accion: 'mecer' },
+    'metronomo': { precio: 80, accion: 'pulso' }, 'lampara': { precio: 60, accion: 'luz' }, 'farolito': { precio: 60, accion: 'luz' },
+    'lago-canoa': { precio: 120, accion: 'navegar' }, 'lago-patitos': { precio: 100, accion: 'nadar' }, 'lago-peces': { precio: 80, accion: 'saltar' },
+    'lago-nenufares-rana': { precio: 80, accion: 'croar' }, 'lago-cana-pescar': { precio: 150, accion: 'pescar', uso: 5, regalo: 'pescado' }
+  };
+  const REGALOS = ['galletas', 'cacao', 'pescado'], DESPENSA_MAX = 9;
+  const CATALOGO_TIENDA = TIENDA.map(t => MEJORAS[t.id] ? Object.assign({}, t, { mejora: MEJORAS[t.id] }) : t);
   const INSIGNIAS = [
     ['primera', 'Primera práctica', j => j.dias >= 1], ['racha3', '3 días seguidos', j => j.mejor >= 3], ['racha7', '7 días seguidos', j => j.mejor >= 7],
     ['racha14', '14 días seguidos', j => j.mejor >= 14], ['racha30', '30 días seguidos', j => j.mejor >= 30], ['perfecta', 'Ronda perfecta', (j, x) => !!(x && x.perfecta)],
@@ -95,6 +115,25 @@ window.Api = (function () {
   ];
   const PERSONAJES = [['osito', 'Osito', 0], ['conejo', 'Conejo', 3], ['ardilla', 'Ardilla', 7], ['zorro', 'Zorro', 14], ['erizo', 'Erizo', 21], ['raton', 'Ratón', 30]]
     .map(([id, nombre, dias]) => ({ id, nombre, dias }));
+  /* Los amigos son stickers y se van si deja de practicar (regla de la dueña, 16-nov-2026): igual que amistad_ del servidor.
+     Dos días completos sin practicar no cuestan nada; después se va uno por día (primero el último que llegó) y la leña
+     también salva días. Al volver, los días se cuentan desde el último amigo que le queda. El osito nunca se va. */
+  const GRACIA_AMIGOS = 2, AMISTAD_MAX = 30;
+  function amistad(j, hoy) {
+    const guardada = j.extras && j.extras.amistad != null ? Number(j.extras.amistad) || 0 : Math.min(j.dias, AMISTAD_MAX);
+    const tiene = PERSONAJES.filter(p => guardada >= p.dias).length;
+    const faltas = j.ultimo ? Math.max(0, diasEntre(j.ultimo, hoy) - 1) : 0;
+    const perdidos = Math.max(0, faltas - GRACIA_AMIGOS - (j.lena || 0));
+    const quedan = Math.max(1, tiene - perdidos);
+    const puntos = quedan < tiene ? PERSONAJES[quedan - 1].dias : guardada;
+    const sig = PERSONAJES[quedan];
+    return { puntos, amigos: PERSONAJES.slice(0, quedan).map(p => p.id), siguiente: sig ? { id: sig.id, faltan: sig.dias - puntos } : null };
+  }
+  function extrasJuego(j, hoy) {
+    const am = amistad(j, hoy), x = j.extras || {}, casa = {};
+    Object.keys(j.casa || {}).forEach(id => { if (id.indexOf('amigo-') !== 0 || am.amigos.includes(id.slice(6))) casa[id] = j.casa[id]; });
+    return { personajes: am.amigos, amistad: { puntos: am.puntos, siguiente: am.siguiente }, casa, mejoras: x.mejoras || [], despensa: x.despensa || {} };
+  }
   const ETAPAS = ['Cuerpo y pulso', 'Primeras lecturas', 'Lectura y ritmo', 'Intervalos, escalas y acordes', 'Tonalidad: reposo, mayor y menor', 'Músico completo', 'Los modos griegos'];
   const LARGO = [6, 8, 13, 10, 9, 6, 8];   // 60 lecciones desde el 29-oct (ver Registro_Sprinkloud/Guia.js versión 8)
   const APPS = ',ritmo,ritmo,ritmo,oido:sube,notas,ritmo,notas,notas,notas,notas,ritmo,ritmo:3/4,notas,ritmo,ritmo:3/4,ritmo,ritmo,ritmo,ritmo,notas,notas,notas,notas,notas,notas,notas,oido:intervalos:segundas y terceras,oido:intervalos:cuartas, quintas y octavas,oido:intervalos:todos,notas,notas,armaduras:sostenidos,armaduras:bemoles,oido:mayorMenor,oido:triadas,acordes,notas,oido:reposo,oido:mayorMenor,oido:mayorMenor,oido:mayorMenor,circulo,notas,ritmo,ritmo:6/8,oido:intervalos:todos,ritmo,ritmo,ritmo,notas,oido:reposo,ritmo,modos:1,modos:2,modos:3,modos:4,modos:5,modos:6,modos:7,modos:7'
@@ -117,6 +156,13 @@ window.Api = (function () {
       let d = null; try { d = JSON.parse(localStorage.getItem(demo.llave) || 'null'); } catch (e) { }
       d = d || { malvaviscos: 60, racha: 0, mejor: 0, ultimo: '', lena: 0, dias: 0, aciertos: 0, insignias: [], casa: {}, inventario: [], hoy: {} };
       if (LIBRE && !d.libre) d.libre = { semana: 1, paso: '' };
+      /* solo en la prueba (no en la versión libre): ?malvaviscos=2000 y ?amistad=14 (días de amistad: llegan los amigos)
+         se ponen una vez por dirección, para probar los mapas, las mejoras y los amigos sin practicar semanas */
+      if (DEMO && !LIBRE && (q.has('malvaviscos') || q.has('amistad')) && d.ajuste !== location.search) {
+        if (q.has('malvaviscos')) d.malvaviscos = Math.max(0, Math.min(99999, Number(q.get('malvaviscos')) || 0));
+        if (q.has('amistad')) { const n = Math.max(0, Math.min(AMISTAD_MAX, Number(q.get('amistad')) || 0)); d.extras = Object.assign({}, d.extras, { amistad: n }); d.dias = Math.max(d.dias, n); d.ultimo = demo.hoy(); }
+        d.ajuste = location.search; demo.guardar(d);
+      }
       return d;
     },
     guardar(j) { try { localStorage.setItem(demo.llave, JSON.stringify(j)); } catch (e) { } },
@@ -140,7 +186,7 @@ window.Api = (function () {
       const hoy = demo.hoy(), j = demo.leer();
       if (LIBRE && demo.avanzar(j, hoy)) demo.guardar(j);
       const s = LIBRE ? j.libre.semana : Math.min(60, Math.max(1, Number(q.get('semana')) || 1)), f = demo.fogata(j, hoy), et = etapaDe(s);
-      const tema = window.Leccion.GUIA[s], h = demo.hoyDe(j, hoy);
+      const tema = window.Leccion.GUIA[s], h = demo.hoyDe(j, hoy), ex = extrasJuego(j, hoy);
       return {
         alumno: LIBRE ? (j.nombre || '') : 'Amiga', instrumento: 'piano', hoy,   // por ahora el bosque es de piano para todos (29-oct)
         leccion: { semana: s, etapa: et.etapa, nombreEtapa: ETAPAS[et.etapa - 1], numero: et.leccion, nivel: 'Etapa ' + et.etapa + ' · Lección ' + et.leccion, tema: tema[0], objetivo: tema[1], app: APPS[s] },
@@ -151,7 +197,7 @@ window.Api = (function () {
         }),
         juego: {
           malvaviscos: j.malvaviscos, racha: f.racha, fogata: f.estado, mejor: j.mejor, lena: j.lena, dias: j.dias, aciertos: j.aciertos,
-          insignias: j.insignias, casa: j.casa, inventario: j.inventario, personajes: PERSONAJES.filter(p => j.dias >= p.dias).map(p => p.id),
+          insignias: j.insignias, casa: ex.casa, inventario: j.inventario, personajes: ex.personajes, amistad: ex.amistad, mejoras: ex.mejoras, despensa: ex.despensa,
           hoy: { terminada: !!h.terminada, actividades: h.actividades || 0, ganados: h.ganados || 0 },
           energia: LIBRE ? { max: ENERGIA_DIA, queda: Math.max(0, ENERGIA_DIA - (h.gastada || 0)), error: COSTO_ERROR } : null
         },
@@ -161,7 +207,7 @@ window.Api = (function () {
         prueba: LIBRE ? pruebaDe(j.libre) : q.has('encuesta') ? null : q.get('prueba') === 'no' ? { puede: false, desde: demo.hoy(), dias: DIAS_REPETIR_PRUEBA } : { puede: true, desde: demo.hoy(), dias: DIAS_REPETIR_PRUEBA },
         cuenta: LIBRE ? false : undefined,
         biblioteca: ETAPAS.map((nombre, i) => ({ etapa: i + 1, nombre, abierto: !LIBRE && i + 1 <= et.etapa, amazon: LIBRE })),
-        catalogo: { tienda: TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(([id, nombre]) => ({ id, nombre })) }
+        catalogo: { tienda: CATALOGO_TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(([id, nombre]) => ({ id, nombre })) }
       };
     },
     insignias(j, x) { const n = INSIGNIAS.filter(([id, , si]) => j.insignias.indexOf(id) < 0 && si(j, x)).map(i => i[0]); j.insignias = j.insignias.concat(n); return n; },
@@ -184,9 +230,13 @@ window.Api = (function () {
       const perfecta = x.aciertos === x.intentos && x.intentos >= 4;
       let gana = Math.min(x.aciertos, 15) + (perfecta ? 5 : 0);
       if (j.hoy.terminada) gana = Math.floor(gana / 2);
-      const antes = j.dias; let fuego = null;
+      let fuego = null, amigoNuevo = null;
       if (d.terminada && !j.hoy.terminada) {
         j.hoy.terminada = true;
+        const am = amistad(j, hoy), sube = Math.min(AMISTAD_MAX, am.puntos + 1);   // antes de tocar el último día y la leña
+        amigoNuevo = PERSONAJES.find(p => p.dias > am.puntos && p.dias <= sube) || null;
+        j.extras = Object.assign({}, j.extras, { amistad: sube });
+        Object.keys(j.casa || {}).forEach(id => { if (id.indexOf('amigo-') === 0 && !am.amigos.includes(id.slice(6))) delete j.casa[id]; });
         const dif = j.ultimo ? diasEntre(j.ultimo, hoy) : null;
         if (dif === 1) j.racha++;
         else if (dif !== null && dif > 1 && dif - 1 <= j.lena) { j.lena -= dif - 1; j.racha++; }
@@ -199,9 +249,8 @@ window.Api = (function () {
       gana = Math.max(0, Math.min(gana, 150 - (j.hoy.ganados || 0)));
       j.hoy.actividades++; j.hoy.ganados += gana; j.malvaviscos += gana; j.aciertos += x.aciertos;
       const nuevas = demo.insignias(j, { perfecta });
-      const amigo = PERSONAJES.find(p => p.dias > antes && p.dias <= j.dias);
       demo.guardar(j);
-      return { ok: true, ganados: gana, perfecta, fogata: fuego, insignias: nuevas, personaje: amigo ? amigo.id : null, avance, estado: demo.estado() };
+      return { ok: true, ganados: gana, perfecta, fogata: fuego, insignias: nuevas, personaje: amigoNuevo ? amigoNuevo.id : null, avance, estado: demo.estado() };
     },
     /* la prueba de nivel: en la versión libre, la lección donde empieza (hasta la 27); en la prueba sin libre, la semana */
     nivel(s) {
@@ -232,19 +281,62 @@ window.Api = (function () {
       const j = demo.leer(), item = TIENDA.find(t => t.id === id);
       if (!item) throw new Error('Eso no está en la tienda.');
       if (j.inventario.indexOf(id) >= 0) throw new Error('Ya lo tienes en tu casita.');
+      if (item.mapa && item.tipo !== 'mapa' && j.inventario.indexOf('mapa-' + item.mapa) < 0) throw new Error('Primero consigue ese mapa.');
       if (j.malvaviscos < item.precio) throw new Error('Te faltan ' + (item.precio - j.malvaviscos) + ' malvaviscos.');
       j.malvaviscos -= item.precio; j.inventario.push(id);   // queda en la bandeja de calcomanías
       const nuevas = demo.insignias(j); demo.guardar(j);
       return { ok: true, insignias: nuevas, estado: demo.estado() };
     },
+    /* mejorar un sticker que ya tiene: se paga una vez y desde entonces hace algo al tocarlo */
+    mejorar(id) {
+      const j = demo.leer(), m = MEJORAS[id], x = Object.assign({ mejoras: [] }, j.extras);
+      if (!m) throw new Error('Eso no se puede mejorar.');
+      if (j.inventario.indexOf(id) < 0) throw new Error('Primero cómpralo en la tienda.');
+      if ((x.mejoras || []).indexOf(id) >= 0) throw new Error('Ya lo mejoraste.');
+      if (j.malvaviscos < m.precio) throw new Error('Te faltan ' + (m.precio - j.malvaviscos) + ' malvaviscos.');
+      j.malvaviscos -= m.precio; x.mejoras = (x.mejoras || []).concat([id]); j.extras = x;
+      demo.guardar(j);
+      return { ok: true, estado: demo.estado() };
+    },
+    /* usar un sticker mejorado que prepara algo (galletas, cacao, un pescado): cuesta su `uso` y queda en la despensa */
+    usar(id) {
+      const j = demo.leer(), m = MEJORAS[id], x = Object.assign({ mejoras: [] }, j.extras);
+      if (!m || !m.regalo) throw new Error('Eso no prepara nada.');
+      if ((x.mejoras || []).indexOf(id) < 0) throw new Error('Primero mejóralo.');
+      const despensa = Object.assign({}, x.despensa);
+      if ((despensa[m.regalo] || 0) >= DESPENSA_MAX) throw new Error('Ya tienes muchos. Dale uno a un amigo.');
+      if (j.malvaviscos < m.uso) throw new Error('Te faltan ' + (m.uso - j.malvaviscos) + ' malvaviscos.');
+      j.malvaviscos -= m.uso; despensa[m.regalo] = (despensa[m.regalo] || 0) + 1; x.despensa = despensa; j.extras = x;
+      demo.guardar(j);
+      return { ok: true, regalo: m.regalo, estado: demo.estado() };
+    },
+    /* darle un regalo a un amigo que está de visita: el regalo desaparece */
+    dar(regalo, amigo) {
+      const j = demo.leer(), x = Object.assign({}, j.extras);
+      if (REGALOS.indexOf(regalo) < 0) throw new Error('Ese regalo no se entiende.');
+      if (!amistad(j, demo.hoy()).amigos.includes(amigo)) throw new Error('Ese amigo no está de visita.');
+      const despensa = Object.assign({}, x.despensa);
+      if (!(despensa[regalo] >= 1)) throw new Error('No tienes de eso para dar.');
+      despensa[regalo]--; if (!despensa[regalo]) delete despensa[regalo];
+      x.despensa = despensa; j.extras = x;
+      demo.guardar(j);
+      return { ok: true, estado: demo.estado() };
+    },
     casa(casa) {
       const j = demo.leer();
-      const limpia = {};
-      Object.keys(casa).forEach(id => {
-        if (j.inventario.indexOf(id) < 0) throw new Error('Eso no está en tu bandeja de calcomanías.');
+      const limpia = {}, amigos = amistad(j, demo.hoy()).amigos;
+      /* también se pegan los amigos que están de visita («amigo-<id>»), y cada calcomanía va en la casita o en un mapa
+         que ya tiene (`e`); los mapas mismos no se pegan */
+      Object.keys(casa).slice(0, TIENDA.length + PERSONAJES.length).forEach(id => {
+        const esAmigo = id.indexOf('amigo-') === 0;
+        if (esAmigo ? !amigos.includes(id.slice(6)) : (j.inventario.indexOf(id) < 0 || id.indexOf('mapa-') === 0)) throw new Error(esAmigo ? 'Ese amigo no está de visita.' : 'Eso no está en tu bandeja de calcomanías.');
         const c = casa[id];
         if (!(c.x >= 0 && c.x <= 100 && c.y >= 0 && c.y <= 100 && c.s >= .3 && c.s <= 3 && Number.isInteger(c.z))) throw new Error('Esa calcomanía no se entiende.');
         limpia[id] = { x: Math.round(c.x * 10) / 10, y: Math.round(c.y * 10) / 10, s: Math.round(c.s * 100) / 100, z: c.z, f: c.f === true };
+        if (c.e) {
+          if (j.inventario.indexOf('mapa-' + c.e) < 0) throw new Error('Todavía no tienes ese mapa.');
+          limpia[id].e = String(c.e);
+        }
       });
       j.casa = limpia;
       const nuevas = demo.insignias(j); demo.guardar(j);
@@ -281,6 +373,9 @@ window.Api = (function () {
     cargar: () => LOCAL ? local(() => porInstrumento(demo.estado())) : get(),
     practica: (actividad, terminada) => (LOCAL ? local(() => porInstrumento(demo.practica({ actividad, terminada }))) : post({ accion: 'practicaJuego', actividad, terminada })).catch(marcar),
     comprar: item => LOCAL ? local(() => demo.comprar(item)) : post({ accion: 'comprarJuego', item }),
+    mejorar: item => LOCAL ? local(() => demo.mejorar(item)) : post({ accion: 'mejorarJuego', item }),
+    usar: item => LOCAL ? local(() => demo.usar(item)) : post({ accion: 'usarJuego', item }),
+    dar: (regalo, amigo) => LOCAL ? local(() => demo.dar(regalo, amigo)) : post({ accion: 'darJuego', regalo, amigo }),
     libro: n => libros[n] || (libros[n] = bajarLibro(n).catch(e => { delete libros[n]; throw e; })),
     guardarCasa: casa => LOCAL ? local(() => demo.casa(casa)) : post({ accion: 'guardarCasa', casa }),
     nivel: semana => LOCAL ? local(() => porInstrumento(demo.nivel(semana))) : post({ accion: 'nivelJuego', semana }),

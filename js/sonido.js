@@ -163,6 +163,39 @@ window.Sonido = (function () {
       g.gain.setValueAtTime(.0001, t + .03); g.gain.exponentialRampToValueAtTime(.3, t + .04); g.gain.exponentialRampToValueAtTime(.0001, t + .16);
       o.connect(g); g.connect(bus); o.start(t + .03); o.stop(t + .18);
     },
+    /* Los stickers mejorados hacen algo al tocarlos (16-nov-2026): cada acción tiene su sonido corto, sintetizado.
+       Devuelve cuánto dura, en segundos, para que el dibujo se mueva ese mismo tiempo. */
+    juguete(tipo) {
+      if (!ok()) return 0;
+      const t = ctx.currentTime + .02;
+      /* un «pío» que resbala de una nota a otra (pato, rana, cucú) */
+      const voz = (t0, de, a, dur, gain, forma) => {
+        const o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter();
+        o.type = forma || 'triangle'; o.frequency.setValueAtTime(hz(de), t0); o.frequency.exponentialRampToValueAtTime(hz(a), t0 + dur);
+        f.type = 'lowpass'; f.frequency.value = 2600;
+        g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(gain, t0 + .015); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur + .05);
+        o.connect(f); f.connect(g); g.connect(bus); o.start(t0); o.stop(t0 + dur + .1);
+      };
+      const tonada = (notas, paso, dur, gain) => { notas.forEach((m, i) => { if (m) piano(t + i * paso, m, dur, gain); }); return notas.length * paso + dur; };
+      switch (tipo) {
+        case 'cancion': return tonada([[60, 60, 67, 67, 69, 69, 67], [64, 64, 65, 67, 67, 65, 64, 62], [60, 62, 64, 60, 60, 62, 64, 60]][Math.floor(Math.random() * 3)], .3, .5, .3);   // Estrellita, Himno a la alegría, Fray Santiago
+        case 'melodia': return tonada([[76, 74, 72, 74, 76, 76, 76], [67, 72, 76, 79, 76, 72], [72, 76, 79, 84, 79, 76, 72]][Math.floor(Math.random() * 3)], .34, .7, .24);
+        case 'cucu': [0, .7].forEach(d => { voz(t + d, 79, 79, .16, .26, 'sine'); voz(t + d + .24, 75, 75, .22, .26, 'sine'); }); return 1.3;
+        case 'dormir': return tonada([67, 64, 67, 64, 60], .5, 1.1, .16);
+        case 'mecer': [0, .6, 1.2].forEach((d, i) => voz(t + d, i % 2 ? 62 : 57, i % 2 ? 57 : 62, .3, .07, 'sine')); return 1.8;
+        case 'pulso': [0, 1, 2, 3].forEach(i => api.clic(t + i * .5, i === 0)); return 2;
+        case 'luz': marimba(t, 91, .14); return .3;
+        case 'navegar': [0, .9, 1.8].forEach(d => ruido(t + d, .5, 520, .22)); return 2.4;
+        case 'nadar': [0, .28, .9, 1.18].forEach(d => voz(t + d, 70, 65, .12, .2, 'sawtooth')); ruido(t + .1, .5, 600, .12); return 1.8;
+        case 'saltar': [0, .8].forEach(d => { voz(t + d, 72, 84, .18, .12, 'sine'); ruido(t + d + .42, .25, 900, .3); }); return 1.5;
+        case 'croar': [0, .5].forEach(d => { voz(t + d, 50, 46, .09, .22, 'sawtooth'); voz(t + d + .12, 52, 47, .14, .22, 'sawtooth'); }); return 1.1;
+        case 'hornear': ruido(t, .9, 2400, .1); campana(t + .95, 96, .26, .9); return 1.4;
+        case 'servir': ruido(t, .7, 1400, .12); [72, 76, 79].forEach((m, i) => marimba(t + .7 + i * .07, m, .18)); return 1.2;
+        case 'pescar': voz(t, 84, 60, .3, .08, 'sine'); ruido(t + .35, .25, 800, .28); [79, 84].forEach((m, i) => marimba(t + .9 + i * .09, m, .2)); return 1.4;
+        case 'regalo': [76, 79, 84, 88].forEach((m, i) => marimba(t + i * .09, m, .24)); return .8;
+        default: return 0;
+      }
+    },
     /* la fogata se aviva */
     fuego() { if (!ok()) return; ruido(ctx.currentTime, .7, 900, .5); ruido(ctx.currentTime + .1, .5, 400, .35); },
     /* pasar de página: ya no suena (3-nov): el soplido se oía como un «posh» en cada botón; basta la nota del toque */

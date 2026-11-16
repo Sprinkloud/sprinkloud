@@ -31,6 +31,9 @@
     'olla-chocolate': '🍲', sillon: '🛋️', 'atril-violin': '🎻', 'piano-madera': '🎹', 'alfombra-redonda': '🟠', cojines: '🧶', 'alfombra-hojas': '🍁',
     tazas: '☕', 'pastel-miel': '🍰', lampara: '🪔', libros: '📚', 'tarro-miel': '🍯', metronomo: '⏱️', 'mesa-comedor': '🪑', 'frascos-mermelada': '🫙',
     'cama-parches': '🛏️', 'cama-hojas': '🛌', banca: '🪵', columpio: '🎠', 'flores-jardin': '🌷', calabazas: '🎃', 'palitos-malvavisco': '🍡',
+    'mapa-lago': '🏞️', 'lago-canoa': '🛶', 'lago-peces': '🐟', 'lago-nenufares-rana': '🐸', 'lago-patitos': '🦆', 'lago-cana-pescar': '🎣', 'lago-cesta-pesca': '🧺',
+    'regalo-galletas': '🍪', 'regalo-cacao': '☕', 'regalo-pescado': '🐟',
+    'amigo-osito': '🐻', 'amigo-conejo': '🐰', 'amigo-ardilla': '🐿️', 'amigo-zorro': '🦊', 'amigo-erizo': '🦔', 'amigo-raton': '🐭',
     primera: '🌱', racha3: '🔥', racha7: '🪵', racha14: '🌟', racha30: '👑', perfecta: '💯', aciertos100: '🎯', aciertos500: '🏆', dias10: '🍄', dias30: '🌳', compra: '🛍️', casa5: '🏡' };
   function arte(id) { return IMAGENES.has(id) ? el('img', { src: 'assets/arte/' + id + '.webp', alt: '' }) : document.createTextNode(EMOJI[id] || '✨'); }
   /* La casita es una casa de muñecas vista desde arriba (assets/ilustraciones/casa-vacia.webp, cuadrada).
@@ -51,7 +54,6 @@
     { id: 'dorm', nombre: 'Dormitorio', x: 53, y: 35, zoom: 3.1 },
     { id: 'jardin', nombre: 'Jardín', x: 48, y: 68, zoom: 1.6 }   // el huerto (x 19) y la fogata (x 76) tienen que verse a la vez
   ];
-  let cuartoVisto = 'todo';
   const RETRATO = id => 'assets/ilustraciones/' + (id === 'osito' ? 'osito-bosque' : id) + '.webp';
 
   /* ---------- Pantallas ---------- */
@@ -235,6 +237,7 @@
   /* ---------- El camino ---------- */
   function camino() {
     const p = $('#camino'), l = estado.leccion, j = estado.juego;
+    precargarAlbum();
     const lb = estado.libre, sinEnergia = j.energia && !j.energia.queda;
     const saludo = !l ? '¡Terminaste toda la guía! 🎉'
       : lb && lb.completa ? '¡Terminaste la versión libre! 🎉 Sigue con un plan del club'
@@ -576,7 +579,7 @@
     const contenido = el('div', { class: 'premio' },
       amigo ? el('div', { class: 'retrato' }, el('img', { src: RETRATO(amigo), alt: '' })) : el('div', { class: 'medalla' }, arte(x)),
       el('h2', { text: amigo ? '¡Llegó ' + (amigo === 'ardilla' ? 'la ' : 'el ') + nombre.toLowerCase() + ' a tu bosque!' : '¡Nueva insignia!' }),
-      el('p', { text: amigo ? 'Vendrá a visitarte a tu casita.' : nombre }),
+      el('p', { text: amigo ? '¡Ya está en tus calcomanías!' : nombre }),
       el('div', { class: 'acciones' },
         puff('📸 Compartir', 'rosa', () => amigo ? window.Compartir.amigo(estado, amigo, nombre) : window.Compartir.insignia(estado, x, nombre)),
         puff('¡Genial!', 'ocre', () => { cerrar(); setTimeout(() => mostrarPremios(resto), 450); })));
@@ -586,156 +589,524 @@
   /* ---------- Mi casita: un lienzo de calcomanías (idea de la dueña) ----------
      Cada compra queda en la bandeja; al tocarla se pega en el cuarto que se está viendo y se arrastra donde uno quiera.
      La que se pega o se sube después queda encima (z). Tocar una pegada la elige: agrandar, achicar, voltear, subir, bajar o guardarla. */
-  function encuadre(c) {
-    const z = c.zoom, max = (z - 1) * 50;
-    const tx = Math.max(-max, Math.min(max, (50 - c.x) * z)), ty = Math.max(-max, Math.min(max, (50 - c.y) * z));
-    return 'translate(' + tx + '%, ' + ty + '%) scale(' + z + ')';
+  /* ---------- El álbum (16-nov-2026, idea de la dueña): la casita y los mapas son páginas donde se pegan calcomanías ----------
+     Cada calcomanía pegada dice en qué página está (`e`: el mapa; sin `e`, la casita). Los amigos que están de visita son
+     calcomanías («amigo-<id>») y los mapas se compran en la tienda. */
+  const NOMBRE_REGALO = { galletas: 'Galletas', cacao: 'Cacao', pescado: 'Pescado' };
+  const ACCION_ICO = { hornear: '🍪', servir: '☕', cancion: '🎵', melodia: '🎶', cucu: '🐦', dormir: '💤', mecer: '🍃', pulso: '🎼', luz: '💡',
+    navegar: '🌊', nadar: '💦', saltar: '💦', croar: '🐸', pescar: '🎣' };
+  const itemDe = id => estado.catalogo.tienda.find(t => t.id === id);
+  const mejorada = id => (estado.juego.mejoras || []).includes(id);
+  const paginas = () => [{ id: 'casa', nombre: 'Mi casita', img: 'assets/ilustraciones/casa-vacia.webp', mini: 'assets/ilustraciones/casa-vacia-mini.webp', tengo: true }]
+    .concat(estado.catalogo.tienda.filter(t => t.tipo === 'mapa').map(t => ({ id: t.mapa, nombre: t.nombre, img: 'assets/ilustraciones/escenario-' + t.mapa + '.webp',
+      mini: 'assets/ilustraciones/escenario-' + t.mapa + '-mini.webp', item: t, tengo: estado.juego.inventario.includes(t.id) })));
+  let paginaVista = 'casa';
+  const luces = new Set();   // lámparas encendidas (mientras la app está abierta)
+  /* el ancho de cada calcomanía en % de la página. Los amigos guardan su tamaño entre ellos (BOSQUE_AMIGOS, del osito al
+     ratón); en un mapa todo se ve un poco más grande que en la casita, que se mira de cerca cuarto por cuarto */
+  const AMIGO_ANCHO = { casa: 13, mapa: 19 };
+  function tamBase(id, pagina) {
+    const enMapa = !!pagina && pagina !== 'casa';
+    if (id.startsWith('amigo-')) return AMIGO_ANCHO[enMapa ? 'mapa' : 'casa'] * ((window.BOSQUE_AMIGOS || {})[id.slice(6)] || .7);
+    const t = itemDe(id) || {};
+    if (t.tam) return enMapa ? t.tam : t.tam * .7;
+    return (POS[t.lugar] || [0, 0, 9])[2] * 1.35 * (enMapa ? 1.25 : 1);
   }
-  /* el cuarto más cercano a un punto de la casa (para acercarse a una calcomanía desde «Toda la casa») */
-  const cuartoDe = c => CUARTOS.filter(x => x.id !== 'todo').reduce((m, x) => Math.hypot(x.x - c.x, x.y - c.y) < Math.hypot(m.x - c.x, m.y - c.y) ? x : m).id;
-  const tamBase = id => { const t = estado.catalogo.tienda.find(x => x.id === id); return ((POS[t && t.lugar] || [0, 0, 9])[2]) * 1.35; };   // un poco más grandes que los lugares de antes: se ven bien de cerca
+
+  /* ---------- Los stickers mejorados hacen algo (movimiento con la API de animaciones del navegador: solo transform y opacity) ---------- */
+  const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)', EASE_IN_OUT = 'cubic-bezier(0.77, 0, 0.175, 1)';   // las mismas curvas de app.css
+  const quieto = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cuadros = (curva, ...t) => t.map(x => ({ transform: x, easing: curva }));
+  /* cada acción: [cuadros, opciones, origen del giro, chispitas, cada cuánto sale una chispita (ms)] */
+  const MOVIMIENTOS = {
+    cancion: d => [cuadros(EASE_IN_OUT, 'translateY(0) rotate(0)', 'translateY(-5%) rotate(-2deg)', 'translateY(0) rotate(0)', 'translateY(-5%) rotate(2deg)', 'translateY(0) rotate(0)'), { duration: 1200, iterations: Math.max(1, Math.round(d / 1.2)) }, '50% 100%', ['♪', '♫', '♪', '♫', '♪'], 420],
+    melodia: d => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-3deg)', 'rotate(0)', 'rotate(3deg)', 'rotate(0)'), { duration: 1360, iterations: Math.max(1, Math.round(d / 1.36)) }, '50% 100%', ['♪', '♫', '♪', '♫'], 520],
+    cucu: () => [cuadros(EASE_OUT, 'rotate(0)', 'rotate(-5deg)', 'rotate(5deg)', 'rotate(-3deg)', 'rotate(0)'), { duration: 350, iterations: 2, iterationStart: 0, delay: 0, endDelay: 350 }, '50% 0', ['🐦', '🐦'], 700],
+    dormir: () => [cuadros(EASE_IN_OUT, 'scale(1)', 'scale(1.04)', 'scale(1)'), { duration: 1300, iterations: 2 }, '50% 100%', ['z', 'z', 'Z'], 600],
+    mecer: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(7deg)', 'rotate(-7deg)', 'rotate(5deg)', 'rotate(-5deg)', 'rotate(0)'), { duration: 1800 }, '50% 0', ['🍃'], 0],
+    pulso: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-8deg)', 'rotate(0)', 'rotate(8deg)', 'rotate(0)'), { duration: 1000, iterations: 2 }, '50% 100%', [], 0],
+    navegar: () => [cuadros(EASE_IN_OUT, 'translateX(0) rotate(0)', 'translateX(45%) rotate(-2deg)', 'translateX(0) rotate(0)'), { duration: 2400 }, '50% 50%', ['💧', '💧'], 900],
+    nadar: () => [cuadros(EASE_IN_OUT, 'translateX(0) rotate(0)', 'translateX(18%) rotate(3deg)', 'translateX(35%) rotate(-3deg)', 'translateX(18%) rotate(3deg)', 'translateX(0) rotate(0)'), { duration: 1800 }, '50% 50%', ['💧'], 0],
+    /* el pez sube frenando y cae acelerando, como cualquier cosa que salta: por eso la caída lleva «ease-in» */
+    saltar: () => [[{ transform: 'translateY(0) rotate(0)', easing: EASE_OUT }, { transform: 'translateY(-40%) rotate(-12deg)', easing: 'ease-in' }, { transform: 'translateY(0) rotate(0)' }], { duration: 750, iterations: 2 }, '50% 50%', ['💧', '💧'], 750],
+    croar: () => [cuadros(EASE_OUT, 'scale(1, 1)', 'scale(1.1, .86)', 'translateY(-14%) scale(.96, 1.06)', 'scale(1.06, .94)', 'scale(1, 1)'), { duration: 500, iterations: 2 }, '50% 100%', [], 0],
+    hornear: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-2deg)', 'rotate(2deg)', 'rotate(-2deg)', 'rotate(0)'), { duration: 900 }, '50% 100%', ['💨', '💨'], 350],
+    servir: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-2deg)', 'rotate(2deg)', 'rotate(0)'), { duration: 700 }, '50% 100%', ['💨'], 0],
+    pescar: () => [cuadros(EASE_OUT, 'rotate(0)', 'rotate(-14deg)', 'rotate(6deg)', 'rotate(0)'), { duration: 900 }, '50% 100%', ['💧'], 500],
+    regalo: () => [cuadros(EASE_OUT, 'translateY(0)', 'translateY(-12%)', 'translateY(0)', 'translateY(-7%)', 'translateY(0)'), { duration: 700 }, '50% 100%', ['💛', '💛', '💛'], 160]
+  };
+  /* una chispita (una nota, una gota, un corazón, o el dibujo de un regalo) que sale de arriba de la calcomanía y sube */
+  function chispa(capa, b, contenido, espera, lado) {
+    const s = el('span', { class: 'chispa', 'aria-hidden': 'true', style: 'left:' + b.style.left + ';top:calc(' + b.style.top + ' - ' + (parseFloat(b.style.width) * .38) + '%)' }, contenido);
+    capa.append(s);
+    const dx = (lado || 0) * .9, op = { duration: 1300, delay: espera || 0, fill: 'both' };
+    /* dos animaciones: sube frenando (transform) y se ve casi todo el viaje (opacity); con una sola curva se borraba enseguida */
+    if (!quieto()) s.animate([{ transform: 'translate(-50%, -50%) scale(.9)' }, { transform: 'translate(calc(-50% + ' + dx + 'em), -260%) scale(1)' }], Object.assign({ easing: EASE_OUT }, op));
+    else s.style.transform = 'translate(-50%, -100%)';
+    s.animate([{ opacity: 0 }, { opacity: 1, offset: .12 }, { opacity: 1, offset: .6 }, { opacity: 0 }], op).onfinish = () => s.remove();
+    return s;
+  }
+  function jugar(capa, b, accion) {
+    const m = MOVIMIENTOS[accion], dibujo = b.querySelector('.calco-arte');
+    if (!m || !dibujo) return;
+    S.callar();
+    dibujo.getAnimations().forEach(a => a.cancel());
+    const dur = S.juguete(accion);
+    if (dur > 1.5 && S.pref.musica && S.musica && S.musica.silenciar) S.musica.silenciar(dur * 1000);   // la canción de la casita se calla mientras suena
+    const [marcos, op, origen, chispitas, cada] = m(dur || 1.6);
+    dibujo.style.transformOrigin = origen;
+    if (quieto()) dibujo.animate([{ opacity: 1 }, { opacity: .6 }, { opacity: 1 }], { duration: 400, easing: 'ease' });   // sin moverse: solo parpadea
+    else dibujo.animate(marcos, op);
+    chispitas.forEach((c, i) => chispa(capa, b, c, i * cada, i % 2 ? 1 : -1));
+  }
+
+  /* ---------- Sin esperas (16-nov-2026, la dueña: «la carga y el tiempo de espera tienen que estar nulos o mínimos») ----------
+     Cada pedido al servidor tarda de 2 a 3 segundos (Google). Por eso comprar, mejorar, preparar un regalo, darlo y
+     guardar el álbum se ven AL INSTANTE: la app aplica el cambio con las mismas reglas del servidor y lo manda por
+     detrás, en orden. Cuando llega la última respuesta, el estado del servidor reemplaza al de la app. Si el servidor
+     rechaza algo, se avisa, se vuelve a pedir el estado y se repinta la pantalla. */
+  let colaJuego = Promise.resolve(), pendientes = 0, filtroTienda = null;
+  function porDetras(cambio, pedido, alLlegar) {
+    cambio(estado.juego);
+    pendientes++;
+    colaJuego = colaJuego.then(pedido).then(r => {
+      pendientes--;
+      if (!pendientes && r && r.estado) estado = r.estado;   // ya no queda nada en camino: manda el servidor
+      if (alLlegar) alLlegar(r);
+    }, async e => {
+      pendientes--;
+      aviso(e.message);
+      try { estado = await Api.cargar(); } catch (x) { return; }
+      const activa = document.querySelector('.pantalla.activa');
+      if (activa && activa.id === 'casita') casita(); else if (activa && activa.id === 'tienda') tienda(filtroTienda);
+    });
+  }
+  /* los dibujos del álbum se bajan apenas entra, mientras mira el camino: al abrir la casita o un mapa ya están */
+  let precargado = false;
+  function precargarAlbum() {
+    if (precargado || !estado) return; precargado = true;
+    const pedir = () => {
+      const jg = estado.juego;
+      paginas().filter(pg => pg.tengo).map(pg => pg.img)
+        .concat(jg.inventario.filter(id => !id.startsWith('mapa-')).concat((jg.personajes || []).map(a => 'amigo-' + a)).filter(id => IMAGENES.has(id)).map(id => 'assets/arte/' + id + '.webp'))
+        .forEach(src => { new Image().src = src; });
+    };
+    (window.requestIdleCallback || (f => setTimeout(f, 1200)))(pedir);
+  }
+
+  /* mejorar un sticker: se ve qué va a hacer (su dibujito) y cuánto cuesta; sin frases */
+  function ofrecerMejora(t, listo) {
+    const m = t.mejora, falta = m.precio - estado.juego.malvaviscos;
+    let cerrar, ocupado = false;
+    cerrar = cajon(el('div', { class: 'premio mejora' },
+      el('div', { class: 'mejora-arte' }, arte(t.id), el('span', { class: 'sello', 'aria-hidden': 'true', text: ACCION_ICO[m.accion] || '⭐' })),
+      el('h2', { text: t.nombre }),
+      el('span', { class: 'precio', html: MALVAVISCO + m.precio }),
+      el('div', { class: 'acciones', style: 'grid-template-columns:1fr' },
+        puff(falta > 0 ? 'Faltan ' + falta : '⭐ Mejorar', falta > 0 ? 'plomo' : 'ocre', () => {
+          if (falta > 0) { S.error(); return; }
+          if (ocupado || mejorada(t.id)) return; ocupado = true;
+          porDetras(j => { j.malvaviscos -= m.precio; j.mejoras = (j.mejoras || []).concat([t.id]); }, () => Api.mejorar(t.id));
+          S.caja(); cerrar(); listo && listo();
+        }))));
+  }
+
+  /* La cámara de cada página (16-nov-2026, pedido de la dueña: «en lugar de las etiquetas de las habitaciones, que se pueda
+     hacer zoom y deslizarse por el escenario»): z = cuánto se acerca; tx, ty = corrimiento en % del lienzo. */
+  const ZOOM_MAX = 4;
+  const camaras = { casa: { z: 1.3, tx: -1.3, ty: -2.6 } };   // la casita empieza un poco cerca: su dibujo trae mucho margen de bosque
+  const LUPA = mas => '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">' +
+    '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M7.5 10.5h6' + (mas ? 'M10.5 7.5v6' : '') + '"/></svg>';
+
+  /* Dos maneras de estar en el álbum (16-nov-2026, la dueña):
+     - JUGAR (como se abre): tocar una cosa la hace actuar, sin elegirla. Las cosas no se mueven; arrastrar desliza la
+       cámara. Los amigos sí se mueven siempre, y reciben regalos.
+     - LÁPIZ ✏️: las calcomanías se eligen, se arrastran, se agrandan, se voltean y vuelven a la bandeja. */
   function casita() {
-    const p = $('#casita'), j = estado.juego;
-    let casa = JSON.parse(JSON.stringify(j.casa || {})), elegida = null, guardar = null;
-    const capa = el('div', { class: 'casa-capa' }, el('img', { src: 'assets/ilustraciones/casa-vacia.webp', alt: 'La casita del osito, vista desde arriba', draggable: 'false' }));
+    const p = $('#casita');
+    let casa = JSON.parse(JSON.stringify(estado.juego.casa || {})), elegida = null, guardar = null, arrastrada = false;
+    let editando = false, regaloArmado = null, amigoActivo = null;
+    const pags = paginas();
+    if (!pags.some(x => x.id === paginaVista && x.tengo)) paginaVista = 'casa';
+    const enPagina = id => (casa[id].e || 'casa') === paginaVista;
+    const esAmigo = id => id.startsWith('amigo-');
+    const fondo = el('img', { src: pags.find(x => x.id === paginaVista).img, alt: '', draggable: 'false' });
+    const capa = el('div', { class: 'casa-capa' }, fondo);
     const lienzo = el('div', { class: 'casa casa-arriba' }, capa);
     const bandeja = el('div', { class: 'bandeja' });
+    const extras = el('span', { class: 'extras-calco' });
     const herramientas = el('div', { class: 'herramientas-calco', hidden: true },
+      extras,
       boton('−', 'Achicar', () => cambiar(c => { c.s = Math.max(.3, +(c.s / 1.15).toFixed(2)); })),
       boton('+', 'Agrandar', () => cambiar(c => { c.s = Math.min(3, +(c.s * 1.15).toFixed(2)); })),
       boton('⇆', 'Voltear', () => cambiar(c => { c.f = !c.f; })),
       boton('▲', 'Poner encima', () => cambiar(c => { c.z = maxZ() + 1; })),
       boton('▼', 'Poner debajo', () => cambiar(c => { Object.values(casa).forEach(o => { o.z++; }); c.z = 0; })),
       boton('↩', 'Guardar en la bandeja', () => { delete casa[elegida]; elegir(null); pintar(); guardarPronto(); }));
-    function boton(ico, nombre, fn) { return el('button', { class: 'btn-icono', type: 'button', 'aria-label': nombre, title: nombre, text: ico, onclick: () => { S.toque(); fn(); } }); }
+    function boton(ico, nombre, fn, clase) { return el('button', { class: 'btn-icono' + (clase ? ' ' + clase : ''), type: 'button', 'aria-label': nombre, title: nombre, html: ico, onclick: () => { S.toque(); fn(); } }); }
+    function pastilla(clase, nombre, dibujo, numero, fn) {
+      return el('button', { class: 'pastilla ' + clase, type: 'button', 'aria-label': nombre, title: nombre, onclick: () => { S.toque(); fn(); } },
+        el('span', { class: 'pastilla-arte' }, dibujo), el('span', { class: 'num', html: numero }));
+    }
     const maxZ = () => Object.values(casa).reduce((m, c) => Math.max(m, c.z), 0);
+    const calco = id => [...capa.querySelectorAll('.calco')].find(b => b.dataset.id === id);
+    const entre = (v, a, b) => Math.max(a, Math.min(b, v));
     function cambiar(fn) { if (!elegida) return; fn(casa[elegida]); pintar(); guardarPronto(); }
-    function elegir(id) { elegida = id; herramientas.hidden = !id; capa.querySelectorAll('.calco').forEach(b => b.classList.toggle('elegida', b.dataset.id === id)); }
+    function elegir(id) {
+      elegida = id; herramientas.hidden = !id;
+      capa.querySelectorAll('.calco').forEach(b => b.classList.toggle('elegida', b.dataset.id === id));
+      /* con el lápiz, la calcomanía elegida que se puede mejorar muestra su estrella con el precio */
+      const t = id && !esAmigo(id) ? itemDe(id) : null, m = t && t.mejora;
+      llenar(extras, m && !mejorada(id) ? pastilla('mejorar', 'Mejorar', document.createTextNode('⭐'), MALVAVISCO + m.precio, () => ofrecerMejora(t, () => {
+        pintarMonedas(); elegir(t.id);   // ya mejorada: muestra sola lo que hace
+        setTimeout(() => { const b = calco(t.id); if (b) m.accion === 'luz' ? actuar(t.id) : jugar(capa, b, m.accion); }, 420);
+      })) : null);
+      extras.hidden = !extras.children.length;
+    }
+    function editar(si) {
+      editando = si; lienzo.classList.toggle('editando', si); lapiz.setAttribute('aria-pressed', String(si));
+      if (!si) elegir(null);
+    }
+
+    /* ---- la cámara: dos dedos o la rueda acercan, un dedo desliza; los botones de lupa hacen lo mismo ---- */
+    const cam = Object.assign({ z: 1, tx: 0, ty: 0 }, camaras[paginaVista]);
+    function camara(suave) {
+      cam.z = entre(cam.z, 1, ZOOM_MAX);
+      const tope = (cam.z - 1) * 50;   // el dibujo nunca deja un hueco en el lienzo
+      cam.tx = entre(cam.tx, -tope, tope); cam.ty = entre(cam.ty, -tope, tope);
+      capa.classList.toggle('suave', !!suave && !quieto());
+      capa.style.transform = 'translate(' + cam.tx.toFixed(3) + '%, ' + cam.ty.toFixed(3) + '%) scale(' + cam.z.toFixed(4) + ')';
+      capa.style.setProperty('--zoom', cam.z.toFixed(3));   // el borde de la elegida y las chispitas no engordan con el zoom
+      lienzo.dataset.cuarto = cam.z < 1.7 ? 'todo' : 'cerca';   // de lejos, las calcomanías tienen una zona de toque más grande
+      lienzo.style.touchAction = cam.z > 1.01 ? 'none' : 'pan-y';   // sin acercar no hay nada que deslizar: el dedo baja la pantalla
+      menos.disabled = cam.z <= 1.01; mas.disabled = cam.z >= ZOOM_MAX - .01;
+      camaras[paginaVista] = { z: cam.z, tx: cam.tx, ty: cam.ty };   // cada página recuerda dónde quedó su cámara
+    }
+    /* acerca o aleja dejando quieto el punto (px, py) de la pantalla; sin punto, el centro del lienzo */
+    function acercar(factor, px, py, suave) {
+      const r = lienzo.getBoundingClientRect();
+      const sx = px == null ? 0 : (px - r.left - r.width / 2) / r.width * 100, sy = py == null ? 0 : (py - r.top - r.height / 2) / r.height * 100;
+      const z = entre(cam.z * factor, 1, ZOOM_MAX), k = z / cam.z;
+      cam.tx = sx - (sx - cam.tx) * k; cam.ty = sy - (sy - cam.ty) * k; cam.z = z;
+      camara(suave);
+    }
+    const menos = boton(LUPA(false), 'Alejar', () => acercar(1 / 1.5, null, null, true));
+    const mas = boton(LUPA(true), 'Acercar', () => acercar(1.5, null, null, true));
+    const lapiz = el('button', { class: 'btn-icono lapiz', type: 'button', 'aria-label': 'Mover las calcomanías', title: 'Mover las calcomanías', 'aria-pressed': 'false', text: '✏️', onclick: () => { S.toque(); editar(!editando); } });
+    const punteros = new Map();
+    let gesto = null, paneo = false, arrastrando = false;
+    const distancia = () => { const [a, b] = [...punteros.values()]; return { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; };
+    lienzo.addEventListener('pointerdown', e => {   // en la fase de captura: se cuentan los dedos antes de que una calcomanía decida
+      if (e.isPrimary) punteros.clear();
+      punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (punteros.size === 1) { paneo = false; gesto = null; }
+      if (punteros.size === 2 && !arrastrando) { gesto = Object.assign({ tipo: 'pellizco' }, distancia()); paneo = true; }
+    }, true);
+    lienzo.addEventListener('pointerdown', e => {   // llega aquí si no lo tomó una calcomanía que se mueve
+      if (punteros.size !== 1) return;
+      gesto = { tipo: 'desliza', id: e.pointerId, x: e.clientX, y: e.clientY, tx: cam.tx, ty: cam.ty, activo: false };
+      if (!e.target.closest('.calco')) { amigoActivo = null; if (editando) elegir(null); }
+    });
+    lienzo.addEventListener('pointermove', e => {
+      if (!punteros.has(e.pointerId) || !gesto) return;
+      if (e.pointerType === 'mouse' && e.buttons === 0) { punteros.delete(e.pointerId); gesto = null; return; }   // el mouse se soltó fuera del lienzo
+      punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (gesto.tipo === 'pellizco' && punteros.size >= 2) {
+        const n = distancia(), r = lienzo.getBoundingClientRect();
+        cam.tx += (n.x - gesto.x) / r.width * 100; cam.ty += (n.y - gesto.y) / r.height * 100;   // los dos dedos también arrastran
+        acercar(n.d / gesto.d, n.x, n.y);
+        Object.assign(gesto, n);
+      } else if (gesto.tipo === 'desliza' && gesto.id === e.pointerId) {
+        const dx = e.clientX - gesto.x, dy = e.clientY - gesto.y;
+        if (!gesto.activo && Math.hypot(dx, dy) < 5) return;   // un dedo nunca está del todo quieto: menos de 5 px es un toque
+        if (!gesto.activo) { gesto.activo = true; paneo = true; try { lienzo.setPointerCapture(e.pointerId); } catch (err) { } }
+        const r = lienzo.getBoundingClientRect();
+        cam.tx = gesto.tx + dx / r.width * 100; cam.ty = gesto.ty + dy / r.height * 100;
+        camara();
+      }
+    });
+    const suelta = e => {
+      punteros.delete(e.pointerId);
+      if (!gesto) return;
+      if (gesto.tipo === 'pellizco' && punteros.size === 1) {   // quedó un dedo: sigue deslizando desde donde está
+        const [[id, pt]] = [...punteros.entries()];
+        gesto = { tipo: 'desliza', id, x: pt.x, y: pt.y, tx: cam.tx, ty: cam.ty, activo: true };
+      } else if (!punteros.size) { gesto = null; setTimeout(() => { paneo = false; }, 0); }   // el «click» de este toque ya pasó
+    };
+    lienzo.addEventListener('pointerup', suelta); lienzo.addEventListener('pointercancel', suelta);
+    lienzo.addEventListener('wheel', e => {
+      if (e.deltaY > 0 && cam.z <= 1.01) return;   // ya está lejos del todo: la rueda baja la pantalla
+      e.preventDefault();
+      acercar(Math.exp(-e.deltaY * .0016), e.clientX, e.clientY);
+    }, { passive: false });
+
     function estilo(id) {
       const c = casa[id];
-      return 'left:' + c.x + '%;top:' + c.y + '%;width:' + (tamBase(id) * c.s) + '%;z-index:' + (c.z + 1) + ';transform:translate(-50%,-50%)' + (c.f ? ' scaleX(-1)' : '');
+      return 'left:' + c.x + '%;top:' + c.y + '%;width:' + (tamBase(id, paginaVista) * c.s) + '%;z-index:' + (c.z + 1) + ';transform:translate(-50%,-50%)' + (c.f ? ' scaleX(-1)' : '');
     }
     function pintar() {
       capa.querySelectorAll('.calco').forEach(b => b.remove());
-      Object.keys(casa).sort((a, b) => casa[a].z - casa[b].z).forEach(id => {
-        const b = el('button', { class: 'calco' + (id === elegida ? ' elegida' : ''), type: 'button', 'data-id': id, style: estilo(id), 'aria-label': nombreItem(id) }, arte(id));
+      Object.keys(casa).filter(enPagina).sort((a, b) => casa[a].z - casa[b].z).forEach(id => {
+        const viva = !esAmigo(id) && (itemDe(id) || {}).mejora;
+        const b = el('button', { class: 'calco' + (id === elegida ? ' elegida' : '') + (esAmigo(id) ? ' es-amigo' : '') + (viva ? ' viva' : '') + (luces.has(id) && mejorada(id) ? ' encendida' : ''),
+          type: 'button', 'data-id': id, style: estilo(id), 'aria-label': nombreItem(id) }, el('span', { class: 'calco-arte' }, arte(id)));
         arrastrable(b, id);
         conTeclado(b, id);
         capa.append(b);
       });
-      const libres = j.inventario.filter(id => !casa[id]);
-      llenar(bandeja, libres.length
-        ? el('div', { class: 'bandeja-fila' }, libres.map(id => el('button', { class: 'calco-bandeja', type: 'button', 'aria-label': 'Pegar ' + nombreItem(id), onclick: () => pegar(id) }, el('span', { class: 'arte-mini' }, arte(id)))))
-        : el('p', { class: 'mano', text: j.inventario.length ? '¡Pegaste todas tus calcomanías! 🧸' : 'Compra cosas en la tienda: llegan aquí como calcomanías 🧺' }));
+      pintarBandeja();
     }
+    /* la bandeja sola (los regalos y lo que falta pegar): se repinta sin tocar las calcomanías, que pueden estar moviéndose */
+    function pintarBandeja() {
+      const jg = estado.juego;
+      const libres = jg.inventario.filter(id => !id.startsWith('mapa-') && !casa[id]).concat((jg.personajes || []).map(a => 'amigo-' + a).filter(id => !casa[id]));
+      const regalos = Object.keys(jg.despensa || {}).filter(r => jg.despensa[r] > 0);
+      if (!regalos.includes(regaloArmado)) regaloArmado = null;
+      llenar(bandeja, libres.length || regalos.length
+        ? el('div', { class: 'bandeja-fila' },
+          regalos.map(r => el('button', { class: 'calco-bandeja regalo' + (r === regaloArmado ? ' armado' : ''), type: 'button', 'data-regalo': r, 'aria-pressed': String(r === regaloArmado), 'aria-label': NOMBRE_REGALO[r] + ': ' + jg.despensa[r], onclick: () => ofrecer(r) },
+            el('span', { class: 'arte-mini' }, arte('regalo-' + r)), el('span', { class: 'cuenta', text: String(jg.despensa[r]) }))),
+          libres.map(id => el('button', { class: 'calco-bandeja', type: 'button', 'data-id': id, 'aria-label': 'Pegar ' + nombreItem(id), onclick: () => pegar(id) }, el('span', { class: 'arte-mini' }, arte(id)))))
+        : el('p', { class: 'mano', text: '¡Pegaste todas tus calcomanías! 🧸' }));
+    }
+    /* una calcomanía de la bandeja se pega en el centro de lo que se está viendo. Una cosa entra con el lápiz puesto
+       (hay que acomodarla); un amigo no lo necesita: se mueve siempre */
     function pegar(id) {
       S.pegar();
-      const c = CUARTOS.find(x => x.id === cuartoVisto), t = estado.catalogo.tienda.find(x => x.id === id);
-      const [px, py] = POS[t.lugar] || [50, 55];
-      casa[id] = cuartoVisto === 'todo' ? { x: px, y: py, s: 1, z: maxZ() + 1, f: false } : { x: c.x, y: c.y, s: 1, z: maxZ() + 1, f: false };
-      elegida = id; pintar(); elegir(id); guardarPronto();
+      const azar = () => Math.round((Math.random() - .5) * 8 / cam.z);
+      casa[id] = { x: entre(50 - cam.tx / cam.z + azar(), 4, 96), y: entre(50 - cam.ty / cam.z + azar(), 4, 96), s: 1, z: maxZ() + 1, f: false };
+      if (paginaVista !== 'casa') casa[id].e = paginaVista;
+      if (!esAmigo(id) && !editando) editar(true);
+      pintar(); if (editando) elegir(id); guardarPronto();
     }
-    /* arrastrar con el dedo o el mouse: la posición se calcula sobre la capa (que ya viene con el zoom del cuarto) */
+    /* un sticker mejorado hace lo suyo (la lámpara se enciende o se apaga; los demás se mueven y suenan) */
+    function actuar(id) {
+      const t = itemDe(id), m = t && t.mejora, b = calco(id);
+      if (!m || !b || !mejorada(id)) return;
+      if (m.accion === 'luz') { luces.has(id) ? luces.delete(id) : luces.add(id); b.classList.toggle('encendida', luces.has(id)); S.juguete('luz'); return; }
+      jugar(capa, b, m.accion);
+    }
+    /* la estufa hornea, la olla sirve, la caña pesca: cuesta unos malvaviscos (se ven salir) y el regalo queda en la bandeja */
+    let ultimo = { id: null, t: 0 };
+    function preparar(id) {
+      const m = itemDe(id).mejora, jg = estado.juego, ahora = Date.now();
+      if (ultimo.id === id && ahora - ultimo.t < 600) return;   // dos toques pegados no cobran dos veces
+      if (jg.malvaviscos < m.uso) { S.error(); aviso('Te faltan ' + (m.uso - jg.malvaviscos) + ' malvaviscos 🍡'); return; }
+      if (((jg.despensa || {})[m.regalo] || 0) >= 9) {   // la despensa está llena: los amigos piden su parte
+        S.error(); const f = bandeja.querySelector('[data-regalo="' + m.regalo + '"]');
+        if (f && !quieto()) f.animate(cuadros(EASE_OUT, 'scale(1)', 'scale(1.14)', 'scale(1)'), { duration: 320 });
+        return;
+      }
+      ultimo = { id, t: ahora };
+      porDetras(j => { j.malvaviscos -= m.uso; j.despensa = Object.assign({}, j.despensa, { [m.regalo]: ((j.despensa || {})[m.regalo] || 0) + 1 }); }, () => Api.usar(id));
+      const b = calco(id);
+      if (b) {
+        jugar(capa, b, m.accion);
+        chispa(capa, b, el('span', { class: 'chispa-precio', html: '−' + m.uso + MALVAVISCO }), 0, 1);
+        chispa(capa, b, arte('regalo-' + m.regalo), 700, 0).classList.add('grande');
+      }
+      pintarMonedas(); pintarBandeja();
+      const ficha = bandeja.querySelector('[data-regalo="' + m.regalo + '"]');
+      if (ficha && !quieto()) ficha.animate(cuadros(EASE_OUT, 'scale(1)', 'scale(1.14)', 'scale(1)'), { duration: 320, delay: 900 });
+    }
+    function dar(regalo, amigo) {
+      if (!((estado.juego.despensa || {})[regalo] > 0) || !(estado.juego.personajes || []).includes(amigo)) return;
+      porDetras(j => { const d = Object.assign({}, j.despensa); d[regalo]--; if (!d[regalo]) delete d[regalo]; j.despensa = d; }, () => Api.dar(regalo, amigo));
+      const b = calco('amigo-' + amigo);
+      if (b) jugar(capa, b, 'regalo');
+      regaloArmado = null; pintarBandeja();
+    }
+    const saltito = (cosas) => { if (!quieto()) cosas.forEach((a, i) => a && a.animate(cuadros(EASE_OUT, 'translateY(0)', 'translateY(-10%)', 'translateY(0)'), { duration: 300, delay: i * 50 })); };
+    /* tocar un regalo de la bandeja: va para el amigo que se acaba de tocar; si no hay, queda listo para el próximo
+       amigo que se toque (y los amigos dan un saltito para pedirlo) */
+    function ofrecer(regalo) {
+      S.toque();
+      if (amigoActivo && calco('amigo-' + amigoActivo)) { dar(regalo, amigoActivo); return; }
+      regaloArmado = regaloArmado === regalo ? null : regalo;
+      pintarBandeja();
+      if (regaloArmado) saltito([...capa.querySelectorAll('.calco.es-amigo .calco-arte')].concat([...bandeja.querySelectorAll('.calco-bandeja')].filter(b => (b.dataset.id || '').startsWith('amigo-'))));
+    }
+    /* JUGAR: lo que pasa al tocar una calcomanía sin el lápiz */
+    function tocar(id) {
+      if (esAmigo(id)) {
+        if (regaloArmado) { dar(regaloArmado, id.slice(6)); return; }
+        amigoActivo = id.slice(6); S.toque();
+        const b = calco(id);
+        saltito([b && b.querySelector('.calco-arte')].concat([...bandeja.querySelectorAll('.calco-bandeja.regalo')]));   // saluda, y los regalos se ofrecen
+        return;
+      }
+      const t = itemDe(id), m = t && t.mejora;
+      if (!m) return;
+      if (!mejorada(id)) {   // todavía no hace nada: una estrella con su precio avisa que se puede mejorar (con el lápiz o en la tienda)
+        const b = calco(id); S.toque();
+        if (b) { chispa(capa, b, el('span', { class: 'chispa-precio', html: '⭐ ' + m.precio + MALVAVISCO }), 0, 0); saltito([b.querySelector('.calco-arte')]); }
+        return;
+      }
+      if (m.regalo) preparar(id); else actuar(id);
+    }
+    /* se arrastran las calcomanías con el lápiz puesto, y los amigos siempre. Lo demás no se mueve: el dedo desliza la cámara */
     function arrastrable(b, id) {
       b.addEventListener('pointerdown', e => {
-        e.preventDefault();
-        if (cuartoVisto === 'todo') { S.toque(); ver(cuartoDe(casa[id])); return; }   // de lejos son chicas: primero se acerca
-        b.setPointerCapture(e.pointerId); elegir(id);
-        const caja = capa.getBoundingClientRect(), c = casa[id];   // caja: la capa ya con el zoom del cuarto
+        if (!(editando || esAmigo(id)) || punteros.size > 1) return;
+        e.preventDefault(); e.stopPropagation();
+        b.setPointerCapture(e.pointerId); arrastrando = true;
+        if (editando) elegir(id);
+        const caja = capa.getBoundingClientRect(), c = casa[id];   // caja: la capa ya con el zoom de la cámara
         const dx = e.clientX - (caja.left + caja.width * c.x / 100), dy = e.clientY - (caja.top + caja.height * c.y / 100);
         let movio = false;
-        const x0 = c.x, y0 = c.y, giro = c.f ? ' scaleX(-1)' : '';
+        const x0 = c.x, y0 = c.y, giro = c.f ? ' scaleX(-1)' : '', ex0 = e.clientX, ey0 = e.clientY;
         const mover = ev => {
+          if (!movio && Math.hypot(ev.clientX - ex0, ev.clientY - ey0) < 5) return;
           // mientras se arrastra solo cambia el transform (GPU); left/top se fijan al soltar
           movio = true;
-          c.x = Math.max(0, Math.min(100, (ev.clientX - dx - caja.left) / caja.width * 100));
-          c.y = Math.max(0, Math.min(100, (ev.clientY - dy - caja.top) / caja.height * 100));
+          c.x = entre((ev.clientX - dx - caja.left) / caja.width * 100, 0, 100);
+          c.y = entre((ev.clientY - dy - caja.top) / caja.height * 100, 0, 100);
           b.style.transform = 'translate(calc(-50% + ' + ((c.x - x0) / 100 * capa.offsetWidth) + 'px), calc(-50% + ' + ((c.y - y0) / 100 * capa.offsetHeight) + 'px))' + giro;
         };
         const soltar = () => {
           b.removeEventListener('pointermove', mover); b.removeEventListener('pointerup', soltar); b.removeEventListener('pointercancel', soltar);
+          arrastrada = movio; arrastrando = false;
+          setTimeout(() => { arrastrada = false; }, 0);   // el «click» de este toque ya pasó
           if (movio) { b.style.left = c.x + '%'; b.style.top = c.y + '%'; b.style.transform = 'translate(-50%,-50%)' + giro; S.pegar(); guardarPronto(); }
         };
         b.addEventListener('pointermove', mover); b.addEventListener('pointerup', soltar); b.addEventListener('pointercancel', soltar);
       });
+      /* un toque (o Enter) sin arrastrar ni deslizar: sin el lápiz, la calcomanía hace lo suyo */
+      b.addEventListener('click', () => {
+        if (arrastrada) { arrastrada = false; return; }
+        if (paneo || editando) return;
+        tocar(id);
+      });
     }
-    /* con el teclado: al enfocar una calcomanía se elige; las flechas la mueven (Mayús: más lejos), + y − cambian
-       el tamaño, Supr o Retroceso la devuelven a la bandeja */
+    /* con el teclado: lo que se mueve (con el lápiz, todo; sin él, los amigos) va con las flechas (Mayús: más lejos);
+       con el lápiz, + y − cambian el tamaño y Supr o Retroceso la devuelven a la bandeja */
     function conTeclado(b, id) {
-      b.addEventListener('focus', () => { if (cuartoVisto !== 'todo') elegir(id); });
+      b.addEventListener('focus', () => { if (editando) elegir(id); });
       b.addEventListener('keydown', e => {
-        if (cuartoVisto === 'todo') { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ver(cuartoDe(casa[id])); } return; }
+        if (!(editando || esAmigo(id))) return;
         const c = casa[id], paso = e.shiftKey ? 5 : 1;
         const mov = { ArrowLeft: [-paso, 0], ArrowRight: [paso, 0], ArrowUp: [0, -paso], ArrowDown: [0, paso] }[e.key];
-        if (mov) { e.preventDefault(); c.x = Math.max(0, Math.min(100, c.x + mov[0])); c.y = Math.max(0, Math.min(100, c.y + mov[1])); b.style.left = c.x + '%'; b.style.top = c.y + '%'; guardarPronto(); return; }
+        if (mov) { e.preventDefault(); c.x = entre(c.x + mov[0], 0, 100); c.y = entre(c.y + mov[1], 0, 100); b.style.left = c.x + '%'; b.style.top = c.y + '%'; guardarPronto(); return; }
+        if (!editando) return;
         if (e.key === '+' || e.key === '=') { e.preventDefault(); c.s = Math.min(3, +(c.s * 1.15).toFixed(2)); b.setAttribute('style', estilo(id)); guardarPronto(); }
         else if (e.key === '-') { e.preventDefault(); c.s = Math.max(.3, +(c.s / 1.15).toFixed(2)); b.setAttribute('style', estilo(id)); guardarPronto(); }
         else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); delete casa[id]; elegir(null); pintar(); guardarPronto(); }
       });
     }
     function guardarPronto() {
-      clearTimeout(guardar);
-      guardar = setTimeout(async () => {
-        try { const r = await Api.guardarCasa(casa); estado = r.estado; if (r.insignias && r.insignias.length) mostrarPremios(r.insignias); }
-        catch (e) { aviso(e.message); }
+      estado.juego.casa = JSON.parse(JSON.stringify(casa));   // si sale y vuelve a entrar antes de que llegue al servidor, la ve igual
+      if (guardar) clearTimeout(guardar); else pendientes++;   // cuenta como pendiente desde ya: una respuesta vieja no la pisa
+      guardar = setTimeout(() => {
+        guardar = null; pendientes--;
+        porDetras(() => { }, () => Api.guardarCasa(casa), r => { if (r.insignias && r.insignias.length) mostrarPremios(r.insignias); });
       }, 700);
     }
-    lienzo.addEventListener('pointerdown', e => { if (e.target === lienzo || e.target.tagName === 'IMG' && !e.target.closest('.calco')) elegir(null); });
-    const pestanas = el('div', { class: 'pestanas cuartos', role: 'tablist' }, CUARTOS.map(c => el('button', {
-      class: 'pestana', type: 'button', 'data-cuarto': c.id, 'aria-pressed': String(c.id === cuartoVisto), text: c.nombre, onclick: () => { S.toque(); ver(c.id); }
-    })));
-    function ver(id) {
-      cuartoVisto = id;
-      const cu = CUARTOS.find(x => x.id === id);
-      capa.style.transform = encuadre(cu);
-      capa.style.setProperty('--zoom', cu.zoom);   // el borde de la elegida no engorda con el zoom
-      lienzo.dataset.cuarto = id;   // en «Toda la casa» las calcomanías tienen una zona de toque más grande
-      pestanas.querySelectorAll('.pestana').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cuarto === id)));
+    /* las páginas del álbum: la casita y cada mapa. Una página que todavía no tiene lleva a la tienda, a ese mapa */
+    const titulo = el('h1', { text: pags.find(x => x.id === paginaVista).nombre });
+    const selector = el('div', { class: 'paginas-album', role: 'tablist', 'aria-label': 'Páginas del álbum' }, pags.map(pg => el('button', {
+      class: 'pagina-album' + (pg.tengo ? '' : ' cerrada'), type: 'button', 'data-pagina': pg.id, 'aria-pressed': String(pg.id === paginaVista),
+      'aria-label': pg.tengo ? pg.nombre : pg.nombre + ', en la tienda por ' + pg.item.precio + ' malvaviscos', onclick: () => { S.toque(); irPagina(pg.id); }
+    }, el('img', { src: pg.mini, alt: '', width: '40', height: '40' }), pg.tengo ? el('span', { text: pg.id === 'casa' ? 'Casita' : pg.nombre }) : el('span', { class: 'precio', html: '🔒 ' + MALVAVISCO + pg.item.precio }))));
+    function irPagina(id) {
+      const pg = pags.find(x => x.id === id);
+      if (!pg.tengo) { tienda(pg.id); return; }
+      if (id === paginaVista) return;
+      paginaVista = id; elegir(null); amigoActivo = null;
+      Object.assign(cam, camaras[id] || { z: 1, tx: 0, ty: 0 });
+      fondo.src = pg.img; titulo.textContent = pg.nombre;
+      selector.querySelectorAll('.pagina-album').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pagina === id)));
+      pintar(); camara();   // de una página a otra no hay viaje de cámara: la página nueva aparece
+      lienzo.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: EASE_OUT });
     }
-    llenar(p, 
-      el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Mi casita' }), fichas().children[1]),
-      lienzo, herramientas, pestanas,
-      el('p', { class: 'mano pista-casa', text: j.inventario.length ? 'Toca una calcomanía y arrástrala ✨' : '' }),
+    const cabecera = el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), titulo, fichas().children[1]);
+    function pintarMonedas() { cabecera.replaceChild(fichas().children[1], cabecera.lastChild); }
+    llenar(p,
+      cabecera, selector, lienzo,
+      el('div', { class: 'controles-album' }, lapiz, el('span', { class: 'zoom-album' }, menos, mas)),
+      herramientas,
       el('h2', { class: 'seccion-titulo', style: 'margin:8px 2px 6px', text: 'Mis calcomanías' }), bandeja,
       el('div', { class: 'casa-acciones' },
-        puff('🧺 Tienda', 'rosa', () => tienda(cuartoVisto === 'todo' ? null : cuartoVisto)),
-        puff('📸 Compartir', 'cielo', () => window.Compartir.casa(Object.assign({}, estado, { juego: Object.assign({}, estado.juego, { casa }) }), POS, EMOJI, IMAGENES, tamBase))));
+        puff('🧺 Tienda', 'rosa', () => tienda(paginaVista !== 'casa' ? paginaVista : null)),
+        puff('📸 Compartir', 'cielo', () => window.Compartir.casa(Object.assign({}, estado, { juego: Object.assign({}, estado.juego, { casa }) }), POS, EMOJI, IMAGENES,
+          id => tamBase(id, paginaVista), pags.find(x => x.id === paginaVista)))));
     ir('casita');
-    pintar(); ver(cuartoVisto);
+    pintar(); camara();
   }
-  const nombreItem = id => (estado.catalogo.tienda.find(t => t.id === id) || {}).nombre || id;
-  /* ---------- Tienda ---------- */
+  const nombreItem = id => id.startsWith('amigo-') ? (estado.catalogo.personajes.find(a => a.id === id.slice(6)) || {}).nombre || id : (itemDe(id) || {}).nombre || id;
+
+  /* ---------- Tienda: la casita por cuartos, los mapas con sus stickers, las mejoras y los amigos ---------- */
   function tienda(filtro) {
-    const p = $('#tienda'), j = estado.juego;
-    let lugar = filtro || 'todo';   // 'todo' o un cuarto: sala, cocina, dorm, jardin
+    const p = $('#tienda');
+    let lugar = filtro || 'todo';   // 'todo' (la casita entera), un cuarto, un mapa, 'mejoras' o 'amigos'
+    filtroTienda = lugar;
+    const mapas = estado.catalogo.tienda.filter(t => t.tipo === 'mapa');
+    const filtros = CUARTOS.map(c => ({ id: c.id, nombre: c.id === 'todo' ? 'Casita' : c.nombre }))
+      .concat(mapas.map(m => ({ id: m.mapa, nombre: m.nombre })), [{ id: 'mejoras', nombre: '⭐ Mejoras' }, { id: 'amigos', nombre: 'Amigos' }]);
     const lista = el('div', { class: 'tienda' });
-    const pintar = () => {
-      llenar(lista, ...estado.catalogo.tienda.filter(t => lugar === 'todo' || t.lugar.startsWith(lugar + '-')).map(t => {
-        const tengo = estado.juego.inventario.includes(t.id), alcanza = estado.juego.malvaviscos >= t.precio;
-        return el('div', { class: 'articulo' }, el('div', { class: 'arte' }, arte(t.id)), el('h3', { text: t.nombre }),
-          tengo ? el('span', { class: 'mano', style: 'font-size:1.3rem;color:var(--moss-deep)', text: 'Ya es tuya ✓' })
-            : el('span', { class: 'precio', html: MALVAVISCO + t.precio }),
-          tengo ? null : puff(alcanza ? 'Comprar' : 'Faltan ' + (t.precio - estado.juego.malvaviscos), alcanza ? 'ocre' : 'papel', () => comprar(t)));
-      }));
+    const precio = n => el('span', { class: 'precio', html: MALVAVISCO + n });
+    const dibujo = t => el('div', { class: 'arte' }, arte(t.id), t.mejora ? el('span', { class: 'sello' + (mejorada(t.id) ? ' lista' : ''), 'aria-hidden': 'true', text: ACCION_ICO[t.mejora.accion] || '⭐' }) : null);
+    /* una cosa de la tienda: comprarla; si ya es suya y se puede mejorar, mejorarla */
+    const tarjeta = t => {
+      const jg = estado.juego, tengo = jg.inventario.includes(t.id), falta = t.precio - jg.malvaviscos;
+      const cerrado = !!t.mapa && !jg.inventario.includes('mapa-' + t.mapa), m = t.mejora;
+      return el('div', { class: 'articulo' + (cerrado ? ' cerrado' : '') }, dibujo(t), el('h3', { text: t.nombre }),
+        tengo
+          ? (m && !mejorada(t.id)
+            ? [precio(m.precio), puff('⭐ Mejorar', jg.malvaviscos >= m.precio ? 'ocre' : 'papel', () => ofrecerMejora(t, () => tienda(lugar)))]
+            : el('span', { class: 'mano tuya', text: m ? 'Mejorada ⭐' : 'Ya es tuya ✓' }))
+          : [precio(t.precio), cerrado
+            ? puff('🔒', 'plomo', () => { S.error(); const c = lista.querySelector('.mapa-tienda'); if (c && !quieto()) c.animate(cuadros(EASE_OUT, 'scale(1)', 'scale(1.03)', 'scale(1)'), { duration: 260 }); })
+            : puff(falta > 0 ? 'Faltan ' + falta : 'Comprar', falta > 0 ? 'papel' : 'ocre', () => comprar(t))]);
     };
-    const pestanas = el('div', { class: 'pestanas', role: 'tablist' }, CUARTOS.map(c => c.id).map(l => el('button', {
-      class: 'pestana', type: 'button', 'aria-pressed': String(l === lugar), text: l === 'todo' ? 'Todo' : CUARTOS.find(c => c.id === l).nombre,
-      onclick: e => { S.toque(); lugar = l; pestanas.querySelectorAll('.pestana').forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); pintar(); }
+    /* un mapa: se ve el paisaje, cuánto cuesta y cuánto lleva ahorrado */
+    const tarjetaMapa = t => {
+      const jg = estado.juego, tengo = jg.inventario.includes(t.id), falta = t.precio - jg.malvaviscos;
+      return el('div', { class: 'articulo mapa-tienda' },
+        el('img', { class: 'mapa-vista', src: 'assets/ilustraciones/escenario-' + t.mapa + '.webp', alt: t.nombre }),
+        el('h3', { text: t.nombre }),
+        tengo ? puff(('Ir a ' + t.nombre.toLowerCase()).replace('a el ', 'al '), 'madera', () => { paginaVista = t.mapa; casita(); })
+          : [precio(t.precio),
+            el('div', { class: 'ahorro', role: 'img', 'aria-label': 'Tienes ' + Math.min(jg.malvaviscos, t.precio) + ' de ' + t.precio + ' malvaviscos' }, el('i', { style: 'transform:scaleX(' + Math.min(1, jg.malvaviscos / t.precio).toFixed(3) + ')' })),
+            puff(falta > 0 ? 'Faltan ' + falta : 'Comprar', falta > 0 ? 'papel' : 'ocre', () => comprar(t))]);
+    };
+    const tarjetaAmigo = a => {
+      const jg = estado.juego, tiene = (jg.personajes || []).includes(a.id), sig = jg.amistad && jg.amistad.siguiente && jg.amistad.siguiente.id === a.id ? jg.amistad.siguiente : null;
+      return el('div', { class: 'articulo' + (tiene ? '' : ' cerrado') }, el('div', { class: 'arte' }, arte('amigo-' + a.id)), el('h3', { text: a.nombre }),
+        el('span', { class: 'mano tuya', text: tiene ? 'Está contigo ✓' : sig ? '🔥 Faltan ' + sig.faltan + (sig.faltan === 1 ? ' día' : ' días') : '🔒' }));
+    };
+    const pintar = () => {
+      const cat = estado.catalogo.tienda, jg = estado.juego;
+      let hijos;
+      if (lugar === 'amigos') hijos = estado.catalogo.personajes.map(tarjetaAmigo);
+      else if (lugar === 'mejoras') {
+        const mias = cat.filter(t => t.mejora && jg.inventario.includes(t.id));
+        hijos = mias.length ? mias.sort((a, b) => mejorada(a.id) - mejorada(b.id)).map(tarjeta) : [el('p', { class: 'mano tienda-vacia', text: 'Aquí llegan tus calcomanías que se pueden mejorar ⭐' })];
+      } else if (mapas.some(m => m.mapa === lugar)) hijos = [tarjetaMapa(mapas.find(m => m.mapa === lugar))].concat(cat.filter(t => t.mapa === lugar && t.tipo !== 'mapa').map(tarjeta));
+      else hijos = cat.filter(t => !t.mapa && (lugar === 'todo' || t.lugar.startsWith(lugar + '-'))).map(tarjeta);
+      llenar(lista, hijos);
+    };
+    const pestanas = el('div', { class: 'pestanas', role: 'tablist' }, filtros.map(f => el('button', {
+      class: 'pestana', type: 'button', 'data-filtro': f.id, 'aria-pressed': String(f.id === lugar), text: f.nombre,
+      onclick: e => { S.toque(); lugar = filtroTienda = f.id; pestanas.querySelectorAll('.pestana').forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); pintar(); lista.parentNode.scrollTop = 0; e.currentTarget.scrollIntoView({ block: 'nearest', inline: 'center' }); }
     })));
-    async function comprar(t) {
-      if (estado.juego.malvaviscos < t.precio) { S.error(); aviso('Practica un poco más para juntar ' + (t.precio - estado.juego.malvaviscos) + ' malvaviscos 🍡'); return; }
-      try {
-        const r = await Api.comprar(t.id); estado = r.estado; S.caja();
-        aviso('¡' + t.nombre + ' está en tu bandeja de calcomanías!');
-        tienda(lugar);
-        if (r.insignias.length) setTimeout(() => mostrarPremios(r.insignias), 600);
-      } catch (e) { aviso(e.message); }
+    function comprar(t) {
+      const jg = estado.juego;
+      if (jg.malvaviscos < t.precio) { S.error(); aviso('Practica un poco más para juntar ' + (t.precio - jg.malvaviscos) + ' malvaviscos 🍡'); return; }
+      if (jg.inventario.includes(t.id)) return;
+      porDetras(j => { j.malvaviscos -= t.precio; j.inventario = j.inventario.concat([t.id]); }, () => Api.comprar(t.id),
+        r => { if (r.insignias && r.insignias.length) mostrarPremios(r.insignias); });
+      S.caja();
+      if (t.tipo === 'mapa') { confeti(); aviso('¡' + t.nombre + ' ya es tuyo! 🎉'); }
+      else aviso('¡' + t.nombre + ' está en tu bandeja de calcomanías!');
+      tienda(lugar);
     }
     pintar();
-    llenar(p, 
+    llenar(p,
       el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Tienda del bosque' }), fichas().children[1]),
       pestanas, el('div', { class: 'lista-scroll' }, lista),
       el('div', { class: 'casa-acciones', style: 'grid-template-columns:1fr' }, puff('🏡 Ver mi casita', 'madera', () => casita())));
+    const activa = pestanas.querySelector('[aria-pressed="true"]');
+    if (activa) activa.scrollIntoView({ block: 'nearest', inline: 'center' });
     if (document.querySelector('.pantalla.activa') !== p) ir('tienda');
   }
 
@@ -766,8 +1137,9 @@
         el('div', { class: 'medalla' }, arte(i.id)), el('span', { text: i.nombre }));
     }));
     const amigos = el('div', { class: 'amigos' }, estado.catalogo.personajes.map(a => {
-      const tiene = (j.personajes || []).includes(a.id);
-      return el('div', { class: 'amigo' + (tiene ? '' : ' bloqueado') }, el('div', { class: 'retrato' }, el('img', { src: RETRATO(a.id), alt: '' })), el('span', { text: tiene ? a.nombre : a.dias + ' días' }));
+      const tiene = (j.personajes || []).includes(a.id), sig = j.amistad && j.amistad.siguiente && j.amistad.siguiente.id === a.id ? j.amistad.siguiente : null;
+      return el('div', { class: 'amigo' + (tiene ? '' : ' bloqueado') }, el('div', { class: 'retrato' }, el('img', { src: RETRATO(a.id), alt: '' })),
+        el('span', { text: tiene ? a.nombre : sig ? 'Faltan ' + sig.faltan + (sig.faltan === 1 ? ' día' : ' días') : '🔒' }));
     }));
     llenar(p, 
       el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Biblioteca' })),

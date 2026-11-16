@@ -75,8 +75,83 @@ for jpg in sorted(ORIGEN.glob('bosque-*.jpg')):
     con_borde(im).save(salida, 'WEBP', quality=86, method=6)
     print('listo', salida.name)
 
+
+# ---------- 16-nov-2026: los mapas (páginas del álbum), sus stickers, los amigos y los regalos ----------
+# Los stickers de los mapas ya vienen recortados de Libro_Sprinkloud/img/stickers (stickers.py); aquí solo se llevan a un
+# cuadro de 360 px con su borde blanco, con el id «<mapa>-<nombre>». Al agregar un sticker a un mapa: ponerlo en MAPAS
+# (el orden no importa), correr este archivo y sumarlo a la TIENDA del servidor y del modo de prueba (js/api.js).
+LIBRO = RAIZ.parent / 'Libro_Sprinkloud' / 'img'
+MAPAS = {
+    'lago': ['canoa', 'peces', 'nenufares-rana', 'patitos', 'cana-pescar', 'cesta-pesca',
+             'velero', 'salvavidas', 'libelulas', 'tortuga-tronco', 'cisne', 'garza', 'juncos', 'farol-muelle', 'cubeta-peces',
+             'red-pesca', 'tienda-campana', 'fogatita-olla', 'toalla-sombrero', 'barquito-papel', 'ranitas',
+             'balsa-troncos', 'bote-cisne', 'puente-arco', 'castor-presa', 'nutria', 'boya', 'hamaca', 'farolitos-flotantes', 'piedras-paso'],
+}
+REGALOS = {'galletas': 'tarro-galletas', 'cacao': 'taza-cacao'}   # lo que preparan la estufa y la olla mejoradas
+AMIGOS = ['osito', 'zorro', 'conejo', 'ardilla', 'erizo', 'raton']
+
+
+def cuadro(im, lado_final=360, aire=1.12):
+    """La figura ya recortada, centrada en un cuadro con un poco de aire para el borde blanco."""
+    caja = im.getchannel('A').point(lambda v: 255 if v > 40 else 0).getbbox() or (0, 0, im.width, im.height)
+    cx, cy = (caja[0] + caja[2]) / 2, (caja[1] + caja[3]) / 2
+    lado = max(caja[2] - caja[0], caja[3] - caja[1]) * aire
+    lienzo = Image.new('RGBA', (round(lado), round(lado)), (0, 0, 0, 0))
+    lienzo.alpha_composite(im.crop(caja), (round(lado / 2 - (cx - caja[0])), round(lado / 2 - (cy - caja[1]))))
+    return lienzo.resize((lado_final, lado_final), Image.LANCZOS), caja
+
+
+def al_dia(salida, origen):
+    return salida.exists() and salida.stat().st_mtime >= max(origen.stat().st_mtime, pathlib.Path(__file__).stat().st_mtime)
+
+
+for mapa, nombres in MAPAS.items():
+    fondo = LIBRO / 'gemini' / f'escenario-{mapa}.jpg'
+    if fondo.exists():
+        salida = RAIZ / 'assets' / 'ilustraciones' / f'escenario-{mapa}.webp'
+        if not al_dia(salida, fondo):
+            Image.open(fondo).convert('RGB').resize((1024, 1024), Image.LANCZOS).save(salida, 'WEBP', quality=84, method=6)
+            print('listo el mapa', salida.name)
+    for n in nombres:
+        png = LIBRO / 'stickers' / f'sticker-{n}.png'
+        salida = DESTINO / f'{mapa}-{n}.webp'
+        if not png.exists() or al_dia(salida, png):
+            continue
+        con_borde(cuadro(Image.open(png).convert('RGBA'))[0]).save(salida, 'WEBP', quality=86, method=6)
+        print('listo', salida.name)
+for id_, n in REGALOS.items():
+    png, salida = LIBRO / 'stickers' / f'sticker-{n}.png', DESTINO / f'regalo-{id_}.webp'
+    if png.exists() and not al_dia(salida, png):
+        con_borde(cuadro(Image.open(png).convert('RGBA'), 240)[0]).save(salida, 'WEBP', quality=86, method=6)
+        print('listo', salida.name)
+# Los amigos: salen de personajes-limpios (ya a escala entre ellos). Cada uno llena su cuadro, y su alto relativo al del
+# osito (con orejas y todo) va a js/arte.js para que la app los dibuje con su tamaño.
+altos = {}
+for n in AMIGOS:
+    png, salida = LIBRO / 'personajes-limpios' / f'{n}.png', DESTINO / f'amigo-{n}.webp'
+    if not png.exists():
+        continue
+    im = Image.open(png).convert('RGBA')
+    figura, caja = cuadro(im, 420, 1.08)
+    altos[n] = max(caja[2] - caja[0], caja[3] - caja[1])
+    if not al_dia(salida, png):
+        con_borde(figura, 6).save(salida, 'WEBP', quality=88, method=6)
+        print('listo', salida.name)
+amigos = {n: round(a / altos['osito'], 3) for n, a in altos.items()} if 'osito' in altos else {}
+
+# Miniaturas de las páginas del álbum (16-nov-2026, «la carga tiene que ser mínima»): el selector de páginas muestra un
+# circulito de 40 px; con la miniatura no hace falta bajar el paisaje entero de un mapa que el alumno todavía no tiene.
+for fondo in [RAIZ / 'assets' / 'ilustraciones' / 'casa-vacia.webp'] + sorted((RAIZ / 'assets' / 'ilustraciones').glob('escenario-*.webp')):
+    if fondo.stem.endswith('-mini') or not fondo.exists():
+        continue
+    mini = fondo.with_name(fondo.stem + '-mini.webp')
+    if not al_dia(mini, fondo):
+        Image.open(fondo).convert('RGB').resize((120, 120), Image.LANCZOS).save(mini, 'WEBP', quality=80, method=6)
+        print('lista la miniatura', mini.name)
+
 ids = sorted(p.stem for p in DESTINO.glob('*.webp'))
 (RAIZ / 'js' / 'arte.js').write_text(
     '/* Dibujos de la tienda y las insignias que ya existen en assets/arte/<id>.webp (los demás se ven como emoji).\n'
-    '   GENERADO por herramientas/arte.py. */\nwindow.BOSQUE_ARTE = ' + json.dumps(ids) + ';\n', encoding='utf-8', newline='\n')
+    '   BOSQUE_AMIGOS: el tamaño de cada amigo comparado con el osito. GENERADO por herramientas/arte.py. */\n'
+    'window.BOSQUE_ARTE = ' + json.dumps(ids) + ';\nwindow.BOSQUE_AMIGOS = ' + json.dumps(amigos) + ';\n', encoding='utf-8', newline='\n')
 print(len(ids), 'dibujos en la app')

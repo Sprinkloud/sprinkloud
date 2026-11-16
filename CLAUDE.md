@@ -362,8 +362,53 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
   - la casa nunca debe competir con los muebles;
   - nada de dibujos pálidos ni verdosos apagados.
 
-## EN CURSO: escenarios con stickers (opción 2, 12-nov-2026)
-El plan está en `plan-escenarios.md`.
-- La casita publicada se queda tal cual.
-- En la tienda se compran **escenarios** nuevos (lago para pescar, picnic en el prado, huerto), cada uno con sus stickers para pegar. Sin osito animado.
-- Los fondos y los stickers los pide la tarea diaria de Gemini (etapas 18 y 19 de `Libro_Sprinkloud/herramientas/ilustraciones`).
+## El álbum: mapas, amigos como stickers, mejoras y regalos (16-nov-2026, PUBLICADO el 16-nov)
+
+Las decisiones, los precios y la tabla de stickers y mejoras de cada mapa están en **`plan-escenarios.md`**. La dueña lo vio en vivo y dijo «upload» el mismo 16-nov; lo que siga (los stickers que va pintando Gemini) se revisa y se sube los viernes en la noche.
+
+- **Páginas del álbum** (`paginas()` y `casita()` en `js/app.js`): la casita y cada mapa de la tienda (`tipo: 'mapa'`). Arriba del lienzo hay una pastilla por página. La que todavía no se compró se ve gris, con 🔒 y su precio, y lleva a la tienda en la pestaña de ese mapa.
+  - Cada calcomanía pegada guarda `e`, la página donde está (sin `e`, la casita). Lo que ya estaba pegado sigue igual.
+  - **Cámara libre** (pedido de la dueña, 16-nov tarde: «en lugar de las etiquetas de las habitaciones, que se pueda hacer zoom y deslizarse por el escenario»): ya no hay pestañas de cuartos en ninguna página. Dos dedos o la rueda acercan (hasta 4 veces), un dedo desliza, y hay dos botones de lupa. `camaras` recuerda la cámara de cada página; la casita empieza en 1,3 y un mapa se ve entero.
+    - Sin acercar no hay nada que deslizar: ahí el lienzo deja que el dedo baje la pantalla (`touch-action: pan-y`).
+    - `CUARTOS` sigue existiendo solo para ordenar la tienda.
+  - Cualquier calcomanía se pega en cualquier página que el alumno tenga. `tamBase(id, pagina)` da su ancho: los stickers de mapa traen `tam`; en un mapa todo se ve un poco más grande que en la casita.
+  - Se quitó la frase «Toca una calcomanía y arrástrala»: sin instrucciones, y así la pantalla cabe en un celular sin bajar.
+- **Los amigos son calcomanías** (`amigo-<id>`): los que están de visita (`estado.juego.personajes`) aparecen en la bandeja. Su tamaño sale de `BOSQUE_AMIGOS` (`js/arte.js`): del osito (1) al ratón (0,35).
+  - `estado.juego.amistad` = `{puntos, siguiente: {id, faltan}}`. La tienda («Amigos») y la biblioteca dicen cuántos días faltan para el siguiente. El juego no avisa cuando uno se va.
+- **Jugar o lápiz** (pedido de la dueña, 16-nov tarde: «con el botón de lápiz se puede mover los stickers, para que al tocar las cosas hagan su acción sin seleccionar el sticker; lo que sí se puede mover son los personajes»):
+  - **Jugar** (así se abre): tocar una cosa la hace actuar (`tocar`), sin elegirla. Las cosas no se mueven: el dedo que cae sobre ellas desliza la cámara. **Los amigos sí se arrastran siempre.**
+  - **Lápiz ✏️** (`editar`): las calcomanías se eligen, se arrastran y tienen sus herramientas (achicar, agrandar, voltear, encima, debajo, volver a la bandeja). Con el lápiz, tocar no hace la acción.
+  - Pegar una cosa desde la bandeja enciende el lápiz y la deja elegida, porque hay que acomodarla. Pegar un amigo no.
+  - Menos de 5 px no cuenta como arrastrar ni como deslizar: sigue siendo un toque.
+- **Mejoras** (`t.mejora` en el catálogo, `estado.juego.mejoras`). Lo que pasa al tocar una cosa en el modo de jugar:
+  - **Ya mejorada:** actúa (`actuar` → `jugar`).
+  - **Mejorada y prepara un regalo** (estufa → galletas, olla → cacao, caña → pescado): lo prepara al toque (`preparar`). Se ve salir lo que costó («−10») y el regalo queda en la bandeja con su cuenta (hasta 9; llena, la ficha del regalo salta y no cobra).
+  - **Se puede mejorar y todavía no:** sale una estrella con su precio y nada más (la dueña: «con una estrella está bien»; el cajón al tocar interrumpía). Se mejora con el lápiz o en la tienda; ahí sí se abre el cajón con el dibujo, lo que va a hacer y el precio (`ofrecerMejora`), y al mejorarla muestra sola su acción.
+  - **Sin mejora posible:** nada.
+  - También se mejora con el lápiz (la estrella con el precio, junto a las herramientas) y desde la tienda (botón en la tarjeta y pestaña «⭐ Mejoras»).
+- **Dar un regalo** (`dar`), en cualquier orden: tocar al amigo y después el regalo de la bandeja, o tocar el regalo (queda listo, con un aro) y después al amigo. El amigo salta con corazones y el regalo desaparece. Un amigo que se toca sin regalo saluda con un saltito.
+- **Sin esperas** (la dueña, 16-nov: «la carga y el tiempo de espera tienen que estar nulos o mínimos»). Cada pedido al servidor tarda de 2 a 3 s, así que nada del álbum ni de la tienda lo espera:
+  - `porDetras(cambio, pedido, alLlegar)` en `js/app.js`: aplica el cambio en `estado.juego` con la misma regla del servidor (cobrar, sumar al inventario, a las mejoras o a la despensa), repinta al instante y manda el pedido por detrás, en una sola cola y en orden (`colaJuego`). Lo usan comprar, mejorar, preparar un regalo, darlo y guardar el álbum.
+  - Mientras haya pedidos en camino (`pendientes`), las respuestas viejas no pisan lo que se ve. Con la última, el estado del servidor reemplaza al de la app.
+  - Si el servidor rechaza algo: aviso, se vuelve a pedir el estado y se repinta la pantalla.
+  - Guardar el álbum: `estado.juego.casa` se pone al día en el momento, así salir y volver a entrar muestra lo mismo aunque el envío siga en camino (va 0,7 s después del último cambio).
+  - Dos toques pegados (menos de 0,6 s) en la estufa no cobran dos veces.
+  - **Dibujos:** `precargarAlbum()` baja, mientras el alumno mira el camino, los fondos de sus páginas y los dibujos de sus calcomanías y amigos. El selector de páginas usa miniaturas de 120 px (`…-mini.webp`, 3 a 4 KB, las hace `arte.py`): no baja el paisaje entero de un mapa que todavía no tiene.
+  - Probado con un servidor que tarda 2,5 s por pedido (`probar_camara.js`): la estufa responde en menos de 150 ms y lo guardado al final es igual a lo que se ve.
+- **Movimiento** (skill `animate`, de Emil Kowalski): `MOVIMIENTOS` en `js/app.js`, con la API de animaciones del navegador sobre `.calco-arte` (el botón ya usa `transform` para su lugar). Solo `transform` y `opacity`, con las curvas de `app.css`. Las chispitas (`chispa`) son notas, gotas, corazones o el dibujo del regalo. La lámpara es un estado (`.encendida`, transición de 200 ms). Con movimiento reducido el dibujo solo parpadea y las chispitas no viajan.
+  - El pez es la única caída con `ease-in`: sube frenando y cae acelerando, como cualquier cosa que salta.
+- **Sonido:** `Sonido.juguete(tipo)` en `js/sonido.js`, todo sintetizado. Devuelve cuánto dura. La música de la escena se calla mientras suena una canción.
+- **Tienda** (`tienda(filtro)`): Casita · Sala · Cocina · Dormitorio · Jardín · un filtro por mapa · ⭐ Mejoras · Amigos.
+  - La tarjeta del mapa muestra el paisaje, el precio y una barra con lo ahorrado.
+  - Los stickers de un mapa que no se tiene se ven grises con 🔒.
+  - El sello redondo sobre un dibujo dice qué hará al mejorarlo.
+- **Compartir:** la tarjeta dibuja la página que se está viendo (`Compartir.casa(…, pagina)`).
+- **Modo de prueba** (`js/api.js`): las mismas reglas del servidor (`TIENDA`, `MEJORAS`, `amistad`, `mejorar`, `usar`, `dar` y `casa` con amigos y `e`). Lo nuevo va en `j.extras` (`mejoras`, `amistad`, `despensa`), igual que la columna Extras del servidor.
+  - **Para probar sin practicar semanas:** `?demo=1&malvaviscos=2500&amistad=14` (solo en la prueba, nunca en la versión libre; se aplica una vez por dirección).
+  - `node herramientas/probar_album.js`: 34 comprobaciones, las mismas del servidor (`Registro_Sprinkloud/pruebas/album_test.js`). Hay que correrla cada vez que cambien las reglas en cualquiera de los dos.
+- **Arte** (`herramientas/arte.py`): `MAPAS` (los 30 stickers de cada mapa), `REGALOS` y `AMIGOS`. Genera `assets/ilustraciones/escenario-<mapa>.webp`, `assets/arte/<mapa>-<nombre>.webp`, `regalo-<id>.webp` y `amigo-<id>.webp`.
+- **Probado en vivo** (Playwright, 16-nov) a 320×640, 390×844, 768×1024 y 1280×720: comprar el mapa, sus stickers, pegar, mejorar, las acciones, preparar y dar regalos. Nada se sale de la pantalla y no hubo errores de JavaScript.
+  - **`node herramientas/probar_camara.js`** (76 comprobaciones, con el servidor local en 8020): la cámara, el modo de jugar, el lápiz y que nada espere al servidor, en esos cuatro tamaños. Abre su propio Chrome sin ventana, así no molesta en el navegador que la dueña está mirando.
+- **Auditoría antes de subir** (`/impeccable audit`, 16-nov): el detector no encontró antipatrones en lo nuevo (solo avisos de colores sueltos; la luz de la lámpara pasó a ser el token `--luz-calida`). Botones de 44 px o más con su nombre para lectores de pantalla, movimiento reducido cubierto, gestos probados con toques sintetizados. **Pendiente menor:** con teclado se puede acercar (lupas) pero no deslizar la cámara.
+- **`review-animations` no la puede correr Claude:** solo la dueña, escribiendo `/review-animations`. Las animaciones se hicieron con la skill `animate` (solo `transform` y `opacity`, curvas de `app.css`, movimiento reducido).
+- **Falta:** probarlo en un iPhone y un Android de verdad (pellizco y sonidos) y los 24 stickers del lago que faltan.

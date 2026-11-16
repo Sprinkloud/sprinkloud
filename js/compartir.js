@@ -82,13 +82,15 @@ window.Compartir = (function () {
       const c = await lienzo(async g => { redondo(g, img, W / 2, 720, 330, .3); textos(g, '¡Llegó un amigo a mi bosque!', nombre, 1200); });
       enviar(c, '¡' + nombre + ' llegó a mi bosque de Sprinkloud por practicar música! 🌲🎶', 'mi-amigo');
     },
-    async casa(estado, POS, EMOJI, IMAGENES, tamBase) {
-      const fondo = await cargar('assets/ilustraciones/casa-vacia.webp');
+    /* pagina: la página del álbum que se comparte ({id, nombre, img}); sin ella, la casita */
+    async casa(estado, POS, EMOJI, IMAGENES, tamBase, pagina) {
+      const pg = pagina || { id: 'casa', img: 'assets/ilustraciones/casa-vacia.webp' };
+      const fondo = await cargar(pg.img);
       const c = await lienzo(async g => {
         const x0 = 60, y0 = 330, w = W - 120, h = w;   // la casa vista desde arriba es cuadrada
         g.save(); roundRect(g, x0, y0, w, h, 48); g.clip(); if (fondo) g.drawImage(fondo, x0, y0, w, h);
         const casa = estado.juego.casa;
-        for (const id of Object.keys(casa).sort((a, b) => casa[a].z - casa[b].z)) {
+        for (const id of Object.keys(casa).filter(id => (casa[id].e || 'casa') === pg.id).sort((a, b) => casa[a].z - casa[b].z)) {
           const k = casa[id], s = w * tamBase(id) * k.s / 100, cx = x0 + w * k.x / 100, cy = y0 + h * k.y / 100;
           g.save(); g.translate(cx, cy); if (k.f) g.scale(-1, 1);
           const im = IMAGENES.has(id) ? await cargar('assets/arte/' + id + '.webp') : null;
@@ -98,7 +100,7 @@ window.Compartir = (function () {
         }
         g.restore(); g.textBaseline = 'alphabetic';
         g.lineWidth = 14; g.strokeStyle = '#FFFDF8'; roundRect(g, x0, y0, w, h, 48); g.stroke();
-        textos(g, 'La casita de mi osito', '🔥 ' + estado.juego.racha + ' días · 🏅 ' + estado.juego.insignias.length + ' insignias', y0 + h + 120);
+        textos(g, pg.id === 'casa' ? 'La casita de mi osito' : pg.nombre + ' de mi bosque', '🔥 ' + estado.juego.racha + ' días · 🏅 ' + estado.juego.insignias.length + ' insignias', y0 + h + 120);
       });
       enviar(c, '¡Mira la casita que decoré en el bosque de Sprinkloud practicando música! 🏡🎶', 'mi-casita');
     }
