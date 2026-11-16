@@ -395,6 +395,7 @@ Las decisiones, los precios y la tabla de stickers y mejoras de cada mapa están
   - Dos toques pegados (menos de 0,6 s) en la estufa no cobran dos veces.
   - **Dibujos:** `precargarAlbum()` baja, mientras el alumno mira el camino, los fondos de sus páginas y los dibujos de sus calcomanías y amigos. El selector de páginas usa miniaturas de 120 px (`…-mini.webp`, 3 a 4 KB, las hace `arte.py`): no baja el paisaje entero de un mapa que todavía no tiene.
   - Probado con un servidor que tarda 2,5 s por pedido (`probar_camara.js`): la estufa responde en menos de 150 ms y lo guardado al final es igual a lo que se ve.
+  - **Contra la app publicada:** `BOSQUE=https://sprinkloud.github.io/sprinkloud/ node herramientas/probar_camara.js` (16-nov, después de subir: 76 de 76).
 - **Movimiento** (skill `animate`, de Emil Kowalski): `MOVIMIENTOS` en `js/app.js`, con la API de animaciones del navegador sobre `.calco-arte` (el botón ya usa `transform` para su lugar). Solo `transform` y `opacity`, con las curvas de `app.css`. Las chispitas (`chispa`) son notas, gotas, corazones o el dibujo del regalo. La lámpara es un estado (`.encendida`, transición de 200 ms). Con movimiento reducido el dibujo solo parpadea y las chispitas no viajan.
   - El pez es la única caída con `ease-in`: sube frenando y cae acelerando, como cualquier cosa que salta.
 - **Sonido:** `Sonido.juguete(tipo)` en `js/sonido.js`, todo sintetizado. Devuelve cuánto dura. La música de la escena se calla mientras suena una canción.

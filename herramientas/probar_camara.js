@@ -4,6 +4,8 @@
    Con el servidor local en 8020: `node herramientas/probar_camara.js`. Usa playwright-core de Libro_Sprinkloud. */
 const path = require('path');
 const { chromium } = require(path.join(__dirname, '..', '..', 'Libro_Sprinkloud', 'node_modules', 'playwright-core'));
+/* para probar la app publicada: BOSQUE=https://sprinkloud.github.io/sprinkloud/ node herramientas/probar_camara.js */
+const BASE = process.env.BOSQUE || 'http://localhost:8020/';
 const TAMANOS = [[320, 640], [390, 844], [768, 1024], [1280, 720]];
 let fallos = 0, pasos = 0;
 const ok = (c, msg, extra) => { pasos++; if (!c) { fallos++; console.log('  ✗ ' + msg, extra !== undefined ? JSON.stringify(extra).slice(0, 300) : ''); } else console.log('  ✓ ' + msg); };
@@ -17,7 +19,7 @@ const ok = (c, msg, extra) => { pasos++; if (!c) { fallos++; console.log('  ✗ 
     const errores = [];
     pag.on('pageerror', e => errores.push(e.message));
     pag.on('console', m => { if (m.type() === 'error') errores.push(m.text()); });
-    await pag.goto('http://localhost:8020/?demo=1&malvaviscos=3000&amistad=14');
+    await pag.goto(BASE + '?demo=1&malvaviscos=3000&amistad=14');
     await pag.waitForSelector('#entrada .puff'); await pag.click('#entrada .puff', { force: true });
     await pag.waitForSelector('#camino.activa'); await pag.waitForTimeout(400);
     /* se compran unas cosas por el motor de la app, para tener qué tocar: el piano y la estufa mejorados, el reloj sin mejorar */
