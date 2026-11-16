@@ -58,6 +58,13 @@ const ok = (c, msg, extra) => { pasos++; if (!c) { fallos++; console.log('  ✗ 
       o.estrella = [...document.querySelectorAll('.chispa')].map(c => c.textContent).join('|') + ' · cajones ' + document.querySelectorAll('.cajon').length + ' · elegidas ' + document.querySelectorAll('.calco.elegida').length;
       // tocar el piano lo hace sonar y no lo elige
       toque(calco('piano-madera')); await espera(250); o.pianoToca = anim('piano-madera') + ' · elegidas ' + document.querySelectorAll('.calco.elegida').length;
+      // revisión de animaciones (16-nov): otro toque mientras suena no lo reinicia (antes el dibujo saltaba a su lugar)
+      const a1 = calco('piano-madera').querySelector('.calco-arte').getAnimations()[0], t1 = a1.currentTime;
+      toque(calco('piano-madera')); await espera(60);
+      const a2 = calco('piano-madera').querySelector('.calco-arte').getAnimations();
+      o.sinReinicio = a2.length === 1 && a2[0] === a1 && a2[0].currentTime > t1;
+      // la sombra va en el dibujo que se mueve, no en el botón
+      o.sombra = getComputedStyle(calco('piano-madera')).filter + ' | ' + getComputedStyle(calco('piano-madera').querySelector('.calco-arte')).filter.slice(0, 11);
       await espera(2600);
       // la cámara
       const c1 = cam(); document.querySelector('[aria-label="Acercar"]').click(); await espera(350); o.lupa = c1 + ' → ' + cam();
@@ -68,6 +75,20 @@ const ok = (c, msg, extra) => { pasos++; if (!c) { fallos++; console.log('  ✗ 
       c0 = cam(); pe(img, 'pointerdown', cx - 30, cy, 1); pe(img, 'pointerdown', cx + 30, cy, 2);
       for (let i = 1; i <= 4; i++) { pe(img, 'pointermove', cx - 30 - i * 6, cy, 1); pe(img, 'pointermove', cx + 30 + i * 6, cy, 2); }
       pe(img, 'pointerup', cx - 54, cy, 1); pe(img, 'pointerup', cx + 54, cy, 2); o.pellizco = c0 + ' → ' + cam();
+      // la variable --zoom se pone al descansar el gesto, no en cada cuadro
+      const capa = document.querySelector('.casa-capa'), zoomDe = () => Number((cam().match(/scale\(([\d.]+)\)/) || [])[1]);
+      const durante = capa.style.getPropertyValue('--zoom'); await espera(200);
+      o.zoomVar = { durante, despues: capa.style.getPropertyValue('--zoom'), z: zoomDe().toFixed(2) };
+      // el borde cede como una goma mientras el dedo tira, y al soltar la página vuelve a su tope
+      const txDe = () => Number((cam().match(/translate\(([-\d.]+)%/) || [])[1]), topeAhora = (zoomDe() - 1) * 50;
+      pe(img, 'pointerdown', cx, cy); for (let i = 1; i <= 6; i++) pe(img, 'pointermove', cx + i * q.width, cy);   // un tirón más largo que toda la página
+      const tirando = txDe(); pe(img, 'pointerup', cx + 6 * q.width, cy); await espera(450);
+      o.goma = { tope: +topeAhora.toFixed(1), tirando: +tirando.toFixed(1), suelta: +txDe().toFixed(1) };
+      // inercia: un dedo que suelta con impulso deja la página andando un poco más; otro dedo la detiene donde va
+      pe(img, 'pointerdown', cx, cy); for (let i = 1; i <= 6; i++) { await espera(16); pe(img, 'pointermove', cx - i * 9, cy); }
+      const alSoltar = txDe(); pe(img, 'pointerup', cx - 54, cy);
+      await espera(120); pe(img, 'pointerdown', cx, cy); const detenida = txDe(); pe(img, 'pointerup', cx, cy);
+      await espera(400); o.inercia = { alSoltar: +alSoltar.toFixed(1), detenida: +detenida.toFixed(1), quieta: +txDe().toFixed(1) };
       o.sale = sale(); o.alto = document.querySelector('#casita').scrollHeight + '/' + document.querySelector('#casita').clientHeight;
       await espera(1200);   // lo movido ya se guardó
       // con cinco calcomanías pegadas llega la insignia «Casita decorada»: se cierra su cajón antes de seguir
@@ -111,6 +132,11 @@ const ok = (c, msg, extra) => { pasos++; if (!c) { fallos++; console.log('  ✗ 
     ok(r.lapizApagado === 'false · elegidas 0', 'al apagar el lápiz no queda nada elegido', r.lapizApagado);
     ok(/⭐ 120/.test(r.estrella) && / cajones 0 · elegidas 0/.test(r.estrella), 'jugar: una cosa sin mejorar muestra solo una estrella con su precio', r.estrella);
     ok(r.pianoToca === '1 · elegidas 0', 'jugar: tocar el piano lo hace sonar sin elegirlo', r.pianoToca);
+    ok(r.sinReinicio, 'otro toque mientras actúa no lo reinicia', r.sinReinicio);
+    ok(/^none \| drop-shadow$/.test(r.sombra), 'la sombra va en el dibujo que se mueve, no en el botón', r.sombra);
+    ok(r.zoomVar.despues === r.zoomVar.z, 'la variable --zoom queda al día cuando el gesto descansa', r.zoomVar);
+    ok(r.goma.tirando > r.goma.tope + 1 && r.goma.tirando < r.goma.tope + 12 && Math.abs(r.goma.suelta - r.goma.tope) < .2, 'el borde cede como una goma y la página vuelve al soltar', r.goma);
+    ok(r.inercia.detenida < r.inercia.alSoltar - 1 && Math.abs(r.inercia.quieta - r.inercia.detenida) < .6, 'al soltar con impulso la página sigue andando, y un dedo la detiene donde va', r.inercia);
     ok(/scale\(1\.95/.test(r.lupa) && r.desliza && /scale\((2|3|4)/.test(r.pellizco), 'la lupa acerca, un dedo desliza y dos dedos acercan más', [r.lupa, r.pellizco]);
     ok(r.pianoQuieto && r.camaraSigue && r.pianoCallado, 'jugar: arrastrar desde el piano desliza la cámara; el piano no se mueve ni suena', [r.pianoQuieto, r.camaraSigue, r.pianoCallado]);
     ok(r.ositoSeMueve && r.camaraQuieta, 'jugar: el osito sí se mueve, y la cámara se queda quieta', [r.ositoSeMueve, r.camaraQuieta]);

@@ -395,9 +395,9 @@ Las decisiones, los precios y la tabla de stickers y mejoras de cada mapa están
   - Dos toques pegados (menos de 0,6 s) en la estufa no cobran dos veces.
   - **Dibujos:** `precargarAlbum()` baja, mientras el alumno mira el camino, los fondos de sus páginas y los dibujos de sus calcomanías y amigos. El selector de páginas usa miniaturas de 120 px (`…-mini.webp`, 3 a 4 KB, las hace `arte.py`): no baja el paisaje entero de un mapa que todavía no tiene.
   - Probado con un servidor que tarda 2,5 s por pedido (`probar_camara.js`): la estufa responde en menos de 150 ms y lo guardado al final es igual a lo que se ve.
-  - **Contra la app publicada:** `BOSQUE=https://sprinkloud.github.io/sprinkloud/ node herramientas/probar_camara.js` (16-nov, después de subir: 76 de 76).
+  - **Contra la app publicada:** `BOSQUE=https://sprinkloud.github.io/sprinkloud/ node herramientas/probar_camara.js` (16-nov, después de subir: 96 de 96).
 - **Movimiento** (skill `animate`, de Emil Kowalski): `MOVIMIENTOS` en `js/app.js`, con la API de animaciones del navegador sobre `.calco-arte` (el botón ya usa `transform` para su lugar). Solo `transform` y `opacity`, con las curvas de `app.css`. Las chispitas (`chispa`) son notas, gotas, corazones o el dibujo del regalo. La lámpara es un estado (`.encendida`, transición de 200 ms). Con movimiento reducido el dibujo solo parpadea y las chispitas no viajan.
-  - El pez es la única caída con `ease-in`: sube frenando y cae acelerando, como cualquier cosa que salta.
+  - El pez es la única caída con una curva que acelera: sube frenando y cae acelerando, como cualquier cosa que salta.
 - **Sonido:** `Sonido.juguete(tipo)` en `js/sonido.js`, todo sintetizado. Devuelve cuánto dura. La música de la escena se calla mientras suena una canción.
 - **Tienda** (`tienda(filtro)`): Casita · Sala · Cocina · Dormitorio · Jardín · un filtro por mapa · ⭐ Mejoras · Amigos.
   - La tarjeta del mapa muestra el paisaje, el precio y una barra con lo ahorrado.
@@ -409,7 +409,15 @@ Las decisiones, los precios y la tabla de stickers y mejoras de cada mapa están
   - `node herramientas/probar_album.js`: 34 comprobaciones, las mismas del servidor (`Registro_Sprinkloud/pruebas/album_test.js`). Hay que correrla cada vez que cambien las reglas en cualquiera de los dos.
 - **Arte** (`herramientas/arte.py`): `MAPAS` (los 30 stickers de cada mapa), `REGALOS` y `AMIGOS`. Genera `assets/ilustraciones/escenario-<mapa>.webp`, `assets/arte/<mapa>-<nombre>.webp`, `regalo-<id>.webp` y `amigo-<id>.webp`.
 - **Probado en vivo** (Playwright, 16-nov) a 320×640, 390×844, 768×1024 y 1280×720: comprar el mapa, sus stickers, pegar, mejorar, las acciones, preparar y dar regalos. Nada se sale de la pantalla y no hubo errores de JavaScript.
-  - **`node herramientas/probar_camara.js`** (76 comprobaciones, con el servidor local en 8020): la cámara, el modo de jugar, el lápiz y que nada espere al servidor, en esos cuatro tamaños. Abre su propio Chrome sin ventana, así no molesta en el navegador que la dueña está mirando.
+  - **`node herramientas/probar_camara.js`** (96 comprobaciones, con el servidor local en 8020): la cámara (con su goma y su inercia), el modo de jugar, el lápiz, los arreglos de la revisión de animaciones y que nada espere al servidor, en esos cuatro tamaños. Abre su propio Chrome sin ventana, así no molesta en el navegador que la dueña está mirando.
 - **Auditoría antes de subir** (`/impeccable audit`, 16-nov): el detector no encontró antipatrones en lo nuevo (solo avisos de colores sueltos; la luz de la lámpara pasó a ser el token `--luz-calida`). Botones de 44 px o más con su nombre para lectores de pantalla, movimiento reducido cubierto, gestos probados con toques sintetizados. **Pendiente menor:** con teclado se puede acercar (lupas) pero no deslizar la cámara.
-- **`review-animations` no la puede correr Claude:** solo la dueña, escribiendo `/review-animations`. Las animaciones se hicieron con la skill `animate` (solo `transform` y `opacity`, curvas de `app.css`, movimiento reducido).
+- **Revisión de animaciones** (`/review-animations`, la corrió la dueña el 16-nov; Claude no puede lanzarla): salió «bloqueo» por tres cosas y cuatro de pulido. Las siete quedaron arregladas y publicadas el mismo día:
+  - **Otro toque no reinicia al sticker que ya está actuando** (`jugar` marca su animación con `id = 'accion'`): antes la canoa a mitad de viaje saltaba a su lugar.
+  - **La sombra va en `.calco-arte`,** que es lo que se mueve, y no en el botón: con la sombra en el padre, cada cuadro volvía a pintar el sticker.
+  - **El pez** sube y cae con curvas simétricas (`SUBE` y `CAE`, las «Quad» de easings.net).
+  - **`--zoom`** se escribe solo cuando cambia y con el gesto en reposo (`fijarZoom`); lo demás que depende del zoom, solo al cambiar (`fijar`).
+  - **Péndulos** (`pendulo`): el metrónomo y el atril van de extremo a extremo y pasan por el centro sin detenerse; el metrónomo cruza el centro justo en cada clic.
+  - **El reloj cucú** se sacude con cada «cu-cú» (0 y 0,7 s).
+  - **Cámara con goma e inercia:** pasado el borde la página cede cada vez menos (`goma`) y vuelve al soltar; soltar con impulso la deja andando un poco (`.deriva`, 480 ms); un dedo que cae la detiene donde va (`detener`). Con movimiento reducido, nada de esto anima.
+  - **Ojo:** antes de pedir una transición de la cámara hay que hacer que el navegador vea dónde está (`getComputedStyle(capa).transform` en `camara`). Si el último movimiento del dedo y el soltar llegan en el mismo cuadro, sin eso anima también ese tramo y la página «rebota» hacia atrás.
 - **Falta:** probarlo en un iPhone y un Android de verdad (pellizco y sonidos) y los 24 stickers del lago que faltan.

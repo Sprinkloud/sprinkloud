@@ -325,12 +325,15 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 /* la cámara (16-nov-2026): sigue al dedo sin transición; solo los botones de lupa la mueven con suavidad */
 .casa-capa { position: absolute; inset: 0; transform-origin: 50% 50%; }
 .casa-capa.suave { transition: transform 240ms var(--ease-out); }
+.casa-capa.deriva { transition: transform 480ms var(--ease-out); }   /* la inercia al soltar: un dedo que cae la detiene (detener() en app.js) */
 .casa-arriba { cursor: grab; }
 .casa-capa > img { width: 100%; height: 100%; object-fit: cover; }
 :root[data-hora="noche"] .casa-capa > img { filter: brightness(.72) sepia(.15); }
 /* Calcomanías: el dibujo con todos sus colores y un borde blanco de pegatina */
-.calco { position: absolute; padding: 0; border: 0; background: none; touch-action: none; cursor: grab; aspect-ratio: 1;
-  filter: drop-shadow(0 3px 3px rgba(58, 40, 20, .35)); }   /* el borde blanco ya viene en la imagen (herramientas/arte.py) */
+.calco { position: absolute; padding: 0; border: 0; background: none; touch-action: none; cursor: grab; aspect-ratio: 1; }
+/* la sombra va en el dibujo, que es lo que se mueve cuando el sticker actúa: con la sombra en el botón (el padre), cada
+   cuadro de la animación volvía a pintar el sticker y su sombra. El borde blanco ya viene en la imagen (herramientas/arte.py) */
+.calco-arte { filter: drop-shadow(0 3px 3px rgba(58, 40, 20, .35)); }
 .calco img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; -webkit-user-drag: none; }
 .calco:not(:has(img)) { font-size: clamp(1rem, 6vw, 2.2rem); display: grid; place-items: center; }
 /* de lejos las calcomanías son chicas: una zona de toque invisible más grande (tocar acerca la cámara a su cuarto) */
@@ -348,7 +351,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .calco-bandeja img { width: 100%; height: 100%; object-fit: contain; }
 .bandeja .mano { margin: 0; text-align: center; font-size: 1.3rem; color: var(--ink-soft); }
 .pestanas.cuartos { justify-content: center; flex-wrap: wrap; margin-top: 10px; }
-@media (prefers-reduced-motion: reduce) { .casa-capa.suave { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .casa-capa.suave, .casa-capa.deriva { transition: none; } }
 /* sin el lápiz, las cosas no se mueven: el dedo que cae sobre ellas desliza la cámara (los amigos sí se arrastran siempre) */
 .casa-arriba:not(.editando) .calco:not(.es-amigo) { touch-action: auto; cursor: inherit; }
 .casa-arriba:not(.editando) .calco.viva { cursor: pointer; }
@@ -356,6 +359,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .zoom-album { display: inline-flex; gap: 8px; }
 .controles-album .btn-icono { color: var(--ink); }
 .controles-album .btn-icono:disabled { opacity: .4; }
+.lapiz { transition: transform 140ms var(--ease-out), background-color 150ms ease, box-shadow 150ms ease; }
 .lapiz[aria-pressed="true"] { background: var(--ochre-strong); box-shadow: 0 0 0 3px var(--ochre-soft), var(--sombra-papel); }
 .calco-bandeja.regalo.armado { box-shadow: 0 0 0 3px var(--ochre-strong), var(--sombra-papel); }
 .chispa-precio { display: inline-flex; align-items: center; gap: .1em; white-space: nowrap; }

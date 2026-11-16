@@ -616,19 +616,28 @@
   /* ---------- Los stickers mejorados hacen algo (movimiento con la API de animaciones del navegador: solo transform y opacity) ---------- */
   const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)', EASE_IN_OUT = 'cubic-bezier(0.77, 0, 0.175, 1)';   // las mismas curvas de app.css
   const quieto = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SUBE = 'cubic-bezier(0.5, 1, 0.89, 1)', CAE = 'cubic-bezier(0.11, 0, 0.5, 0)';   // lo que salta: frena al subir y acelera igual al caer (easings.net, «Quad»)
   const cuadros = (curva, ...t) => t.map(x => ({ transform: x, easing: curva }));
+  /* un péndulo: del centro a un extremo, después de extremo a extremo (pasa por el centro a su mayor velocidad, sin
+     detenerse ahí) y de vuelta al centro. Con 4 extremos en 2 s cruza el centro en 0,5, 1 y 1,5 s: los clics del metrónomo */
+  const pendulo = (grados, extremos) => [{ transform: 'rotate(0)', easing: SUBE, offset: 0 }]
+    .concat(Array.from({ length: extremos }, (_, i) => ({ transform: 'rotate(' + (i % 2 ? grados : -grados) + 'deg)', easing: EASE_IN_OUT, offset: (i + .5) / extremos })),
+      [{ transform: 'rotate(0)', offset: 1 }]);
+  /* el reloj se sacude con cada «cu-cú» (en 0 y en 0,7 s) y espera quieto entre los dos */
+  const CUCU = [[0, 0], [.083, -5], [.167, 5], [.25, -3], [.333, 0], [.667, 0], [.75, -5], [.833, 5], [.917, -3], [1, 0]]
+    .map(([offset, g]) => ({ transform: 'rotate(' + g + 'deg)', easing: EASE_OUT, offset }));
   /* cada acción: [cuadros, opciones, origen del giro, chispitas, cada cuánto sale una chispita (ms)] */
   const MOVIMIENTOS = {
     cancion: d => [cuadros(EASE_IN_OUT, 'translateY(0) rotate(0)', 'translateY(-5%) rotate(-2deg)', 'translateY(0) rotate(0)', 'translateY(-5%) rotate(2deg)', 'translateY(0) rotate(0)'), { duration: 1200, iterations: Math.max(1, Math.round(d / 1.2)) }, '50% 100%', ['♪', '♫', '♪', '♫', '♪'], 420],
-    melodia: d => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-3deg)', 'rotate(0)', 'rotate(3deg)', 'rotate(0)'), { duration: 1360, iterations: Math.max(1, Math.round(d / 1.36)) }, '50% 100%', ['♪', '♫', '♪', '♫'], 520],
-    cucu: () => [cuadros(EASE_OUT, 'rotate(0)', 'rotate(-5deg)', 'rotate(5deg)', 'rotate(-3deg)', 'rotate(0)'), { duration: 350, iterations: 2, iterationStart: 0, delay: 0, endDelay: 350 }, '50% 0', ['🐦', '🐦'], 700],
+    melodia: d => [pendulo(3, Math.max(2, Math.round(d / .68))), { duration: Math.round(d * 1000) }, '50% 100%', ['♪', '♫', '♪', '♫'], 520],
+    cucu: () => [CUCU, { duration: 1050 }, '50% 0', ['🐦', '🐦'], 700],
     dormir: () => [cuadros(EASE_IN_OUT, 'scale(1)', 'scale(1.04)', 'scale(1)'), { duration: 1300, iterations: 2 }, '50% 100%', ['z', 'z', 'Z'], 600],
     mecer: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(7deg)', 'rotate(-7deg)', 'rotate(5deg)', 'rotate(-5deg)', 'rotate(0)'), { duration: 1800 }, '50% 0', ['🍃'], 0],
-    pulso: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-8deg)', 'rotate(0)', 'rotate(8deg)', 'rotate(0)'), { duration: 1000, iterations: 2 }, '50% 100%', [], 0],
+    pulso: () => [pendulo(8, 4), { duration: 2000 }, '50% 100%', [], 0],
     navegar: () => [cuadros(EASE_IN_OUT, 'translateX(0) rotate(0)', 'translateX(45%) rotate(-2deg)', 'translateX(0) rotate(0)'), { duration: 2400 }, '50% 50%', ['💧', '💧'], 900],
     nadar: () => [cuadros(EASE_IN_OUT, 'translateX(0) rotate(0)', 'translateX(18%) rotate(3deg)', 'translateX(35%) rotate(-3deg)', 'translateX(18%) rotate(3deg)', 'translateX(0) rotate(0)'), { duration: 1800 }, '50% 50%', ['💧'], 0],
-    /* el pez sube frenando y cae acelerando, como cualquier cosa que salta: por eso la caída lleva «ease-in» */
-    saltar: () => [[{ transform: 'translateY(0) rotate(0)', easing: EASE_OUT }, { transform: 'translateY(-40%) rotate(-12deg)', easing: 'ease-in' }, { transform: 'translateY(0) rotate(0)' }], { duration: 750, iterations: 2 }, '50% 50%', ['💧', '💧'], 750],
+    /* el pez sube frenando y cae acelerando, como cualquier cosa que salta: la única caída con una curva que acelera */
+    saltar: () => [[{ transform: 'translateY(0) rotate(0)', easing: SUBE }, { transform: 'translateY(-40%) rotate(-12deg)', easing: CAE }, { transform: 'translateY(0) rotate(0)' }], { duration: 750, iterations: 2 }, '50% 50%', ['💧', '💧'], 750],
     croar: () => [cuadros(EASE_OUT, 'scale(1, 1)', 'scale(1.1, .86)', 'translateY(-14%) scale(.96, 1.06)', 'scale(1.06, .94)', 'scale(1, 1)'), { duration: 500, iterations: 2 }, '50% 100%', [], 0],
     hornear: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-2deg)', 'rotate(2deg)', 'rotate(-2deg)', 'rotate(0)'), { duration: 900 }, '50% 100%', ['💨', '💨'], 350],
     servir: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-2deg)', 'rotate(2deg)', 'rotate(0)'), { duration: 700 }, '50% 100%', ['💨'], 0],
@@ -648,16 +657,21 @@
   }
   function jugar(capa, b, accion) {
     const m = MOVIMIENTOS[accion], dibujo = b.querySelector('.calco-arte');
-    if (!m || !dibujo) return;
+    if (!m || !dibujo) return false;
+    /* si ya está actuando, otro toque no lo reinicia: una animación que vuelve a empezar hace saltar el dibujo a su
+       lugar (la canoa a mitad de viaje). Termina lo suyo y recién entonces puede actuar otra vez */
+    if (dibujo.getAnimations().some(a => a.id === 'accion' && a.playState === 'running')) return false;
     S.callar();
-    dibujo.getAnimations().forEach(a => a.cancel());
+    dibujo.getAnimations().forEach(a => a.cancel());   // un saludo a medias sí se corta
     const dur = S.juguete(accion);
     if (dur > 1.5 && S.pref.musica && S.musica && S.musica.silenciar) S.musica.silenciar(dur * 1000);   // la canción de la casita se calla mientras suena
     const [marcos, op, origen, chispitas, cada] = m(dur || 1.6);
     dibujo.style.transformOrigin = origen;
-    if (quieto()) dibujo.animate([{ opacity: 1 }, { opacity: .6 }, { opacity: 1 }], { duration: 400, easing: 'ease' });   // sin moverse: solo parpadea
-    else dibujo.animate(marcos, op);
+    const a = quieto() ? dibujo.animate([{ opacity: 1 }, { opacity: .6 }, { opacity: 1 }], { duration: 400, easing: 'ease' })   // sin moverse: solo parpadea
+      : dibujo.animate(marcos, op);
+    a.id = 'accion';
     chispitas.forEach((c, i) => chispa(capa, b, c, i * cada, i % 2 ? 1 : -1));
+    return true;
   }
 
   /* ---------- Sin esperas (16-nov-2026, la dueña: «la carga y el tiempo de espera tienen que estar nulos o mínimos») ----------
@@ -770,17 +784,45 @@
 
     /* ---- la cámara: dos dedos o la rueda acercan, un dedo desliza; los botones de lupa hacen lo mismo ---- */
     const cam = Object.assign({ z: 1, tx: 0, ty: 0 }, camaras[paginaVista]);
-    function camara(suave) {
+    const tope = () => (cam.z - 1) * 50;   // hasta dónde se corre sin que el dibujo deje un hueco en el lienzo
+    /* pasado el borde, la página cede cada vez menos (como una goma) en vez de chocar contra una pared; al soltar vuelve */
+    const goma = v => { const t = tope(), sobra = Math.abs(v) - t; return sobra <= 0 ? v : Math.sign(v) * (t + sobra / (1 + sobra / 10)); };
+    let puesto = {}, relojZoom = null;
+    /* lo que depende del zoom y hace recalcular el estilo de todas las calcomanías se escribe solo cuando cambia, y la
+       variable --zoom espera a que el gesto descanse (antes iba en cada cuadro del pellizco) */
+    function fijar(clave, valor, poner) { if (puesto[clave] !== valor) { puesto[clave] = valor; poner(valor); } }
+    function fijarZoom(ya) {
+      const poner = () => fijar('zoom', cam.z.toFixed(2), v => capa.style.setProperty('--zoom', v));   // el borde de la elegida y las chispitas no engordan con el zoom
+      clearTimeout(relojZoom);
+      if (ya || puesto.zoom == null) poner(); else relojZoom = setTimeout(poner, 120);
+    }
+    /* modo: false (sigue al dedo), 'suave' (botones de lupa y vuelta del borde) o 'deriva' (la inercia al soltar).
+       sinTope: mientras el dedo arrastra, la página puede pasarse un poco del borde */
+    function camara(modo, sinTope) {
       cam.z = entre(cam.z, 1, ZOOM_MAX);
-      const tope = (cam.z - 1) * 50;   // el dibujo nunca deja un hueco en el lienzo
-      cam.tx = entre(cam.tx, -tope, tope); cam.ty = entre(cam.ty, -tope, tope);
-      capa.classList.toggle('suave', !!suave && !quieto());
+      if (!sinTope) { const t = tope(); cam.tx = entre(cam.tx, -t, t); cam.ty = entre(cam.ty, -t, t); }
+      modo = modo === true ? 'suave' : modo;
+      /* antes de pedir una transición, el navegador tiene que haber visto dónde está la página ahora: si el último
+         movimiento del dedo y el soltar llegan en el mismo cuadro, sin esto animaría también ese último tramo */
+      if (modo) getComputedStyle(capa).transform;
+      capa.classList.toggle('suave', modo === 'suave' && !quieto()); capa.classList.toggle('deriva', modo === 'deriva' && !quieto());
       capa.style.transform = 'translate(' + cam.tx.toFixed(3) + '%, ' + cam.ty.toFixed(3) + '%) scale(' + cam.z.toFixed(4) + ')';
-      capa.style.setProperty('--zoom', cam.z.toFixed(3));   // el borde de la elegida y las chispitas no engordan con el zoom
-      lienzo.dataset.cuarto = cam.z < 1.7 ? 'todo' : 'cerca';   // de lejos, las calcomanías tienen una zona de toque más grande
-      lienzo.style.touchAction = cam.z > 1.01 ? 'none' : 'pan-y';   // sin acercar no hay nada que deslizar: el dedo baja la pantalla
-      menos.disabled = cam.z <= 1.01; mas.disabled = cam.z >= ZOOM_MAX - .01;
-      camaras[paginaVista] = { z: cam.z, tx: cam.tx, ty: cam.ty };   // cada página recuerda dónde quedó su cámara
+      fijarZoom(!!modo);
+      fijar('cuarto', cam.z < 1.7 ? 'todo' : 'cerca', v => { lienzo.dataset.cuarto = v; });   // de lejos, las calcomanías tienen una zona de toque más grande
+      fijar('toque', cam.z > 1.01 ? 'none' : 'pan-y', v => { lienzo.style.touchAction = v; });   // sin acercar no hay nada que deslizar: el dedo baja la pantalla
+      fijar('menos', cam.z <= 1.01, v => { menos.disabled = v; }); fijar('mas', cam.z >= ZOOM_MAX - .01, v => { mas.disabled = v; });
+      const t = tope();
+      camaras[paginaVista] = { z: cam.z, tx: entre(cam.tx, -t, t), ty: entre(cam.ty, -t, t) };   // cada página recuerda dónde quedó su cámara
+    }
+    /* un dedo que cae mientras la cámara todavía se mueve (inercia o lupa) la detiene donde va. Si iba volviendo de
+       pasarse del borde, queda en el borde: nunca descansa mostrando un hueco */
+    function detener() {
+      if (!capa.classList.contains('suave') && !capa.classList.contains('deriva')) return;
+      if (capa.getAnimations().some(x => x.playState === 'running') && capa.offsetWidth) {   // si ya llegó, no hay nada que medir
+        const m = new DOMMatrixReadOnly(getComputedStyle(capa).transform), casi = (v, destino, margen) => Math.abs(v - destino) < margen ? destino : v;
+        if (m.a > 0) { cam.z = casi(m.a, cam.z, .003); cam.tx = casi(m.e / capa.offsetWidth * 100, cam.tx, .06); cam.ty = casi(m.f / capa.offsetHeight * 100, cam.ty, .06); }
+      }
+      camara(false);
     }
     /* acerca o aleja dejando quieto el punto (px, py) de la pantalla; sin punto, el centro del lienzo */
     function acercar(factor, px, py, suave) {
@@ -798,6 +840,7 @@
     const distancia = () => { const [a, b] = [...punteros.values()]; return { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; };
     lienzo.addEventListener('pointerdown', e => {   // en la fase de captura: se cuentan los dedos antes de que una calcomanía decida
       if (e.isPrimary) punteros.clear();
+      detener();
       punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (punteros.size === 1) { paneo = false; gesto = null; }
       if (punteros.size === 2 && !arrastrando) { gesto = Object.assign({ tipo: 'pellizco' }, distancia()); paneo = true; }
@@ -820,9 +863,13 @@
         const dx = e.clientX - gesto.x, dy = e.clientY - gesto.y;
         if (!gesto.activo && Math.hypot(dx, dy) < 5) return;   // un dedo nunca está del todo quieto: menos de 5 px es un toque
         if (!gesto.activo) { gesto.activo = true; paneo = true; try { lienzo.setPointerCapture(e.pointerId); } catch (err) { } }
-        const r = lienzo.getBoundingClientRect();
-        cam.tx = gesto.tx + dx / r.width * 100; cam.ty = gesto.ty + dy / r.height * 100;
-        camara();
+        const r = lienzo.getBoundingClientRect(), ahora = performance.now(), tx0 = cam.tx, ty0 = cam.ty;
+        cam.tx = goma(gesto.tx + dx / r.width * 100); cam.ty = goma(gesto.ty + dy / r.height * 100);
+        /* la velocidad del dedo (en % del lienzo por milisegundo), suavizada, para la inercia al soltar */
+        const dt = ahora - (gesto.t || ahora);
+        if (dt >= 4) { gesto.vx = .6 * (cam.tx - tx0) / dt + .4 * (gesto.vx || 0); gesto.vy = .6 * (cam.ty - ty0) / dt + .4 * (gesto.vy || 0); gesto.t = ahora; }
+        else if (!gesto.t) gesto.t = ahora;
+        camara(false, true);
       }
     });
     const suelta = e => {
@@ -831,7 +878,16 @@
       if (gesto.tipo === 'pellizco' && punteros.size === 1) {   // quedó un dedo: sigue deslizando desde donde está
         const [[id, pt]] = [...punteros.entries()];
         gesto = { tipo: 'desliza', id, x: pt.x, y: pt.y, tx: cam.tx, ty: cam.ty, activo: true };
-      } else if (!punteros.size) { gesto = null; setTimeout(() => { paneo = false; }, 0); }   // el «click» de este toque ya pasó
+      } else if (!punteros.size) {
+        const g = gesto; gesto = null; setTimeout(() => { paneo = false; }, 0);   // el «click» de este toque ya pasó
+        if (g.tipo === 'desliza' && g.activo) {
+          /* al soltar con impulso la página sigue un poco y frena sola; si quedó pasada del borde, vuelve */
+          const rapido = g.t && performance.now() - g.t < 90 && Math.hypot(g.vx || 0, g.vy || 0) > .03 && !quieto();
+          const t = tope(), pasada = Math.abs(cam.tx) > t + .01 || Math.abs(cam.ty) > t + .01;
+          if (rapido) { cam.tx += g.vx * 240; cam.ty += g.vy * 240; }
+          camara(rapido ? 'deriva' : pasada ? 'suave' : false);   // sin impulso y dentro del borde: se queda donde la dejó el dedo
+        } else fijarZoom(true);
+      }
     };
     lienzo.addEventListener('pointerup', suelta); lienzo.addEventListener('pointercancel', suelta);
     lienzo.addEventListener('wheel', e => {
@@ -1015,7 +1071,7 @@
       Object.assign(cam, camaras[id] || { z: 1, tx: 0, ty: 0 });
       fondo.src = pg.img; titulo.textContent = pg.nombre;
       selector.querySelectorAll('.pagina-album').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pagina === id)));
-      pintar(); camara();   // de una página a otra no hay viaje de cámara: la página nueva aparece
+      pintar(); camara(); fijarZoom(true);   // de una página a otra no hay viaje de cámara: la página nueva aparece
       lienzo.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: EASE_OUT });
     }
     const cabecera = el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), titulo, fichas().children[1]);
