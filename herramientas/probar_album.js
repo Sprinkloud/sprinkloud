@@ -94,6 +94,22 @@ const falla = async (promesa, texto) => { try { await promesa; return false; } c
   const g = JSON.parse(guardado['bosque-demo']);
   ok(g.extras.mejoras.join() === 'tetera' && g.extras.amistad === 3, 'las mejoras y la amistad se guardan en «extras», como en el servidor', g.extras);
 
+  console.log('\n9) Pasar de lección con 70 % (17-nov-2026: la dueña lo bajó de 80), igual que el servidor');
+  const libre = () => {   // la versión libre (sin clave), con su memoria vacía: ahí la regla la aplica la app
+    const window = { Leccion: { GUIA: Array.from({ length: 61 }, (_, i) => ['Tema ' + i, 'Objetivo ' + i]) } }, mem = {};
+    const ctx = { window, URLSearchParams, setTimeout, Date, JSON, Math, Number, String, Object, Promise, Error, console,
+      location: { search: '?dia=' + dia(2), pathname: '/' }, history: { replaceState() { } },
+      localStorage: { getItem: k => (k in mem ? mem[k] : null), setItem: (k, v) => { mem[k] = String(v); } } };
+    vm.createContext(ctx); vm.runInContext(codigo, ctx);
+    return window.Api;
+  };
+  const con = async (aciertos, intentos) => { const a = libre(); await a.cargar(); return (await a.practica({ tipo: 'notas', aciertos, intentos }, true)).avance; };
+  const justo = await con(7, 10), casi = await con(13, 19);
+  ok(justo && justo.pct === 70 && justo.paso === true, 'con 70 % justo pasa de lección', justo);
+  ok(casi && casi.pct === 68 && casi.paso === false, 'con 68 % todavía no', casi);
+  const textoApp = fs.readFileSync(path.join(__dirname, '..', 'js', 'app.js'), 'utf8');
+  ok(/const PCT_PASAR = 70;/.test(textoApp) && !/\b80 %/.test(textoApp), 'los mensajes de la app dicen 70 % y ninguno dice 80 %');
+
   console.log(`\n${pasos - fallos}/${pasos} comprobaciones bien` + (fallos ? ` · ${fallos} FALLARON` : ''));
   process.exit(fallos ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

@@ -143,6 +143,7 @@
 
   /* ---------- La prueba de nivel (30-oct; más justa desde el 4-nov): al entrar la primera vez, y desde la biblioteca para
      subir de nivel (repetir). Las reglas están en js/encuesta.js: un toque equivocado no decide el nivel. ---------- */
+  const PCT_PASAR = 70;   // el porcentaje para pasar de lección (17-nov-2026: antes 80). El mismo de js/api.js y del servidor (PARA_PASAR)
   const PAUSA_ENCUESTA = 600;   // ms sin poder responder al aparecer cada pregunta: el toque de la anterior no cuenta aquí
   function encuesta(repetir) {
     const p = $('#practica'), E = window.Encuesta;
@@ -317,7 +318,7 @@
       S.toque();
       // tocar la piedra lleva directo a la lección (pedido de la dueña): la de hoy o el repaso de una pasada; las futuras tienen candado
       if (c.premium) { club('leccion'); return; }   // versión libre: después de la etapa 3, los planes del club
-      if (c.estado === 'futura') { aviso('🔒 Lección ' + c.leccion + ': ' + c.tema + (estado.libre ? ' (se abre cuando pases la anterior con 80 %)' : ' (pronto)')); return; }
+      if (c.estado === 'futura') { aviso('🔒 Lección ' + c.leccion + ': ' + c.tema + (estado.libre ? ' (se abre cuando pases la anterior con ' + PCT_PASAR + ' %)' : ' (pronto)')); return; }
       practicar_(c.semana);
     });
     return caja;
@@ -447,18 +448,18 @@
     const premios = [].concat((r && r.insignias) || [], r && r.personaje ? ['amigo:' + r.personaje] : []);
     if (premios.length) setTimeout(() => mostrarPremios(premios), 2200);
   }
-  /* cómo le fue para pasar a la lección siguiente (80 %): alumnos del club, en 2 días; versión libre, en 1 */
+  /* cómo le fue para pasar a la lección siguiente (PCT_PASAR): alumnos del club, en 2 días; versión libre, en 1 */
   function avanceTxt(a) {
     if (!a) return null;
     if (a.dias != null) {
       const t = a.paso ? '⭐ ¡' + a.pct + ' %! Lección lograda: mañana empiezas la siguiente.'
-        : a.pct >= 80 ? '⭐ ¡' + a.pct + ' %! Llevas ' + a.dias + ' de ' + a.necesita + ' días con 80 %. ¡Un día más y pasas!'
-        : '💪 ' + a.pct + ' % de aciertos. Para pasar de lección necesitas 80 % en ' + a.necesita + ' días. ¡Mañana otra vez!';
-      return el('p', { class: 'avance-txt aparece d3' + (a.pct >= 80 ? ' bien' : ''), text: t });
+        : a.pct >= PCT_PASAR ? '⭐ ¡' + a.pct + ' %! Llevas ' + a.dias + ' de ' + a.necesita + ' días con ' + PCT_PASAR + ' %. ¡Un día más y pasas!'
+        : '💪 ' + a.pct + ' % de aciertos. Para pasar de lección necesitas ' + PCT_PASAR + ' % en ' + a.necesita + ' días. ¡Mañana otra vez!';
+      return el('p', { class: 'avance-txt aparece d3' + (a.pct >= PCT_PASAR ? ' bien' : ''), text: t });
     }
     const texto = a.paso && a.ultima ? '🎉 ¡Completaste la etapa 3 con ' + a.pct + ' %! Terminaste la versión libre.'
       : a.paso ? '⭐ ¡' + a.pct + ' % de aciertos! Mañana se abre la lección siguiente.'
-      : '💪 ' + a.pct + ' % de aciertos. Con 80 % pasas a la lección siguiente: ¡mañana otra vez!';
+      : '💪 ' + a.pct + ' % de aciertos. Con ' + PCT_PASAR + ' % pasas a la lección siguiente: ¡mañana otra vez!';
     return el('p', { class: 'avance-txt aparece d3' + (a.paso ? ' bien' : ''), text: texto });
   }
 

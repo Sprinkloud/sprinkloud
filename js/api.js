@@ -23,7 +23,7 @@ window.Api = (function () {
      (4 actividades): sin errores gasta 8 y alcanza; con muchos errores se acaba antes (pedido de la dueña, 30-oct) */
   const ENERGIA_DIA = 20, COSTO_ACTIVIDAD = 2, COSTO_ERROR = 2;
   const ULTIMA_LIBRE = 27;   // la versión libre llega hasta el final de la etapa 3 (6 + 8 + 13 lecciones)
-  const PARA_PASAR = .8;   // con el 80 % de aciertos en la práctica del día, al día siguiente se abre la lección siguiente
+  const PARA_PASAR = .7;   // con el 70 % de aciertos en la práctica del día, al día siguiente se abre la lección siguiente (17-nov-2026: antes 80 %; igual que el servidor)
   const gasto = (aciertos, intentos) => intentos ? COSTO_ACTIVIDAD + COSTO_ERROR * (intentos - aciertos) : 0;
 
   /* Las lecciones 20 a 23 son distintas en piano y en violín: el tema viene como «piano / violín» y el objetivo como
@@ -166,7 +166,7 @@ window.Api = (function () {
       return d;
     },
     guardar(j) { try { localStorage.setItem(demo.llave, JSON.stringify(j)); } catch (e) { } },
-    /* versión libre: si ayer (o antes) pasó la lección con el 80 %, hoy se abre la siguiente */
+    /* versión libre: si ayer (o antes) pasó la lección con el 70 %, hoy se abre la siguiente */
     avanzar(j, hoy) {
       if (!j.libre.paso || j.libre.paso >= hoy) return false;
       j.libre.paso = '';
