@@ -420,4 +420,4 @@ Las decisiones, los precios y la tabla de stickers y mejoras de cada mapa están
   - **El reloj cucú** se sacude con cada «cu-cú» (0 y 0,7 s).
   - **Cámara con goma e inercia:** pasado el borde la página cede cada vez menos (`goma`) y vuelve al soltar; soltar con impulso la deja andando un poco (`.deriva`, 480 ms); un dedo que cae la detiene donde va (`detener`). Con movimiento reducido, nada de esto anima.
   - **Ojo:** antes de pedir una transición de la cámara hay que hacer que el navegador vea dónde está (`getComputedStyle(capa).transform` en `camara`). Si el último movimiento del dedo y el soltar llegan en el mismo cuadro, sin eso anima también ese tramo y la página «rebota» hacia atrás.
-- **Falta:** probarlo en un iPhone y un Android de verdad (pellizco y sonidos) y los 24 stickers del lago que faltan.
+- **Falta:** probarlo en un iPhone y un Android de verdad (pellizco y sonidos) y los 24 stickers del lago que faltan (19-nov: 22 ya están pintados y recortados en `Libro_Sprinkloud/img/stickers/`; faltan los barquitos de papel y los farolitos flotantes. Entran juntos cuando estén los 30).
