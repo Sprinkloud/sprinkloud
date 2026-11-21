@@ -426,3 +426,10 @@ Las decisiones, los precios y la tabla de stickers y mejoras de cada mapa están
   - **Regalo nuevo:** `sopa` (la fogatita con olla, 8 malvaviscos). `sopa` y `pescado` se ven como emoji hasta que tengan su dibujo `regalo-<id>.webp`.
   - **Probado:** `album_test.js` 39 de 39, `probar_album.js` 39 de 39, `probar_camara.js` 96 de 96, y en el navegador los 30 pegados en el lago y tocados uno por uno: cada uno hace lo suyo y no hay errores.
 - **Falta:** probarlo en un iPhone y un Android de verdad (pellizco y sonidos), y los dibujos de los regalos `pescado` y `sopa`.
+
+## Ordenar sostenidos o bemoles: se anota y se compara (21-nov-2026, pedido de la dueña; publicado)
+- En la actividad de armaduras (`armadura` en `js/actividades.js`), la pregunta de ordenar ya no pide siempre las 7: pide una cantidad al azar, de 2 a 7 («Toca los 4 primeros sostenidos en orden»), con los 7 botones a la vista.
+- Cada toque se anota en la hilera «Tu orden» (con ↩ se quita la última). Al terminar aparece debajo la hilera «El orden» correcto, y las casillas de «Tu orden» quedan en verde o rojo. El pentagrama muestra la armadura con esa cantidad.
+- Se quitaron la frase «N de 7 en su lugar. Mira las rojas» y la línea con el orden: la comparación lo dice sola. Solo dice «¡Perfecto!» cuando todo está bien. Si hay errores, la comparación se queda 4,2 s antes de seguir.
+- CSS: `.ranuras-orden` contiene dos `.hilera-orden` (`--n` = cuántas casillas). Con 7 casillas cabe en 320 px.
+- Es lo mismo que hace `página_Sprinkloud/practica/armaduras.html`. `herramientas/probar_orden.js` es de la versión anterior (espera 7 lugares y el mensaje viejo): hay que ponerlo al día antes de volver a usarlo.

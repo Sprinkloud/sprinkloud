@@ -712,14 +712,16 @@ dialog.lh { max-width: calc(100vw - 16px); box-sizing: border-box; }
 dialog.lh .lh-in > * { min-width: 0; }
 dialog.lh h2, dialog.lh p { overflow-wrap: anywhere; }
 
-/* Ordenar sostenidos o bemoles (7-nov): 7 lugares que se llenan; al final, verde o rojo con la correcta debajo */
-.ranuras-orden { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; max-width: 420px; width: 100%; margin: 0 auto; }
-.lugar-orden { display: grid; justify-items: center; align-content: start; gap: 2px; min-height: 64px; padding: 6px 2px; border-radius: 12px;
+/* Ordenar sostenidos o bemoles (7-nov; 21-nov: «Tu orden» arriba y «El orden» debajo, para comparar casilla por casilla) */
+.ranuras-orden { display: grid; gap: 8px; max-width: 420px; width: 100%; margin: 0 auto; }
+.hilera-orden { display: grid; grid-template-columns: repeat(var(--n, 7), minmax(0, 56px)); justify-content: center; gap: 6px; }
+.titulo-orden { grid-column: 1 / -1; text-align: center; font-size: .8rem; font-weight: 800; color: var(--ink-2); }
+.lugar-orden { display: grid; place-items: center; min-height: 46px; padding: 4px 2px; border-radius: 12px;
   border: 2px dashed var(--line); background: var(--papel-claro); color: var(--hoja-tinta); transition: border-color 160ms var(--ease-out), background-color 160ms var(--ease-out); }
-.lugar-orden b { font-size: 1.05rem; min-height: 1.4em; }
-.lugar-orden small { font-weight: 800; font-size: .85rem; color: var(--ok-text); min-height: 1.2em; }
+.lugar-orden b { font-size: clamp(.78rem, 3.6vw, 1.05rem); white-space: nowrap; }
 .lugar-orden.lleno { border-style: solid; }
 .lugar-orden.bien { border-color: var(--moss); background: color-mix(in srgb, var(--moss) 14%, var(--papel-claro)); }
 .lugar-orden.mal { border-color: var(--rose-strong); background: color-mix(in srgb, var(--rose-strong) 12%, var(--papel-claro)); }
-.lugar-orden.mal b { color: var(--mal-text); text-decoration: line-through; text-decoration-thickness: 2px; }
+.lugar-orden.mal b { color: var(--mal-text); }
+.hilera-orden.correcta .lugar-orden { border-color: var(--moss); }
 .deshacer-orden { --d: 52px; }

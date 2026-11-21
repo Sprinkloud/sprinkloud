@@ -442,40 +442,42 @@ window.Actividades = (function () {
       const { d, n, f } = pr;
       regla.textContent = ''; msj.textContent = '';
       if (pr.tipo === 'orden') {
-        /* 7-nov (pedido de la dueña): no se corta al primer error. El alumno pone las 7 en el orden que cree (con ↩ puede
-           quitar la última) y al final se corrige cada lugar: verde lo que estaba bien, rojo lo que no, con la correcta
-           debajo. Así ve dónde se equivocó y sabe que el resto lo tenía bien. */
-        pedido.textContent = 'Toca los ' + (f === 's' ? 'sostenidos' : 'bemoles') + ' en orden';
+        /* 7-nov (pedido de la dueña): no se corta al primer error. 21-nov (la dueña): se pide una cantidad («los 4 primeros
+           sostenidos»), cada toque se anota en «Tu orden» (con ↩ se quita la última) y al final aparece debajo «El orden»
+           correcto para comparar, casilla por casilla. Sin frase que explique el error: la comparación lo dice sola. */
+        const cuantos = 2 + Math.floor(o.rnd() * 6), nombre = f === 's' ? 'sostenidos' : 'bemoles';
+        pedido.textContent = cuantos === 7 ? 'Toca los 7 ' + nombre + ' en orden' : 'Toca los ' + cuantos + ' primeros ' + nombre + ' en orden';
         dibujarArmadura(pent, 'C');
-        const correctas = d.orden.map(x => x + d.signo), puestas = [];
-        const lugares = correctas.map(() => el('span', { class: 'lugar-orden' }, el('b'), el('small')));
-        const ranuras = el('div', { class: 'ranuras-orden', 'aria-live': 'polite' }, lugares);
+        const todas = d.orden.map(x => x + d.signo), correctas = todas.slice(0, cuantos), puestas = [];
+        const hilera = titulo => el('div', { class: 'hilera-orden', style: '--n:' + cuantos }, el('span', { class: 'titulo-orden', text: titulo }),
+          correctas.map(() => el('span', { class: 'lugar-orden' }, el('b'))));
+        const tuya = hilera('Tu orden'), lugares = [...tuya.querySelectorAll('.lugar-orden')];
+        const ranuras = el('div', { class: 'ranuras-orden', 'aria-live': 'polite' }, tuya);
         pent.after(ranuras);
         const pintar = () => lugares.forEach((l, i) => { l.firstChild.textContent = puestas[i] ? puestas[i].op : ''; l.classList.toggle('lleno', !!puestas[i]); });
         await new Promise(listo => {
-          botones(mezclar(o.rnd, correctas), (op, b) => {
-            if (b.disabled || puestas.length >= 7) return;
+          botones(mezclar(o.rnd, todas), (op, b) => {
+            if (b.disabled || puestas.length >= cuantos) return;
             puestas.push({ op, b }); b.disabled = true; S.toque(); pintar();
-            if (puestas.length === 7) { deshacer.remove(); listo(); }
+            if (puestas.length === cuantos) { deshacer.remove(); listo(); }
           });
           var deshacer = puff('↩', 'papel deshacer-orden', () => { const u = puestas.pop(); if (u) { u.b.disabled = false; pintar(); } });
           deshacer.setAttribute('aria-label', 'Quitar la última');
           fila.append(deshacer);
         });
+        fila.querySelectorAll('button').forEach(b => { b.disabled = true; });
         let bienPuestas = 0;
-        lugares.forEach((l, i) => {
-          const ok = puestas[i].op === correctas[i];
-          if (ok) bienPuestas++;
-          l.classList.add(ok ? 'bien' : 'mal');
-          l.lastChild.textContent = ok ? '' : correctas[i];
-        });
-        dibujarArmadura(pent, d.vf[7]);
-        regla.textContent = correctas.join(' · ');
-        const ok = bienPuestas === 7;
+        lugares.forEach((l, i) => { const bien = puestas[i].op === correctas[i]; if (bien) bienPuestas++; l.classList.add(bien ? 'bien' : 'mal'); });
+        const correcta = hilera('El orden');
+        correcta.classList.add('correcta');
+        correcta.querySelectorAll('.lugar-orden').forEach((l, i) => { l.firstChild.textContent = correctas[i]; l.classList.add('lleno'); });
+        ranuras.append(correcta);
+        dibujarArmadura(pent, d.vf[cuantos]);
+        const ok = bienPuestas === cuantos;
         ok ? S.acierto() : S.error();
         msj.className = 'mensaje ' + (ok ? 'bien' : 'mal');
-        msj.textContent = ok ? '¡Perfecto!' : bienPuestas + ' de 7 en su lugar. Mira las rojas 👀';
-        await espera(ok ? 1800 : 3600);
+        msj.textContent = ok ? '¡Perfecto!' : '';
+        await espera(ok ? 1800 : 4200);
         ranuras.remove();
         return ok;
       }
