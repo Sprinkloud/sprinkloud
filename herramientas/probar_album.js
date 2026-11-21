@@ -57,6 +57,11 @@ const falla = async (promesa, texto) => { try { await promesa; return false; } c
   console.log('\n5) Los mapas se ahorran');
   api = abrir('2026-12-12');
   e = await api.cargar();
+  /* 20-nov-2026: el lago completo, con sus 30 stickers, y la fogatita que sirve sopa */
+  const delLago = e.catalogo.tienda.filter(t => t.mapa === 'lago' && t.tipo !== 'mapa');
+  ok(delLago.length === 30 && delLago.every(t => t.precio >= 60 && t.precio <= 250 && t.tam > 0 && (!t.mejora || (t.mejora.precio >= 60 && t.mejora.precio <= 250))), 'el lago tiene sus 30 stickers, con precios y mejoras de 60 a 250', delLago.length);
+  const fogatita = delLago.find(t => t.id === 'lago-fogatita-olla');
+  ok(fogatita && fogatita.mejora && fogatita.mejora.regalo === 'sopa' && fogatita.mejora.uso === 8, 'la fogatita mejorada sirve una sopa por 8');
   const lago = e.catalogo.tienda.find(t => t.id === 'mapa-lago'), canoa = e.catalogo.tienda.find(t => t.id === 'lago-canoa');
   ok(lago && lago.tipo === 'mapa' && lago.precio === 900 && canoa.mapa === 'lago' && canoa.precio === 250 && canoa.tam > 0, 'la tienda trae el mapa del lago (900) y sus stickers');
   ok(await falla(api.comprar('mapa-lago'), /Te faltan \d+ malvaviscos/), 'con lo de unos días de práctica no alcanza para el mapa');

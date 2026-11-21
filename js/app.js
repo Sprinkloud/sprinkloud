@@ -32,7 +32,7 @@
     tazas: '☕', 'pastel-miel': '🍰', lampara: '🪔', libros: '📚', 'tarro-miel': '🍯', metronomo: '⏱️', 'mesa-comedor': '🪑', 'frascos-mermelada': '🫙',
     'cama-parches': '🛏️', 'cama-hojas': '🛌', banca: '🪵', columpio: '🎠', 'flores-jardin': '🌷', calabazas: '🎃', 'palitos-malvavisco': '🍡',
     'mapa-lago': '🏞️', 'lago-canoa': '🛶', 'lago-peces': '🐟', 'lago-nenufares-rana': '🐸', 'lago-patitos': '🦆', 'lago-cana-pescar': '🎣', 'lago-cesta-pesca': '🧺',
-    'regalo-galletas': '🍪', 'regalo-cacao': '☕', 'regalo-pescado': '🐟',
+    'regalo-galletas': '🍪', 'regalo-cacao': '☕', 'regalo-pescado': '🐟', 'regalo-sopa': '🍲',
     'amigo-osito': '🐻', 'amigo-conejo': '🐰', 'amigo-ardilla': '🐿️', 'amigo-zorro': '🦊', 'amigo-erizo': '🦔', 'amigo-raton': '🐭',
     primera: '🌱', racha3: '🔥', racha7: '🪵', racha14: '🌟', racha30: '👑', perfecta: '💯', aciertos100: '🎯', aciertos500: '🏆', dias10: '🍄', dias30: '🌳', compra: '🛍️', casa5: '🏡' };
   function arte(id) { return IMAGENES.has(id) ? el('img', { src: 'assets/arte/' + id + '.webp', alt: '' }) : document.createTextNode(EMOJI[id] || '✨'); }
@@ -593,9 +593,10 @@
   /* ---------- El álbum (16-nov-2026, idea de la dueña): la casita y los mapas son páginas donde se pegan calcomanías ----------
      Cada calcomanía pegada dice en qué página está (`e`: el mapa; sin `e`, la casita). Los amigos que están de visita son
      calcomanías («amigo-<id>») y los mapas se compran en la tienda. */
-  const NOMBRE_REGALO = { galletas: 'Galletas', cacao: 'Cacao', pescado: 'Pescado' };
+  const NOMBRE_REGALO = { galletas: 'Galletas', cacao: 'Cacao', pescado: 'Pescado', sopa: 'Sopa' };
   const ACCION_ICO = { hornear: '🍪', servir: '☕', cancion: '🎵', melodia: '🎶', cucu: '🐦', dormir: '💤', mecer: '🍃', pulso: '🎼', luz: '💡',
-    navegar: '🌊', nadar: '💦', saltar: '💦', croar: '🐸', pescar: '🎣' };
+    navegar: '🌊', nadar: '💦', saltar: '💦', croar: '🐸', pescar: '🎣',
+    revolotear: '🦋', esconder: '🐢', aletear: '🪶', viento: '🍃', roer: '🪵', campana: '🔔' };
   const itemDe = id => estado.catalogo.tienda.find(t => t.id === id);
   const mejorada = id => (estado.juego.mejoras || []).includes(id);
   const paginas = () => [{ id: 'casa', nombre: 'Mi casita', img: 'assets/ilustraciones/casa-vacia.webp', mini: 'assets/ilustraciones/casa-vacia-mini.webp', tengo: true }]
@@ -643,6 +644,14 @@
     hornear: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-2deg)', 'rotate(2deg)', 'rotate(-2deg)', 'rotate(0)'), { duration: 900 }, '50% 100%', ['💨', '💨'], 350],
     servir: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(-2deg)', 'rotate(2deg)', 'rotate(0)'), { duration: 700 }, '50% 100%', ['💨'], 0],
     pescar: () => [cuadros(EASE_OUT, 'rotate(0)', 'rotate(-14deg)', 'rotate(6deg)', 'rotate(0)'), { duration: 900 }, '50% 100%', ['💧'], 500],
+    /* 20-nov-2026, los del lago: las libélulas dan una vuelta, la tortuga se encoge y asoma, la garza aletea, los juncos
+       se doblan desde la raíz, el castor roe (tres mordiscos, como su sonido) y la boya se balancea con su campana */
+    revolotear: () => [cuadros(EASE_IN_OUT, 'translate(0, 0) rotate(0)', 'translate(14%, -16%) rotate(6deg)', 'translate(-12%, -24%) rotate(-6deg)', 'translate(10%, -8%) rotate(4deg)', 'translate(0, 0) rotate(0)'), { duration: 1800 }, '50% 50%', [], 0],
+    esconder: () => [[{ transform: 'scale(1, 1)', easing: EASE_OUT, offset: 0 }, { transform: 'scale(.94, .82)', easing: EASE_OUT, offset: .2 }, { transform: 'scale(.94, .82)', easing: EASE_OUT, offset: .62 }, { transform: 'scale(1.03, 1.05)', easing: EASE_OUT, offset: .82 }, { transform: 'scale(1, 1)', offset: 1 }], { duration: 1500 }, '50% 100%', [], 0],
+    aletear: () => [cuadros(EASE_IN_OUT, 'translateY(0) scale(1, 1)', 'translateY(-7%) scale(1.07, .95)', 'translateY(0) scale(.97, 1.03)', 'translateY(-7%) scale(1.07, .95)', 'translateY(0) scale(1, 1)'), { duration: 1200 }, '50% 100%', [], 0],
+    viento: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(6deg)', 'rotate(-4deg)', 'rotate(4deg)', 'rotate(-2deg)', 'rotate(0)'), { duration: 1800 }, '50% 100%', ['🍃'], 0],
+    roer: () => [cuadros(EASE_OUT, 'rotate(0)', 'rotate(-3deg)', 'rotate(2deg)', 'rotate(-3deg)', 'rotate(2deg)', 'rotate(-3deg)', 'rotate(0)'), { duration: 1000 }, '50% 100%', [], 0],
+    campana: () => [pendulo(9, 4), { duration: 1800 }, '50% 100%', ['🔔'], 0],
     regalo: () => [cuadros(EASE_OUT, 'translateY(0)', 'translateY(-12%)', 'translateY(0)', 'translateY(-7%)', 'translateY(0)'), { duration: 700 }, '50% 100%', ['💛', '💛', '💛'], 160]
   };
   /* una chispita (una nota, una gota, un corazón, o el dibujo de un regalo) que sale de arriba de la calcomanía y sube */

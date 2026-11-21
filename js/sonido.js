@@ -192,6 +192,13 @@ window.Sonido = (function () {
         case 'hornear': ruido(t, .9, 2400, .1); campana(t + .95, 96, .26, .9); return 1.4;
         case 'servir': ruido(t, .7, 1400, .12); [72, 76, 79].forEach((m, i) => marimba(t + .7 + i * .07, m, .18)); return 1.2;
         case 'pescar': voz(t, 84, 60, .3, .08, 'sine'); ruido(t + .35, .25, 800, .28); [79, 84].forEach((m, i) => marimba(t + .9 + i * .09, m, .2)); return 1.4;
+        /* 20-nov-2026, los del lago */
+        case 'revolotear': [0, .45, .9, 1.35].forEach(d => ruido(t + d, .22, 3200, .06)); return 1.8;
+        case 'esconder': voz(t, 62, 55, .16, .12, 'sine'); voz(t + .95, 57, 66, .16, .12, 'sine'); return 1.5;
+        case 'aletear': [0, .3, .6, .9].forEach(d => ruido(t + d, .16, 1100, .16)); return 1.2;
+        case 'viento': ruido(t, 1.1, 1500, .07); ruido(t + .7, .9, 2100, .05); return 1.8;
+        case 'roer': [0, .3, .6].forEach(d => ruido(t + d, .07, 2600, .22)); return 1;
+        case 'campana': [0, .9].forEach(d => campana(t + d, 81, .22, .9)); return 1.8;
         case 'regalo': [76, 79, 84, 88].forEach((m, i) => marimba(t + i * .09, m, .24)); return .8;
         default: return 0;
       }

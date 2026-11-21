@@ -94,7 +94,31 @@ window.Api = (function () {
     { id: 'lago-cesta-pesca', mapa: 'lago', lugar: 'lago', nombre: 'Cesta de pesca', precio: 90, tam: 14 },
     { id: 'lago-patitos', mapa: 'lago', lugar: 'lago', nombre: 'Mamá pata y patitos', precio: 110, tam: 20 },
     { id: 'lago-cana-pescar', mapa: 'lago', lugar: 'lago', nombre: 'Caña de pescar', precio: 130, tam: 17 },
-    { id: 'lago-canoa', mapa: 'lago', lugar: 'lago', nombre: 'Canoa', precio: 250, tam: 30 }
+    { id: 'lago-canoa', mapa: 'lago', lugar: 'lago', nombre: 'Canoa', precio: 250, tam: 30 },
+    { id: 'lago-velero', mapa: 'lago', lugar: 'lago', nombre: 'Velero', precio: 220, tam: 26 },
+    { id: 'lago-salvavidas', mapa: 'lago', lugar: 'lago', nombre: 'Salvavidas', precio: 60, tam: 12 },
+    { id: 'lago-libelulas', mapa: 'lago', lugar: 'lago', nombre: 'Libélulas', precio: 80, tam: 14 },
+    { id: 'lago-tortuga-tronco', mapa: 'lago', lugar: 'lago', nombre: 'Tortuga en el tronco', precio: 110, tam: 18 },
+    { id: 'lago-cisne', mapa: 'lago', lugar: 'lago', nombre: 'Cisne', precio: 130, tam: 16 },
+    { id: 'lago-garza', mapa: 'lago', lugar: 'lago', nombre: 'Garza', precio: 110, tam: 15 },
+    { id: 'lago-juncos', mapa: 'lago', lugar: 'lago', nombre: 'Juncos', precio: 60, tam: 14 },
+    { id: 'lago-farol-muelle', mapa: 'lago', lugar: 'lago', nombre: 'Farol del muelle', precio: 90, tam: 11 },
+    { id: 'lago-cubeta-peces', mapa: 'lago', lugar: 'lago', nombre: 'Cubeta de peces', precio: 80, tam: 12 },
+    { id: 'lago-red-pesca', mapa: 'lago', lugar: 'lago', nombre: 'Red de pesca', precio: 70, tam: 14 },
+    { id: 'lago-tienda-campana', mapa: 'lago', lugar: 'lago', nombre: 'Tienda de campaña', precio: 200, tam: 26 },
+    { id: 'lago-fogatita-olla', mapa: 'lago', lugar: 'lago', nombre: 'Fogatita con olla', precio: 150, tam: 16 },
+    { id: 'lago-toalla-sombrero', mapa: 'lago', lugar: 'lago', nombre: 'Toalla con sombrero', precio: 70, tam: 16 },
+    { id: 'lago-barquito-papel', mapa: 'lago', lugar: 'lago', nombre: 'Barquitos de papel', precio: 80, tam: 16 },
+    { id: 'lago-ranitas', mapa: 'lago', lugar: 'lago', nombre: 'Ranitas', precio: 90, tam: 16 },
+    { id: 'lago-balsa-troncos', mapa: 'lago', lugar: 'lago', nombre: 'Balsa de troncos', precio: 180, tam: 24 },
+    { id: 'lago-bote-cisne', mapa: 'lago', lugar: 'lago', nombre: 'Bote cisne', precio: 240, tam: 26 },
+    { id: 'lago-puente-arco', mapa: 'lago', lugar: 'lago', nombre: 'Puente de arco', precio: 200, tam: 32 },
+    { id: 'lago-castor-presa', mapa: 'lago', lugar: 'lago', nombre: 'Castor y su presa', precio: 130, tam: 18 },
+    { id: 'lago-nutria', mapa: 'lago', lugar: 'lago', nombre: 'Nutria', precio: 120, tam: 16 },
+    { id: 'lago-boya', mapa: 'lago', lugar: 'lago', nombre: 'Boya con gaviota', precio: 80, tam: 12 },
+    { id: 'lago-hamaca', mapa: 'lago', lugar: 'lago', nombre: 'Hamaca', precio: 160, tam: 24 },
+    { id: 'lago-farolitos-flotantes', mapa: 'lago', lugar: 'lago', nombre: 'Farolitos flotantes', precio: 120, tam: 18 },
+    { id: 'lago-piedras-paso', mapa: 'lago', lugar: 'lago', nombre: 'Piedras de paso', precio: 70, tam: 20 }
   ]);
   /* mejoras: un sticker comprado se mejora pagando y desde entonces hace algo; los que tienen `uso` preparan un regalo */
   const MEJORAS = {
@@ -103,9 +127,28 @@ window.Api = (function () {
     'cama-parches': { precio: 150, accion: 'dormir' }, 'cama-hojas': { precio: 150, accion: 'dormir' }, 'columpio': { precio: 100, accion: 'mecer' },
     'metronomo': { precio: 80, accion: 'pulso' }, 'lampara': { precio: 60, accion: 'luz' }, 'farolito': { precio: 60, accion: 'luz' },
     'lago-canoa': { precio: 120, accion: 'navegar' }, 'lago-patitos': { precio: 100, accion: 'nadar' }, 'lago-peces': { precio: 80, accion: 'saltar' },
-    'lago-nenufares-rana': { precio: 80, accion: 'croar' }, 'lago-cana-pescar': { precio: 150, accion: 'pescar', uso: 5, regalo: 'pescado' }
+    'lago-nenufares-rana': { precio: 80, accion: 'croar' }, 'lago-cana-pescar': { precio: 150, accion: 'pescar', uso: 5, regalo: 'pescado' },
+    'lago-velero': { precio: 120, accion: 'navegar' },
+    'lago-libelulas': { precio: 80, accion: 'revolotear' },
+    'lago-tortuga-tronco': { precio: 80, accion: 'esconder' },
+    'lago-cisne': { precio: 100, accion: 'nadar' },
+    'lago-garza': { precio: 80, accion: 'aletear' },
+    'lago-juncos': { precio: 60, accion: 'viento' },
+    'lago-farol-muelle': { precio: 60, accion: 'luz' },
+    'lago-cubeta-peces': { precio: 80, accion: 'saltar' },
+    'lago-tienda-campana': { precio: 150, accion: 'dormir' },
+    'lago-fogatita-olla': { precio: 150, accion: 'servir', uso: 8, regalo: 'sopa' },
+    'lago-barquito-papel': { precio: 80, accion: 'navegar' },
+    'lago-ranitas': { precio: 80, accion: 'croar' },
+    'lago-balsa-troncos': { precio: 120, accion: 'navegar' },
+    'lago-bote-cisne': { precio: 120, accion: 'navegar' },
+    'lago-castor-presa': { precio: 80, accion: 'roer' },
+    'lago-nutria': { precio: 100, accion: 'nadar' },
+    'lago-boya': { precio: 60, accion: 'campana' },
+    'lago-hamaca': { precio: 100, accion: 'mecer' },
+    'lago-farolitos-flotantes': { precio: 80, accion: 'luz' }
   };
-  const REGALOS = ['galletas', 'cacao', 'pescado'], DESPENSA_MAX = 9;
+  const REGALOS = ['galletas', 'cacao', 'pescado', 'sopa'], DESPENSA_MAX = 9;
   const CATALOGO_TIENDA = TIENDA.map(t => MEJORAS[t.id] ? Object.assign({}, t, { mejora: MEJORAS[t.id] }) : t);
   const INSIGNIAS = [
     ['primera', 'Primera práctica', j => j.dias >= 1], ['racha3', '3 días seguidos', j => j.mejor >= 3], ['racha7', '7 días seguidos', j => j.mejor >= 7],

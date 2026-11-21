@@ -48,10 +48,11 @@ Empezó el 12-nov-2026 como «opción 2» (escenarios con stickers) y el 16-nov 
 - **Modo de prueba** (`js/api.js`): las mismas reglas. Prueba: `node herramientas/probar_album.js` (34).
 - **App** (`js/app.js`, `css/app.css`, `js/sonido.js`, `js/compartir.js`): el álbum con sus páginas, la tienda con mapas, mejoras y amigos, y las acciones. El detalle está en `CLAUDE.md`, «El álbum».
 - **Arte** (`herramientas/arte.py`): el fondo del lago, 6 stickers del lago, 2 regalos y los 6 amigos.
+- **20-nov-2026, el lago completo:** los otros 24 stickers en `TIENDA` y 19 mejoras en `MEJORAS` (servidor y `js/api.js`), el regalo nuevo `sopa` (la fogatita) y 6 acciones nuevas en la app: `revolotear` (libélulas), `esconder` (tortuga), `aletear` (garza), `viento` (juncos), `roer` (castor) y `campana` (boya). Los regalos `pescado` y `sopa` todavía se ven como emoji: falta su dibujo.
 
 ## Los stickers de cada mapa y su mejora
 
-✓ = ya está en la tienda. Los demás entran a medida que la tarea diaria los pinta (`Libro_Sprinkloud/herramientas/ilustraciones/etapa19.txt`, en este orden). Las acciones que todavía no existen en la app están en cursiva: se programan cuando llegue el dibujo.
+✓ = ya está en la tienda (**el lago entró completo, con sus 30, el 20-nov-2026**). Los demás entran a medida que la tarea diaria los pinta (`Libro_Sprinkloud/herramientas/ilustraciones/etapa19.txt`, en este orden). Las acciones que todavía no existen en la app están en cursiva: se programan cuando llegue el dibujo.
 
 ### El lago (900)
 
@@ -63,30 +64,30 @@ Empezó el 12-nov-2026 como «opción 2» (escenarios con stickers) y el 16-nov 
 | Mamá pata y patitos ✓ | 110 | 100 | Nadan y hacen cuac |
 | Caña de pescar ✓ | 130 | 150 | Pesca un pescado (5), regalo para un amigo |
 | Canoa ✓ | 250 | 120 | Navega |
-| Velero | 220 | 120 | Navega |
-| Salvavidas | 60 | sin mejora | |
-| Libélulas | 80 | 80 | *Revolotean* |
-| Tortuga en el tronco | 110 | 80 | *Esconde la cabeza y asoma* |
-| Cisne | 130 | 100 | Nada |
-| Garza | 110 | 80 | *Aletea* |
-| Juncos | 60 | 60 | Se mecen con el viento |
-| Farol del muelle | 90 | 60 | Se enciende |
-| Cubeta de peces | 80 | 80 | Saltan |
-| Red de pesca | 70 | sin mejora | |
-| Tienda de campaña | 200 | 150 | Alguien duerme adentro (zzz) |
-| Fogatita con olla | 150 | 150 | Sirve una sopa (8), regalo |
-| Toalla con sombrero | 70 | sin mejora | |
-| Barquitos de papel | 80 | 80 | Navegan |
-| Ranitas | 90 | 80 | Croan en fila |
-| Balsa de troncos | 180 | 120 | Navega |
-| Bote cisne | 240 | 120 | Navega |
-| Puente de arco | 200 | sin mejora | |
-| Castor y su presa | 130 | 80 | *Asoma y roe* |
-| Nutria | 120 | 100 | Nada panza arriba |
-| Boya con gaviota | 80 | 60 | *Suena su campana* |
-| Hamaca | 160 | 100 | Se mece |
-| Farolitos flotantes | 120 | 80 | Se encienden |
-| Piedras de paso | 70 | sin mejora | |
+| Velero ✓ | 220 | 120 | Navega |
+| Salvavidas ✓ | 60 | sin mejora | |
+| Libélulas ✓ | 80 | 80 | Revolotean |
+| Tortuga en el tronco ✓ | 110 | 80 | Esconde la cabeza y asoma |
+| Cisne ✓ | 130 | 100 | Nada |
+| Garza ✓ | 110 | 80 | Aletea |
+| Juncos ✓ | 60 | 60 | Se doblan con el viento |
+| Farol del muelle ✓ | 90 | 60 | Se enciende |
+| Cubeta de peces ✓ | 80 | 80 | Saltan |
+| Red de pesca ✓ | 70 | sin mejora | |
+| Tienda de campaña ✓ | 200 | 150 | Alguien duerme adentro (zzz) |
+| Fogatita con olla ✓ | 150 | 150 | Sirve una sopa (8), regalo |
+| Toalla con sombrero ✓ | 70 | sin mejora | |
+| Barquitos de papel ✓ | 80 | 80 | Navegan |
+| Ranitas ✓ | 90 | 80 | Croan en fila |
+| Balsa de troncos ✓ | 180 | 120 | Navega |
+| Bote cisne ✓ | 240 | 120 | Navega |
+| Puente de arco ✓ | 200 | sin mejora | |
+| Castor y su presa ✓ | 130 | 80 | Asoma y roe |
+| Nutria ✓ | 120 | 100 | Nada panza arriba |
+| Boya con gaviota ✓ | 80 | 60 | Suena su campana |
+| Hamaca ✓ | 160 | 100 | Se mece |
+| Farolitos flotantes ✓ | 120 | 80 | Se encienden |
+| Piedras de paso ✓ | 70 | sin mejora | |
 
 ### El picnic (1 200)
 

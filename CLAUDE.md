@@ -420,4 +420,9 @@ Las decisiones, los precios y la tabla de stickers y mejoras de cada mapa están
   - **El reloj cucú** se sacude con cada «cu-cú» (0 y 0,7 s).
   - **Cámara con goma e inercia:** pasado el borde la página cede cada vez menos (`goma`) y vuelve al soltar; soltar con impulso la deja andando un poco (`.deriva`, 480 ms); un dedo que cae la detiene donde va (`detener`). Con movimiento reducido, nada de esto anima.
   - **Ojo:** antes de pedir una transición de la cámara hay que hacer que el navegador vea dónde está (`getComputedStyle(capa).transform` en `camara`). Si el último movimiento del dedo y el soltar llegan en el mismo cuadro, sin eso anima también ese tramo y la página «rebota» hacia atrás.
-- **Falta:** probarlo en un iPhone y un Android de verdad (pellizco y sonidos) y los 24 stickers del lago que faltan (19-nov: 22 ya están pintados y recortados en `Libro_Sprinkloud/img/stickers/`; faltan los barquitos de papel y los farolitos flotantes. Entran juntos cuando estén los 30).
+- **El lago completo (20-nov-2026, PUBLICADO):** el mapa tiene sus 30 stickers en la tienda.
+  - 24 stickers nuevos y 19 mejoras, iguales en el servidor y en `js/api.js` (la tabla está en `plan-escenarios.md`).
+  - **6 acciones nuevas** (`MOVIMIENTOS` en `js/app.js`, `Sonido.juguete` en `js/sonido.js` y su dibujito en `ACCION_ICO`): `revolotear`, `esconder`, `aletear`, `viento` (como `mecer`, pero gira desde abajo: los juncos están plantados), `roer` y `campana`.
+  - **Regalo nuevo:** `sopa` (la fogatita con olla, 8 malvaviscos). `sopa` y `pescado` se ven como emoji hasta que tengan su dibujo `regalo-<id>.webp`.
+  - **Probado:** `album_test.js` 39 de 39, `probar_album.js` 39 de 39, `probar_camara.js` 96 de 96, y en el navegador los 30 pegados en el lago y tocados uno por uno: cada uno hace lo suyo y no hay errores.
+- **Falta:** probarlo en un iPhone y un Android de verdad (pellizco y sonidos), y los dibujos de los regalos `pescado` y `sopa`.
