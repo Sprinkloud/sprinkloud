@@ -149,6 +149,9 @@
     const p = $('#practica'), E = window.Encuesta;
     const escenario = el('div', { class: 'escenario encuesta' });
     const respuestas = [];
+    /* subir de nivel: solo las preguntas de la etapa en la que va; si la aprueba, pasa a la siguiente (25-nov-2026) */
+    const etapaHoy = repetir && estado.leccion ? estado.leccion.etapa : null;
+    const preguntas = E.armar(etapaHoy);
     llenar(p, escenario);
     ir('practica');
     llenar(escenario,
@@ -161,8 +164,8 @@
         puff(repetir ? 'Empezar' : 'Empezar la prueba', 'grande ocre', () => preguntar(0)),
         repetir ? puff('Ahora no', 'papel', () => logros()) : puff('Empezar desde la lección 1', 'papel', () => terminar(1))));
     function preguntar(i) {
-      const q = E.PREGUNTAS[i];
-      const puntos = el('div', { class: 'puntos-encuesta', 'aria-label': 'Pregunta ' + (i + 1) + ' de ' + E.PREGUNTAS.length }, E.PREGUNTAS.map((_, k) => el('i', { class: k < i ? 'hecho' : k === i ? 'ahora' : '' })));
+      const q = preguntas[i];
+      const puntos = el('div', { class: 'puntos-encuesta', 'aria-label': 'Pregunta ' + (i + 1) + ' de ' + preguntas.length }, preguntas.map((_, k) => el('i', { class: k < i ? 'hecho' : k === i ? 'ahora' : '' })));
       const dibujo = q.pentagrama ? el('div', { class: 'pentagrama-encuesta' }) : null;
       const escuchar = q.sonido ? puff('🔊 Escuchar', 'cielo', () => { S.despertar(); S.callar(); S.nota(q.sonido[0], .7); S.luego(800, () => S.nota(q.sonido[1], .7)); }) : null;
       const listaDesde = Date.now() + PAUSA_ENCUESTA;
@@ -174,8 +177,8 @@
         const bien = op === q.correcta;
         if (bien) S.acierto(); else if (op !== E.NO_SE) S.error();
         respuestas.push({ etapa: q.etapa, bien });
-        const r = E.evaluar(respuestas);
-        if (r.sigue) setTimeout(() => preguntar(i + 1), 250);
+        const r = E.evaluar(preguntas, respuestas);
+        if (r.siguiente >= 0) setTimeout(() => preguntar(r.siguiente), 250);
         else terminar(E.semanaDe(r.etapa), r);
       };
       const opciones = el('div', { class: 'respuestas-encuesta espera' }, E.mezclar(q.opciones).map(op => puff(op, 'papel', () => responder(op))));
@@ -1225,7 +1228,7 @@
   /* repetir la prueba de nivel para subir (4-nov): una vez por semana; si todavía no se puede, dice desde qué día */
   function pruebaNivel() {
     const pr = estado.prueba;
-    if (!pr) return null;
+    if (!pr || (estado.leccion && estado.leccion.etapa >= 7)) return null;
     const f = pr.desde.split('-');
     // antes de los 7 días el botón queda gris (plomo), sin frases (pedido de la dueña, 4-nov): al tocarlo, solo la fecha
     return el('div', { class: 'prueba-nivel casa-acciones', style: 'grid-template-columns:1fr;margin-top:14px' },

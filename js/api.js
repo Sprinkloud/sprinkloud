@@ -300,7 +300,9 @@ window.Api = (function () {
       const j = demo.leer();
       if (!(s >= 1 && s <= 60)) throw new Error('La lección no se entiende.');
       if (LIBRE) {
-        const repite = !!j.libre.nivelado, pr = pruebaDe(j.libre), nueva = Math.min(s, ULTIMA_LIBRE);
+        // repetirla sube una etapa como máximo (25-nov-2026, igual que topeSubida_ del servidor)
+        const tope = x => { const e = etapaDe(x).etapa; return e >= 7 ? x : LARGO.slice(0, e).reduce((t, n) => t + n, 1); };
+        const repite = !!j.libre.nivelado, pr = pruebaDe(j.libre), nueva = Math.min(s, ULTIMA_LIBRE, repite ? tope(j.libre.semana || 1) : 60);
         if (repite && !(pr && pr.puede)) throw new Error('Podrás repetir la prueba de nivel desde el ' + pr.desde.split('-').reverse().join('/') + '.');
         if (!repite) j.libre.nivelado = demo.hoy();
         j.libre.intento = demo.hoy();

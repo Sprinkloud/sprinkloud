@@ -310,6 +310,13 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
   - Prueba: `herramientas/probar_orden.js` (320×640).
 - **Revisión de textos cortados:** `herramientas/revisar_cortes.js`. Se corre con Chrome propio, sin el MCP: `node herramientas/correr_revision.js herramientas/revisar_cortes.js 360x780 <lecciones>`, una lección por proceso. Si no se le pasan lecciones, revisa la prueba de nivel. Busca texto que se sale de la pantalla, que tapa un contenedor o que es más ancho que su caja.
 
+## Prueba de nivel más exigente (25-nov-2026, publicado)
+
+- Caso: una alumna repitió la prueba y subió de la etapa 3 a la 5 sin saber esos temas. Con 3 preguntas por etapa, de 2 o 3 opciones, aprobadas con 2, adivinando se pasaba una etapa entre 1 de cada 4 y 1 de cada 2 veces.
+- `js/encuesta.js`: `BANCO` con 6 preguntas por etapa (1 a 6), casi todas de 4 opciones (la primera es la correcta; en pantalla se mezclan). `armar(soloEtapa)` saca 4 al azar por etapa; `evaluar(preguntas, respuestas)` aprueba la etapa con 3 bien y la cierra con 2 fallas (salta lo que sobra de una etapa aprobada). Simulado: adivinando se pasa una etapa 5 de cada 100 veces y dos seguidas, menos de 1 de cada 300.
+- «Subir de nivel» (`encuesta(true)` en `js/app.js`) pregunta solo por la etapa de su lección actual; si la aprueba, va al comienzo de la siguiente. En la etapa 7 el botón no aparece. El servidor (`topeSubida_`) y el modo libre de `js/api.js` tampoco dejan subir más de una etapa.
+- Probado en `?demo=1&encuesta` a 390 px: sabiendo las etapas 1 y 2, salen 3 preguntas de la 1, 3 de la 2 y 2 de la 3, y empieza en la Etapa 3 · Lección 1.
+
 ## Sonidos más claros (3-nov-2026, pedido de la dueña)
 - **Toque de botón** (`Sonido.toque`): el 3-nov fue una nota aguda de piano, que se mezclaba con las notas de los ejercicios. Desde el 4-nov es un «tic» corto sin nota (ver «Sonidos que no se mezclan»).
 - **Cambio de pantalla** (`Sonido.pagina`): ya no suena. El soplido también se oía como «posh» en cada botón.
