@@ -10,6 +10,22 @@
   // Siempre de día (4-nov, pedido de la dueña): de noche la app quedaba casi negra y costaba jugar, practicar, ver la tienda y
   // la biblioteca. Los estilos de :root[data-hora="noche"] siguen en app.css por si algún día se vuelve a probar, pero no se usan.
   document.documentElement.dataset.hora = 'dia';
+  /* Navidad (25-nov-2026, pedido de la dueña): lo decide js/config.js por la fecha (o ?navidad=1). Su dibujo del osito con
+     gorro, chocolate y regalos reemplaza al del bosque en la entrada y arriba del camino. */
+  const NAVIDAD = document.documentElement.dataset.temporada === 'navidad';
+  const OSITO_ESCENA = 'assets/ilustraciones/' + (NAVIDAD ? 'osito-navidad' : 'osito-bosque') + '.webp';
+  /* la guirnalda de luces que cuelga sobre la ilustración del camino: un cable que se curva y 11 foquitos de colores */
+  const GUIRNALDA = (() => {
+    const colores = ['#D63A3F', '#F2B632', '#3E8A58', '#4F86C6'];
+    let s = '<svg viewBox="0 0 360 40" preserveAspectRatio="none"><path d="M-4 6 Q45 26 90 8 Q135 26 180 8 Q225 26 270 8 Q315 26 364 6" fill="none" stroke="#2F4A2B" stroke-width="2"/>';
+    for (let i = 0; i < 11; i++) {
+      const x = 12 + i * 33.6, tramo = (x % 90) / 90, y = 8 + Math.sin(tramo * Math.PI) * 11;
+      s += '<g class="foco" style="animation-delay:' + (-(i * 0.73) % 2.6).toFixed(2) + 's" transform="translate(' + x.toFixed(1) + ' ' + (y + 3).toFixed(1) + ')"><rect x="-2" y="-3" width="4" height="4" rx="1" fill="#2F4A2B"/><ellipse cy="5" rx="4" ry="5.6" fill="' + colores[i % 4] + '"/><ellipse cx="-1.3" cy="3" rx="1.2" ry="1.8" fill="#fff" opacity=".55"/></g>';
+    }
+    return s + '</svg>';
+  })();
+  /* la nieve sobre cada piedra del camino (la piedra mide 32 de radio: el gorrito de nieve con gotitas cubre la parte de arriba) */
+  const NIEVE_PIEDRA = '<path d="M-26 -18.6 A32 32 0 0 1 26 -18.6 Q22 -12 18 -15 Q13 -9 8 -14 Q2 -8 -4 -13 Q-10 -8 -14 -14 Q-20 -10 -26 -18.6 Z" fill="#FFFFFF" stroke="#9FB6C6" stroke-width="1.2" stroke-opacity=".7" opacity=".95"/>';
 
   /* ---------- Dibujos chiquitos: fogata, malvavisco ---------- */
   const SVG_FOGATA = '<svg viewBox="0 0 64 64" aria-hidden="true">' +
@@ -62,6 +78,7 @@
   function ir(id) {
     const antes = document.querySelector('.pantalla.activa');
     document.querySelectorAll('.pantalla').forEach(p => p.classList.toggle('activa', p.id === id));
+    document.documentElement.dataset.pantalla = id;   // la nieve de Navidad no cae sobre la práctica (css)
     S.callar(); S.pagina();
     if (S.pref.musica) S.escena(ESCENA[id] || 'mapa');
     if (id === 'tienda' && (!antes || antes.id !== 'tienda')) S.campanaPuerta();
@@ -111,7 +128,7 @@
   function entrada() {
     const p = $('#entrada');
     if (!Api.tieneClave()) {
-      llenar(p, el('div', { class: 'portada' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
+      llenar(p, el('div', { class: 'portada' }, el('img', { src: OSITO_ESCENA, alt: 'El osito en el bosque' })),
         el('h1', { html: 'El bosque<span>de Sprinkloud</span>' }),
         el('p', { text: 'Para entrar, abre el enlace que te mandó tu maestro por WhatsApp.' }));
       ir('entrada'); return;
@@ -120,7 +137,8 @@
        mira la portada; al tocar «Entrar» casi siempre ya llegó. Si ese pedido falló, se vuelve a pedir. */
     let pedido = Api.cargar();
     pedido.catch(() => { });
-    const boton = puff('🌲 Entrar al bosque', 'grande respira', async () => {
+    const ENTRAR = (NAVIDAD ? '🎄' : '🌲') + ' Entrar al bosque';
+    const boton = puff(ENTRAR, 'grande respira', async () => {
       S.despertar();
       boton.disabled = true; boton.querySelector('.cara').textContent = 'Abriendo el bosque…';
       const espera = esperando('Abriendo el bosque…'); boton.after(espera);
@@ -131,9 +149,9 @@
         // ex alumno o app vencida: al entrar, una vez, le cuenta que su avance sigue guardado y cómo volver a todo
         if (estado.libre && estado.libre.motivo && !estado.encuesta) setTimeout(() => club(), 900);
       }
-      catch (e) { espera.remove(); boton.disabled = false; boton.querySelector('.cara').textContent = '🌲 Entrar al bosque'; aviso(e.message || 'No se pudo abrir. Revisa tu internet.'); }
+      catch (e) { espera.remove(); boton.disabled = false; boton.querySelector('.cara').textContent = ENTRAR; aviso(e.message || 'No se pudo abrir. Revisa tu internet.'); }
     });
-    llenar(p, el('div', { class: 'portada aparece' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: 'El osito en el bosque' })),
+    llenar(p, el('div', { class: 'portada aparece' }, el('img', { src: OSITO_ESCENA, alt: NAVIDAD ? 'El osito con gorro de Navidad, una taza de chocolate y regalos' : 'El osito en el bosque' })),
       el('h1', { class: 'aparece d1', html: 'El bosque<span>de Sprinkloud</span>' }),
       Api.libre ? el('p', { class: 'lema aparece d2', text: 'Aprende teoría musical jugando, unos minutos cada día' }) : null,
       el('div', { class: 'aparece d2', style: 'width:100%;display:grid;justify-items:center' }, boton),
@@ -249,7 +267,8 @@
       : j.hoy.terminada ? ((lb && lb.paso) || (estado.avance && estado.avance.paso) ? '¡Pasaste la lección! Mañana se abre la siguiente 🌙' : '¡Ya practicaste hoy! Vuelve mañana 🌙')
       : (estado.alumno ? '¡Hola, ' + estado.alumno + '! ' : '¡Hola! ') + 'Hoy toca: ' + l.tema;
     const luciernagas = Array.from({ length: 6 }, (_, i) => el('i', { class: 'luciernaga', style: 'left:' + (10 + i * 15) + '%;top:' + (20 + (i * 37) % 50) + '%;animation-delay:' + (-i * .8) + 's' }));
-    const heroe = el('div', { class: 'heroe' }, el('img', { src: 'assets/ilustraciones/osito-bosque.webp', alt: '' }), el('div', { class: 'noche-luz' }, luciernagas), el('div', { class: 'burbuja', text: saludo }));
+    const heroe = el('div', { class: 'heroe' }, el('img', { src: OSITO_ESCENA, alt: '' }), el('div', { class: 'noche-luz' }, luciernagas),
+      NAVIDAD ? el('div', { class: 'guirnalda', 'aria-hidden': 'true', html: GUIRNALDA }) : null, el('div', { class: 'burbuja', text: saludo }));
     const etapas = [...new Set(estado.camino.map(c => c.etapa))];
     const paradas = estado.camino.filter(c => c.etapa === etapaVista);
     const nombre = (estado.leccion && estado.leccion.etapa === etapaVista) ? estado.leccion.nombreEtapa : NOMBRES_ETAPA[etapaVista - 1];
@@ -294,7 +313,7 @@
     let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="' + NS + '" role="list" aria-label="Lecciones de la etapa">' +
       '<defs><clipPath id="cara-osito"><circle cx="0" cy="0" r="24"/></clipPath>' +
       '<radialGradient id="luz" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>' +
-      '<rect class="fondo-zona" x="0" y="0" width="' + W + '" height="' + H + '" rx="26" fill="' + ZONAS[(etapaVista - 1) % ZONAS.length] + '"/>' +
+      '<rect class="fondo-zona" x="0" y="0" width="' + W + '" height="' + H + '" rx="26" fill="' + (NAVIDAD ? '#DCE8EE' : ZONAS[(etapaVista - 1) % ZONAS.length]) + '"/>' +
       '<path d="' + d + '" fill="none" stroke="#C9A27A" stroke-width="30" stroke-linecap="round" opacity=".45"/>' +
       '<path d="' + d + '" fill="none" stroke="#8A5A35" stroke-width="3" stroke-dasharray="2 12" stroke-linecap="round" opacity=".55"/>';
     // árboles y hongos (decorado del bosque)
@@ -308,7 +327,11 @@
         (c.estado === 'actual' ? '<circle class="halo" r="40" fill="none" stroke="#FFB54A" stroke-width="5"/>' : '') +
         '<g class="piedra"><circle r="32" cy="6" fill="' + col[1] + '"/><circle r="32" fill="' + col[0] + '"/><circle r="32" fill="url(#luz)"/>' +
         '<text y="9" text-anchor="middle" font-size="' + (c.premium ? 22 : 26) + '" fill="' + (c.estado === 'futura' ? '#A8977A' : '#FFFDF5') + '">' + (c.premium ? '🔒' : c.estado === 'hecha' ? '★' : c.leccion) + '</text></g>' +
-        (c.estado === 'actual' ? '<g transform="translate(' + (i % 2 ? -66 : 66) + ' -14)"><circle r="27" fill="#FBF7EE"/><image href="assets/ilustraciones/osito-bosque.webp" x="-131" y="-104" width="262" height="231" clip-path="url(#cara-osito)"/><circle r="26" fill="none" stroke="#FBF7EE" stroke-width="3"/></g>' : '') +
+        (NAVIDAD ? NIEVE_PIEDRA : '') +
+        (c.estado === 'actual' ? '<g transform="translate(' + (i % 2 ? -66 : 66) + ' -14)"><circle r="27" fill="#FBF7EE"/>' +
+          (NAVIDAD ? '<image href="assets/ilustraciones/osito-navidad-cara.webp" x="-27" y="-27" width="54" height="54" clip-path="url(#cara-osito)"/>'
+            : '<image href="assets/ilustraciones/osito-bosque.webp" x="-131" y="-104" width="262" height="231" clip-path="url(#cara-osito)"/>') +
+          '<circle r="26" fill="none" stroke="#FBF7EE" stroke-width="3"/></g>' : '') +
         '</g>';
     });
     svg += '</svg>';
@@ -328,9 +351,15 @@
   }
   function pino(x, y, k) {
     return '<g transform="translate(' + x + ' ' + y + ') scale(' + k + ')" opacity=".85"><rect x="-3" y="10" width="6" height="12" fill="#8A5A35"/>' +
-      '<path d="M0 -34 L18 -6 L8 -6 L22 14 L-22 14 L-8 -6 L-18 -6 Z" fill="#647745"/><path d="M0 -34 L18 -6 L8 -6 L22 14 L0 14 Z" fill="#48592F" opacity=".35"/></g>';
+      '<path d="M0 -34 L18 -6 L8 -6 L22 14 L-22 14 L-8 -6 L-18 -6 Z" fill="#647745"/><path d="M0 -34 L18 -6 L8 -6 L22 14 L0 14 Z" fill="#48592F" opacity=".35"/>' +
+      // Navidad: nieve en las puntas y dos esferas
+      (NAVIDAD ? '<path d="M0 -34 L8 -21.5 L3 -23 L-1 -20 L-4 -23 L-8 -21.5 Z" fill="#fff"/><path d="M-8 -6 L-18 -6 L-15 -3 L-11 -5 Z M8 -6 L18 -6 L15 -3 L11 -5 Z" fill="#fff" opacity=".9"/>' +
+        '<circle cx="-7" cy="4" r="2.6" fill="#D63A3F"/><circle cx="8" cy="-2" r="2.3" fill="#F2B632"/>' : '') + '</g>';
   }
   function hongo(x, y) {
+    // Navidad: en vez del hongo, un regalo con moño
+    if (NAVIDAD) return '<g transform="translate(' + x + ' ' + y + ')"><rect x="-10" y="-8" width="20" height="16" rx="2" fill="#B8383E"/><rect x="-2" y="-8" width="4" height="16" fill="#F2B632"/>' +
+      '<rect x="-12" y="-11" width="24" height="5" rx="1.5" fill="#D04A4F"/><rect x="-2" y="-11" width="4" height="5" fill="#F2B632"/><path d="M0 -11 C-7 -19 -11 -12 0 -11 C11 -12 7 -19 0 -11 Z" fill="#F2B632"/></g>';
     return '<g transform="translate(' + x + ' ' + y + ')"><rect x="-3" y="-2" width="6" height="10" rx="2" fill="#F6F0E2"/><path d="M-12 0 a12 9 0 0 1 24 0z" fill="#B0685A"/>' +
       '<circle cx="-4" cy="-4" r="1.8" fill="#FBF7EE"/><circle cx="4" cy="-6" r="1.4" fill="#FBF7EE"/></g>';
   }
@@ -538,7 +567,7 @@
 
   function confeti() {
     if (!window.confetti || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const formas = ['🍂', '⭐', '🎵', '🔥'].map(t => confetti.shapeFromText({ text: t, scalar: 2 }));
+    const formas = (NAVIDAD ? ['❄️', '⭐', '🎄', '🎁'] : ['🍂', '⭐', '🎵', '🔥']).map(t => confetti.shapeFromText({ text: t, scalar: 2 }));
     const tiro = (x, ang) => confetti({ particleCount: 40, spread: 70, angle: ang, origin: { x, y: .7 }, shapes: formas, scalar: 2, ticks: 220, disableForReducedMotion: true });
     tiro(.15, 60); tiro(.85, 120); setTimeout(() => tiro(.5, 90), 350);
   }

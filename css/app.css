@@ -725,3 +725,55 @@ dialog.lh h2, dialog.lh p { overflow-wrap: anywhere; }
 .lugar-orden.mal b { color: var(--mal-text); }
 .hilera-orden.correcta .lugar-orden { border-color: var(--moss); }
 .deshacer-orden { --d: 52px; }
+
+/* ---------- Navidad (25-nov-2026, pedido de la dueña) ----------
+   :root[data-temporada="navidad"] lo pone js/config.js entre las fechas de BOSQUE_NAVIDAD (o con ?navidad=1).
+   Nieve que cae (solo transform, dos capas a distinta velocidad; quieta con movimiento reducido y nunca sobre la práctica),
+   guirnalda de foquitos sobre la ilustración del camino, y el botón de practicar rojo de Navidad. */
+:root[data-temporada="navidad"] {
+  --navidad-rojo: #B8383E; --navidad-rojo-borde: #8A2629; --navidad-texto: #FFFDF8;
+  --copo: rgba(255, 255, 255, .95); --copo-borde: rgba(120, 150, 175, .55);
+}
+:root[data-temporada="navidad"] .puff.ocre { --c: var(--navidad-rojo); --c-borde: var(--navidad-rojo-borde); --c-texto: var(--navidad-texto); }   /* blanco sobre rojo: 5,9:1 */
+:root[data-temporada="navidad"] .mapa .fondo-zona { opacity: .8; }
+:root[data-temporada="navidad"] body::after, :root[data-temporada="navidad"] #app::after {
+  content: ''; position: fixed; left: 0; right: 0; top: -240px; height: calc(100% + 240px); pointer-events: none; z-index: 2;
+  background-repeat: repeat; animation: nieve-cae 16s linear infinite;
+}
+/* copos grandes: 7 por cada cuadro de 240 px, en lugares al azar (con uno solo por cuadro se veía una cuadrícula) */
+:root[data-temporada="navidad"] body::after {
+  background-image:
+    radial-gradient(circle, var(--copo) 0 1.9px, var(--copo-borde) 2.5px, transparent 3.1px),
+    radial-gradient(circle, var(--copo) 0 2.3px, var(--copo-borde) 2.9px, transparent 3.5px),
+    radial-gradient(circle, var(--copo) 0 2.1px, var(--copo-borde) 2.7px, transparent 3.3px),
+    radial-gradient(circle, var(--copo) 0 1.7px, var(--copo-borde) 2.3px, transparent 2.9px),
+    radial-gradient(circle, var(--copo) 0 1.6px, var(--copo-borde) 2.2px, transparent 2.8px),
+    radial-gradient(circle, var(--copo) 0 1.7px, var(--copo-borde) 2.3px, transparent 2.9px),
+    radial-gradient(circle, var(--copo) 0 2.0px, var(--copo-borde) 2.6px, transparent 3.2px);
+  background-size: 240px 240px; background-position: 38px 101px, 18px 210px, 93px 149px, 129px 54px, 111px 107px, 23px 141px, 211px 144px;
+}
+/* copos chiquitos, más lentos: parece que hay profundidad */
+:root[data-temporada="navidad"] #app::after {
+  background-image:
+    radial-gradient(circle, var(--copo) 0 0.9px, var(--copo-borde) 1.5px, transparent 2.1px),
+    radial-gradient(circle, var(--copo) 0 1.1px, var(--copo-borde) 1.7px, transparent 2.3px),
+    radial-gradient(circle, var(--copo) 0 1.1px, var(--copo-borde) 1.7px, transparent 2.3px),
+    radial-gradient(circle, var(--copo) 0 0.8px, var(--copo-borde) 1.4px, transparent 2.0px),
+    radial-gradient(circle, var(--copo) 0 0.9px, var(--copo-borde) 1.5px, transparent 2.1px),
+    radial-gradient(circle, var(--copo) 0 0.9px, var(--copo-borde) 1.5px, transparent 2.1px),
+    radial-gradient(circle, var(--copo) 0 1.2px, var(--copo-borde) 1.8px, transparent 2.4px),
+    radial-gradient(circle, var(--copo) 0 1.1px, var(--copo-borde) 1.7px, transparent 2.3px),
+    radial-gradient(circle, var(--copo) 0 1.0px, var(--copo-borde) 1.6px, transparent 2.2px),
+    radial-gradient(circle, var(--copo) 0 0.8px, var(--copo-borde) 1.4px, transparent 2.0px);
+  background-size: 240px 240px; background-position: 57px 161px, 15px 147px, 12px 56px, 219px 34px, 36px 138px, 78px 143px, 46px 26px, 163px 48px, 140px 182px, 15px 158px; opacity: .8; animation-duration: 26s;
+}
+@keyframes nieve-cae { to { transform: translateY(240px); } }   /* 240 px = el cuadro entero del patrón: el bucle no salta */
+:root[data-temporada="navidad"][data-pantalla="practica"] body::after,
+:root[data-temporada="navidad"][data-pantalla="practica"] #app::after { display: none; }
+.heroe .guirnalda { position: absolute; left: 0; right: 0; top: 0; height: 34px; pointer-events: none; }
+.heroe .guirnalda svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.guirnalda .foco { animation: foco 2.6s ease-in-out infinite; }
+@keyframes foco { 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) {
+  :root[data-temporada="navidad"] body::after, :root[data-temporada="navidad"] #app::after, .guirnalda .foco { animation: none; }
+}

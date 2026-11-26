@@ -63,6 +63,25 @@ window.Sonido = (function () {
     s.connect(f); f.connect(g); g.connect(bus); s.start(t);
   }
   const ok = () => pref.sonido && audio();
+  /* Navidad (25-nov-2026, pedido de la dueña): los toques, la calcomanía que se pega, la hoja del libro y la caja de la
+     tienda suenan a cascabeles y campanitas, sin el «golpe» ni el «viento» (ruido) que no le gustan. */
+  /* En la práctica no cambia nada (la dueña: los ejercicios y los ejemplos tienen que oírse fuertes, claros y limpios):
+     ahí suenan los mismos sonidos de siempre. */
+  const navidad = () => document.documentElement.dataset.temporada === 'navidad' && document.documentElement.dataset.pantalla !== 'practica';
+  /* cascabeles: campanitas de metal muy agudas, cortas y algo desafinadas entre sí (no forman una nota, así no se mezclan
+     con las notas de los ejercicios). n: cuántas suenan; reparto: en cuántos segundos se reparten */
+  function cascabeles(t, n, reparto, gain) {
+    for (let i = 0; i < n; i++) {
+      const t0 = t + (n > 1 ? (i / (n - 1)) * reparto : 0) + Math.random() * .012, base = 3200 + Math.random() * 1800, dur = .07 + Math.random() * .07;
+      [[1, 1], [2.71, .35], [4.13, .15]].forEach(([k, a]) => {
+        if (base * k > 14000) return;   // más arriba ya no se oye (y el navegador avisa)
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(base * k, t0);
+        g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(gain * a, t0 + .002); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+        o.connect(g); g.connect(bus); o.start(t0); o.stop(t0 + dur + .02);
+      });
+    }
+  }
 
   let jingle = null;
   let escalera = 0;   // aciertos seguidos: cada uno suena un poco más agudo
@@ -90,6 +109,7 @@ window.Sonido = (function () {
        como un botón y no como una nota. */
     toque() {
       if (!ok()) return;
+      if (navidad()) { cascabeles(ctx.currentTime + .003, 3, .035, .045); return; }   // Navidad: un «tilín» de cascabel
       const t = ctx.currentTime + .003;
       const n = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .018), ctx.sampleRate), d = n.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
@@ -126,6 +146,18 @@ window.Sonido = (function () {
     /* festejo de fin de práctica: arpegio y acorde */
     festejo() {
       if (!ok()) return;
+      if (navidad()) {
+        /* Navidad: «Jingle bells, jingle bells, jingle all the way» (melodía tradicional, de dominio público) en campanitas,
+           con cascabeles en cada tiempo. Dura unos 2,8 s; la música de la escena se baja mientras suena */
+        musica.bajar(3400);
+        const t = ctx.currentTime + .08, q = .2;
+        const notas = [[76, 1], [76, 1], [76, 2], [76, 1], [76, 1], [76, 2], [76, 1], [79, 1], [72, 1.5], [74, .5], [76, 4]];
+        let k = t;
+        notas.forEach(([m, d]) => { campana(k, m, .26, .9); campana(k, m + 12, .06, .5); k += d * q; });
+        for (let i = 0; i < 8; i++) cascabeles(t + i * 2 * q, 4, .05, .03);
+        [84, 88, 91, 96].forEach((m, i) => marimba(k + .05 + i * .08, m, .14));
+        return;
+      }
       if (window.BOSQUE_JINGLE && window.Howl) {
         // el jingle CC0 (la música de fondo se baja mientras suena) y unas chispitas encima
         musica.bajar(5600);   // la música de la escena se baja mientras suena el jingle
@@ -148,6 +180,12 @@ window.Sonido = (function () {
     caja() {
       if (!ok()) return;
       const t = ctx.currentTime;
+      if (navidad()) {   // Navidad: cascabeles que se sacuden, el «¡ding!» y las monedas (sin el ruido de las teclas y el cajón)
+        cascabeles(t, 7, .22, .05);
+        campana(t + .26, 96, .3); campana(t + .26, 103, .12);
+        for (let i = 0; i < 6; i++) marimba(t + .45 + i * .055 + Math.random() * .02, 91 + (i % 3) * 2, .12);
+        return;
+      }
       for (let i = 0; i < 4; i++) ruido(t + i * .045, .04, 3000 + i * 400, .25);   // las teclas
       ruido(t + .2, .18, 700, .35);                                                // el cajón
       campana(t + .26, 96, .3); campana(t + .26, 103, .12);                        // ¡ding!
@@ -157,6 +195,8 @@ window.Sonido = (function () {
     pegar() {
       if (!ok()) return;
       const t = ctx.currentTime;
+      if (navidad()) { campana(t, 91, .16, .45); cascabeles(t + .02, 2, .03, .03); return; }   // Navidad: una campanita
+
       ruido(t, .07, 1800, .25);
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.type = 'sine'; o.frequency.setValueAtTime(320, t + .03); o.frequency.exponentialRampToValueAtTime(160, t + .12);
@@ -210,6 +250,7 @@ window.Sonido = (function () {
     /* pasar la hoja de un libro: el papel roza (un soplo que sube y baja) y al final cae la hoja */
     hojaLibro() {
       if (!ok()) return;
+      if (navidad()) { cascabeles(ctx.currentTime, 2, .06, .025); return; }   // Navidad: sin el soplo del papel, un cascabel muy suave
       const t = ctx.currentTime, dur = .34;
       const n = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate), d = n.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -267,6 +308,11 @@ window.Sonido = (function () {
     practica: { pistas: [] },
     silencio: { pistas: [] }
   };
+  /* Navidad: la música de cada escena sale de BOSQUE_NAVIDAD.musica (js/config.js) y en el mapa no cantan los pájaros */
+  if (navidad() && window.BOSQUE_NAVIDAD && window.BOSQUE_NAVIDAD.musica) {
+    Object.entries(window.BOSQUE_NAVIDAD.musica).forEach(([k, pistas]) => { if (ESCENAS[k] && pistas && pistas.length) ESCENAS[k].pistas = pistas; });
+    delete ESCENAS.mapa.ambiente;
+  }
   const musica = {
     actual: null, howl: null, amb: null, crepita: null, sonando: false, vol: .3,
     escena(nombre, forzar) {

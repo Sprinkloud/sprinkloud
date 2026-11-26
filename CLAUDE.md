@@ -310,6 +310,31 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
   - Prueba: `herramientas/probar_orden.js` (320×640).
 - **Revisión de textos cortados:** `herramientas/revisar_cortes.js`. Se corre con Chrome propio, sin el MCP: `node herramientas/correr_revision.js herramientas/revisar_cortes.js 360x780 <lecciones>`, una lección por proceso. Si no se le pasan lecciones, revisa la prueba de nivel. Busca texto que se sale de la pantalla, que tapa un contenedor o que es más ancho que su caja.
 
+## Modo Navidad (25-nov-2026, pedido de la dueña; SIN SUBIR, en vista previa)
+- **Cuándo:** `BOSQUE_NAVIDAD` en `js/config.js` (del 25-nov-2026 al 6-ene-2027, con la fecha del celular). `config.js` pone `data-temporada="navidad"` en `<html>`. Para verlo en otra fecha: `?navidad=1`; para apagarlo: `?navidad=0`.
+- **El dibujo de la dueña:** `assets/ilustraciones/osito navidad.jpeg` (el osito con gorro, chocolate, árbol y regalos). `herramientas/navidad.py` arma:
+  - `osito-navidad.webp` (113 KB): la entrada y la ilustración de arriba del camino (`OSITO_ESCENA` en `js/app.js`);
+  - `osito-navidad-cara.webp` (8 KB): el circulito de la lección de hoy en el mapa.
+- **Lo que cambia en la pantalla** (`js/app.js` y el final de `css/app.css`):
+  - **Nieve que cae:** dos capas fijas (`body::after` y `#app::after`), 7 y 10 copos al azar por cada cuadro de 240 px, a 16 s y 26 s por vuelta. Solo se mueven con `transform`. No caen en la práctica (`data-pantalla`, que pone `ir()`) y quedan quietas con movimiento reducido. No se pueden tocar.
+  - **Guirnalda de 11 foquitos** sobre la ilustración del camino (`GUIRNALDA`). Titilan solo con opacidad.
+  - **El mapa:** el fondo nevado, nieve en las piedras (`NIEVE_PIEDRA`) y en las puntas de los pinos, esferas en los pinos y regalos en lugar de hongos.
+  - **Botones:** los ocres (practicar, comprar, mejorar, «¡Ahora tú!») pasan a rojo de Navidad, con letra blanca (5,9:1).
+  - **Otros cambios:** «🎄 Entrar al bosque» y confeti de ❄️ ⭐ 🎄 🎁.
+- **Sonidos** (`js/sonido.js`, `navidad()`). Sin el «golpe» ni el «viento» (ruido) que no le gustan a la dueña:
+  - el toque de los botones es un «tilín» de cascabel (`cascabeles`: campanitas agudas y desafinadas entre sí, que no forman nota);
+  - la calcomanía, una campanita;
+  - la hoja del libro, un cascabel muy suave;
+  - la caja de la tienda, cascabeles, el «¡ding!» y las monedas;
+  - el festejo final, «Jingle Bells» en campanitas (melodía tradicional, sintetizada, unos 2,8 s).
+- **Música:**
+  - `BOSQUE_NAVIDAD.musica` reemplaza las pistas del mapa, la tienda, la casita y la biblioteca. En Navidad no hay pájaros en el mapa; la fogata sigue.
+  - **Las 13 pistas** (CC0, OpenGameArt, niveladas a −24 dB a 96 kbps; la dueña las eligió todas): una por escena (`navidad-tienda.mp3`, `navidad-casita.mp3` y `navidad-biblioteca.mp3`) y 10 que van cambiando en el mapa, una tras otra (`navidad-mapa-1` a `-10`). Unos 19 MB en total; se bajan de a una, cuando suenan. Autores en `CREDITOS.md`.
+  - **Buscador** de música CC0 de Navidad: [OpenGameArt](https://opengameart.org/art-search-advanced?keys=christmas&field_art_type_tid%5B%5D=12&field_art_licenses_tid%5B%5D=4&sort_by=count&sort_order=DESC).
+  - **Al agregar una pista:** nivelarla igual y anotarla en `CREDITOS.md` antes del «upload».
+- **La práctica no cambia** (la dueña: los ejercicios y los ejemplos tienen que oírse fuertes, claros y limpios). `navidad()` en `js/sonido.js` da falso en la pantalla de práctica, así que ahí suenan los sonidos de siempre, sin música ni nieve. Los ejemplos de los libros callan todo (`callar`) y apagan la música antes de sonar, como siempre.
+- **Para la próxima Navidad:** cambiar las fechas en `config.js`.
+
 ## Prueba de nivel más exigente (25-nov-2026, publicado)
 
 - Caso: una alumna repitió la prueba y subió de la etapa 3 a la 5 sin saber esos temas. Con 3 preguntas por etapa, de 2 o 3 opciones, aprobadas con 2, adivinando se pasaba una etapa entre 1 de cada 4 y 1 de cada 2 veces.
