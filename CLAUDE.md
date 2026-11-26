@@ -329,6 +329,26 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - `Compartir.casa` usa ahora el tamaño de cada calcomanía en su página (`tamBase(id, pg.id)`): en los mapas la tarjeta las dibujaba más chicas que en la app.
 - Probado en `?demo=1&dia=…&semana=9` con `bosque-hoy` en `hechas: 99` (salta directo al final): saludo «¡Hola, Amiga!» y la tarjeta con el último sticker; la fogata, la medalla y el amigo, dibujados a mano con `Compartir.dia`.
 
+## El picnic y el huerto en la tienda (26-nov-2026, publicado)
+- Los dos mapas con sus 30 stickers y sus mejoras, iguales en el servidor y en `js/api.js` (los mete `vestidor_test.js` en la comprobación). Las acciones y los regalos nuevos están en `plan-escenarios.md`. El arte lo hizo `herramientas/arte.py` (`MAPAS` con `picnic` y `huerto`).
+- Probado en la demo: comprar los dos mapas, 14 stickers con acción nueva, mejorarlos, pegarlos y tocarlos (todos actúan, sin errores), y los regalos en la bandeja.
+
+## El vestidor del osito (26-nov-2026, pedido de la dueña; publicado el 26-nov con 4 prendas)
+- **Crear ropa nueva:** skill `/prendas-osito` (`.claude/skills/prendas-osito/`). La única lista es `prendas.json`; `herramientas/prendas.py` la copia a `ROPA` del servidor y de `js/api.js` y a los pedidos de Gemini (`etapa24.txt`). La primera tanda (34 prendas) quedó pedida a la tarea diaria.
+- **La bufanda** sale del dibujo original del osito (`bufanda_original` en `Libro_Sprinkloud/herramientas/vestidor.py`), no de Gemini: es exactamente la suya.
+- **Servidor:** `comprarRopa_` y `vestirJuego_` (Registro_Sprinkloud), con las mismas reglas que la prueba. Pruebas: `Registro_Sprinkloud/pruebas/vestidor_test.js` (19).
+- **La idea:** como Pou o Talking Tom: ropa que se compra con malvaviscos y se le pone al osito (gorras, chompas, camisetas, buzos, chaquetas, pantalones, shorts, medias, zapatos, deportivos, reloj…). Investigado el 26-nov: lo que más funciona es **probarse antes de comprar**, una prenda por ranura, un toque pone y otro quita, el personaje reacciona, nada de sorteos ni ropa que se vence. No hace falta ninguna librería (capas de `<img>` apiladas) ni skill nueva.
+- **Decisiones de la dueña:** la bufanda de cuadritos es **una prenda que se puede quitar** (gratis y puesta desde el inicio); se entra con un **quinto botón 👕** en la barra del camino (🏡 👕 ▶ 🧺 📚; `.nav` con 5 columnas: a 320 px cada botón mide 50 px o más).
+- **La pantalla** (`vestidor()` en `js/app.js`, sección `#vestidor`, música de la tienda): el osito grande (`ositoVestido(puesto)`: la base y una `<img>` por prenda, en el orden de `RANURAS`), abajo una pestaña redonda por ranura (solo el dibujo: 🧢 🧣 👕 🧥 👖 🧦 👟 ⌚) y la ropa de esa ranura.
+  - Prenda suya: un toque la pone (el osito da un saltito) y otro la quita. Se guarda 0,7 s después del último toque (`Api.vestir`), un solo pedido.
+  - Prenda que no es suya: se la **prueba** (se ve puesta, con un aro) y aparece el botón esponjoso con su precio; tocarla otra vez o salir la quita. Al comprar: caja, confeti y queda puesta (`Api.comprarRopa`).
+  - Tocar al osito: se mueve un poquito. Sin textos ni instrucciones.
+- **Datos** (`js/api.js`, motor de la prueba; **el servidor todavía no lo tiene**): `ROPA` ({id, nombre, ranura, precio}), `RANURAS` (de abajo hacia arriba: medias, piernas, pies, torso, abrigo, cuello, muñeca, cabeza), `j.extras.ropa` (lo comprado; la bufanda siempre es suya) y `j.extras.puesto` ({ranura: prenda}; si no hay, `{cuello: 'bufanda'}`). El estado trae `juego.ropa`, `juego.puesto`, `catalogo.ropa` y `catalogo.ranuras`. Solo se venden las prendas con dibujo (`js/ropa.js`).
+- **Arte:** `Libro_Sprinkloud/herramientas/vestidor.py` (Gemini EDITA al osito y se recorta solo la prenda; ver su `CLAUDE.md`, etapa 24) → `python herramientas/vestidor_app.py` → `assets/vestidor/base.webp`, `<id>.webp` (lienzo entero, se apilan sin acomodar) y `<id>-mini.webp` (el botón), más `js/ropa.js`.
+- **Hoy hay:** la base, la bufanda (gratis), gorra roja (120), chompa verde (250) y deportivos azules (300).
+- **Probado** en `?demo=1&malvaviscos=400` a 390×844 y 320×640: probar, comprar (descuenta), cambiar de ranura, poner, quitar y guardar.
+- **Falta:** las 33 prendas de la primera tanda (llegan con la tarea diaria; se revisan y se suben con `/prendas-osito`) y, si la dueña quiere, el osito vestido en la tarjeta de la racha.
+
 ## Temporadas en la rama `temporadas` (sin subir, pedido de la dueña del 26-nov)
 - San Valentín, Día del Niño, de la Madre, del Padre y de la Música están **solo en la rama local `temporadas`** (commit 580e74a), para no subirlas por error. La dueña aprueba primero sus dibujos y su música.
 - **Para seguir con ellas:** `git checkout temporadas` (y `git merge main` para traer lo nuevo). **Nunca** `git push` de esa rama sin su «upload».

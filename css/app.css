@@ -194,7 +194,7 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .parada.actual .halo { animation: halo 2.2s var(--ease-out) infinite; transform-box: fill-box; transform-origin: center; }
 @keyframes halo { 0% { opacity: .7; transform: scale(.85); } 100% { opacity: 0; transform: scale(1.5); } }
 .parada text { font-family: var(--f-display); font-weight: 700; }
-.nav { display: grid; grid-template-columns: 1fr 1.5fr 1fr 1fr; gap: 10px; align-items: end; padding-top: 10px; }
+.nav { display: grid; grid-template-columns: 1fr 1fr 1.4fr 1fr 1fr; gap: 8px; align-items: end; padding-top: 10px; }
 .nav .puff .cara { flex-direction: column; gap: 0; padding: 8px 4px 10px; min-height: 56px; }
 .nav .puff .cara .ico { font-size: 1.9rem; line-height: 1; }   /* solo el dibujo */
 .nav .puff.grande .cara { min-height: 64px; }
@@ -744,6 +744,32 @@ dialog.lh h2, dialog.lh p { overflow-wrap: anywhere; }
 .lugar-orden.mal b { color: var(--mal-text); }
 .hilera-orden.correcta .lugar-orden { border-color: var(--moss); }
 .deshacer-orden { --d: 52px; }
+
+/* ---------- El vestidor del osito (26-nov-2026, pedido de la dueña) ----------
+   El osito grande arriba; abajo, una pestaña redonda por ranura (solo el dibujo) y la ropa de esa ranura. */
+.vestidor-escena { position: relative; flex: none; height: min(46dvh, 420px); min-height: 230px; display: grid; place-items: center; margin: 2px 0 8px;
+  background: radial-gradient(60% 55% at 50% 58%, var(--cream), transparent 72%); }
+.osito-vestido { position: relative; height: 100%; aspect-ratio: 700 / 1051; cursor: pointer; touch-action: manipulation; transform-origin: 50% 100%; }
+.osito-vestido img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.comprar-prenda { position: absolute; right: 0; bottom: 6%; }
+.comprar-prenda .puff .cara { gap: 4px; padding-inline: 16px; font-size: 1.15rem; }
+.comprar-prenda .puff svg { width: 26px; height: 26px; }
+.ranuras { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 2px 0 10px; flex: none; }
+.ranura { width: 52px; height: 52px; border: 0; border-radius: 50%; background: var(--surface); box-shadow: var(--sombra-papel); font-size: 1.6rem; line-height: 1;
+  transition: transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out); }
+.ranura[aria-selected="true"] { box-shadow: var(--sombra-papel), inset 0 0 0 3px var(--moss); background: var(--moss-soft); }
+.ranura:active { transform: scale(.94); transition-duration: 60ms; }
+.ropa { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px; }
+.prenda { position: relative; aspect-ratio: 1; border: 0; padding: 10px; border-radius: var(--radio); background: var(--surface); box-shadow: var(--sombra-papel);
+  display: grid; place-items: center; transition: transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out); }
+.prenda img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.prenda.puesta { box-shadow: var(--sombra-papel), inset 0 0 0 3px var(--moss); background: var(--moss-soft); }
+.prenda.ajena img { opacity: .9; }
+.prenda:active { transform: scale(.95); transition-duration: 60ms; }
+.precio-prenda { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 2px;
+  padding: 2px 8px 2px 4px; border-radius: 999px; background: var(--cream); box-shadow: var(--sombra-papel); font-weight: 800; font-size: .9rem; color: var(--ink); white-space: nowrap; }
+.precio-prenda svg { width: 18px; height: 18px; }
+@media (prefers-reduced-motion: reduce) { .ranura, .prenda { transition: none; } }
 
 /* ---------- Navidad (25-nov-2026, pedido de la dueña) ----------
    :root[data-temporada="navidad"] lo pone js/config.js entre las fechas de BOSQUE_NAVIDAD (o con ?navidad=1).

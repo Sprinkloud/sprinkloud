@@ -91,6 +91,8 @@ Empezó el 12-nov-2026 como «opción 2» (escenarios con stickers) y el 16-nov 
 
 ### El picnic (1 200)
 
+**Completo en la tienda desde el 26-nov-2026** (los 30, con sus mejoras; la dueña: «haz upload todo el material que ya tenemos listo»).
+
 | Sticker | Precio | Mejora | Qué hace |
 |---|---|---|---|
 | Cesta de picnic | 100 | 150 | Prepara un sándwich (8), regalo |
@@ -125,6 +127,8 @@ Empezó el 12-nov-2026 como «opción 2» (escenarios con stickers) y el 16-nov 
 | Mesita de picnic | 120 | sin mejora | |
 
 ### El huerto (1 500)
+
+**Completo en la tienda desde el 26-nov-2026** (los 30, con sus mejoras).
 
 | Sticker | Precio | Mejora | Qué hace |
 |---|---|---|---|
@@ -166,6 +170,31 @@ Los fondos del escenario de conciertos, el campamento, el bosque nevado y la pla
 ### Idea para después
 
 Que cada amigo tenga un regalo favorito (el ratón el queso, el conejo la zanahoria, el osito la miel) y festeje más al recibirlo. No está hecho ni aprobado.
+
+## Las acciones y los regalos del picnic y del huerto (26-nov-2026)
+
+- **Acciones nuevas** (`MOVIMIENTOS` en `js/app.js`, `Sonido.juguete` en `js/sonido.js`, dibujito en `ACCION_ICO`; todas con nota, sin soplidos):
+  - `volar`: la cometa y los globos;
+  - `girar`: la sombrilla, el rehilete y la veleta, que se mueven con el aire;
+  - `caminar`: las hormiguitas y el caracol;
+  - `timbre`: la bicicleta avanza y vuelve con su timbre;
+  - `rodar`: la carretilla;
+  - `burbujas`: salen burbujas del frasco;
+  - `picotear`: los pajaritos y la gallina;
+  - `regar`: la regadera se inclina y caen gotas;
+  - `balde`: el pozo sube su balde.
+- **Las acciones que ya existían:**
+  - `mecer`: banderines, columpio, espantapájaros y tendedero;
+  - `saltar`: pelota y botas;
+  - `cancion`: ukelele;
+  - `melodia`: gramófono;
+  - `revolotear`: mariposas;
+  - `viento`: girasoles;
+  - `cucu`: casita de pájaros;
+  - `luz`: farolillos e invernadero;
+  - `esconder`: topo.
+- **Regalos nuevos:** sándwich, limonada, pastel, sandía, té, queso, helado, zanahoria, fresas, miel y manzana (`REGALOS` en el servidor y en `js/api.js`, `NOMBRE_REGALO` en la app). Se preparan con la acción `servir`. Se ven como emoji hasta tener su dibujo `regalo-<id>.webp`. El sello de una mejora que prepara un regalo muestra el regalo (`icoMejora`).
+- Los tamaños (`tam`) se pusieron a ojo, como los del lago. Si alguno queda grande o chico en la página, se ajusta su `tam`.
 
 ## Cómo entra un sticker nuevo a la tienda
 

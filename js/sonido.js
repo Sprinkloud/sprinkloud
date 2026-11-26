@@ -240,6 +240,16 @@ window.Sonido = (function () {
         case 'roer': [0, .3, .6].forEach(d => ruido(t + d, .07, 2600, .22)); return 1;
         case 'campana': [0, .9].forEach(d => campana(t + d, 81, .22, .9)); return 1.8;
         case 'regalo': [76, 79, 84, 88].forEach((m, i) => marimba(t + i * .09, m, .24)); return .8;
+        /* 26-nov-2026, el picnic y el huerto: sonidos con nota (sin soplidos) */
+        case 'volar': [0, .5, 1, 1.5].forEach((d, i) => voz(t + d, 67 + i * 2, 72 + i * 2, .3, .06, 'sine')); return 2;
+        case 'girar': [79, 83, 86, 83, 79].forEach((m, i) => marimba(t + i * .28, m, .12)); return 1.6;
+        case 'caminar': [0, .3, .6, .9, 1.2, 1.5, 1.8].forEach(d => marimba(t + d, 96, .07)); return 2.4;
+        case 'timbre': [0, .16, 1.1, 1.26].forEach(d => campana(t + d, 93, .2, .5)); return 2;
+        case 'rodar': [0, .4, .8, 1.2].forEach(d => voz(t + d, 52, 50, .12, .08, 'triangle')); return 1.8;
+        case 'burbujas': [0, .28, .56, .84].forEach((d, i) => voz(t + d, 76 + i * 3, 88 + i * 3, .1, .1, 'sine')); return 1.2;
+        case 'picotear': [0, .4, .8].forEach(d => { voz(t + d, 88, 93, .07, .12, 'sine'); voz(t + d + .1, 91, 86, .08, .1, 'sine'); }); return 1.2;
+        case 'regar': [0, .2, .4, .6, .8, 1].forEach((d, i) => marimba(t + .3 + d, [84, 88, 86, 91, 89, 93][i], .1)); return 1.6;
+        case 'balde': voz(t, 55, 60, .5, .08, 'triangle'); voz(t + .7, 57, 62, .5, .08, 'triangle'); [84, 88].forEach((m, i) => marimba(t + 1.2 + i * .08, m, .14)); return 1.5;
         default: return 0;
       }
     },

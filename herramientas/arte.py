@@ -86,6 +86,8 @@ MAPAS = {
              'velero', 'salvavidas', 'libelulas', 'tortuga-tronco', 'cisne', 'garza', 'juncos', 'farol-muelle', 'cubeta-peces',
              'red-pesca', 'tienda-campana', 'fogatita-olla', 'toalla-sombrero', 'barquito-papel', 'ranitas',
              'balsa-troncos', 'bote-cisne', 'puente-arco', 'castor-presa', 'nutria', 'boya', 'hamaca', 'farolitos-flotantes', 'piedras-paso'],
+    'picnic': ['cesta-picnic', 'manta-picnic', 'sandwiches-limonada', 'cometa', 'sombrilla', 'pastel-fresas', 'tarta-manzana', 'sandia', 'canasta-frutas', 'globos', 'banderines', 'columpio-rama', 'pelota', 'ukelele', 'mariposas', 'hormiguitas', 'ramo-frasco', 'cojines', 'bicicleta', 'rehilete', 'termo-tazas', 'caballete', 'burbujas', 'tabla-quesos', 'carrito-helados', 'gramofono', 'raquetas', 'pajaritos-migas', 'farolillos-papel', 'mesita-picnic'],
+    'huerto': ['regadera', 'carretilla', 'pala-rastrillo', 'zanahorias', 'espantapajaros', 'coles', 'tomates', 'girasoles', 'fresas-mata', 'maiz', 'lechugas', 'calabaza-gigante', 'canasta-verduras', 'gallina-pollitos', 'casita-pajaros', 'colmena', 'costal-semillas', 'letreritos', 'botas-lluvia', 'canasta-manzanas', 'tendedero', 'invernadero', 'pozo', 'macetas-hierbas', 'cerca-flores', 'veleta', 'manzano', 'caracol', 'topo', 'barril-lluvia'],
 }
 REGALOS = {'galletas': 'tarro-galletas', 'cacao': 'taza-cacao'}   # lo que preparan la estufa y la olla mejoradas
 AMIGOS = ['osito', 'zorro', 'conejo', 'ardilla', 'erizo', 'raton']

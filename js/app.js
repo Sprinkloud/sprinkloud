@@ -49,6 +49,8 @@
     'cama-parches': '🛏️', 'cama-hojas': '🛌', banca: '🪵', columpio: '🎠', 'flores-jardin': '🌷', calabazas: '🎃', 'palitos-malvavisco': '🍡',
     'mapa-lago': '🏞️', 'lago-canoa': '🛶', 'lago-peces': '🐟', 'lago-nenufares-rana': '🐸', 'lago-patitos': '🦆', 'lago-cana-pescar': '🎣', 'lago-cesta-pesca': '🧺',
     'regalo-galletas': '🍪', 'regalo-cacao': '☕', 'regalo-pescado': '🐟', 'regalo-sopa': '🍲',
+    'regalo-sandwich': '🥪', 'regalo-limonada': '🍋', 'regalo-pastel': '🍰', 'regalo-sandia': '🍉', 'regalo-te': '🍵', 'regalo-queso': '🧀',
+    'regalo-helado': '🍦', 'regalo-zanahoria': '🥕', 'regalo-fresas': '🍓', 'regalo-miel': '🍯', 'regalo-manzana': '🍎',
     'amigo-osito': '🐻', 'amigo-conejo': '🐰', 'amigo-ardilla': '🐿️', 'amigo-zorro': '🦊', 'amigo-erizo': '🦔', 'amigo-raton': '🐭',
     primera: '🌱', racha3: '🔥', racha7: '🪵', racha14: '🌟', racha30: '👑', perfecta: '💯', aciertos100: '🎯', aciertos500: '🏆', dias10: '🍄', dias30: '🌳', compra: '🛍️', casa5: '🏡',
     // los logros del 26-nov-2026
@@ -85,7 +87,7 @@
 
   /* ---------- Pantallas ---------- */
   /* cada pantalla tiene su canción y su ambiente (Sonido.escena); en la práctica, silencio */
-  const ESCENA = { entrada: 'mapa', camino: 'mapa', practica: 'practica', fin: 'silencio', casita: 'casita', tienda: 'tienda', logros: 'logros' };
+  const ESCENA = { entrada: 'mapa', camino: 'mapa', practica: 'practica', fin: 'silencio', casita: 'casita', tienda: 'tienda', logros: 'logros', vestidor: 'tienda' };
   function ir(id) {
     const antes = document.querySelector('.pantalla.activa');
     document.querySelectorAll('.pantalla').forEach(p => p.classList.toggle('activa', p.id === id));
@@ -297,6 +299,7 @@
     const conNombre = (b, nombre) => { b.setAttribute('aria-label', nombre); b.title = nombre; return b; };
     const nav = el('div', { class: 'nav' },
       conNombre(puff('<span class="ico">🏡</span>', 'madera', () => casita()), 'Mi casita'),
+      conNombre(puff('<span class="ico">👕</span>', 'cielo', () => vestidor()), 'Vestidor'),   // 26-nov-2026: el vestidor del osito
       practicar,
       conNombre(puff('<span class="ico">🧺</span>', 'rosa', () => tienda()), 'Tienda'),
       conNombre(puff('<span class="ico">📚</span>', 'cielo', () => logros()), 'Biblioteca'));
@@ -670,10 +673,16 @@
   /* ---------- El álbum (16-nov-2026, idea de la dueña): la casita y los mapas son páginas donde se pegan calcomanías ----------
      Cada calcomanía pegada dice en qué página está (`e`: el mapa; sin `e`, la casita). Los amigos que están de visita son
      calcomanías («amigo-<id>») y los mapas se compran en la tienda. */
-  const NOMBRE_REGALO = { galletas: 'Galletas', cacao: 'Cacao', pescado: 'Pescado', sopa: 'Sopa' };
+  const NOMBRE_REGALO = { galletas: 'Galletas', cacao: 'Cacao', pescado: 'Pescado', sopa: 'Sopa',
+    sandwich: 'Sándwich', limonada: 'Limonada', pastel: 'Pastel', sandia: 'Sandía', te: 'Té', queso: 'Queso', helado: 'Helado',
+    zanahoria: 'Zanahoria', fresas: 'Fresas', miel: 'Miel', manzana: 'Manzana' };
   const ACCION_ICO = { hornear: '🍪', servir: '☕', cancion: '🎵', melodia: '🎶', cucu: '🐦', dormir: '💤', mecer: '🍃', pulso: '🎼', luz: '💡',
     navegar: '🌊', nadar: '💦', saltar: '💦', croar: '🐸', pescar: '🎣',
-    revolotear: '🦋', esconder: '🐢', aletear: '🪶', viento: '🍃', roer: '🪵', campana: '🔔' };
+    revolotear: '🦋', esconder: '🐢', aletear: '🪶', viento: '🍃', roer: '🪵', campana: '🔔',
+    // 26-nov-2026, el picnic y el huerto
+    volar: '🪁', girar: '🌀', caminar: '🐌', timbre: '🔔', rodar: '🛞', burbujas: '🫧', picotear: '🐦', regar: '💧', balde: '🪣' };
+  /* el dibujito del sello de una mejora: lo que prepara (si da un regalo) o lo que hace */
+  const icoMejora = m => (m.regalo && EMOJI['regalo-' + m.regalo]) || ACCION_ICO[m.accion] || '⭐';
   const itemDe = id => estado.catalogo.tienda.find(t => t.id === id);
   const mejorada = id => (estado.juego.mejoras || []).includes(id);
   const paginas = () => [{ id: 'casa', nombre: 'Mi casita', img: 'assets/ilustraciones/casa-vacia.webp', mini: 'assets/ilustraciones/casa-vacia-mini.webp', tengo: true }]
@@ -729,7 +738,19 @@
     viento: () => [cuadros(EASE_IN_OUT, 'rotate(0)', 'rotate(6deg)', 'rotate(-4deg)', 'rotate(4deg)', 'rotate(-2deg)', 'rotate(0)'), { duration: 1800 }, '50% 100%', ['🍃'], 0],
     roer: () => [cuadros(EASE_OUT, 'rotate(0)', 'rotate(-3deg)', 'rotate(2deg)', 'rotate(-3deg)', 'rotate(2deg)', 'rotate(-3deg)', 'rotate(0)'), { duration: 1000 }, '50% 100%', [], 0],
     campana: () => [pendulo(9, 4), { duration: 1800 }, '50% 100%', ['🔔'], 0],
-    regalo: () => [cuadros(EASE_OUT, 'translateY(0)', 'translateY(-12%)', 'translateY(0)', 'translateY(-7%)', 'translateY(0)'), { duration: 700 }, '50% 100%', ['💛', '💛', '💛'], 160]
+    regalo: () => [cuadros(EASE_OUT, 'translateY(0)', 'translateY(-12%)', 'translateY(0)', 'translateY(-7%)', 'translateY(0)'), { duration: 700 }, '50% 100%', ['💛', '💛', '💛'], 160],
+    /* 26-nov-2026, el picnic y el huerto: la cometa y los globos flotan, el rehilete, la sombrilla y la veleta se
+       mueven con el aire, las hormiguitas y el caracol pasean, la bicicleta y la carretilla avanzan y vuelven, las
+       burbujas salen del frasco, los pajaritos y la gallina picotean, la regadera riega y el pozo sube su balde */
+    volar: () => [cuadros(EASE_IN_OUT, 'translate(0, 0) rotate(0)', 'translate(6%, -14%) rotate(5deg)', 'translate(-5%, -20%) rotate(-4deg)', 'translate(3%, -8%) rotate(3deg)', 'translate(0, 0) rotate(0)'), { duration: 2000 }, '50% 100%', [], 0],
+    girar: () => [pendulo(10, 4), { duration: 1600 }, '50% 100%', ['🍃'], 0],
+    caminar: () => [cuadros(EASE_IN_OUT, 'translateX(0)', 'translateX(22%)', 'translateX(0)'), { duration: 2400 }, '50% 100%', [], 0],
+    timbre: () => [cuadros(EASE_IN_OUT, 'translateX(0)', 'translateX(30%)', 'translateX(0)'), { duration: 2000 }, '50% 100%', ['🔔'], 0],
+    rodar: () => [cuadros(EASE_IN_OUT, 'translateX(0) rotate(0)', 'translateX(24%) rotate(-2deg)', 'translateX(0) rotate(0)'), { duration: 1800 }, '50% 100%', [], 0],
+    burbujas: () => [cuadros(EASE_OUT, 'scale(1)', 'scale(1.06, .95)', 'scale(1)'), { duration: 500, iterations: 2 }, '50% 100%', ['🫧', '🫧', '🫧', '🫧'], 280],
+    picotear: () => [cuadros(EASE_OUT, 'rotate(0)', 'rotate(7deg)', 'rotate(0)', 'rotate(7deg)', 'rotate(0)', 'rotate(7deg)', 'rotate(0)'), { duration: 1200 }, '50% 100%', ['♪'], 0],
+    regar: () => [[{ transform: 'rotate(0)', easing: EASE_OUT, offset: 0 }, { transform: 'rotate(-18deg)', easing: EASE_OUT, offset: .25 }, { transform: 'rotate(-18deg)', easing: EASE_OUT, offset: .75 }, { transform: 'rotate(0)', offset: 1 }], { duration: 1600 }, '50% 100%', ['💧', '💧', '💧'], 260],
+    balde: () => [cuadros(EASE_IN_OUT, 'translateY(0)', 'translateY(-3%)', 'translateY(0)', 'translateY(-3%)', 'translateY(0)'), { duration: 1400 }, '50% 100%', ['💧', '💧'], 500]
   };
   /* una chispita (una nota, una gota, un corazón, o el dibujo de un regalo) que sale de arriba de la calcomanía y sube */
   function chispa(capa, b, contenido, espera, lado) {
@@ -800,7 +821,7 @@
     const m = t.mejora, falta = m.precio - estado.juego.malvaviscos;
     let cerrar, ocupado = false;
     cerrar = cajon(el('div', { class: 'premio mejora' },
-      el('div', { class: 'mejora-arte' }, arte(t.id), el('span', { class: 'sello', 'aria-hidden': 'true', text: ACCION_ICO[m.accion] || '⭐' })),
+      el('div', { class: 'mejora-arte' }, arte(t.id), el('span', { class: 'sello', 'aria-hidden': 'true', text: icoMejora(m) })),
       el('h2', { text: t.nombre }),
       el('span', { class: 'precio', html: MALVAVISCO + m.precio }),
       el('div', { class: 'acciones', style: 'grid-template-columns:1fr' },
@@ -1187,7 +1208,7 @@
       .concat(mapas.map(m => ({ id: m.mapa, nombre: m.nombre })), [{ id: 'mejoras', nombre: '⭐ Mejoras' }, { id: 'amigos', nombre: 'Amigos' }]);
     const lista = el('div', { class: 'tienda' });
     const precio = n => el('span', { class: 'precio', html: MALVAVISCO + n });
-    const dibujo = t => el('div', { class: 'arte' }, arte(t.id), t.mejora ? el('span', { class: 'sello' + (mejorada(t.id) ? ' lista' : ''), 'aria-hidden': 'true', text: ACCION_ICO[t.mejora.accion] || '⭐' }) : null);
+    const dibujo = t => el('div', { class: 'arte' }, arte(t.id), t.mejora ? el('span', { class: 'sello' + (mejorada(t.id) ? ' lista' : ''), 'aria-hidden': 'true', text: icoMejora(t.mejora) }) : null);
     /* una cosa de la tienda: comprarla; si ya es suya y se puede mejorar, mejorarla */
     const tarjeta = t => {
       const jg = estado.juego, tengo = jg.inventario.includes(t.id), falta = t.precio - jg.malvaviscos;
@@ -1251,6 +1272,85 @@
     const activa = pestanas.querySelector('[aria-pressed="true"]');
     if (activa) activa.scrollIntoView({ block: 'nearest', inline: 'center' });
     if (document.querySelector('.pantalla.activa') !== p) ir('tienda');
+  }
+
+  /* ---------- El vestidor del osito (26-nov-2026, pedido de la dueña) ----------
+     Como en Pou o Talking Tom: el osito grande y, abajo, la ropa por ranura (gorra, bufanda, camiseta, chaqueta, pantalón,
+     medias, zapatos, reloj), con dibujos y sin palabras. Tocar una prenda suya la pone; tocarla otra vez la quita. Tocar
+     una que no es suya se la PRUEBA (se ve puesta) y aparece el botón con su precio para comprarla; al salir sin comprar,
+     se le quita. El osito da un saltito al estrenar algo y se ríe si lo tocan. Todas las prendas están dibujadas sobre el
+     mismo lienzo que el osito (Libro_Sprinkloud/herramientas/vestidor.py), así que se apilan sin acomodarlas. */
+  const ICONO_RANURA = { cabeza: '🧢', cuello: '🧣', torso: '👕', abrigo: '🧥', piernas: '👖', medias: '🧦', pies: '👟', muneca: '⌚' };
+  const ROPA_ARTE = new Set(window.BOSQUE_ROPA_ARTE || []);
+  let ranuraVista = null, guardarRopa = null;
+  /* el osito con lo que tiene puesto (y lo que se está probando), capa por capa en el orden de las ranuras */
+  function ositoVestido(puesto, clase) {
+    const cat = estado.catalogo, capas = (cat.ranuras || []).map(r => puesto[r]).filter(id => id && ROPA_ARTE.has(id));
+    return el('div', { class: 'osito-vestido ' + (clase || ''), role: 'img', 'aria-label': 'El osito' },
+      el('img', { src: 'assets/vestidor/base.webp', alt: '' }),
+      capas.map(id => el('img', { src: 'assets/vestidor/' + id + '.webp', alt: '' })));
+  }
+  function vestidor() {
+    const p = $('#vestidor'), cat = estado.catalogo;
+    const prendas = (cat.ropa || []).filter(r => ROPA_ARTE.has(r.id));
+    const ranuras = (cat.ranuras || []).filter(r => prendas.some(x => x.ranura === r)).reverse();   // de la cabeza a los pies
+    if (!ranuraVista || !ranuras.includes(ranuraVista)) ranuraVista = ranuras[0];
+    let probando = null;   // la prenda que se está probando (todavía no es suya)
+    const mia = id => (estado.juego.ropa || []).includes(id);
+    const puestoDe = () => Object.assign({}, estado.juego.puesto || {});
+    const escena = el('div', { class: 'vestidor-escena' });
+    const lista = el('div', { class: 'ropa' });
+    const saltito = () => { const o = escena.querySelector('.osito-vestido'); if (o && !quieto()) o.animate(cuadros(EASE_OUT, 'translateY(0)', 'translateY(-4%) scale(1.02, .98)', 'translateY(0)'), { duration: 380 }); };
+    const pintar = () => {
+      const puesto = puestoDe();
+      if (probando) puesto[probando.ranura] = probando.id;
+      const osito = ositoVestido(puesto);
+      osito.addEventListener('pointerdown', () => {   // tocarlo: se ríe y se mueve un poquito
+        S.toque(); if (!quieto()) osito.animate(cuadros(EASE_OUT, 'rotate(0)', 'rotate(-3deg)', 'rotate(2deg)', 'rotate(0)'), { duration: 420 });
+      });
+      const falta = probando ? probando.precio - estado.juego.malvaviscos : 0;
+      llenar(escena, osito, probando ? el('div', { class: 'comprar-prenda' },
+        puff(MALVAVISCO + probando.precio, falta > 0 ? 'plomo' : 'ocre', () => comprarPrenda(probando))) : null);
+      llenar(lista, prendas.filter(x => x.ranura === ranuraVista).map(x => {
+        const puesta = puesto[x.ranura] === x.id, suya = mia(x.id);
+        return el('button', { class: 'prenda' + (puesta ? ' puesta' : '') + (suya ? '' : ' ajena'), type: 'button', 'aria-label': x.nombre, 'aria-pressed': String(puesta),
+          onclick: () => tocarPrenda(x) },
+          el('img', { src: 'assets/vestidor/' + x.id + '-mini.webp', alt: '' }),
+          suya ? null : el('span', { class: 'precio-prenda', html: MALVAVISCO + x.precio }));
+      }));
+    };
+    function tocarPrenda(x) {
+      S.toque();
+      if (!mia(x.id)) { probando = probando && probando.id === x.id ? null : x; pintar(); if (probando) saltito(); return; }
+      probando = null;
+      const puesto = puestoDe();
+      if (puesto[x.ranura] === x.id) delete puesto[x.ranura]; else puesto[x.ranura] = x.id;
+      estado.juego.puesto = puesto;
+      pintar(); if (puesto[x.ranura]) saltito();
+      /* se guarda 0,7 s después del último toque: cambiarse varias veces seguidas manda un solo pedido */
+      clearTimeout(guardarRopa);
+      guardarRopa = setTimeout(() => { const pu = puestoDe(); porDetras(() => {}, () => Api.vestir(pu)); }, 700);
+    }
+    function comprarPrenda(x) {
+      const jg = estado.juego;
+      if (jg.malvaviscos < x.precio) { S.error(); aviso('Practica un poco más para juntar ' + (x.precio - jg.malvaviscos) + ' malvaviscos 🍡'); return; }
+      if (mia(x.id)) return;
+      clearTimeout(guardarRopa);
+      porDetras(j => { j.malvaviscos -= x.precio; j.ropa = (j.ropa || []).concat([x.id]); j.puesto = Object.assign({}, j.puesto, { [x.ranura]: x.id }); },
+        () => Api.comprarRopa(x.id), festejar);
+      probando = null; S.caja(); confeti();
+      pintar(); saltito();
+      const f = p.querySelector('.cabecera .ficha .num'); if (f) f.textContent = estado.juego.malvaviscos;
+    }
+    const pestanas = el('div', { class: 'ranuras', role: 'tablist' }, ranuras.map(r => el('button', {
+      class: 'ranura', type: 'button', role: 'tab', 'aria-selected': String(r === ranuraVista), 'aria-label': r, text: ICONO_RANURA[r] || '✨',
+      onclick: e => { S.toque(); ranuraVista = r; pestanas.querySelectorAll('.ranura').forEach(b => b.setAttribute('aria-selected', String(b === e.currentTarget))); pintar(); }
+    })));
+    pintar();
+    llenar(p,
+      el('div', { class: 'cabecera' }, el('button', { class: 'btn-icono', type: 'button', 'aria-label': 'Volver', text: '←', onclick: () => camino() }), el('h1', { text: 'Vestidor' }), fichas().children[1]),
+      escena, pestanas, el('div', { class: 'lista-scroll' }, lista));
+    if (document.querySelector('.pantalla.activa') !== p) ir('vestidor');
   }
 
   /* ---------- Biblioteca (antes «Logros»): los libros de cada etapa, las medallas y los amigos del bosque ----------

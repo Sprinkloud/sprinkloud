@@ -118,7 +118,71 @@ window.Api = (function () {
     { id: 'lago-boya', mapa: 'lago', lugar: 'lago', nombre: 'Boya con gaviota', precio: 80, tam: 12 },
     { id: 'lago-hamaca', mapa: 'lago', lugar: 'lago', nombre: 'Hamaca', precio: 160, tam: 24 },
     { id: 'lago-farolitos-flotantes', mapa: 'lago', lugar: 'lago', nombre: 'Farolitos flotantes', precio: 120, tam: 18 },
-    { id: 'lago-piedras-paso', mapa: 'lago', lugar: 'lago', nombre: 'Piedras de paso', precio: 70, tam: 20 }
+    { id: 'lago-piedras-paso', mapa: 'lago', lugar: 'lago', nombre: 'Piedras de paso', precio: 70, tam: 20 },
+    /* 26-nov-2026: el mapa del picnic con sus 30 stickers (los pintó la tarea diaria; la dueña dijo «upload») */
+    { id: 'mapa-picnic', tipo: 'mapa', mapa: 'picnic', lugar: 'picnic', nombre: 'El picnic', precio: 1200 },
+    { id: 'picnic-cesta-picnic', mapa: 'picnic', lugar: 'picnic', nombre: 'Cesta de picnic', precio: 100, tam: 16 },
+    { id: 'picnic-manta-picnic', mapa: 'picnic', lugar: 'picnic', nombre: 'Manta de cuadros', precio: 90, tam: 24 },
+    { id: 'picnic-sandwiches-limonada', mapa: 'picnic', lugar: 'picnic', nombre: 'Sándwiches y limonada', precio: 110, tam: 18 },
+    { id: 'picnic-cometa', mapa: 'picnic', lugar: 'picnic', nombre: 'Cometa', precio: 150, tam: 14 },
+    { id: 'picnic-sombrilla', mapa: 'picnic', lugar: 'picnic', nombre: 'Sombrilla', precio: 120, tam: 20 },
+    { id: 'picnic-pastel-fresas', mapa: 'picnic', lugar: 'picnic', nombre: 'Pastel de fresas', precio: 160, tam: 15 },
+    { id: 'picnic-tarta-manzana', mapa: 'picnic', lugar: 'picnic', nombre: 'Tarta de manzana', precio: 140, tam: 15 },
+    { id: 'picnic-sandia', mapa: 'picnic', lugar: 'picnic', nombre: 'Sandía', precio: 100, tam: 16 },
+    { id: 'picnic-canasta-frutas', mapa: 'picnic', lugar: 'picnic', nombre: 'Canasta de frutas', precio: 110, tam: 15 },
+    { id: 'picnic-globos', mapa: 'picnic', lugar: 'picnic', nombre: 'Globos', precio: 120, tam: 14 },
+    { id: 'picnic-banderines', mapa: 'picnic', lugar: 'picnic', nombre: 'Banderines', precio: 90, tam: 26 },
+    { id: 'picnic-columpio-rama', mapa: 'picnic', lugar: 'picnic', nombre: 'Columpio de la rama', precio: 180, tam: 20 },
+    { id: 'picnic-pelota', mapa: 'picnic', lugar: 'picnic', nombre: 'Pelota', precio: 60, tam: 11 },
+    { id: 'picnic-ukelele', mapa: 'picnic', lugar: 'picnic', nombre: 'Ukelele', precio: 200, tam: 15 },
+    { id: 'picnic-mariposas', mapa: 'picnic', lugar: 'picnic', nombre: 'Mariposas', precio: 80, tam: 14 },
+    { id: 'picnic-hormiguitas', mapa: 'picnic', lugar: 'picnic', nombre: 'Hormiguitas', precio: 80, tam: 14 },
+    { id: 'picnic-ramo-frasco', mapa: 'picnic', lugar: 'picnic', nombre: 'Ramo en frasco', precio: 70, tam: 11 },
+    { id: 'picnic-cojines', mapa: 'picnic', lugar: 'picnic', nombre: 'Cojines', precio: 70, tam: 15 },
+    { id: 'picnic-bicicleta', mapa: 'picnic', lugar: 'picnic', nombre: 'Bicicleta', precio: 250, tam: 26 },
+    { id: 'picnic-rehilete', mapa: 'picnic', lugar: 'picnic', nombre: 'Rehilete', precio: 60, tam: 11 },
+    { id: 'picnic-termo-tazas', mapa: 'picnic', lugar: 'picnic', nombre: 'Termo con tazas', precio: 110, tam: 15 },
+    { id: 'picnic-caballete', mapa: 'picnic', lugar: 'picnic', nombre: 'Caballete', precio: 150, tam: 16 },
+    { id: 'picnic-burbujas', mapa: 'picnic', lugar: 'picnic', nombre: 'Burbujas', precio: 80, tam: 12 },
+    { id: 'picnic-tabla-quesos', mapa: 'picnic', lugar: 'picnic', nombre: 'Tabla de quesos', precio: 120, tam: 16 },
+    { id: 'picnic-carrito-helados', mapa: 'picnic', lugar: 'picnic', nombre: 'Carrito de helados', precio: 240, tam: 24 },
+    { id: 'picnic-gramofono', mapa: 'picnic', lugar: 'picnic', nombre: 'Gramófono', precio: 220, tam: 17 },
+    { id: 'picnic-raquetas', mapa: 'picnic', lugar: 'picnic', nombre: 'Raquetas', precio: 80, tam: 15 },
+    { id: 'picnic-pajaritos-migas', mapa: 'picnic', lugar: 'picnic', nombre: 'Pajaritos con migas', precio: 90, tam: 15 },
+    { id: 'picnic-farolillos-papel', mapa: 'picnic', lugar: 'picnic', nombre: 'Farolillos de papel', precio: 130, tam: 24 },
+    { id: 'picnic-mesita-picnic', mapa: 'picnic', lugar: 'picnic', nombre: 'Mesita de picnic', precio: 120, tam: 18 },
+    /* 26-nov-2026: el mapa del huerto con sus 30 stickers (los pintó la tarea diaria; la dueña dijo «upload») */
+    { id: 'mapa-huerto', tipo: 'mapa', mapa: 'huerto', lugar: 'huerto', nombre: 'El huerto', precio: 1500 },
+    { id: 'huerto-regadera', mapa: 'huerto', lugar: 'huerto', nombre: 'Regadera', precio: 80, tam: 13 },
+    { id: 'huerto-carretilla', mapa: 'huerto', lugar: 'huerto', nombre: 'Carretilla', precio: 130, tam: 20 },
+    { id: 'huerto-pala-rastrillo', mapa: 'huerto', lugar: 'huerto', nombre: 'Pala y rastrillo', precio: 70, tam: 14 },
+    { id: 'huerto-zanahorias', mapa: 'huerto', lugar: 'huerto', nombre: 'Zanahorias', precio: 100, tam: 18 },
+    { id: 'huerto-espantapajaros', mapa: 'huerto', lugar: 'huerto', nombre: 'Espantapájaros', precio: 180, tam: 18 },
+    { id: 'huerto-coles', mapa: 'huerto', lugar: 'huerto', nombre: 'Coles', precio: 80, tam: 18 },
+    { id: 'huerto-tomates', mapa: 'huerto', lugar: 'huerto', nombre: 'Tomates', precio: 90, tam: 14 },
+    { id: 'huerto-girasoles', mapa: 'huerto', lugar: 'huerto', nombre: 'Girasoles', precio: 120, tam: 18 },
+    { id: 'huerto-fresas-mata', mapa: 'huerto', lugar: 'huerto', nombre: 'Mata de fresas', precio: 110, tam: 14 },
+    { id: 'huerto-maiz', mapa: 'huerto', lugar: 'huerto', nombre: 'Maíz', precio: 100, tam: 18 },
+    { id: 'huerto-lechugas', mapa: 'huerto', lugar: 'huerto', nombre: 'Lechugas', precio: 80, tam: 18 },
+    { id: 'huerto-calabaza-gigante', mapa: 'huerto', lugar: 'huerto', nombre: 'Calabaza gigante', precio: 200, tam: 18 },
+    { id: 'huerto-canasta-verduras', mapa: 'huerto', lugar: 'huerto', nombre: 'Canasta de verduras', precio: 110, tam: 15 },
+    { id: 'huerto-gallina-pollitos', mapa: 'huerto', lugar: 'huerto', nombre: 'Gallina con pollitos', precio: 150, tam: 17 },
+    { id: 'huerto-casita-pajaros', mapa: 'huerto', lugar: 'huerto', nombre: 'Casita de pájaros', precio: 130, tam: 13 },
+    { id: 'huerto-colmena', mapa: 'huerto', lugar: 'huerto', nombre: 'Colmena', precio: 180, tam: 15 },
+    { id: 'huerto-costal-semillas', mapa: 'huerto', lugar: 'huerto', nombre: 'Costal de semillas', precio: 70, tam: 12 },
+    { id: 'huerto-letreritos', mapa: 'huerto', lugar: 'huerto', nombre: 'Letreritos', precio: 60, tam: 16 },
+    { id: 'huerto-botas-lluvia', mapa: 'huerto', lugar: 'huerto', nombre: 'Botas de lluvia', precio: 70, tam: 11 },
+    { id: 'huerto-canasta-manzanas', mapa: 'huerto', lugar: 'huerto', nombre: 'Canasta de manzanas', precio: 100, tam: 15 },
+    { id: 'huerto-tendedero', mapa: 'huerto', lugar: 'huerto', nombre: 'Tendedero', precio: 120, tam: 24 },
+    { id: 'huerto-invernadero', mapa: 'huerto', lugar: 'huerto', nombre: 'Invernadero', precio: 250, tam: 26 },
+    { id: 'huerto-pozo', mapa: 'huerto', lugar: 'huerto', nombre: 'Pozo', precio: 220, tam: 18 },
+    { id: 'huerto-macetas-hierbas', mapa: 'huerto', lugar: 'huerto', nombre: 'Macetas de hierbas', precio: 80, tam: 15 },
+    { id: 'huerto-cerca-flores', mapa: 'huerto', lugar: 'huerto', nombre: 'Cerca con flores', precio: 90, tam: 22 },
+    { id: 'huerto-veleta', mapa: 'huerto', lugar: 'huerto', nombre: 'Veleta', precio: 140, tam: 13 },
+    { id: 'huerto-manzano', mapa: 'huerto', lugar: 'huerto', nombre: 'Manzano', precio: 240, tam: 26 },
+    { id: 'huerto-caracol', mapa: 'huerto', lugar: 'huerto', nombre: 'Caracol', precio: 80, tam: 11 },
+    { id: 'huerto-topo', mapa: 'huerto', lugar: 'huerto', nombre: 'Topo', precio: 110, tam: 12 },
+    { id: 'huerto-barril-lluvia', mapa: 'huerto', lugar: 'huerto', nombre: 'Barril de lluvia', precio: 100, tam: 14 }
   ]);
   /* mejoras: un sticker comprado se mejora pagando y desde entonces hace algo; los que tienen `uso` preparan un regalo */
   const MEJORAS = {
@@ -146,9 +210,94 @@ window.Api = (function () {
     'lago-nutria': { precio: 100, accion: 'nadar' },
     'lago-boya': { precio: 60, accion: 'campana' },
     'lago-hamaca': { precio: 100, accion: 'mecer' },
-    'lago-farolitos-flotantes': { precio: 80, accion: 'luz' }
+    'lago-farolitos-flotantes': { precio: 80, accion: 'luz' },
+    'picnic-cesta-picnic': { precio: 150, accion: 'servir', uso: 8, regalo: 'sandwich' },
+    'picnic-sandwiches-limonada': { precio: 120, accion: 'servir', uso: 6, regalo: 'limonada' },
+    'picnic-cometa': { precio: 100, accion: 'volar' },
+    'picnic-sombrilla': { precio: 60, accion: 'girar' },
+    'picnic-pastel-fresas': { precio: 200, accion: 'servir', uso: 12, regalo: 'pastel' },
+    'picnic-sandia': { precio: 120, accion: 'servir', uso: 6, regalo: 'sandia' },
+    'picnic-globos': { precio: 80, accion: 'volar' },
+    'picnic-banderines': { precio: 60, accion: 'mecer' },
+    'picnic-columpio-rama': { precio: 100, accion: 'mecer' },
+    'picnic-pelota': { precio: 80, accion: 'saltar' },
+    'picnic-ukelele': { precio: 200, accion: 'cancion' },
+    'picnic-mariposas': { precio: 80, accion: 'revolotear' },
+    'picnic-hormiguitas': { precio: 80, accion: 'caminar' },
+    'picnic-bicicleta': { precio: 120, accion: 'timbre' },
+    'picnic-rehilete': { precio: 60, accion: 'girar' },
+    'picnic-termo-tazas': { precio: 120, accion: 'servir', uso: 6, regalo: 'te' },
+    'picnic-burbujas': { precio: 80, accion: 'burbujas' },
+    'picnic-tabla-quesos': { precio: 150, accion: 'servir', uso: 8, regalo: 'queso' },
+    'picnic-carrito-helados': { precio: 200, accion: 'servir', uso: 10, regalo: 'helado' },
+    'picnic-gramofono': { precio: 200, accion: 'melodia' },
+    'picnic-pajaritos-migas': { precio: 80, accion: 'picotear' },
+    'picnic-farolillos-papel': { precio: 80, accion: 'luz' },
+    'huerto-regadera': { precio: 80, accion: 'regar' },
+    'huerto-carretilla': { precio: 100, accion: 'rodar' },
+    'huerto-zanahorias': { precio: 150, accion: 'servir', uso: 5, regalo: 'zanahoria' },
+    'huerto-espantapajaros': { precio: 80, accion: 'mecer' },
+    'huerto-girasoles': { precio: 60, accion: 'viento' },
+    'huerto-fresas-mata': { precio: 150, accion: 'servir', uso: 6, regalo: 'fresas' },
+    'huerto-gallina-pollitos': { precio: 100, accion: 'picotear' },
+    'huerto-casita-pajaros': { precio: 80, accion: 'cucu' },
+    'huerto-colmena': { precio: 200, accion: 'servir', uso: 10, regalo: 'miel' },
+    'huerto-botas-lluvia': { precio: 60, accion: 'saltar' },
+    'huerto-tendedero': { precio: 60, accion: 'mecer' },
+    'huerto-invernadero': { precio: 60, accion: 'luz' },
+    'huerto-pozo': { precio: 120, accion: 'balde' },
+    'huerto-veleta': { precio: 60, accion: 'girar' },
+    'huerto-manzano': { precio: 150, accion: 'servir', uso: 5, regalo: 'manzana' },
+    'huerto-caracol': { precio: 80, accion: 'caminar' },
+    'huerto-topo': { precio: 80, accion: 'esconder' }
   };
-  const REGALOS = ['galletas', 'cacao', 'pescado', 'sopa'], DESPENSA_MAX = 9;
+  const REGALOS = ['galletas', 'cacao', 'pescado', 'sopa', 'sandwich', 'limonada', 'pastel', 'sandia', 'te', 'queso', 'helado', 'zanahoria', 'fresas', 'miel', 'manzana'], DESPENSA_MAX = 9;
+  /* El vestidor del osito (26-nov-2026, pedido de la dueña): ropa que se compra y se pone. Una prenda por ranura (al poner
+     otra gorra, la anterior se quita sola). La bufanda de siempre es gratis y viene puesta. Las ranuras van en el orden en
+     que se dibujan (de abajo hacia arriba): las medias debajo de los zapatos, la chompa debajo de la chaqueta y la bufanda
+     encima de las dos. Precios para 6 meses (memoria bosque-economia-largo-plazo). Solo se venden las que ya tienen dibujo
+     (js/ropa.js); el servidor tendrá la misma lista. */
+  const RANURAS = ['medias', 'piernas', 'pies', 'torso', 'abrigo', 'cuello', 'muneca', 'cabeza'];
+  /* ROPA:INICIO (la escribe herramientas/prendas.py desde prendas.json; no se edita a mano) */
+  const ROPA = [
+    { id: 'bufanda', nombre: 'Bufanda de cuadritos', ranura: 'cuello', precio: 0 },
+    { id: 'gorra-roja', nombre: 'Gorra roja', ranura: 'cabeza', precio: 120 },
+    { id: 'gorro-lana', nombre: 'Gorro de lana', ranura: 'cabeza', precio: 150 },
+    { id: 'sombrero-paja', nombre: 'Sombrero de paja', ranura: 'cabeza', precio: 180 },
+    { id: 'boina', nombre: 'Boina', ranura: 'cabeza', precio: 140 },
+    { id: 'bufanda-roja', nombre: 'Bufanda roja', ranura: 'cuello', precio: 100 },
+    { id: 'corbatin', nombre: 'Corbatín', ranura: 'cuello', precio: 90 },
+    { id: 'panuelo', nombre: 'Pañuelo', ranura: 'cuello', precio: 80 },
+    { id: 'camiseta-amarilla', nombre: 'Camiseta amarilla', ranura: 'torso', precio: 80 },
+    { id: 'camiseta-rayas', nombre: 'Camiseta de rayas', ranura: 'torso', precio: 100 },
+    { id: 'camiseta-musica', nombre: 'Camiseta de la nota', ranura: 'torso', precio: 120 },
+    { id: 'polo-verde', nombre: 'Polo verde', ranura: 'torso', precio: 110 },
+    { id: 'chompa-verde', nombre: 'Chompa verde', ranura: 'torso', precio: 250 },
+    { id: 'sueter-rojo', nombre: 'Suéter del corazón', ranura: 'torso', precio: 230 },
+    { id: 'buzo-azul', nombre: 'Buzo con capucha', ranura: 'torso', precio: 260 },
+    { id: 'chaqueta-jean', nombre: 'Chaqueta de jean', ranura: 'abrigo', precio: 350 },
+    { id: 'impermeable', nombre: 'Impermeable amarillo', ranura: 'abrigo', precio: 380 },
+    { id: 'chaleco', nombre: 'Chaleco de lana', ranura: 'abrigo', precio: 200 },
+    { id: 'chaqueta-acolchada', nombre: 'Chaqueta acolchada', ranura: 'abrigo', precio: 420 },
+    { id: 'pantalon-jean', nombre: 'Pantalón de jean', ranura: 'piernas', precio: 220 },
+    { id: 'pantalon-pana', nombre: 'Pantalón de pana', ranura: 'piernas', precio: 200 },
+    { id: 'jogger-gris', nombre: 'Jogger', ranura: 'piernas', precio: 180 },
+    { id: 'shorts-azul', nombre: 'Shorts azules', ranura: 'piernas', precio: 120 },
+    { id: 'shorts-rojo', nombre: 'Shorts rojos', ranura: 'piernas', precio: 120 },
+    { id: 'medias-rayas', nombre: 'Medias de rayas', ranura: 'medias', precio: 60 },
+    { id: 'medias-azules', nombre: 'Medias azules', ranura: 'medias', precio: 50 },
+    { id: 'medias-verdes', nombre: 'Medias de lana', ranura: 'medias', precio: 70 },
+    { id: 'deportivos-azules', nombre: 'Deportivos azules', ranura: 'pies', precio: 300 },
+    { id: 'deportivos-rojos', nombre: 'Deportivos rojos', ranura: 'pies', precio: 300 },
+    { id: 'zapatos-cafe', nombre: 'Zapatos de cuero', ranura: 'pies', precio: 250 },
+    { id: 'botas-lluvia', nombre: 'Botas de lluvia', ranura: 'pies', precio: 220 },
+    { id: 'sandalias', nombre: 'Sandalias', ranura: 'pies', precio: 150 },
+    { id: 'reloj-dorado', nombre: 'Reloj dorado', ranura: 'muneca', precio: 450 },
+    { id: 'reloj-deportivo', nombre: 'Reloj deportivo', ranura: 'muneca', precio: 350 }
+  ];
+  /* ROPA:FIN */
+  const PUESTO_INICIAL = { cuello: 'bufanda' };
+  const ropaDe = x => ['bufanda'].concat((x && x.ropa) || []);
   const CATALOGO_TIENDA = TIENDA.map(t => MEJORAS[t.id] ? Object.assign({}, t, { mejora: MEJORAS[t.id] }) : t);
   /* LOGROS:INICIO (copiados del servidor con Registro_Sprinkloud/pruebas/copiar_logros.py; no se editan aquí) */
   const diasEntre_ = (a, b) => diasEntre(a, b);   // diasEntre se define más abajo
@@ -270,7 +419,8 @@ window.Api = (function () {
   function extrasJuego(j, hoy) {
     const am = amistad(j, hoy), x = j.extras || {}, casa = {};
     Object.keys(j.casa || {}).forEach(id => { if (id.indexOf('amigo-') !== 0 || am.amigos.includes(id.slice(6))) casa[id] = j.casa[id]; });
-    return { personajes: am.amigos, amistad: { puntos: am.puntos, siguiente: am.siguiente }, casa, mejoras: x.mejoras || [], despensa: x.despensa || {} };
+    return { personajes: am.amigos, amistad: { puntos: am.puntos, siguiente: am.siguiente }, casa, mejoras: x.mejoras || [], despensa: x.despensa || {},
+      ropa: ropaDe(x), puesto: x.puesto || PUESTO_INICIAL };
   }
   const ETAPAS = ['Cuerpo y pulso', 'Primeras lecturas', 'Lectura y ritmo', 'Intervalos, escalas y acordes', 'Tonalidad: reposo, mayor y menor', 'Músico completo', 'Los modos griegos'];
   const LARGO = [6, 8, 13, 10, 9, 6, 8];   // 60 lecciones desde el 29-oct (ver Registro_Sprinkloud/Guia.js versión 8)
@@ -336,6 +486,7 @@ window.Api = (function () {
         juego: {
           malvaviscos: j.malvaviscos, racha: f.racha, fogata: f.estado, mejor: j.mejor, lena: j.lena, dias: j.dias, aciertos: j.aciertos,
           insignias: j.insignias, casa: ex.casa, inventario: j.inventario, personajes: ex.personajes, amistad: ex.amistad, mejoras: ex.mejoras, despensa: ex.despensa,
+          ropa: ex.ropa, puesto: ex.puesto,
           hoy: { terminada: !!h.terminada, actividades: h.actividades || 0, ganados: h.ganados || 0 },
           energia: LIBRE ? { max: ENERGIA_DIA, queda: Math.max(0, ENERGIA_DIA - (h.gastada || 0)), error: COSTO_ERROR } : null
         },
@@ -345,7 +496,7 @@ window.Api = (function () {
         prueba: LIBRE ? pruebaDe(j.libre) : q.has('encuesta') ? null : q.get('prueba') === 'no' ? { puede: false, desde: demo.hoy(), dias: DIAS_REPETIR_PRUEBA } : { puede: true, desde: demo.hoy(), dias: DIAS_REPETIR_PRUEBA },
         cuenta: LIBRE ? false : undefined,
         biblioteca: ETAPAS.map((nombre, i) => ({ etapa: i + 1, nombre, abierto: !LIBRE && i + 1 <= et.etapa, amazon: LIBRE })),
-        catalogo: { tienda: CATALOGO_TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(i => ({ id: i.id, nombre: i.nombre, grupo: i.grupo })) }
+        catalogo: { tienda: CATALOGO_TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(i => ({ id: i.id, nombre: i.nombre, grupo: i.grupo })), ropa: ROPA, ranuras: RANURAS }
       };
     },
     insignias(j, x) { const n = INSIGNIAS.filter(i => j.insignias.indexOf(i.id) < 0 && i.si(j, x)).map(i => i.id); j.insignias = j.insignias.concat(n); return n; },
@@ -472,6 +623,29 @@ window.Api = (function () {
       const nuevas = demo.insignias(j); demo.guardar(j);
       return { ok: true, insignias: nuevas, estado: demo.estado() };
     },
+    /* comprar una prenda: queda suya y puesta (en su ranura, en lugar de la que había) */
+    comprarRopa(id) {
+      const j = demo.leer(), p = ROPA.find(r => r.id === id), x = Object.assign({}, j.extras);
+      if (!p) throw new Error('Esa prenda no está en el vestidor.');
+      if (ropaDe(x).indexOf(id) >= 0) throw new Error('Ya es tuya.');
+      if (j.malvaviscos < p.precio) throw new Error('Te faltan ' + (p.precio - j.malvaviscos) + ' malvaviscos.');
+      j.malvaviscos -= p.precio; x.ropa = (x.ropa || []).concat([id]);
+      x.puesto = Object.assign({}, x.puesto || PUESTO_INICIAL, { [p.ranura]: id }); j.extras = x;
+      const nuevas = demo.insignias(j); demo.guardar(j);
+      return { ok: true, insignias: nuevas, estado: demo.estado() };
+    },
+    /* lo que tiene puesto: {ranura: prenda}, solo prendas suyas y cada una en su ranura */
+    vestir(puesto) {
+      const j = demo.leer(), x = Object.assign({}, j.extras), mias = ropaDe(x), limpio = {};
+      Object.keys(puesto || {}).forEach(r => {
+        const id = puesto[r], p = ROPA.find(q => q.id === id);
+        if (RANURAS.indexOf(r) < 0 || !p || p.ranura !== r) throw new Error('Esa prenda no va ahí.');
+        if (mias.indexOf(id) < 0) throw new Error('Esa prenda todavía no es tuya.');
+        limpio[r] = id;
+      });
+      x.puesto = limpio; j.extras = x; demo.guardar(j);
+      return { ok: true, estado: demo.estado() };
+    },
     casa(casa) {
       const j = demo.leer();
       const limpia = {}, amigos = amistad(j, demo.hoy()).amigos;
@@ -528,6 +702,9 @@ window.Api = (function () {
     dar: (regalo, amigo) => LOCAL ? local(() => demo.dar(regalo, amigo)) : post({ accion: 'darJuego', regalo, amigo }),
     libro: n => libros[n] || (libros[n] = bajarLibro(n).catch(e => { delete libros[n]; throw e; })),
     guardarCasa: casa => LOCAL ? local(() => demo.casa(casa)) : post({ accion: 'guardarCasa', casa }),
+    /* el vestidor (26-nov-2026). Por ahora solo en la prueba: el servidor todavía no lo tiene */
+    comprarRopa: item => LOCAL ? local(() => demo.comprarRopa(item)) : post({ accion: 'comprarRopa', item }),
+    vestir: puesto => LOCAL ? local(() => demo.vestir(puesto)) : post({ accion: 'vestirJuego', puesto }),
     nivel: semana => LOCAL ? local(() => porInstrumento(demo.nivel(semana))) : post({ accion: 'nivelJuego', semana }),
     /* reportar un error o un reclamo (llega a la hoja «Reportes» del sistema); en la prueba (?demo=1) no se manda */
     reporte: datos => DEMO ? local(() => ({ ok: true })) : post(Object.assign({ accion: 'reporteJuego' }, datos)),

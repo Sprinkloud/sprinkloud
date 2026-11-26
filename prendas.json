@@ -1,0 +1,244 @@
+{
+  "LEEME": "La ropa del vestidor del osito (26-nov-2026). Es la ÚNICA lista: herramientas/prendas.py la copia al servidor (Registro_Sprinkloud/maestros/Código.js), a js/api.js y a los pedidos de Gemini (Libro_Sprinkloud/herramientas/ilustraciones/etapa24.txt). Ver la skill /prendas-osito. ranura: cabeza, cuello, torso, abrigo, piernas, medias, pies o muneca. pedido: lo que Gemini le pone al osito (una prenda, dónde va y qué tapa). Precios para 6 meses: básicas 50-120, medianas 150-300, especiales 350-450. «gemini»: false = no se pide a Gemini (la bufanda sale del dibujo original del osito, vestidor.py).",
+  "prendas": [
+    {
+      "id": "bufanda",
+      "nombre": "Bufanda de cuadritos",
+      "ranura": "cuello",
+      "precio": 0,
+      "pedido": "",
+      "gemini": false
+    },
+    {
+      "id": "gorra-roja",
+      "nombre": "Gorra roja",
+      "ranura": "cabeza",
+      "precio": 120,
+      "pedido": "Ponle una gorra deportiva roja con visera hacia adelante, bien puesta en la cabeza, entre las dos orejas (las orejas se siguen viendo enteras)."
+    },
+    {
+      "id": "gorro-lana",
+      "nombre": "Gorro de lana",
+      "ranura": "cabeza",
+      "precio": 150,
+      "pedido": "Ponle un gorro de lana tejido amarillo mostaza con un pompón blanco arriba, bien puesto en la cabeza entre las dos orejas (las orejas se ven enteras, por fuera del gorro)."
+    },
+    {
+      "id": "sombrero-paja",
+      "nombre": "Sombrero de paja",
+      "ranura": "cabeza",
+      "precio": 180,
+      "pedido": "Ponle un sombrero de paja con ala ancha y una cinta roja alrededor, bien puesto en la cabeza; las orejas asoman por encima del ala."
+    },
+    {
+      "id": "boina",
+      "nombre": "Boina",
+      "ranura": "cabeza",
+      "precio": 140,
+      "pedido": "Ponle una boina azul cielo de pintor, un poco ladeada hacia su izquierda, puesta en la cabeza entre las dos orejas."
+    },
+    {
+      "id": "bufanda-roja",
+      "nombre": "Bufanda roja",
+      "ranura": "cuello",
+      "precio": 100,
+      "pedido": "Ponle una bufanda tejida roja lisa, dada una vuelta al cuello, con las dos puntas con flecos cayendo sobre el pecho."
+    },
+    {
+      "id": "corbatin",
+      "nombre": "Corbatín",
+      "ranura": "cuello",
+      "precio": 90,
+      "pedido": "Ponle un corbatín (corbata de moño) rojo con lunares blancos, en el cuello, justo debajo de la cara."
+    },
+    {
+      "id": "panuelo",
+      "nombre": "Pañuelo",
+      "ranura": "cuello",
+      "precio": 80,
+      "pedido": "Ponle un pañuelo de cuadros verdes y blancos anudado al cuello, con la punta en triángulo sobre el pecho."
+    },
+    {
+      "id": "camiseta-amarilla",
+      "nombre": "Camiseta amarilla",
+      "ranura": "torso",
+      "precio": 80,
+      "pedido": "Ponle una camiseta amarilla mantequilla de manga corta, que le cubre el pecho, la pancita y la espalda hasta la cadera. Los brazos desde la manga, las patas y la cabeza quedan igual."
+    },
+    {
+      "id": "camiseta-rayas",
+      "nombre": "Camiseta de rayas",
+      "ranura": "torso",
+      "precio": 100,
+      "pedido": "Ponle una camiseta marinera de manga corta con rayas horizontales azul y blanco, que le cubre el pecho, la pancita y la espalda hasta la cadera."
+    },
+    {
+      "id": "camiseta-musica",
+      "nombre": "Camiseta de la nota",
+      "ranura": "torso",
+      "precio": 120,
+      "pedido": "Ponle una camiseta blanca de manga corta con una nota musical (una corchea) roja grande pintada en el pecho; le cubre el pecho y la pancita hasta la cadera. Sin letras."
+    },
+    {
+      "id": "polo-verde",
+      "nombre": "Polo verde",
+      "ranura": "torso",
+      "precio": 110,
+      "pedido": "Ponle un polo verde hoja de manga corta, con cuello de camisa y tres botoncitos blancos, que le cubre el pecho y la pancita hasta la cadera."
+    },
+    {
+      "id": "chompa-verde",
+      "nombre": "Chompa verde",
+      "ranura": "torso",
+      "precio": 250,
+      "pedido": "Ponle una chompa de lana tejida verde hoja, de manga larga hasta las muñecas, que le cubre el pecho, la pancita y la espalda hasta la cadera. Las patas y la cabeza quedan igual."
+    },
+    {
+      "id": "sueter-rojo",
+      "nombre": "Suéter del corazón",
+      "ranura": "torso",
+      "precio": 230,
+      "pedido": "Ponle un suéter de lana rojo cereza de manga larga hasta las muñecas, con un corazón blanco tejido en el pecho; le cubre el pecho, la pancita y la espalda hasta la cadera."
+    },
+    {
+      "id": "buzo-azul",
+      "nombre": "Buzo con capucha",
+      "ranura": "torso",
+      "precio": 260,
+      "pedido": "Ponle un buzo (sudadera) azul cielo de manga larga hasta las muñecas, con la capucha bajada detrás del cuello y un bolsillo canguro en la pancita; le cubre hasta la cadera. La cabeza y las orejas quedan igual, sin la capucha puesta."
+    },
+    {
+      "id": "chaqueta-jean",
+      "nombre": "Chaqueta de jean",
+      "ranura": "abrigo",
+      "precio": 350,
+      "pedido": "Ponle una chaqueta de jean azul, ABIERTA por delante (se ve su pancita en el medio), de manga larga hasta las muñecas y con botones dorados, hasta la cadera."
+    },
+    {
+      "id": "impermeable",
+      "nombre": "Impermeable amarillo",
+      "ranura": "abrigo",
+      "precio": 380,
+      "pedido": "Ponle un impermeable amarillo brillante de lluvia, ABIERTO por delante (se ve su pancita en el medio), de manga larga hasta las muñecas, largo hasta las rodillas, con la capucha bajada detrás del cuello."
+    },
+    {
+      "id": "chaleco",
+      "nombre": "Chaleco de lana",
+      "ranura": "abrigo",
+      "precio": 200,
+      "pedido": "Ponle un chaleco de lana tejido color miel, sin mangas y ABIERTO por delante (se ve su pancita en el medio), hasta la cadera."
+    },
+    {
+      "id": "chaqueta-acolchada",
+      "nombre": "Chaqueta acolchada",
+      "ranura": "abrigo",
+      "precio": 420,
+      "pedido": "Ponle una chaqueta acolchada de invierno rojo cereza, ABIERTA por delante (se ve su pancita en el medio), de manga larga hasta las muñecas, hasta la cadera."
+    },
+    {
+      "id": "pantalon-jean",
+      "nombre": "Pantalón de jean",
+      "ranura": "piernas",
+      "precio": 220,
+      "pedido": "Ponle un pantalón de jean azul largo, desde la cadera hasta los tobillos, que le cubre las dos patas de abajo. Las plantas de los pies quedan a la vista."
+    },
+    {
+      "id": "pantalon-pana",
+      "nombre": "Pantalón de pana",
+      "ranura": "piernas",
+      "precio": 200,
+      "pedido": "Ponle un pantalón de pana color mostaza largo, desde la cadera hasta los tobillos, que le cubre las dos patas de abajo. Los pies quedan a la vista."
+    },
+    {
+      "id": "jogger-gris",
+      "nombre": "Jogger",
+      "ranura": "piernas",
+      "precio": 180,
+      "pedido": "Ponle un pantalón deportivo (jogger) gris claro, desde la cadera hasta los tobillos, con elástico en los tobillos. Los pies quedan a la vista."
+    },
+    {
+      "id": "shorts-azul",
+      "nombre": "Shorts azules",
+      "ranura": "piernas",
+      "precio": 120,
+      "pedido": "Ponle unos shorts azul cielo cortos, desde la cadera hasta un poco arriba de las rodillas. El resto de las patas queda con su pelaje."
+    },
+    {
+      "id": "shorts-rojo",
+      "nombre": "Shorts rojos",
+      "ranura": "piernas",
+      "precio": 120,
+      "pedido": "Ponle unos shorts rojo cereza deportivos con una línea blanca a los lados, desde la cadera hasta un poco arriba de las rodillas."
+    },
+    {
+      "id": "medias-rayas",
+      "nombre": "Medias de rayas",
+      "ranura": "medias",
+      "precio": 60,
+      "pedido": "Ponle unas medias largas con rayas rojas y blancas en las dos patas de abajo, desde los pies hasta las rodillas."
+    },
+    {
+      "id": "medias-azules",
+      "nombre": "Medias azules",
+      "ranura": "medias",
+      "precio": 50,
+      "pedido": "Ponle unas medias cortas azul cielo en los dos pies, hasta los tobillos."
+    },
+    {
+      "id": "medias-verdes",
+      "nombre": "Medias de lana",
+      "ranura": "medias",
+      "precio": 70,
+      "pedido": "Ponle unas medias de lana verde hoja tejidas en las dos patas de abajo, desde los pies hasta la mitad de la pierna."
+    },
+    {
+      "id": "deportivos-azules",
+      "nombre": "Deportivos azules",
+      "ranura": "pies",
+      "precio": 300,
+      "pedido": "Ponle unos zapatos deportivos azul cielo con cordones blancos y suela blanca en las dos patas de abajo."
+    },
+    {
+      "id": "deportivos-rojos",
+      "nombre": "Deportivos rojos",
+      "ranura": "pies",
+      "precio": 300,
+      "pedido": "Ponle unos zapatos deportivos rojo cereza con cordones blancos y suela blanca en las dos patas de abajo."
+    },
+    {
+      "id": "zapatos-cafe",
+      "nombre": "Zapatos de cuero",
+      "ranura": "pies",
+      "precio": 250,
+      "pedido": "Ponle unos zapatos de cuero café brillante con cordones, de vestir, en las dos patas de abajo."
+    },
+    {
+      "id": "botas-lluvia",
+      "nombre": "Botas de lluvia",
+      "ranura": "pies",
+      "precio": 220,
+      "pedido": "Ponle unas botas de lluvia amarillas brillantes, altas hasta la mitad de la pierna, en las dos patas de abajo."
+    },
+    {
+      "id": "sandalias",
+      "nombre": "Sandalias",
+      "ranura": "pies",
+      "precio": 150,
+      "pedido": "Ponle unas sandalias de tiras color miel en los dos pies; los deditos se ven."
+    },
+    {
+      "id": "reloj-dorado",
+      "nombre": "Reloj dorado",
+      "ranura": "muneca",
+      "precio": 450,
+      "pedido": "Ponle un reloj de pulsera dorado con la carátula blanca en la muñeca de su brazo derecho (el de la izquierda de la imagen), justo arriba de la pata."
+    },
+    {
+      "id": "reloj-deportivo",
+      "nombre": "Reloj deportivo",
+      "ranura": "muneca",
+      "precio": 350,
+      "pedido": "Ponle un reloj deportivo de pulsera azul cielo en la muñeca de su brazo derecho (el de la izquierda de la imagen), justo arriba de la pata."
+    }
+  ]
+}
