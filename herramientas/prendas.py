@@ -22,8 +22,14 @@ SERVIDOR = RAIZ.parent / 'Registro_Sprinkloud' / 'maestros' / 'Código.js'
 API = RAIZ / 'js' / 'api.js'
 ETAPA = RAIZ.parent / 'Libro_Sprinkloud' / 'herramientas' / 'ilustraciones' / 'etapa24.txt'
 RANURAS = ['medias', 'piernas', 'pies', 'torso', 'abrigo', 'cuello', 'muneca', 'cabeza']
-BASE = ('vestidor-base|@editar Quítale la bufanda de cuadros: el cuello y el pecho quedan con su pelaje café y su pancita '
-        'color crema, igual que el resto del cuerpo, como si nunca hubiera tenido bufanda.')
+# 26-nov-2026 (noche): la base es el osito TIERNO de Navidad de la dueña, redibujado de pie y sin nada (ilustraciones.ps1)
+BASE = ('vestidor-base|@editar Genera una imagen vertical 2:3. El osito solo, de pie y de frente, de cuerpo entero de las orejas '
+        'a las patitas, centrado y grande (ocupa casi todo el alto). Es un CACHORRITO tierno como un peluche: la cabeza grande y '
+        'redonda (casi un tercio de su alto), el cuerpo redondito y gordito como una bolita, la pancita redonda, los brazos '
+        'cortos y regordetes relajados a los lados con las patitas vacías, y las patas de abajo MUY cortas y gorditas, separadas '
+        'un poquito y bien apoyadas. Nada de patas largas ni cuerpo alto: más bajito y más redondo. SIN gorro, SIN bufanda, SIN ropa, sin taza y sin nada en '
+        'las manos: solo su pelaje café cálido y su pancita color crema. Fondo blanco puro, sin piso, sin sombra, sin nieve, '
+        'sin árbol, sin regalos y sin notas musicales. Sin texto.')
 
 
 def leer():

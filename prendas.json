@@ -1,13 +1,12 @@
 {
-  "LEEME": "La ropa del vestidor del osito (26-nov-2026). Es la ÚNICA lista: herramientas/prendas.py la copia al servidor (Registro_Sprinkloud/maestros/Código.js), a js/api.js y a los pedidos de Gemini (Libro_Sprinkloud/herramientas/ilustraciones/etapa24.txt). Ver la skill /prendas-osito. ranura: cabeza, cuello, torso, abrigo, piernas, medias, pies o muneca. pedido: lo que Gemini le pone al osito (una prenda, dónde va y qué tapa). Precios para 6 meses: básicas 50-120, medianas 150-300, especiales 350-450. «gemini»: false = no se pide a Gemini (la bufanda sale del dibujo original del osito, vestidor.py).",
+  "LEEME": "La ropa del vestidor del osito (26-nov-2026). Es la ÚNICA lista: herramientas/prendas.py la copia al servidor (Registro_Sprinkloud/maestros/Código.js), a js/api.js y a los pedidos de Gemini (Libro_Sprinkloud/herramientas/ilustraciones/etapa24.txt). Ver la skill /prendas-osito. ranura: cabeza, cuello, torso, abrigo, piernas, medias, pies o muneca. pedido: lo que Gemini le pone al osito (una prenda, dónde va y qué tapa). Precios para 6 meses: básicas 50-120, medianas 150-300, especiales 350-450.",
   "prendas": [
     {
       "id": "bufanda",
       "nombre": "Bufanda de cuadritos",
       "ranura": "cuello",
       "precio": 0,
-      "pedido": "",
-      "gemini": false
+      "pedido": "Ponle su bufanda de siempre: tejida, de cuadritos azul cielo y blanco, dada una vuelta al cuello y con una punta con flecos que cae sobre el pecho, hacia su derecha."
     },
     {
       "id": "gorra-roja",
