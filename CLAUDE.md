@@ -310,7 +310,7 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
   - Prueba: `herramientas/probar_orden.js` (320×640).
 - **Revisión de textos cortados:** `herramientas/revisar_cortes.js`. Se corre con Chrome propio, sin el MCP: `node herramientas/correr_revision.js herramientas/revisar_cortes.js 360x780 <lecciones>`, una lección por proceso. Si no se le pasan lecciones, revisa la prueba de nivel. Busca texto que se sale de la pantalla, que tapa un contenedor o que es más ancho que su caja.
 
-## Modo Navidad (25-nov-2026, pedido de la dueña; SIN SUBIR, en vista previa)
+## Modo Navidad (25-nov-2026, pedido de la dueña; publicado el 25-nov, commit 150fd92)
 - **Cuándo:** `BOSQUE_NAVIDAD` en `js/config.js` (del 25-nov-2026 al 6-ene-2027, con la fecha del celular). `config.js` pone `data-temporada="navidad"` en `<html>`. Para verlo en otra fecha: `?navidad=1`; para apagarlo: `?navidad=0`.
 - **El dibujo de la dueña:** `assets/ilustraciones/osito navidad.jpeg` (el osito con gorro, chocolate, árbol y regalos). `herramientas/navidad.py` arma:
   - `osito-navidad.webp` (113 KB): la entrada y la ilustración de arriba del camino (`OSITO_ESCENA` en `js/app.js`);
