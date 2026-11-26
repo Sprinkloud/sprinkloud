@@ -150,12 +150,107 @@ window.Api = (function () {
   };
   const REGALOS = ['galletas', 'cacao', 'pescado', 'sopa'], DESPENSA_MAX = 9;
   const CATALOGO_TIENDA = TIENDA.map(t => MEJORAS[t.id] ? Object.assign({}, t, { mejora: MEJORAS[t.id] }) : t);
+  /* LOGROS:INICIO (copiados del servidor con Registro_Sprinkloud/pruebas/copiar_logros.py; no se editan aquí) */
+  const diasEntre_ = (a, b) => diasEntre(a, b);   // diasEntre se define más abajo
+  const LOGRO_ = function (j) { return (j.extras && j.extras.logros) || {}; };
   const INSIGNIAS = [
-    ['primera', 'Primera práctica', j => j.dias >= 1], ['racha3', '3 días seguidos', j => j.mejor >= 3], ['racha7', '7 días seguidos', j => j.mejor >= 7],
-    ['racha14', '14 días seguidos', j => j.mejor >= 14], ['racha30', '30 días seguidos', j => j.mejor >= 30], ['perfecta', 'Ronda perfecta', (j, x) => !!(x && x.perfecta)],
-    ['aciertos100', '100 aciertos', j => j.aciertos >= 100], ['aciertos500', '500 aciertos', j => j.aciertos >= 500], ['dias10', '10 días de práctica', j => j.dias >= 10],
-    ['dias30', '30 días de práctica', j => j.dias >= 30], ['compra', 'Primera compra', j => j.inventario.length >= 1], ['casa5', 'Casita decorada', j => Object.keys(j.casa).length >= 5]
+    // Constancia: días de práctica
+    { id: 'primera', grupo: 'Constancia', nombre: 'Primera práctica', si: function (j) { return j.dias >= 1; } },
+    { id: 'dias5', grupo: 'Constancia', nombre: '5 días de práctica', si: function (j) { return j.dias >= 5; } },
+    { id: 'dias10', grupo: 'Constancia', nombre: '10 días de práctica', si: function (j) { return j.dias >= 10; } },
+    { id: 'dias20', grupo: 'Constancia', nombre: '20 días de práctica', si: function (j) { return j.dias >= 20; } },
+    { id: 'dias30', grupo: 'Constancia', nombre: '30 días de práctica', si: function (j) { return j.dias >= 30; } },
+    { id: 'dias50', grupo: 'Constancia', nombre: '50 días de práctica', si: function (j) { return j.dias >= 50; } },
+    { id: 'dias100', grupo: 'Constancia', nombre: '100 días de práctica', si: function (j) { return j.dias >= 100; } },
+    { id: 'dias200', grupo: 'Constancia', nombre: '200 días de práctica', si: function (j) { return j.dias >= 200; } },
+    { id: 'dias365', grupo: 'Constancia', nombre: 'Un año de práctica', si: function (j) { return j.dias >= 365; } },
+    // Racha: días seguidos (la mejor racha)
+    { id: 'racha3', grupo: 'Racha', nombre: '3 días seguidos', si: function (j) { return j.mejor >= 3; } },
+    { id: 'racha7', grupo: 'Racha', nombre: '7 días seguidos', si: function (j) { return j.mejor >= 7; } },
+    { id: 'racha14', grupo: 'Racha', nombre: '14 días seguidos', si: function (j) { return j.mejor >= 14; } },
+    { id: 'racha21', grupo: 'Racha', nombre: '21 días seguidos', si: function (j) { return j.mejor >= 21; } },
+    { id: 'racha30', grupo: 'Racha', nombre: '30 días seguidos', si: function (j) { return j.mejor >= 30; } },
+    { id: 'racha50', grupo: 'Racha', nombre: '50 días seguidos', si: function (j) { return j.mejor >= 50; } },
+    { id: 'racha100', grupo: 'Racha', nombre: '¡100 días seguidos!', si: function (j) { return j.mejor >= 100; } },
+    { id: 'racha200', grupo: 'Racha', nombre: '200 días seguidos', si: function (j) { return j.mejor >= 200; } },
+    { id: 'racha365', grupo: 'Racha', nombre: 'Un año sin parar', si: function (j) { return j.mejor >= 365; } },
+    // Aciertos
+    { id: 'aciertos50', grupo: 'Aciertos', nombre: '50 aciertos', si: function (j) { return j.aciertos >= 50; } },
+    { id: 'aciertos100', grupo: 'Aciertos', nombre: '100 aciertos', si: function (j) { return j.aciertos >= 100; } },
+    { id: 'aciertos500', grupo: 'Aciertos', nombre: '500 aciertos', si: function (j) { return j.aciertos >= 500; } },
+    { id: 'aciertos1000', grupo: 'Aciertos', nombre: '1000 aciertos', si: function (j) { return j.aciertos >= 1000; } },
+    { id: 'aciertos2500', grupo: 'Aciertos', nombre: '2500 aciertos', si: function (j) { return j.aciertos >= 2500; } },
+    { id: 'aciertos5000', grupo: 'Aciertos', nombre: '5000 aciertos', si: function (j) { return j.aciertos >= 5000; } },
+    { id: 'aciertos10000', grupo: 'Aciertos', nombre: '¡10 000 aciertos!', si: function (j) { return j.aciertos >= 10000; } },
+    // Rondas perfectas (todas bien en una actividad de 4 preguntas o más)
+    { id: 'perfecta', grupo: 'Rondas perfectas', nombre: 'Ronda perfecta', si: function (j, x) { return !!(x && x.perfecta) || LOGRO_(j).perfectas >= 1; } },
+    { id: 'perfectas10', grupo: 'Rondas perfectas', nombre: '10 rondas perfectas', si: function (j) { return LOGRO_(j).perfectas >= 10; } },
+    { id: 'perfectas25', grupo: 'Rondas perfectas', nombre: '25 rondas perfectas', si: function (j) { return LOGRO_(j).perfectas >= 25; } },
+    { id: 'perfectas50', grupo: 'Rondas perfectas', nombre: '50 rondas perfectas', si: function (j) { return LOGRO_(j).perfectas >= 50; } },
+    { id: 'perfectas100', grupo: 'Rondas perfectas', nombre: '100 rondas perfectas', si: function (j) { return LOGRO_(j).perfectas >= 100; } },
+    // Etapas de la guía (la etapa de su lección; también si llegó con la prueba de nivel)
+    { id: 'etapa2', grupo: 'Etapas', nombre: 'Llegaste a la Etapa 2', si: function (j, x) { return !!(x && x.etapa >= 2); } },
+    { id: 'etapa3', grupo: 'Etapas', nombre: 'Llegaste a la Etapa 3', si: function (j, x) { return !!(x && x.etapa >= 3); } },
+    { id: 'etapa4', grupo: 'Etapas', nombre: 'Llegaste a la Etapa 4', si: function (j, x) { return !!(x && x.etapa >= 4); } },
+    { id: 'etapa5', grupo: 'Etapas', nombre: 'Llegaste a la Etapa 5', si: function (j, x) { return !!(x && x.etapa >= 5); } },
+    { id: 'etapa6', grupo: 'Etapas', nombre: 'Llegaste a la Etapa 6', si: function (j, x) { return !!(x && x.etapa >= 6); } },
+    { id: 'etapa7', grupo: 'Etapas', nombre: 'Llegaste a la Etapa 7', si: function (j, x) { return !!(x && x.etapa >= 7); } },
+    { id: 'guia', grupo: 'Etapas', nombre: 'Terminaste toda la guía', si: function (j, x) { return !!(x && x.guia); } },
+    // Tienda y casita
+    { id: 'compra', grupo: 'Tienda y casita', nombre: 'Primera compra', si: function (j) { return j.inventario.length >= 1; } },
+    { id: 'compras5', grupo: 'Tienda y casita', nombre: '5 cosas compradas', si: function (j) { return j.inventario.length >= 5; } },
+    { id: 'compras15', grupo: 'Tienda y casita', nombre: '15 cosas compradas', si: function (j) { return j.inventario.length >= 15; } },
+    { id: 'compras30', grupo: 'Tienda y casita', nombre: 'Gran coleccionista', si: function (j) { return j.inventario.length >= 30; } },
+    { id: 'mapa1', grupo: 'Tienda y casita', nombre: 'Un mapa nuevo', si: function (j) { return j.inventario.some(function (id) { return id.indexOf('mapa-') === 0; }); } },
+    { id: 'mejora1', grupo: 'Tienda y casita', nombre: 'Primera mejora', si: function (j) { return ((j.extras && j.extras.mejoras) || []).length >= 1; } },
+    { id: 'mejoras5', grupo: 'Tienda y casita', nombre: '5 mejoras', si: function (j) { return ((j.extras && j.extras.mejoras) || []).length >= 5; } },
+    { id: 'casa5', grupo: 'Tienda y casita', nombre: 'Casita decorada', si: function (j) { return Object.keys(j.casa).length >= 5; } },
+    { id: 'casa10', grupo: 'Tienda y casita', nombre: 'Casita llena de vida', si: function (j) { return Object.keys(j.casa).length >= 10; } },
+    { id: 'casa20', grupo: 'Tienda y casita', nombre: 'Decorador del bosque', si: function (j) { return Object.keys(j.casa).length >= 20; } },
+    { id: 'ahorro300', grupo: 'Tienda y casita', nombre: 'Ahorraste 300 malvaviscos', si: function (j) { return j.malvaviscos >= 300; } },
+    { id: 'ahorro1000', grupo: 'Tienda y casita', nombre: 'Un tesoro de 1000 malvaviscos', si: function (j) { return j.malvaviscos >= 1000; } },
+    // Amigos y regalos
+    { id: 'amigos', grupo: 'Amigos y regalos', nombre: 'Todos tus amigos de visita', si: function (j) { return !!(j.extras && j.extras.amistad >= 30); } },
+    { id: 'preparados5', grupo: 'Amigos y regalos', nombre: 'Cocinero del bosque', si: function (j) { return LOGRO_(j).preparados >= 5; } },
+    { id: 'regalo1', grupo: 'Amigos y regalos', nombre: 'Primer regalo', si: function (j) { return LOGRO_(j).regalos >= 1; } },
+    { id: 'regalos10', grupo: 'Amigos y regalos', nombre: '10 regalos dados', si: function (j) { return LOGRO_(j).regalos >= 10; } },
+    // Momentos especiales (al terminar la práctica del día)
+    { id: 'madrugador', grupo: 'Momentos', nombre: 'Madrugador', si: function (j, x) { return !!(x && x.termino && x.hora < 8); } },
+    { id: 'lunes', grupo: 'Momentos', nombre: 'Lunes con energía', si: function (j, x) { return !!(x && x.termino && diaSemana_(x.hoy) === 1); } },
+    { id: 'finde', grupo: 'Momentos', nombre: 'Fin de semana musical', si: function (j, x) { return !!(x && x.termino && diaSemana_(x.hoy) === 7 && LOGRO_(j).sabado && diasEntre_(LOGRO_(j).sabado, x.hoy) === 1); } },
+    { id: 'extra', grupo: 'Momentos', nombre: 'Práctica extra', si: function (j) { return !!(j.hoy && j.hoy.terminada && j.hoy.actividades >= 8); } },
+    { id: 'volvio', grupo: 'Momentos', nombre: '¡Volviste al bosque!', si: function (j, x) { return !!(x && x.termino && x.volvio); } },
+    // Temporadas: practicar (terminar la práctica del día) en sus fechas
+    { id: 'tnavidad', grupo: 'Temporadas', nombre: 'Navidad en el bosque', si: function (j, x) { return enTemporada_(x, 'navidad'); } },
+    { id: 'tanionuevo', grupo: 'Temporadas', nombre: 'Primer día del año', si: function (j, x) { return enTemporada_(x, 'anionuevo'); } },
+    { id: 'tsanvalentin', grupo: 'Temporadas', nombre: 'Amor y amistad', si: function (j, x) { return enTemporada_(x, 'sanvalentin'); } },
+    { id: 'tnino', grupo: 'Temporadas', nombre: 'Día del Niño', si: function (j, x) { return enTemporada_(x, 'nino'); } },
+    { id: 'tmadre', grupo: 'Temporadas', nombre: 'Para mamá', si: function (j, x) { return enTemporada_(x, 'madre'); } },
+    { id: 'tpadre', grupo: 'Temporadas', nombre: 'Para papá', si: function (j, x) { return enTemporada_(x, 'padre'); } },
+    { id: 'tmusica', grupo: 'Temporadas', nombre: 'Día de la Música', si: function (j, x) { return enTemporada_(x, 'musica'); } }
   ];
+  /* el día de la semana de una fecha yyyy-MM-dd (1 = lunes … 7 = domingo) */
+  function diaSemana_(hoy) { const p = String(hoy).split('-'); return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay() || 7; }
+  /* las temporadas de una fecha (las mismas fechas que App_Bosque/js/config.js): Navidad del 25-nov al 6-ene, Año Nuevo el
+     1-ene, San Valentín del 7 al 15-feb, Día del Niño en México (24 al 30-abr) y en Ecuador (26-may al 1-jun), Día de la Madre
+     la semana del 2.º domingo de mayo y del 10 (Ecuador y México), Día del Padre la semana del 3.er domingo de junio y Día de
+     la Música del 16 al 22-nov. Sin Halloween ni Día de Muertos (principios de la dueña). */
+  function temporadasDe_(hoy) {
+    const p = String(hoy).split('-'), a = +p[0], md = p[1] + '-' + p[2], dos = function (n) { return (n < 10 ? '0' : '') + n; };
+    const domingo = function (m, n) { const w = new Date(Date.UTC(a, m - 1, 1)).getUTCDay(); return 1 + (7 - w) % 7 + (n - 1) * 7; };
+    const entre = function (x, y) { return md >= x && md <= y; };
+    const madre = domingo(5, 2), padre = domingo(6, 3), r = [];
+    if (md >= '11-25' || md <= '01-06') r.push('navidad');
+    if (md === '01-01') r.push('anionuevo');
+    if (entre('02-07', '02-15')) r.push('sanvalentin');
+    if (entre('04-24', '04-30') || entre('05-26', '06-01')) r.push('nino');
+    if (entre('05-' + dos(Math.min(madre, 10) - 6), '05-' + dos(Math.max(madre, 10)))) r.push('madre');
+    if (entre('06-' + dos(padre - 6), '06-' + dos(padre))) r.push('padre');
+    if (entre('11-16', '11-22')) r.push('musica');
+    return r;
+  }
+  function enTemporada_(x, t) { return !!(x && x.termino && x.hoy && temporadasDe_(x.hoy).indexOf(t) >= 0); }
+  /* LOGROS:FIN */
   const PERSONAJES = [['osito', 'Osito', 0], ['conejo', 'Conejo', 3], ['ardilla', 'Ardilla', 7], ['zorro', 'Zorro', 14], ['erizo', 'Erizo', 21], ['raton', 'Ratón', 30]]
     .map(([id, nombre, dias]) => ({ id, nombre, dias }));
   /* Los amigos son stickers y se van si deja de practicar (regla de la dueña, 16-nov-2026): igual que amistad_ del servidor.
@@ -250,10 +345,10 @@ window.Api = (function () {
         prueba: LIBRE ? pruebaDe(j.libre) : q.has('encuesta') ? null : q.get('prueba') === 'no' ? { puede: false, desde: demo.hoy(), dias: DIAS_REPETIR_PRUEBA } : { puede: true, desde: demo.hoy(), dias: DIAS_REPETIR_PRUEBA },
         cuenta: LIBRE ? false : undefined,
         biblioteca: ETAPAS.map((nombre, i) => ({ etapa: i + 1, nombre, abierto: !LIBRE && i + 1 <= et.etapa, amazon: LIBRE })),
-        catalogo: { tienda: CATALOGO_TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(([id, nombre]) => ({ id, nombre })) }
+        catalogo: { tienda: CATALOGO_TIENDA, lugares: ['sala-pared', 'sala-sillon', 'sala-alfombra', 'sala-musica', 'sala-mesa', 'cocina-estufa', 'cocina-ventana', 'cocina-mesa', 'cocina-repisa', 'dorm-cama', 'dorm-mesita', 'dorm-pared', 'jardin-banca', 'jardin-flores', 'jardin-fogata'], personajes: PERSONAJES, insignias: INSIGNIAS.map(i => ({ id: i.id, nombre: i.nombre, grupo: i.grupo })) }
       };
     },
-    insignias(j, x) { const n = INSIGNIAS.filter(([id, , si]) => j.insignias.indexOf(id) < 0 && si(j, x)).map(i => i[0]); j.insignias = j.insignias.concat(n); return n; },
+    insignias(j, x) { const n = INSIGNIAS.filter(i => j.insignias.indexOf(i.id) < 0 && i.si(j, x)).map(i => i.id); j.insignias = j.insignias.concat(n); return n; },
     practica(d) {
       const hoy = demo.hoy(), j = demo.leer(), x = d.actividad;
       if (!(x.intentos >= 1 && x.aciertos >= 0 && x.aciertos <= x.intentos)) throw new Error('El resultado no se entiende.');
@@ -273,14 +368,16 @@ window.Api = (function () {
       const perfecta = x.aciertos === x.intentos && x.intentos >= 4;
       let gana = Math.min(x.aciertos, 15) + (perfecta ? 5 : 0);
       if (j.hoy.terminada) gana = Math.floor(gana / 2);
-      let fuego = null, amigoNuevo = null;
-      if (d.terminada && !j.hoy.terminada) {
+      let fuego = null, amigoNuevo = null, volvio = false;
+      const termino = !!d.terminada && !j.hoy.terminada;
+      if (termino) {
         j.hoy.terminada = true;
         const am = amistad(j, hoy), sube = Math.min(AMISTAD_MAX, am.puntos + 1);   // antes de tocar el último día y la leña
         amigoNuevo = PERSONAJES.find(p => p.dias > am.puntos && p.dias <= sube) || null;
         j.extras = Object.assign({}, j.extras, { amistad: sube });
         Object.keys(j.casa || {}).forEach(id => { if (id.indexOf('amigo-') === 0 && !am.amigos.includes(id.slice(6))) delete j.casa[id]; });
         const dif = j.ultimo ? diasEntre(j.ultimo, hoy) : null;
+        volvio = dif !== null && dif >= 8;   // logro «¡Volviste al bosque!»
         if (dif === 1) j.racha++;
         else if (dif !== null && dif > 1 && dif - 1 <= j.lena) { j.lena -= dif - 1; j.racha++; }
         else if (dif !== 0) j.racha = 1;
@@ -291,7 +388,13 @@ window.Api = (function () {
       }
       gana = Math.max(0, Math.min(gana, 150 - (j.hoy.ganados || 0)));
       j.hoy.actividades++; j.hoy.ganados += gana; j.malvaviscos += gana; j.aciertos += x.aciertos;
-      const nuevas = demo.insignias(j, { perfecta });
+      // logros (26-nov-2026): los mismos contadores y datos que el servidor
+      const lg = Object.assign({}, LOGRO_(j));
+      if (perfecta) lg.perfectas = (lg.perfectas || 0) + 1;
+      if (termino && diaSemana_(hoy) === 6) lg.sabado = hoy;
+      j.extras = Object.assign({}, j.extras, { logros: lg });
+      const s = LIBRE ? j.libre.semana : Math.min(60, Math.max(1, Number(q.get('semana')) || 1));
+      const nuevas = demo.insignias(j, { perfecta, termino, hoy, hora: new Date().getHours(), etapa: etapaDe(s).etapa, guia: false, volvio });
       demo.guardar(j);
       return { ok: true, ganados: gana, perfecta, fogata: fuego, insignias: nuevas, personaje: amigoNuevo ? amigoNuevo.id : null, avance, estado: demo.estado() };
     },
@@ -340,8 +443,8 @@ window.Api = (function () {
       if ((x.mejoras || []).indexOf(id) >= 0) throw new Error('Ya lo mejoraste.');
       if (j.malvaviscos < m.precio) throw new Error('Te faltan ' + (m.precio - j.malvaviscos) + ' malvaviscos.');
       j.malvaviscos -= m.precio; x.mejoras = (x.mejoras || []).concat([id]); j.extras = x;
-      demo.guardar(j);
-      return { ok: true, estado: demo.estado() };
+      const nuevas = demo.insignias(j); demo.guardar(j);
+      return { ok: true, insignias: nuevas, estado: demo.estado() };
     },
     /* usar un sticker mejorado que prepara algo (galletas, cacao, un pescado): cuesta su `uso` y queda en la despensa */
     usar(id) {
@@ -351,9 +454,10 @@ window.Api = (function () {
       const despensa = Object.assign({}, x.despensa);
       if ((despensa[m.regalo] || 0) >= DESPENSA_MAX) throw new Error('Ya tienes muchos. Dale uno a un amigo.');
       if (j.malvaviscos < m.uso) throw new Error('Te faltan ' + (m.uso - j.malvaviscos) + ' malvaviscos.');
-      j.malvaviscos -= m.uso; despensa[m.regalo] = (despensa[m.regalo] || 0) + 1; x.despensa = despensa; j.extras = x;
-      demo.guardar(j);
-      return { ok: true, regalo: m.regalo, estado: demo.estado() };
+      j.malvaviscos -= m.uso; despensa[m.regalo] = (despensa[m.regalo] || 0) + 1; x.despensa = despensa;
+      x.logros = Object.assign({}, x.logros); x.logros.preparados = (x.logros.preparados || 0) + 1; j.extras = x;
+      const nuevas = demo.insignias(j); demo.guardar(j);
+      return { ok: true, regalo: m.regalo, insignias: nuevas, estado: demo.estado() };
     },
     /* darle un regalo a un amigo que está de visita: el regalo desaparece */
     dar(regalo, amigo) {
@@ -363,9 +467,10 @@ window.Api = (function () {
       const despensa = Object.assign({}, x.despensa);
       if (!(despensa[regalo] >= 1)) throw new Error('No tienes de eso para dar.');
       despensa[regalo]--; if (!despensa[regalo]) delete despensa[regalo];
-      x.despensa = despensa; j.extras = x;
-      demo.guardar(j);
-      return { ok: true, estado: demo.estado() };
+      x.despensa = despensa;
+      x.logros = Object.assign({}, x.logros); x.logros.regalos = (x.logros.regalos || 0) + 1; j.extras = x;
+      const nuevas = demo.insignias(j); demo.guardar(j);
+      return { ok: true, insignias: nuevas, estado: demo.estado() };
     },
     casa(casa) {
       const j = demo.leer();

@@ -310,6 +310,19 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
   - Prueba: `herramientas/probar_orden.js` (320×640).
 - **Revisión de textos cortados:** `herramientas/revisar_cortes.js`. Se corre con Chrome propio, sin el MCP: `node herramientas/correr_revision.js herramientas/revisar_cortes.js 360x780 <lecciones>`, una lección por proceso. Si no se le pasan lecciones, revisa la prueba de nivel. Busca texto que se sale de la pantalla, que tapa un contenedor o que es más ancho que su caja.
 
+## Logros: 65 medallas por grupo (26-nov-2026, pedido de la dueña; SIN SUBIR)
+- **Las reglas** viven en el servidor (`Registro_Sprinkloud/CLAUDE.md`, «Logros del bosque»). `js/api.js` lleva una copia exacta para la versión de prueba y la libre (marcas `LOGROS:INICIO/FIN`, `copiar_logros.py`).
+- **La biblioteca** muestra «Tienes N de 65 medallas» y las medallas por grupo (Constancia, Racha, Aciertos, Rondas perfectas, Etapas, Tienda y casita, Amigos y regalos, Momentos y Temporadas), cada grupo con su cuenta (`.grupos-medallas`).
+- **Solo 6 a la vista** (la dueña, 26-nov: «no quiero que se vean todas, deja solo 6 visibles y lo demás se scrolea»): van en un recuadro (`.medallas-scroll`, 330 px de alto, 3 columnas fijas). Se ven el título del primer grupo y 2 filas de 3; la fila siguiente se asoma desvanecida, y el resto se desliza adentro. Comprobado a 390 px: 6 completas de 65.
+- **Varias medallas a la vez** (por ejemplo, un alumno que ya practicaba mucho): si son más de dos, sale un solo festejo con todas («¡Ganaste N medallas!»). Los amigos siguen saliendo de a uno (`mostrarPremios`).
+- **Mejorar, preparar y regalar** también festejan las medallas que dan (`festejar`).
+- **Mientras falten los dibujos** (Gemini, etapa 22), cada medalla nueva tiene su emoji en `EMOJI`.
+
+## Temporadas en la rama `temporadas` (sin subir, pedido de la dueña del 26-nov)
+- San Valentín, Día del Niño, de la Madre, del Padre y de la Música están **solo en la rama local `temporadas`** (commit 580e74a), para no subirlas por error. La dueña aprueba primero sus dibujos y su música.
+- **Para seguir con ellas:** `git checkout temporadas` (y `git merge main` para traer lo nuevo). **Nunca** `git push` de esa rama sin su «upload».
+- **Música:** las candidatas de cada temporada están en `BITACORA.md` (26-nov); ella las va aprobando.
+
 ## Modo Navidad (25-nov-2026, pedido de la dueña; publicado el 25-nov, commit 150fd92)
 - **Cuándo:** `BOSQUE_NAVIDAD` en `js/config.js` (del 25-nov-2026 al 6-ene-2027, con la fecha del celular). `config.js` pone `data-temporada="navidad"` en `<html>`. Para verlo en otra fecha: `?navidad=1`; para apagarlo: `?navidad=0`.
 - **El dibujo de la dueña:** `assets/ilustraciones/osito navidad.jpeg` (el osito con gorro, chocolate, árbol y regalos). `herramientas/navidad.py` arma:

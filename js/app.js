@@ -50,7 +50,17 @@
     'mapa-lago': '🏞️', 'lago-canoa': '🛶', 'lago-peces': '🐟', 'lago-nenufares-rana': '🐸', 'lago-patitos': '🦆', 'lago-cana-pescar': '🎣', 'lago-cesta-pesca': '🧺',
     'regalo-galletas': '🍪', 'regalo-cacao': '☕', 'regalo-pescado': '🐟', 'regalo-sopa': '🍲',
     'amigo-osito': '🐻', 'amigo-conejo': '🐰', 'amigo-ardilla': '🐿️', 'amigo-zorro': '🦊', 'amigo-erizo': '🦔', 'amigo-raton': '🐭',
-    primera: '🌱', racha3: '🔥', racha7: '🪵', racha14: '🌟', racha30: '👑', perfecta: '💯', aciertos100: '🎯', aciertos500: '🏆', dias10: '🍄', dias30: '🌳', compra: '🛍️', casa5: '🏡' };
+    primera: '🌱', racha3: '🔥', racha7: '🪵', racha14: '🌟', racha30: '👑', perfecta: '💯', aciertos100: '🎯', aciertos500: '🏆', dias10: '🍄', dias30: '🌳', compra: '🛍️', casa5: '🏡',
+    // los logros del 26-nov-2026
+    dias5: '🌿', dias20: '🌲', dias50: '🏕️', dias100: '💎', dias200: '🌈', dias365: '🎂',
+    racha21: '⚡', racha50: '🚀', racha100: '🏅', racha200: '🌠', racha365: '☀️',
+    aciertos50: '🎵', aciertos1000: '🎶', aciertos2500: '🎹', aciertos5000: '🎻', aciertos10000: '🎼',
+    perfectas10: '✨', perfectas25: '💫', perfectas50: '🌟', perfectas100: '🏆',
+    etapa2: '2️⃣', etapa3: '3️⃣', etapa4: '4️⃣', etapa5: '5️⃣', etapa6: '6️⃣', etapa7: '7️⃣', guia: '🎓',
+    compras5: '🧺', compras15: '🎁', compras30: '👜', mapa1: '🗺️', mejora1: '🔧', mejoras5: '🛠️', casa10: '🪴', casa20: '🏰', ahorro300: '🍬', ahorro1000: '💰',
+    amigos: '🐾', preparados5: '🧑‍🍳', regalo1: '🎀', regalos10: '💝',
+    madrugador: '🌅', lunes: '📅', finde: '🎉', extra: '➕', volvio: '🤗',
+    tnavidad: '🎄', tanionuevo: '🎆', tsanvalentin: '💖', tnino: '🎈', tmadre: '🌷', tpadre: '💙', tmusica: '🎵' };
   function arte(id) { return IMAGENES.has(id) ? el('img', { src: 'assets/arte/' + id + '.webp', alt: '' }) : document.createTextNode(EMOJI[id] || '✨'); }
   /* La casita es una casa de muñecas vista desde arriba (assets/ilustraciones/casa-vacia.webp, cuadrada).
      Cada lugar: [x, y, tamaño] en % de la imagen. Al elegir un cuarto, la cámara se acerca (CUARTOS: centro y zoom). */
@@ -602,8 +612,24 @@
     }));
     return cerrar;
   }
+  const festejar = r => { if (r && r.insignias && r.insignias.length) mostrarPremios(r.insignias); };
   function mostrarPremios(lista) {
     if (!lista.length) return;
+    /* 26-nov-2026: con los logros nuevos, un alumno que ya practicaba puede ganar muchas medallas de una vez. Si son más de
+       dos, van todas juntas en un solo festejo (los amigos siguen saliendo de a uno). */
+    const medallas = lista.filter(x => !x.startsWith('amigo:'));
+    if (medallas.length > 2) {
+      const otros = lista.filter(x => x.startsWith('amigo:'));
+      const nombreDe = id => (estado.catalogo.insignias.find(i => i.id === id) || {}).nombre || '';
+      S.festejo();
+      let cerrarVarias;
+      const varias = el('div', { class: 'premio' },
+        el('h2', { text: '¡Ganaste ' + medallas.length + ' medallas!' }),
+        el('div', { class: 'insignias premio-varias' }, medallas.map(id => el('div', { class: 'insignia' }, el('div', { class: 'medalla' }, arte(id)), el('span', { text: nombreDe(id) })))),
+        el('div', { class: 'acciones' }, puff('¡Genial!', 'ocre', () => { cerrarVarias(); setTimeout(() => mostrarPremios(otros), 450); })));
+      cerrarVarias = cajon(varias);
+      return;
+    }
     const [x, ...resto] = lista;
     const amigo = x.startsWith('amigo:') ? x.slice(6) : null;
     const nombre = amigo ? (estado.catalogo.personajes.find(p => p.id === amigo) || {}).nombre : (estado.catalogo.insignias.find(i => i.id === x) || {}).nombre;
@@ -762,7 +788,7 @@
         puff(falta > 0 ? 'Faltan ' + falta : '⭐ Mejorar', falta > 0 ? 'plomo' : 'ocre', () => {
           if (falta > 0) { S.error(); return; }
           if (ocupado || mejorada(t.id)) return; ocupado = true;
-          porDetras(j => { j.malvaviscos -= m.precio; j.mejoras = (j.mejoras || []).concat([t.id]); }, () => Api.mejorar(t.id));
+          porDetras(j => { j.malvaviscos -= m.precio; j.mejoras = (j.mejoras || []).concat([t.id]); }, () => Api.mejorar(t.id), festejar);
           S.caja(); cerrar(); listo && listo();
         }))));
   }
@@ -996,7 +1022,7 @@
         return;
       }
       ultimo = { id, t: ahora };
-      porDetras(j => { j.malvaviscos -= m.uso; j.despensa = Object.assign({}, j.despensa, { [m.regalo]: ((j.despensa || {})[m.regalo] || 0) + 1 }); }, () => Api.usar(id));
+      porDetras(j => { j.malvaviscos -= m.uso; j.despensa = Object.assign({}, j.despensa, { [m.regalo]: ((j.despensa || {})[m.regalo] || 0) + 1 }); }, () => Api.usar(id), festejar);
       const b = calco(id);
       if (b) {
         jugar(capa, b, m.accion);
@@ -1009,7 +1035,7 @@
     }
     function dar(regalo, amigo) {
       if (!((estado.juego.despensa || {})[regalo] > 0) || !(estado.juego.personajes || []).includes(amigo)) return;
-      porDetras(j => { const d = Object.assign({}, j.despensa); d[regalo]--; if (!d[regalo]) delete d[regalo]; j.despensa = d; }, () => Api.dar(regalo, amigo));
+      porDetras(j => { const d = Object.assign({}, j.despensa); d[regalo]--; if (!d[regalo]) delete d[regalo]; j.despensa = d; }, () => Api.dar(regalo, amigo), festejar);
       const b = calco('amigo-' + amigo);
       if (b) jugar(capa, b, 'regalo');
       regaloArmado = null; pintarBandeja();
@@ -1229,11 +1255,25 @@
       el('div', { class: 'numero', html: '<b>' + j.mejor + '</b><span>mejor racha</span>' }),
       el('div', { class: 'numero', html: '<b>' + j.dias + '</b><span>días de práctica</span>' }),
       el('div', { class: 'numero', html: '<b>' + j.aciertos + '</b><span>aciertos</span>' }));
-    const insignias = el('div', { class: 'insignias' }, estado.catalogo.insignias.map(i => {
+    /* 26-nov-2026: las medallas van por grupo (Constancia, Racha, Aciertos…), cada grupo con cuántas tiene */
+    const medalla = i => {
       const tiene = j.insignias.includes(i.id);
       return el('button', { class: 'insignia' + (tiene ? '' : ' bloqueada'), type: 'button', onclick: () => { S.toque(); tiene ? window.Compartir.insignia(estado, i.id, i.nombre) : aviso('🔒 ' + i.nombre); } },
         el('div', { class: 'medalla' }, arte(i.id)), el('span', { text: i.nombre }));
-    }));
+    };
+    const grupos = [...new Set(estado.catalogo.insignias.map(i => i.grupo || 'Medallas'))];
+    const totalMedallas = estado.catalogo.insignias.length, ganadas = estado.catalogo.insignias.filter(i => j.insignias.includes(i.id)).length;
+    /* 26-nov-2026 (la dueña: «no quiero que se vean todas, deja solo 6 visibles y lo demás se scrolea»): un recuadro con
+       6 medallas a la vista (2 filas de 3) y el resto se desliza adentro */
+    const insignias = el('div', { class: 'grupos-medallas' },
+      el('p', { class: 'mano cuenta-medallas', text: 'Tienes ' + ganadas + ' de ' + totalMedallas + ' medallas' }),
+      el('div', { class: 'medallas-scroll', tabindex: '0', role: 'region', 'aria-label': 'Medallas: desliza para ver todas' },
+        grupos.map(g => {
+          const del = estado.catalogo.insignias.filter(i => (i.grupo || 'Medallas') === g);
+          return el('section', { class: 'grupo-medallas' },
+            el('h3', { text: g + ' · ' + del.filter(i => j.insignias.includes(i.id)).length + '/' + del.length }),
+            el('div', { class: 'insignias' }, del.map(medalla)));
+        })));
     const amigos = el('div', { class: 'amigos' }, estado.catalogo.personajes.map(a => {
       const tiene = (j.personajes || []).includes(a.id), sig = j.amistad && j.amistad.siguiente && j.amistad.siguiente.id === a.id ? j.amistad.siguiente : null;
       return el('div', { class: 'amigo' + (tiene ? '' : ' bloqueado') }, el('div', { class: 'retrato' }, el('img', { src: RETRATO(a.id), alt: '' })),
