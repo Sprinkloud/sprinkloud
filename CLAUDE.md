@@ -318,7 +318,7 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - **Mejorar, preparar y regalar** también festejan las medallas que dan (`festejar`).
 - **Mientras falten los dibujos** (Gemini, etapa 22), cada medalla nueva tiene su emoji en `EMOJI`.
 
-## Saludo corto y tarjeta de la racha con nombre (26-nov-2026, pedido de la dueña; sin subir)
+## Saludo corto y tarjeta de la racha con nombre (26-nov-2026, pedido de la dueña; publicado el 26-nov, commit 1367488)
 - **Saludo:** la burbuja del camino dice solo «¡Hola, Lena!» (`primerNombre` en `js/app.js`). Con «Hoy toca: <tema>» crecía y tapaba al osito. Los otros mensajes de la burbuja (ya practicaste, sin energía…) no cambiaron.
 - **La tarjeta de la racha** (`Compartir.dia(estado, ganados, nombre, d)`): los alumnos la comparten y la dueña la sube a las redes. **Limpia, como la pantalla final** (la dueña rechazó una primera versión con círculo, frase explicativa, «¡Terminé mi práctica de hoy!», malvaviscos, lección y el álbum de cerca: «tiene mil cosas que no se entiende nada… solo una imagen limpia y pocas letras»). Lleva solo:
   - papel liso (sin manchas ni encabezado);
