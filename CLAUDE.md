@@ -318,6 +318,17 @@ Quien entra **sin el enlace del maestro** (sin `?k=`) juega gratis. Es la muestr
 - **Mejorar, preparar y regalar** también festejan las medallas que dan (`festejar`).
 - **Mientras falten los dibujos** (Gemini, etapa 22), cada medalla nueva tiene su emoji en `EMOJI`.
 
+## Saludo corto y tarjeta de la racha con nombre (26-nov-2026, pedido de la dueña; sin subir)
+- **Saludo:** la burbuja del camino dice solo «¡Hola, Lena!» (`primerNombre` en `js/app.js`). Con «Hoy toca: <tema>» crecía y tapaba al osito. Los otros mensajes de la burbuja (ya practicaste, sin energía…) no cambiaron.
+- **La tarjeta de la racha** (`Compartir.dia(estado, ganados, nombre, d)`): los alumnos la comparten y la dueña la sube a las redes. **Limpia, como la pantalla final** (la dueña rechazó una primera versión con círculo, frase explicativa, «¡Terminé mi práctica de hoy!», malvaviscos, lección y el álbum de cerca: «tiene mil cosas que no se entiende nada… solo una imagen limpia y pocas letras»). Lleva solo:
+  - papel liso (sin manchas ni encabezado);
+  - **una imagen grande, sin marco** (`destacado(r, antes)` en `js/app.js`), y solo si tiene su dibujo (`assets/arte/`): la medalla que ganó con esta práctica (comparada con las que tenía al empezar, `antes` en `practicar_`), el amigo que llegó de visita (`amigo-<id>`) o el último sticker que compró (sin el álbum alrededor). Si no, **la fogata** de la pantalla final (`SVG_FOGATA` como imagen);
+  - **«¡Increíble, Lena!»**: el nombre, sin apellido (el servidor ya manda solo el primero; `primerNombre` lo asegura en la versión libre), con una palabra de ánimo que cambia con la racha (Increíble, Genial, Bravo, Imparable, Excelente); la letra se achica si el nombre es largo;
+  - **Proporciones** (revisión con la skill impeccable, 26-nov; el detector no lee un canvas, así que se revisó mirando las tarjetas): todo va como un solo grupo centrado en la **zona segura de las historias de Instagram** (250 px libres arriba y abajo, donde van el perfil y la barra de «Enviar mensaje»; antes el botón verde caía ahí). Las separaciones son fijas (80 px imagen-frase-botones, 48 entre botones). El dibujo se recorta a su contorno (`recortado`: los stickers traen mucho aire transparente y se veían chicos) y llena una caja de 820×640, del mismo ancho que los botones.
+  - **dos botones esponjosos del mismo ancho (820 px)** como los de la pantalla final (`puffBoton`, copia del `.puff` de `app.css`; la dueña: «me gustan… se ven esponjosos, déjalos en la captura»): el rosa con «🔥 N», solo el fuego y el número («se entiende que es una racha sin explicación»), y el verde con «🌲 El bosque de Sprinkloud», que reemplaza al logo.
+- `Compartir.casa` usa ahora el tamaño de cada calcomanía en su página (`tamBase(id, pg.id)`): en los mapas la tarjeta las dibujaba más chicas que en la app.
+- Probado en `?demo=1&dia=…&semana=9` con `bosque-hoy` en `hechas: 99` (salta directo al final): saludo «¡Hola, Amiga!» y la tarjeta con el último sticker; la fogata, la medalla y el amigo, dibujados a mano con `Compartir.dia`.
+
 ## Temporadas en la rama `temporadas` (sin subir, pedido de la dueña del 26-nov)
 - San Valentín, Día del Niño, de la Madre, del Padre y de la Música están **solo en la rama local `temporadas`** (commit 580e74a), para no subirlas por error. La dueña aprueba primero sus dibujos y su música.
 - **Para seguir con ellas:** `git checkout temporadas` (y `git merge main` para traer lo nuevo). **Nunca** `git push` de esa rama sin su «upload».

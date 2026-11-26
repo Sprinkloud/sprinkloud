@@ -24,12 +24,51 @@ window.Compartir = (function () {
     return c;
   }
   function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')'; }
-  function redondo(g, img, x, y, r, enfoque) {
+  /* un círculo de papel con su doble aro; pintar(g) dibuja adentro (ya recortado al círculo) */
+  function marco(g, x, y, r, pintar) {
     g.save(); g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.closePath(); g.fillStyle = '#FFFDF8'; g.fill(); g.clip();
-    if (img) { const k = Math.max(2 * r / img.width, 2 * r / img.height) * 1.15; g.drawImage(img, x - img.width * k / 2, y - img.height * k * (enfoque || .4), img.width * k, img.height * k); }
+    pintar(g);
     g.restore();
     g.lineWidth = 16; g.strokeStyle = '#FFFDF8'; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.stroke();
     g.lineWidth = 6; g.strokeStyle = '#C4923A'; g.beginPath(); g.arc(x, y, r + 11, 0, Math.PI * 2); g.stroke();
+  }
+  /* un botón esponjoso como los de la app (.puff en app.css, a escala de la tarjeta): el borde oscuro abajo y la cara
+     acolchada encima, con su brillo arriba a la izquierda y su sombra abajo a la derecha. x es el centro; y, el borde de arriba */
+  function puffBoton(g, x, y, w, h, color, borde, texto, fuente) {
+    const r = 64, alto = 18, x0 = x - w / 2;
+    g.save(); g.shadowColor = 'rgba(58, 40, 20, .45)'; g.shadowBlur = 36; g.shadowOffsetY = 26;
+    roundRect(g, x0, y + alto, w, h, r); g.fillStyle = borde; g.fill(); g.restore();
+    g.save(); roundRect(g, x0, y, w, h, r); g.clip();
+    g.fillStyle = color; g.fillRect(x0, y, w, h);
+    const brillo = g.createRadialGradient(x0 + w * .3, y + h * .15, 0, x0 + w * .3, y + h * .15, w * .6);
+    brillo.addColorStop(0, 'rgba(255, 255, 255, .42)'); brillo.addColorStop(.55, 'rgba(255, 255, 255, 0)');
+    g.fillStyle = brillo; g.fillRect(x0, y, w, h);
+    const hondo = g.createRadialGradient(x0 + w * .7, y + h * 1.1, 0, x0 + w * .7, y + h * 1.1, w * .7);
+    hondo.addColorStop(0, 'rgba(0, 0, 0, .14)'); hondo.addColorStop(.6, 'rgba(0, 0, 0, 0)');
+    g.fillStyle = hondo; g.fillRect(x0, y, w, h);
+    g.fillStyle = 'rgba(0, 0, 0, .10)'; g.fillRect(x0, y + h - 8, w, 8);
+    g.fillStyle = 'rgba(255, 255, 255, .45)'; g.fillRect(x0, y, w, 5);
+    g.restore();
+    g.font = fuente; g.fillStyle = '#FFFDF5'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(texto, x, y + h / 2 + 4, w - 80); g.textBaseline = 'alphabetic';
+  }
+  /* el dibujo sin su margen transparente (los stickers traen mucho aire alrededor y se veían chiquitos en la tarjeta) */
+  function recortado(img) {
+    if (!img) return null;
+    const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+    const h = c.getContext('2d'); h.drawImage(img, 0, 0);
+    let px; try { px = h.getImageData(0, 0, c.width, c.height).data; } catch (e) { return img; }
+    let x0 = c.width, y0 = c.height, x1 = -1, y1 = -1;
+    for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (px[(y * c.width + x) * 4 + 3] > 12) {
+      if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }
+    if (x1 < 0) return img;
+    const r = document.createElement('canvas'); r.width = x1 - x0 + 1; r.height = y1 - y0 + 1;
+    r.getContext('2d').drawImage(c, x0, y0, r.width, r.height, 0, 0, r.width, r.height);
+    return r;
+  }
+  function redondo(g, img, x, y, r, enfoque) {
+    marco(g, x, y, r, g => { if (img) { const k = Math.max(2 * r / img.width, 2 * r / img.height) * 1.15; g.drawImage(img, x - img.width * k / 2, y - img.height * k * (enfoque || .4), img.width * k, img.height * k); } });
   }
   function textos(g, titulo, sub, y) {
     g.textAlign = 'center';
@@ -55,14 +94,37 @@ window.Compartir = (function () {
 
   const RETRATO = id => 'assets/ilustraciones/' + (id === 'osito' ? 'osito-bosque' : id) + '.webp';
   return {
-    async dia(estado, ganados) {
-      const j = estado.juego, osito = await cargar(RETRATO('osito'));
-      const c = await lienzo(async g => {
-        redondo(g, osito, W / 2, 720, 330, .42);
-        textos(g, '¡Terminé mi práctica de hoy!', '🔥 ' + j.racha + (j.racha === 1 ? ' día' : ' días seguidos') + '  ·  🍡 +' + ganados, 1180);
-        g.font = '600 60px Caveat, cursive'; g.fillStyle = '#6D6152'; g.fillText((estado.leccion ? estado.leccion.nivel + ' · ' + estado.leccion.tema : ''), W / 2, 1460);
-      });
-      enviar(c, '¡Terminé mi práctica de música de hoy en el bosque de Sprinkloud! 🔥 ' + j.racha + ' días seguidos 🎶', 'mi-practica');
+    /* la tarjeta de la racha (26-nov-2026, la dueña: «visualmente limpio, sin explicaciones, sin más objetos, solo una
+       imagen limpia y pocas letras», como la pantalla final): papel liso, UNA imagen grande (d.img: lo que logró hoy; o
+       d.svg: la fogata), «¡Increíble, Lena!» y dos botones esponjosos.
+       Revisión de proporciones (skill impeccable, 26-nov): todo va como UN grupo centrado en la zona segura de las historias
+       de Instagram (250 px libres arriba y abajo: ahí van el perfil y la barra de «Enviar mensaje»), con las mismas
+       separaciones sea cual sea la forma del dibujo; la imagen llena su caja (860×640) aunque sea ancha. */
+    async dia(estado, ganados, nombre, d) {
+      await document.fonts.ready;
+      const j = estado.juego, c = document.createElement('canvas'); c.width = W; c.height = H;
+      const g = c.getContext('2d'), X = W / 2;
+      g.fillStyle = '#F6F0E2'; g.fillRect(0, 0, W, H);
+      const src = d && d.img ? d.img : 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(((d && d.svg) || '').replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" '));
+      const img = recortado(await cargar(src));
+      const k = img ? Math.min(820 / img.width, 640 / img.height) : 0, iw = img ? img.width * k : 0, ih = img ? img.height * k : 0;
+      /* «¡Increíble, Lena!» (la dueña, 26-nov); la palabra cambia con los días para que cada tarjeta se vea nueva */
+      const palabra = ['¡Increíble', '¡Genial', '¡Bravo', '¡Imparable', '¡Excelente'][j.racha % 5];
+      const frase = nombre ? palabra + ', ' + nombre + '!' : palabra + '!';
+      let t = 124; g.font = '700 ' + t + 'px Fraunces, Georgia, serif';
+      while (g.measureText(frase).width > 900 && t > 70) { t -= 4; g.font = '700 ' + t + 'px Fraunces, Georgia, serif'; }
+      /* el grupo: imagen · 80 · frase (alto de su letra) · 80 · botón · 48 · botón (cada botón: 160 + su borde de 18) */
+      const BOTON = 160, BORDE = 18, ANCHO = 820, SEP = 80, ENTRE = 48;
+      const alto = ih + (ih ? SEP : 0) + t + SEP + (BOTON + BORDE) * 2 + ENTRE;
+      let y = 250 + Math.max(0, (H - 500 - alto) / 2);
+      if (img) { g.drawImage(img, X - iw / 2, y, iw, ih); y += ih + SEP; }
+      g.textAlign = 'center'; g.fillStyle = '#3A3128'; g.fillText(frase, X, y + t * .8); y += t + SEP;
+      /* los botones esponjosos de la pantalla final (la dueña: «me gustan… déjalos en la captura»), los dos del mismo ancho
+         («que nada se vea desproporcionado»): el rosa con el fuego y el número de la racha («se entiende que es una racha
+         sin explicación») y el verde con el nombre del bosque */
+      puffBoton(g, X, y, ANCHO, BOTON, '#A15A4D', '#7E4338', '🔥 ' + j.racha, '800 88px "Nunito Sans", system-ui, sans-serif'); y += BOTON + BORDE + ENTRE;
+      puffBoton(g, X, y, ANCHO, BOTON, '#647745', '#48592F', '🌲 El bosque de Sprinkloud', '800 62px "Nunito Sans", system-ui, sans-serif');
+      enviar(c, '🔥 ' + j.racha + (j.racha === 1 ? ' día' : ' días seguidos') + ' practicando música en el bosque de Sprinkloud 🎶', 'mi-racha');
     },
     async insignia(estado, id, nombre) {
       const c = await lienzo(async g => {
@@ -91,7 +153,7 @@ window.Compartir = (function () {
         g.save(); roundRect(g, x0, y0, w, h, 48); g.clip(); if (fondo) g.drawImage(fondo, x0, y0, w, h);
         const casa = estado.juego.casa;
         for (const id of Object.keys(casa).filter(id => (casa[id].e || 'casa') === pg.id).sort((a, b) => casa[a].z - casa[b].z)) {
-          const k = casa[id], s = w * tamBase(id) * k.s / 100, cx = x0 + w * k.x / 100, cy = y0 + h * k.y / 100;
+          const k = casa[id], s = w * tamBase(id, pg.id) * k.s / 100, cx = x0 + w * k.x / 100, cy = y0 + h * k.y / 100;
           g.save(); g.translate(cx, cy); if (k.f) g.scale(-1, 1);
           const im = IMAGENES.has(id) ? await cargar('assets/arte/' + id + '.webp') : null;
           if (im) g.drawImage(im, -s / 2, -s / 2, s, s);

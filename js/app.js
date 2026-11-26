@@ -81,6 +81,7 @@
     { id: 'jardin', nombre: 'Jardín', x: 48, y: 68, zoom: 1.6 }   // el huerto (x 19) y la fogata (x 76) tienen que verse a la vez
   ];
   const RETRATO = id => 'assets/ilustraciones/' + (id === 'osito' ? 'osito-bosque' : id) + '.webp';
+  const primerNombre = n => String(n || '').trim().split(/\s+/)[0];   // el nombre, nunca el apellido
 
   /* ---------- Pantallas ---------- */
   /* cada pantalla tiene su canción y su ambiente (Sonido.escena); en la práctica, silencio */
@@ -275,7 +276,8 @@
       : lb && lb.completa ? '¡Terminaste la versión libre! 🎉 Sigue con un plan del club'
       : sinEnergia ? '¡Se acabó tu energía de hoy! Vuelve mañana ⚡'
       : j.hoy.terminada ? ((lb && lb.paso) || (estado.avance && estado.avance.paso) ? '¡Pasaste la lección! Mañana se abre la siguiente 🌙' : '¡Ya practicaste hoy! Vuelve mañana 🌙')
-      : (estado.alumno ? '¡Hola, ' + estado.alumno + '! ' : '¡Hola! ') + 'Hoy toca: ' + l.tema;
+      /* 26-nov-2026 (la dueña): solo «¡Hola, Lena!»; con el tema de la lección la burbuja crecía y tapaba al osito */
+      : (primerNombre(estado.alumno) ? '¡Hola, ' + primerNombre(estado.alumno) + '!' : '¡Hola!');
     const luciernagas = Array.from({ length: 6 }, (_, i) => el('i', { class: 'luciernaga', style: 'left:' + (10 + i * 15) + '%;top:' + (20 + (i * 37) % 50) + '%;animation-delay:' + (-i * .8) + 's' }));
     const heroe = el('div', { class: 'heroe' }, el('img', { src: OSITO_ESCENA, alt: '' }), el('div', { class: 'noche-luz' }, luciernagas),
       NAVIDAD ? el('div', { class: 'guirnalda', 'aria-hidden': 'true', html: GUIRNALDA }) : null, el('div', { class: 'burbuja', text: saludo }));
@@ -390,6 +392,8 @@
     let mem = memoriaHoy(semana) || { fecha: estado.hoy, semana, hechas: 0, vuelta: 0 };
     if (extra) { mem.vuelta = (mem.vuelta || 0) + 1; mem.hechas = 0; }
     recordar(mem);
+    /* lo que tenía al empezar: la tarjeta de la racha muestra la medalla o el amigo que llegó con esta práctica */
+    const antes = { insignias: estado.juego.insignias.slice(), personajes: (estado.juego.personajes || []).slice() };
     const base = Object.assign({}, estado, { leccion, alumno: estado.alumno + (mem.vuelta ? '#' + mem.vuelta : '') });
     const lista = A.plan(base);
     const p = $('#practica');
@@ -467,11 +471,26 @@
     if (!ultimo || !ultimo.fogata) {   // si la última se saltó, la práctica igual se cierra para prender la fogata
       try { if (!extra && !estado.juego.hoy.terminada) { ultimo = await Api.practica({ tipo: 'repaso', aciertos: 0, intentos: 1, cierre: true }, true); estado = ultimo.estado; ganados += ultimo.ganados; } } catch (e) { }
     }
-    fin(ultimo, ganados, extra);
+    fin(ultimo, ganados, extra, antes);
+  }
+
+  /* ---------- La imagen de la tarjeta de la racha (26-nov-2026, pedido de la dueña) ----------
+     Los alumnos comparten su racha y ella la sube a las redes. La tarjeta es limpia, como la pantalla final: UNA imagen,
+     el nombre y la racha («no quiero tanta información… solo una imagen limpia y pocas letras»). La imagen es lo que
+     logró hoy, solo si tiene su dibujo: la medalla que ganó con esta práctica, el amigo que llegó de visita o lo último
+     que compró (el sticker solo, sin el álbum alrededor). Si no, la fogata de la pantalla final. */
+  function destacado(r, antes) {
+    const j = estado.juego, dibujo = id => IMAGENES.has(id) ? 'assets/arte/' + id + '.webp' : null;
+    const medallas = (antes ? j.insignias.filter(id => !antes.insignias.includes(id)) : ((r && r.insignias) || [])).filter(dibujo);
+    const llegados = antes ? (j.personajes || []).filter(id => !antes.personajes.includes(id)) : [];
+    const amigo = llegados[llegados.length - 1] || (r && r.personaje);
+    const ultimo = j.inventario.filter(id => !id.startsWith('mapa-')).pop();
+    const img = (medallas.length && dibujo(medallas[medallas.length - 1])) || (amigo && dibujo('amigo-' + amigo)) || (ultimo && dibujo(ultimo));
+    return img ? { img } : { svg: SVG_FOGATA };
   }
 
   /* ---------- ¡Terminaste tu práctica de hoy! ---------- */
-  function fin(r, ganados, extra) {
+  function fin(r, ganados, extra, antes) {
     const p = $('#fin'), j = estado.juego;
     llenar(p,
       el('div', { class: 'fogata-grande aparece', html: fogata(j.fogata) }),
@@ -480,7 +499,7 @@
       j.racha ? el('div', { class: 'racha-txt aparece d3', text: '🔥 ' + j.racha + (j.racha === 1 ? ' día' : ' días seguidos') + (j.lena ? ' · 🪵 ' + j.lena : '') }) : null,
       avanceTxt(r && r.avance),
       el('div', { class: 'acciones aparece d4' },
-        puff('📸 Compartir mi logro', 'rosa', () => window.Compartir.dia(estado, ganados)),
+        puff('📸 Compartir mi logro', 'rosa', () => window.Compartir.dia(estado, ganados, primerNombre(estado.alumno), destacado(r, antes))),
         r && r.avance && r.avance.paso && r.avance.ultima ? puff('⭐ Seguir con el club', 'ocre', () => club('completa')) : null,
         !extra && sinCuenta() ? puff('🔐 Guardar mi progreso', 'madera', () => cuenta()) : null,
         puff('🌲 Volver al bosque', 'grande', () => camino())));
