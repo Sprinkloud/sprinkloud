@@ -340,6 +340,12 @@ window.Actividades = (function () {
   const semis = n => n + (n === 1 ? ' semitono' : ' semitonos');
   const NOMBRE_ST = ['Do', 'Do♯', 'Re', 'Re♯', 'Mi', 'Fa', 'Fa♯', 'Sol', 'Sol♯', 'La', 'La♯', 'Si'];
   const BLANCA = [0, 2, 4, 5, 7, 9, 11];
+  /* 27-nov-2026: los dos pasos del libro (cuenta las notas → el número; cuenta los semitonos → el nombre). El tritono puede
+     ser 4ª o 5ª: ahí solo se cuentan los semitonos. */
+  const PASOS_L = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 7: 4, 8: 5, 9: 5, 10: 6, 11: 6, 12: 7 };
+  const LETRAS_N = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Si'];
+  const notasDe = (desde, st) => { const p = PASOS_L[st]; if (p == null) return null; const i0 = BLANCA.indexOf(desde % 12); return Array.from({ length: p + 1 }, (_, k) => LETRAS_N[(i0 + k) % 7]); };
+  const cuentaInt = (desde, st) => { const ns = notasDe(desde, st); return (ns ? ns.length + ' notas · ' : '') + semis(st); };
   async function teclado(cont, o) {
     const cuales = INTERVALOS_TECLADO[o.semana] || [1, 2, 3, 4];
     const cuantas = o.cuantas || 6, HASTA = 19;   // de Do4 (0) a Sol5 (19)
@@ -359,7 +365,7 @@ window.Actividades = (function () {
       teclas[st] = b; tec.append(b);
     }
     tec.style.setProperty('--blancas', blancas);
-    cont.append(consigna('Cuenta los semitonos', cuenta), pedido, tec, msj);
+    cont.append(consigna('Cuenta notas y semitonos', cuenta), pedido, tec, msj);
     let esperando = null;
     const limpiar = () => Object.values(teclas).forEach(t => { t.classList.remove('desde', 'llega', 'mal'); t.replaceChildren(); });
     const contar = (desde, hasta, mal) => { for (let k = 1; k <= hasta - desde; k++) teclas[desde + k].append(el('span', { class: 'cuenta-st' + (mal ? ' mal' : ''), text: String(k) })); };
@@ -375,11 +381,13 @@ window.Actividades = (function () {
     await ejemplo(cont, async () => {
       const pr = { desde: 0, st: cuales[cuales.length - 1] };
       mostrar(pr);
+      const ns = notasDe(pr.desde, pr.st), [numero, ...tipo] = NOMBRE_INT[pr.st].split(' ');
+      if (ns) { msj.textContent = '1 · ' + ns.join(', ') + ' = ' + ns.length + ' notas → ' + numero; await espera(2200); }
       for (let k = 1; k <= pr.st; k++) { teclas[pr.desde + k].append(el('span', { class: 'cuenta-st', text: String(k) })); S.toque(); await espera(260); }
       teclas[pr.desde + pr.st].classList.add('llega');
       S.nota(60 + pr.desde); await espera(380); S.nota(60 + pr.desde + pr.st);
-      msj.textContent = '¡' + NOMBRE_INT[pr.st].charAt(0).toUpperCase() + NOMBRE_INT[pr.st].slice(1) + ': ' + semis(pr.st) + '!';
-      await espera(1800); msj.textContent = ''; limpiar(); pedido.textContent = '';
+      msj.textContent = (ns ? '2 · ' + semis(pr.st) + ' → ' + (tipo.join(' ') || numero) + ': ¡' : '¡') + NOMBRE_INT[pr.st].charAt(0).toUpperCase() + NOMBRE_INT[pr.st].slice(1) + '!';
+      await espera(2200); msj.textContent = ''; limpiar(); pedido.textContent = '';
     });
     S.reiniciarEscalera();
     const lista = Array.from({ length: cuantas }, pregunta);
@@ -390,12 +398,12 @@ window.Actividades = (function () {
       if (ok) {
         contar(pr.desde, toco); teclas[toco].classList.add('llega');
         S.nota(60 + pr.desde); S.luego(380, () => S.nota(60 + toco)); S.acierto();
-        msj.className = 'mensaje bien'; msj.textContent = '¡Sí! ' + semis(pr.st);
+        msj.className = 'mensaje bien'; msj.textContent = '¡Sí! ' + cuentaInt(pr.desde, pr.st);
       } else {
         S.error();
         if (d > 0 && NOMBRE_INT[d]) { contar(pr.desde, toco, true); teclas[toco].classList.add('mal'); }
         msj.className = 'mensaje mal';
-        msj.textContent = d > 0 && NOMBRE_INT[d] ? 'Esa es ' + unaInt(d) + ' (' + semis(d) + '). Busca ' + semis(pr.st) + '.' : 'Sube desde la tecla marcada.';
+        msj.textContent = d > 0 && NOMBRE_INT[d] ? 'Esa es ' + unaInt(d) + ' (' + semis(d) + '). Busca ' + cuentaInt(pr.desde, pr.st) + '.' : 'Sube desde la tecla marcada.';
       }
       await espera(ok ? 1300 : 2200); msj.textContent = '';
       return ok;

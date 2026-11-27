@@ -510,3 +510,11 @@ Las decisiones, los precios y la tabla de stickers y mejoras de cada mapa están
 - Se quitaron la frase «N de 7 en su lugar. Mira las rojas» y la línea con el orden: la comparación lo dice sola. Solo dice «¡Perfecto!» cuando todo está bien. Si hay errores, la comparación se queda 4,2 s antes de seguir.
 - CSS: `.ranuras-orden` contiene dos `.hilera-orden` (`--n` = cuántas casillas). Con 7 casillas cabe en 320 px.
 - Es lo mismo que hace `página_Sprinkloud/practica/armaduras.html`. `herramientas/probar_orden.js` es de la versión anterior (espera 7 lugares y el mensaje viejo): hay que ponerlo al día antes de volver a usarlo.
+
+## Intervalos en dos pasos y hojas con poco texto (27-nov-2026)
+- **El juego del teclado** (`teclado()` en `js/actividades.js`, lecciones 27 a 29 de piano): el ejemplo animado dice primero «1 · Do, Re, Mi = 3 notas → 3ª» y después cuenta los semitonos. Al acertar dice «¡Sí! 3 notas · 4 semitonos». La consigna es «Cuenta notas y semitonos». Es el mismo método de los libros: se cuentan las notas para el número y los semitonos para el nombre.
+- **La hoja** (`js/motores/hoja.js`, copiada de `página_Sprinkloud/practica/hojas.html` con `herramientas/copiar_motores.py`):
+  - trae el ejemplo de los dos pasos en las lecciones 27 a 29, con sus estilos `dp-*` al final de la sección de la hoja en `css/app.css` (los nombres llevan `dp-` porque la app ya usaba `.paso` y `.n`);
+  - tiene títulos cortos y casi sin consignas;
+  - las prácticas de los libros 1 y 2 piden solo lo que el libro ya enseñó.
+- **`copiar_motores.py` busca el comentario `/* [tema, meta] de cada semana */` en `leccion.js` del sitio:** no hay que cambiarlo.

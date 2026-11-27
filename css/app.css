@@ -277,6 +277,21 @@ h1, h2, h3 { font-family: var(--f-display); font-weight: 600; margin: 0; line-he
 .hoja-papel .dibujable.ok { background: var(--hoja-bien-fondo); border-radius: 10px; }
 .hoja-papel .solucion { font-size: .9rem; color: var(--hoja-bien); font-weight: 800; flex-basis: 100%; overflow-wrap: anywhere; }
 .hoja-papel .dibujable { cursor: pointer; touch-action: manipulation; }
+.hoja-papel .respuestas .par { display: inline-flex; align-items: baseline; gap: 4px; }
+/* 27-nov-2026: el ejemplo de los dos pasos de los intervalos (motores/hoja.js, dosPasos), como en el libro y en la hoja del sitio */
+.hoja-papel .dos-pasos { display: grid; gap: 10px; background: var(--hoja-bien-fondo); border-radius: 14px; padding: 12px; }
+.hoja-papel .dos-pasos .dp-paso { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 8px; }
+.hoja-papel .dos-pasos .dp-n { width: 26px; height: 26px; border-radius: 50%; background: var(--hoja-bien); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .85rem; flex: none; margin-top: 2px; }
+.hoja-papel .dos-pasos .dp-que { font-weight: 800; color: var(--hoja-bien);  margin-top: 3px; }
+.hoja-papel .dos-pasos .dp-paso.dp-st .dp-n { background: var(--hoja-ocre); }
+.hoja-papel .dos-pasos .dp-paso.dp-st .dp-que { color: var(--hoja-ocre); }
+.hoja-papel .dos-pasos .dp-pastilla { display: inline-grid; justify-items: center; gap: 3px; }
+.hoja-papel .dos-pasos .dp-pastilla b { border: 1.5px solid var(--hoja-tinta); border-radius: 999px; padding: 0 9px; font: 400 1.3rem/1.35 var(--f-hand); background: var(--papel-claro); }
+.hoja-papel .dos-pasos .dp-pastilla.dp-punta b { background: #E9B864; }
+.hoja-papel .dos-pasos .dp-pastilla i { width: 18px; height: 18px; border-radius: 50%; background: var(--hoja-bien); color: #fff; font: normal 800 11px/18px var(--f-body); text-align: center; }
+.hoja-papel .dos-pasos .dp-pastilla i.dp-vacio { visibility: hidden; }
+.hoja-papel .dos-pasos .dp-da { margin-top: 3px; font-weight: 800; }
+.hoja-papel .dos-pasos .dp-final { font-weight: 800; font-size: 1.1rem; color: var(--hoja-bien); text-align: center; }
 /* antes de los ejercicios de ritmo: las figuras con su nombre y sus pulsos; y el primer ítem de cada ejercicio, resuelto */
 .hoja-papel .leyenda { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; background: var(--hoja-bien-fondo); border-radius: 14px; padding: 10px 12px; }
 .hoja-papel .leyenda-titulo { width: 100%; margin: 0; font-weight: 800; font-size: .9rem; color: var(--hoja-bien); }
